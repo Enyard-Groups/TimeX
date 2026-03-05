@@ -186,7 +186,7 @@ const CardDetach = () => {
     <>
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-lg font-semibold">
+        <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
           <FaAngleRight />
           Visitor
           <FaAngleRight />
@@ -226,7 +226,7 @@ const CardDetach = () => {
             </div>
 
             <input
-              placeholder="Search by Visitor Name..."
+              placeholder="Search"
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);

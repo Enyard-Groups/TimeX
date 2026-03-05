@@ -99,7 +99,7 @@ const LocationGroup = () => {
     <>
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-lg font-semibold">
+        <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
           <FaAngleRight />
           Device Management
           <FaAngleRight />
@@ -139,7 +139,7 @@ const LocationGroup = () => {
             </div>
 
             <input
-              placeholder="Search by Location Group Name..."
+              placeholder="Search"
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
