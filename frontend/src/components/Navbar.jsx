@@ -68,7 +68,7 @@ export default function Navbar() {
     <>
       {/* Navbar */}
       <nav className="fixed top-0 left-0 w-full z-50 border-b backdrop-blur-xl bg-[oklch(1_0_0)] border-[oklch(0.923_0.003_48.717)]">
-        <div className="h-20 px-6 md:px-14 flex items-center justify-between max-w-7xl mx-auto">
+        <div className="h-20 px-6 md:px-14 flex items-center justify-between mx-auto">
           {/* Left Section */}
           <div className="flex items-center gap-4">
             {/* Mobile Toggle */}

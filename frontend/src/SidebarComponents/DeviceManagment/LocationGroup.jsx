@@ -103,7 +103,9 @@ const LocationGroup = () => {
           <FaAngleRight />
           Device Management
           <FaAngleRight />
-          Location Group
+          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+            Location Group
+          </div>
         </h1>
         {!openModal && (
           <button
@@ -152,13 +154,27 @@ const LocationGroup = () => {
             <table className="w-full text-sm border-collapse">
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Sl.No</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Location Group Name</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Location Group Discription</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Time Keeper Name</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Site Manager Name</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Company</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Action</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Sl.No
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Location Group Name
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Location Group Discription
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Time Keeper Name
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Site Manager Name
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Company
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -171,14 +187,24 @@ const LocationGroup = () => {
                 ) : (
                   currentlocationGroup.map((item, index) => (
                     <tr key={item.id} className="text-center">
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{index + 1}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.locationgroupname}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {index + 1}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.locationgroupname}
+                      </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.locationgroupdescription}
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.timekeepername}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.sitemanagername}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.organization}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.timekeepername}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.sitemanagername}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.organization}
+                      </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-2">
                         <button className="bg-blue-500 text-white px-2 py-1 rounded text-xs">
                           Edit

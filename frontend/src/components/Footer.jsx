@@ -1,19 +1,28 @@
-import React from 'react'
+import React from "react";
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear()
+  const currentYear = new Date().getFullYear();
 
   return (
-    <div className='relative bottom-0 h-14 px-2 md:px-14  border-t w-full'
-    style={{ backgroundColor: "oklch(1 0 0)",
-        borderColor: "oklch(0.823 0.003 48.717)" }}>
-      <div className="text-sm mt-4 flex justify-center items-center"
-      style={{ color: "oklch(0.423 0.003 48.717)" }}
+    <div
+      className="relative bottom-0 h-14 px-2 md:px-14  border-t w-full"
+      style={{
+        backgroundColor: "oklch(1 0 0)",
+        borderColor: "oklch(0.823 0.003 48.717)",
+      }}
+    >
+      <div
+        className="text-sm mt-4 flex justify-center items-center gap-2"
+        style={{ color: "oklch(0.423 0.003 48.717)" }}
       >
-        © {currentYear} TimeX. All rights reserved.
+        © {currentYear} TimeX |{" "}
+        <a href="https://enyard.in" className="underline" target="_blank">
+          ENYARD.
+        </a>{" "}
+        | All rights reserved.
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

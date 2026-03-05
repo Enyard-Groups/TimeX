@@ -4,6 +4,7 @@ import DonutChart from "../components/DonutChart";
 import GeoLocationMap from "../components/GeoLocationMap";
 import LeaveDistributionChart from "../components/LeaveDistributionChart";
 import { useEffect, useState } from "react";
+import RecentActivity from "../components/RecentActivity";
 
 const AdminDashboard = ({ user }) => {
 
@@ -250,6 +251,10 @@ const AdminDashboard = ({ user }) => {
         <LeaveDistributionChart/>
         <GeoLocationMap />
       </div>
+
+      <RecentActivity/>
+       
+      
     </>
   );
 };

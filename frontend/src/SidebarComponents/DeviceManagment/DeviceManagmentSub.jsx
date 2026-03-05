@@ -121,7 +121,9 @@ const DeviceManagementSub = () => {
           <FaAngleRight />
           Device Management
           <FaAngleRight />
-          Device Management
+          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+            Device Management
+          </div>
         </h1>
         {!openModal && (
           <button
@@ -170,17 +172,39 @@ const DeviceManagementSub = () => {
             <table className="w-full text-sm border-collapse">
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Sl.No</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Device Serial No</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Name</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Device IP</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Face</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">FingerPrint</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Card no</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Pin no</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Company</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Active</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Action</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Sl.No
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Device Serial No
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Name
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Device IP
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Face
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    FingerPrint
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Card no
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Pin no
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Company
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Active
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -193,19 +217,33 @@ const DeviceManagementSub = () => {
                 ) : (
                   currentdevicemanagement.map((item, index) => (
                     <tr key={item.id} className="text-center">
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{index + 1}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.deviceserialno}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.name}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.deviceip}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.isFace ? "Y" : "N"}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {index + 1}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.deviceserialno}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.name}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.deviceip}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.isFace ? "Y" : "N"}
+                      </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.isFingerprint ? "Y" : "N"}
                       </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.isCardNo ? "Y" : "N"}
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.isPinNo ? "Y" : "N"}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.company}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.isPinNo ? "Y" : "N"}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.company}
+                      </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.isActive ? "Y" : "N"}
                       </td>

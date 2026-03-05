@@ -74,16 +74,36 @@ const DeviceCommunication = () => {
           <table className="w-full text-sm border-collapse">
             <thead className="bg-[oklch(0.948_0.001_106.424)]">
               <tr>
-                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Status</th>
-                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Serial No</th>
-                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Device Name</th>
-                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Transfer Time</th>
-                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Interval</th>
-                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">LastActivity</th>
-                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">FW Version</th>
-                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">User Count</th>
-                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">FP Count</th>
-                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Transaction Count</th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  Status
+                </th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  Serial No
+                </th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  Device Name
+                </th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  Transfer Time
+                </th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  Interval
+                </th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  LastActivity
+                </th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  FW Version
+                </th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  User Count
+                </th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  FP Count
+                </th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  Transaction Count
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -96,16 +116,36 @@ const DeviceCommunication = () => {
               ) : (
                 currentdevicecommunication.map((item) => (
                   <tr key={item.id} className="text-center">
-                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.status}</td>
-                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.serialno}</td>
-                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.devicename}</td>
-                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.transfername}</td>
-                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.interval}</td>
-                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.lastactivity}</td>
-                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.fwversion}</td>
-                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.usercount}</td>
-                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.fpcount}</td>
-                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.transactioncount}</td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      {item.status}
+                    </td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      {item.serialno}
+                    </td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      {item.devicename}
+                    </td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      {item.transfername}
+                    </td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      {item.interval}
+                    </td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      {item.lastactivity}
+                    </td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      {item.fwversion}
+                    </td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      {item.usercount}
+                    </td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      {item.fpcount}
+                    </td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      {item.transactioncount}
+                    </td>
                   </tr>
                 ))
               )}

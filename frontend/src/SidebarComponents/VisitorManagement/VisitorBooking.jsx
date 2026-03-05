@@ -188,7 +188,9 @@ const VisitorBooking = () => {
           <FaAngleRight />
           Visitor
           <FaAngleRight />
-          Visitor Booking
+          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+            Visitor Booking
+          </div>
         </h1>
         {!openModal && (
           <button
@@ -237,15 +239,33 @@ const VisitorBooking = () => {
             <table className="w-full text-sm  border-collapse">
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
-                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">Sl.No</th>
-                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">Visitor Code</th>
-                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">Visitor Name</th>
-                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">V-Phone</th>
-                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">CardReference</th>
-                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">V-Date & Time</th>
-                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">Organization</th>
-                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">Meeting Person</th>
-                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">Action</th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">
+                    Sl.No
+                  </th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">
+                    Visitor Code
+                  </th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">
+                    Visitor Name
+                  </th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">
+                    V-Phone
+                  </th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">
+                    CardReference
+                  </th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">
+                    V-Date & Time
+                  </th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">
+                    Organization
+                  </th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">
+                    Meeting Person
+                  </th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -258,14 +278,30 @@ const VisitorBooking = () => {
                 ) : (
                   currentVisitors.map((item, index) => (
                     <tr key={item.id} className="text-center">
-                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">{index + 1}</td>
-                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">{item.visitorCode}</td>
-                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">{item.visitorName}</td>
-                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">{item.phone}</td>
-                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">{item.cardReference}</td>
-                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">{item.vDateTime}</td>
-                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">{item.organization}</td>
-                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">{item.meetingPerson}</td>
+                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">
+                        {index + 1}
+                      </td>
+                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">
+                        {item.visitorCode}
+                      </td>
+                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">
+                        {item.visitorName}
+                      </td>
+                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">
+                        {item.phone}
+                      </td>
+                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">
+                        {item.cardReference}
+                      </td>
+                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">
+                        {item.vDateTime}
+                      </td>
+                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">
+                        {item.organization}
+                      </td>
+                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">
+                        {item.meetingPerson}
+                      </td>
                       <td className="p-2  border border-[oklch(0.8_0.001_106.424)] space-x-2">
                         <button className="bg-blue-500 text-white px-2 py-1 rounded text-xs">
                           Edit

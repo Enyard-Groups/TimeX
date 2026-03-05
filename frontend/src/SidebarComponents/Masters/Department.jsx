@@ -87,7 +87,9 @@ const Department = () => {
           <FaAngleRight />
           Masters
           <FaAngleRight />
-          DepartmentMaster
+          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+            DepartmentMaster
+          </div>
         </h1>
         {!openModal && (
           <button
@@ -136,12 +138,24 @@ const Department = () => {
             <table className="w-full text-sm border-collapse">
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Sl.No</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Department Name</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Department Code</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Company</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Active</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Action</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Sl.No
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Department Name
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Department Code
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Company
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Active
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -154,10 +168,18 @@ const Department = () => {
                 ) : (
                   currentdepartment.map((item, index) => (
                     <tr key={item.id} className="text-center">
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{index + 1}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.name}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.code}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.company}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {index + 1}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.name}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.code}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.company}
+                      </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.isActive ? "Y" : "N"}
                       </td>

@@ -90,7 +90,9 @@ const Designation = () => {
           <FaAngleRight />
           Masters
           <FaAngleRight />
-          Designation
+          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+            Designation
+          </div>
         </h1>
         {!openModal && (
           <button

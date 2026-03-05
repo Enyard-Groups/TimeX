@@ -120,7 +120,9 @@ const EmployeeCategory = () => {
           <FaAngleRight />
           Masters
           <FaAngleRight />
-          EmployeeCategoryMaster
+          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+            EmployeeCategoryMaster
+          </div>
         </h1>
         {!openModal && (
           <button
@@ -169,16 +171,36 @@ const EmployeeCategory = () => {
             <table className="w-full text-sm border-collapse">
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Sl.No</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Category Name</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Category Code</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Company</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Description</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Work Hours</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Min Work Hours</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">MaxOT</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Active</th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Action</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Sl.No
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Category Name
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Category Code
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Company
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Description
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Work Hours
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Min Work Hours
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    MaxOT
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Active
+                  </th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -191,14 +213,30 @@ const EmployeeCategory = () => {
                 ) : (
                   currentemployeeCategory.map((item, index) => (
                     <tr key={item.id} className="text-center">
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{index + 1}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.name}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.code}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.company}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.description}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.workhours}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.minworkhours}</td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.maxot}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {index + 1}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.name}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.code}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.company}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.description}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.workhours}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.minworkhours}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        {item.maxot}
+                      </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.isActive ? "Y" : "N"}
                       </td>
@@ -338,10 +376,7 @@ const EmployeeCategory = () => {
             </div>
 
             <div>
-              <label className={labelStyle}>
-                Description
-                
-              </label>
+              <label className={labelStyle}>Description</label>
               <input
                 name="description"
                 value={formData.description}
@@ -353,10 +388,7 @@ const EmployeeCategory = () => {
             </div>
 
             <div>
-              <label className={labelStyle}>
-                Work Hours
-               
-              </label>
+              <label className={labelStyle}>Work Hours</label>
               <select
                 name="workhours"
                 value={formData.workhours}
@@ -374,10 +406,7 @@ const EmployeeCategory = () => {
             </div>
 
             <div>
-              <label className={labelStyle}>
-                Min Work Hours
-               
-              </label>
+              <label className={labelStyle}>Min Work Hours</label>
               <select
                 name="minworkhours"
                 value={formData.minworkhours}
@@ -395,10 +424,7 @@ const EmployeeCategory = () => {
             </div>
 
             <div>
-              <label className={labelStyle}>
-                Max OverTime
-               
-              </label>
+              <label className={labelStyle}>Max OverTime</label>
               <select
                 name="maxot"
                 value={formData.maxot}

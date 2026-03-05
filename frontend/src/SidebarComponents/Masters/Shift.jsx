@@ -144,7 +144,9 @@ const Shift = () => {
           <FaAngleRight />
           Masters
           <FaAngleRight />
-          Shift
+          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+            Shift
+          </div>
         </h1>
         {!openModal && (
           <button
