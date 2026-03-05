@@ -1,0 +1,176 @@
+import React, { useState } from "react";
+import { FaAngleRight } from "react-icons/fa6";
+
+const DeviceCommunication = () => {
+  const [devicecommunication] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [entriesPerPage, setEntriesPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const filtereddevicecommunication = devicecommunication.filter(
+    (device) =>
+      device.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      device.deviceip.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      device.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
+  );
+
+  const totalPages = Math.ceil(
+    filtereddevicecommunication.length / entriesPerPage,
+  );
+
+  const startIndex = (currentPage - 1) * entriesPerPage;
+  const endIndex = startIndex + entriesPerPage;
+
+  const currentdevicecommunication = filtereddevicecommunication.slice(
+    startIndex,
+    endIndex,
+  );
+
+  return (
+    <>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="flex items-center gap-2 pt-1.5 text-lg font-semibold">
+          <FaAngleRight />
+          Device Management
+          <FaAngleRight />
+          Device Communication
+        </h1>
+      </div>
+
+      <div className="mt-6 bg-white shadow-xl rounded-xl border border-gray-200 p-4">
+        {/* Top Controls */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+          <div>
+            <label className="mr-2 text-sm">Show</label>
+            <select
+              value={entriesPerPage}
+              onChange={(e) => {
+                setEntriesPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+            </select>
+            <span className="ml-2 text-sm">entries</span>
+          </div>
+
+          <input
+            placeholder="Search"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+            className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+          />
+        </div>
+
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm border-collapse">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="p-2 border">Status</th>
+                <th className="p-2 border">Serial No</th>
+                <th className="p-2 border">Device Name</th>
+                <th className="p-2 border">Transfer Time</th>
+                <th className="p-2 border">Interval</th>
+                <th className="p-2 border">LastActivity</th>
+                <th className="p-2 border">FW Version</th>
+                <th className="p-2 border">User Count</th>
+                <th className="p-2 border">FP Count</th>
+                <th className="p-2 border">Transaction Count</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentdevicecommunication.length === 0 ? (
+                <tr>
+                  <td colSpan="11" className="text-center p-4">
+                    No Data Available
+                  </td>
+                </tr>
+              ) : (
+                currentdevicecommunication.map((item) => (
+                  <tr key={item.id} className="text-center">
+                    <td className="p-2 border">{item.status}</td>
+                    <td className="p-2 border">{item.serialno}</td>
+                    <td className="p-2 border">{item.devicename}</td>
+                    <td className="p-2 border">{item.transfername}</td>
+                    <td className="p-2 border">{item.interval}</td>
+                    <td className="p-2 border">{item.lastactivity}</td>
+                    <td className="p-2 border">{item.fwversion}</td>
+                    <td className="p-2 border">{item.usercount}</td>
+                    <td className="p-2 border">{item.fpcount}</td>
+                    <td className="p-2 border">{item.transactioncount}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="flex justify-between items-center mt-4 text-sm">
+          <span>
+            Showing {Math.min(endIndex, filtereddevicecommunication.length)} of{" "}
+            {filtereddevicecommunication.length} entries
+          </span>
+
+          <div className="space-x-2">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(1)}
+              className="px-2 py-1 border rounded disabled:opacity-50"
+            >
+              First
+            </button>
+
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+              className="px-2 py-1 border rounded disabled:opacity-50"
+            >
+              Previous
+            </button>
+
+            {[...Array(totalPages)].map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentPage(index + 1)}
+                className={`px-2 py-1 rounded ${
+                  currentPage === index + 1
+                    ? "bg-green-500 text-white"
+                    : "border"
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+              className="px-2 py-1 border rounded disabled:opacity-50"
+            >
+              Next
+            </button>
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(totalPages)}
+              className="px-2 py-1 border rounded disabled:opacity-50"
+            >
+              Last
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default DeviceCommunication;
