@@ -203,7 +203,7 @@ const CardDetach = () => {
       </div>
 
       {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl border border-gray-200 p-4">
+        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-4">
           {/* Top Controls */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
             <div>
@@ -239,23 +239,23 @@ const CardDetach = () => {
             <table className="w-full text-sm border-collapse">
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
-                  <th className="p-2 border">Sl.No</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Sl.No</th>
                   <th
                     className="p-2 
-                  border"
+                  border border-[oklch(0.8_0.001_106.424)]"
                   >
                     Visitor Code
                   </th>
-                  <th className="p-2 border">V-Name</th>
-                  <th className="p-2 border">V-Company</th>
-                  <th className="p-2 border">V-Phone</th>
-                  <th className="p-2 border">V-Email</th>
-                  <th className="p-2 border">CICPA Card No</th>
-                  <th className="p-2 border">Company Code</th>
-                  <th className="p-2 border">EID No</th>
-                  <th className="p-2 border">CardReference</th>
-                  <th className="p-2 border">Meeting Person</th>
-                  <th className="p-2 border">Action</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">V-Name</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">V-Company</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">V-Phone</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">V-Email</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">CICPA Card No</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Company Code</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">EID No</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">CardReference</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Meeting Person</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -268,18 +268,18 @@ const CardDetach = () => {
                 ) : (
                   currentVisitors.map((item, index) => (
                     <tr key={item.id} className="text-center">
-                      <td className="p-2 border">{index + 1}</td>
-                      <td className="p-2 border">{item.visitorCode}</td>
-                      <td className="p-2 border">{item.visitorName}</td>
-                      <td className="p-2 border">{item.organization}</td>
-                      <td className="p-2 border">{item.phone}</td>
-                      <td className="p-2 border">{item.email}</td>
-                      <td className="p-2 border">{item.cicpaCard}</td>
-                      <td className="p-2 border">{item.companyCode}</td>
-                      <td className="p-2 border">{item.idNumber}</td>
-                      <td className="p-2 border">{item.cardReference}</td>
-                      <td className="p-2 border">{item.meetingPerson}</td>
-                      <td className="p-2 border space-x-2">
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{index + 1}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.visitorCode}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.visitorName}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.organization}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.phone}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.email}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.cicpaCard}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.companyCode}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.idNumber}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.cardReference}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.meetingPerson}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-2">
                         <button className="bg-blue-500 text-white px-2 py-1 rounded text-xs">
                           Edit
                         </button>

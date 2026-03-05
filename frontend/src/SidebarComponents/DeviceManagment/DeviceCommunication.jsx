@@ -38,7 +38,7 @@ const DeviceCommunication = () => {
         </h1>
       </div>
 
-      <div className="mt-6 bg-white shadow-xl rounded-xl border border-gray-200 p-4">
+      <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)]  p-4">
         {/* Top Controls */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
           <div>
@@ -74,16 +74,16 @@ const DeviceCommunication = () => {
           <table className="w-full text-sm border-collapse">
             <thead className="bg-[oklch(0.948_0.001_106.424)]">
               <tr>
-                <th className="p-2 border">Status</th>
-                <th className="p-2 border">Serial No</th>
-                <th className="p-2 border">Device Name</th>
-                <th className="p-2 border">Transfer Time</th>
-                <th className="p-2 border">Interval</th>
-                <th className="p-2 border">LastActivity</th>
-                <th className="p-2 border">FW Version</th>
-                <th className="p-2 border">User Count</th>
-                <th className="p-2 border">FP Count</th>
-                <th className="p-2 border">Transaction Count</th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Status</th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Serial No</th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Device Name</th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Transfer Time</th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Interval</th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">LastActivity</th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">FW Version</th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">User Count</th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">FP Count</th>
+                <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Transaction Count</th>
               </tr>
             </thead>
             <tbody>
@@ -96,16 +96,16 @@ const DeviceCommunication = () => {
               ) : (
                 currentdevicecommunication.map((item) => (
                   <tr key={item.id} className="text-center">
-                    <td className="p-2 border">{item.status}</td>
-                    <td className="p-2 border">{item.serialno}</td>
-                    <td className="p-2 border">{item.devicename}</td>
-                    <td className="p-2 border">{item.transfername}</td>
-                    <td className="p-2 border">{item.interval}</td>
-                    <td className="p-2 border">{item.lastactivity}</td>
-                    <td className="p-2 border">{item.fwversion}</td>
-                    <td className="p-2 border">{item.usercount}</td>
-                    <td className="p-2 border">{item.fpcount}</td>
-                    <td className="p-2 border">{item.transactioncount}</td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.status}</td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.serialno}</td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.devicename}</td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.transfername}</td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.interval}</td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.lastactivity}</td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.fwversion}</td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.usercount}</td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.fpcount}</td>
+                    <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.transactioncount}</td>
                   </tr>
                 ))
               )}

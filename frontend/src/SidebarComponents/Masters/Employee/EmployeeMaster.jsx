@@ -126,7 +126,7 @@ const EmployeeMaster = () => {
         )}
       </div>
       {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl border border-gray-200 p-4">
+        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-4">
           {/* Top Controls */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
             <div>
@@ -162,18 +162,18 @@ const EmployeeMaster = () => {
             <table className="w-full text-sm border-collapse">
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
-                  <th className="p-2 border">Sl.No</th>
-                  <th className="p-2 border">Device ID</th>
-                  <th className="p-2 border">Company ID</th>
-                  <th className="p-2 border">Gender</th>
-                  <th className="p-2 border">Location</th>
-                  <th className="p-2 border">Full Name</th>
-                  <th className="p-2 border">Email</th>
-                  <th className="p-2 border">Category</th>
-                  <th className="p-2 border">employeeMaster</th>
-                  <th className="p-2 border">Designation</th>
-                  <th className="p-2 border">Department</th>
-                  <th className="p-2 border">Action</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Sl.No</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Device ID</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Company ID</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Gender</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Location</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Full Name</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Email</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Category</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">employeeMaster</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Designation</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Department</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -186,22 +186,22 @@ const EmployeeMaster = () => {
                 ) : (
                   currentemployeeMaster.map((item, index) => (
                     <tr key={item.id} className="text-center">
-                      <td className="p-2 border">{index + 1}</td>
-                      <td className="p-2 border">{item.deviceEnrollmentId}</td>
-                      <td className="p-2 border">{item.companyEnrollmentId}</td>
-                      <td className="p-2 border">
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{index + 1}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.deviceEnrollmentId}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.companyEnrollmentId}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.gender === "Male" ? "M" : "F"}
                       </td>
-                      <td className="p-2 border">{item.location}</td>
-                      <td className="p-2 border">{item.fullName}</td>
-                      <td className="p-2 border">{item.email}</td>
-                      <td className="p-2 border">{item.empCategory}</td>
-                      <td className="p-2 border">{item.employeeMaster}</td>
-                      <td className="p-2 border">{item.designation}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.location}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.fullName}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.email}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.empCategory}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.employeeMaster}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.designation}</td>
 
-                      <td className="p-2 border">{item.department}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.department}</td>
 
-                      <td className="p-2 border space-x-2">
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-2">
                         <button className="bg-blue-500 text-white px-2 py-1 rounded text-xs">
                           Edit
                         </button>

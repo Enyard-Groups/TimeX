@@ -97,7 +97,7 @@ const DeviceModel = () => {
       </div>
 
       {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl border border-gray-200 p-4">
+        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-4">
           {/* Top Controls */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
             <div>
@@ -133,12 +133,12 @@ const DeviceModel = () => {
             <table className="w-full text-sm border-collapse">
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
-                  <th className="p-2 border">Sl.No</th>
-                  <th className="p-2 border">Name</th>
-                  <th className="p-2 border">Code</th>
-                  <th className="p-2 border">Company</th>
-                  <th className="p-2 border">Active</th>
-                  <th className="p-2 border">Action</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Sl.No</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Name</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Code</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Company</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Active</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -151,14 +151,14 @@ const DeviceModel = () => {
                 ) : (
                   currentdeviceModel.map((item, index) => (
                     <tr key={item.id} className="text-center">
-                      <td className="p-2 border">{index + 1}</td>
-                      <td className="p-2 border">{item.name}</td>
-                      <td className="p-2 border">{item.code}</td>
-                      <td className="p-2 border">{item.company}</td>
-                      <td className="p-2 border">
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{index + 1}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.name}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.code}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.company}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.isActive ? "Y" : "N"}
                       </td>
-                      <td className="p-2 border space-x-2">
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-2">
                         <button className="bg-blue-500 text-white px-2 py-1 rounded text-xs">
                           Edit
                         </button>

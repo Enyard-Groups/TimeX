@@ -116,7 +116,7 @@ const LocationGroup = () => {
       </div>
 
       {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl border border-gray-200 p-4">
+        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-4">
           {/* Top Controls */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
             <div>
@@ -152,13 +152,13 @@ const LocationGroup = () => {
             <table className="w-full text-sm border-collapse">
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
-                  <th className="p-2 border">Sl.No</th>
-                  <th className="p-2 border">Location Group Name</th>
-                  <th className="p-2 border">Location Group Discription</th>
-                  <th className="p-2 border">Time Keeper Name</th>
-                  <th className="p-2 border">Site Manager Name</th>
-                  <th className="p-2 border">Company</th>
-                  <th className="p-2 border">Action</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Sl.No</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Location Group Name</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Location Group Discription</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Time Keeper Name</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Site Manager Name</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Company</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -171,15 +171,15 @@ const LocationGroup = () => {
                 ) : (
                   currentlocationGroup.map((item, index) => (
                     <tr key={item.id} className="text-center">
-                      <td className="p-2 border">{index + 1}</td>
-                      <td className="p-2 border">{item.locationgroupname}</td>
-                      <td className="p-2 border">
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{index + 1}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.locationgroupname}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.locationgroupdescription}
                       </td>
-                      <td className="p-2 border">{item.timekeepername}</td>
-                      <td className="p-2 border">{item.sitemanagername}</td>
-                      <td className="p-2 border">{item.organization}</td>
-                      <td className="p-2 border space-x-2">
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.timekeepername}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.sitemanagername}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.organization}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-2">
                         <button className="bg-blue-500 text-white px-2 py-1 rounded text-xs">
                           Edit
                         </button>

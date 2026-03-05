@@ -134,7 +134,7 @@ const DeviceManagementSub = () => {
       </div>
 
       {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl border border-gray-200 p-4">
+        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-4">
           {/* Top Controls */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
             <div>
@@ -170,17 +170,17 @@ const DeviceManagementSub = () => {
             <table className="w-full text-sm border-collapse">
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
-                  <th className="p-2 border">Sl.No</th>
-                  <th className="p-2 border">Device Serial No</th>
-                  <th className="p-2 border">Name</th>
-                  <th className="p-2 border">Device IP</th>
-                  <th className="p-2 border">Face</th>
-                  <th className="p-2 border">FingerPrint</th>
-                  <th className="p-2 border">Card no</th>
-                  <th className="p-2 border">Pin no</th>
-                  <th className="p-2 border">Company</th>
-                  <th className="p-2 border">Active</th>
-                  <th className="p-2 border">Action</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Sl.No</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Device Serial No</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Name</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Device IP</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Face</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">FingerPrint</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Card no</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Pin no</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Company</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Active</th>
+                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -193,23 +193,23 @@ const DeviceManagementSub = () => {
                 ) : (
                   currentdevicemanagement.map((item, index) => (
                     <tr key={item.id} className="text-center">
-                      <td className="p-2 border">{index + 1}</td>
-                      <td className="p-2 border">{item.deviceserialno}</td>
-                      <td className="p-2 border">{item.name}</td>
-                      <td className="p-2 border">{item.deviceip}</td>
-                      <td className="p-2 border">{item.isFace ? "Y" : "N"}</td>
-                      <td className="p-2 border">
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{index + 1}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.deviceserialno}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.name}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.deviceip}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.isFace ? "Y" : "N"}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.isFingerprint ? "Y" : "N"}
                       </td>
-                      <td className="p-2 border">
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.isCardNo ? "Y" : "N"}
                       </td>
-                      <td className="p-2 border">{item.isPinNo ? "Y" : "N"}</td>
-                      <td className="p-2 border">{item.company}</td>
-                      <td className="p-2 border">
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.isPinNo ? "Y" : "N"}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">{item.company}</td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.isActive ? "Y" : "N"}
                       </td>
-                      <td className="p-2 border space-x-2">
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-2">
                         <button className="bg-blue-500 text-white px-2 py-1 rounded text-xs">
                           Edit
                         </button>

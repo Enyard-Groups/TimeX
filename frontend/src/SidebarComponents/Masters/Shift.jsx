@@ -27,7 +27,7 @@ const Shift = () => {
   });
 
   const inputStyle =
-    "w-full  border border-[oklch(0.8_0.001_106.424)]  border border-[oklch(0.8_0.001_106.424)]-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+    "w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
 
   const labelStyle =
     "text-sm font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
@@ -157,7 +157,7 @@ const Shift = () => {
       </div>
 
       {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)]  border border-[oklch(0.8_0.001_106.424)]-gray-200 p-4">
+        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-4">
           {/* Top Controls */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
             <div>
@@ -168,7 +168,7 @@ const Shift = () => {
                   setEntriesPerPage(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className=" border border-[oklch(0.8_0.001_106.424)] rounded-full px-1  border border-[oklch(0.8_0.001_106.424)]-[oklch(0.645_0.246_16.439)]"
+                className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -193,7 +193,7 @@ const Shift = () => {
             <table className="w-full text-sm  border-collapse">
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
-                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]  border border-[oklch(0.8_0.001_106.424)]-[oklch(0.8_0.001_106.424)]">
+                  <th className="p-2  border  border-[oklch(0.8_0.001_106.424)]">
                     Sl.No
                   </th>
                   <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">
@@ -317,7 +317,7 @@ const Shift = () => {
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="px-2 py-1  border border-[oklch(0.8_0.001_106.424)] rounded disabled:opacity-50"
+                className="px-2 py-1  border rounded disabled:opacity-50"
               >
                 First
               </button>
@@ -325,7 +325,7 @@ const Shift = () => {
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((prev) => prev - 1)}
-                className="px-2 py-1  border border-[oklch(0.8_0.001_106.424)] rounded disabled:opacity-50"
+                className="px-2 py-1  border rounded disabled:opacity-50"
               >
                 Previous
               </button>
@@ -337,7 +337,7 @@ const Shift = () => {
                   className={`px-2 py-1 rounded ${
                     currentPage === index + 1
                       ? "bg-green-500 text-white"
-                      : " border border-[oklch(0.8_0.001_106.424)]"
+                      : " border"
                   }`}
                 >
                   {index + 1}
@@ -347,7 +347,7 @@ const Shift = () => {
               <button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage((prev) => prev + 1)}
-                className="px-2 py-1  border border-[oklch(0.8_0.001_106.424)] rounded disabled:opacity-50"
+                className="px-2 py-1  border rounded disabled:opacity-50"
               >
                 Next
               </button>
@@ -355,7 +355,7 @@ const Shift = () => {
               <button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="px-2 py-1  border border-[oklch(0.8_0.001_106.424)] rounded disabled:opacity-50"
+                className="px-2 py-1  border rounded disabled:opacity-50"
               >
                 Last
               </button>
@@ -365,7 +365,7 @@ const Shift = () => {
       )}
 
       {openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)]  border border-[oklch(0.8_0.001_106.424)]-[oklch(0.923_0.003_48.717)] p-6">
+        <div className="mt-6 bg-white shadow-xl rounded-xl  border  border-[oklch(0.923_0.003_48.717)] p-6">
           {/* Close */}
           <div className="flex justify-end">
             <RxCross2
