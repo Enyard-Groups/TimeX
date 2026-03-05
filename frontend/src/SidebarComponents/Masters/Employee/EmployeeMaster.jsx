@@ -160,7 +160,7 @@ const EmployeeMaster = () => {
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
-              <thead className="bg-gray-100">
+              <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
                   <th className="p-2 border">Sl.No</th>
                   <th className="p-2 border">Device ID</th>
@@ -293,7 +293,10 @@ const EmployeeMaster = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
-              <label className={labelStyle}>Device EnrollmentID</label>
+              <label className={labelStyle}>
+                Device EnrollmentID{" "}
+                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+              </label>
               <input
                 name="deviceEnrollmentId"
                 value={formData.deviceEnrollmentId}
@@ -304,7 +307,10 @@ const EmployeeMaster = () => {
             </div>
 
             <div>
-              <label className={labelStyle}>Company EnrollmentID</label>
+              <label className={labelStyle}>
+                Company EnrollmentID{" "}
+                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+              </label>
               <input
                 name="companyEnrollmentId"
                 value={formData.companyEnrollmentId}
@@ -316,7 +322,10 @@ const EmployeeMaster = () => {
 
             {/* Full Name */}
             <div>
-              <label className={labelStyle}>Full Name</label>
+              <label className={labelStyle}>
+                Full Name{" "}
+                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+              </label>
               <input
                 name="fullName"
                 value={formData.fullName}

@@ -3,9 +3,9 @@ import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
 
-const Department = () => {
+const DeviceModel = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [department, setDepartment] = useState([]);
+  const [deviceModel, setDeviceModel] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -14,7 +14,6 @@ const Department = () => {
     name: "",
     company: "",
     code: "",
-    description: "",
     isActive: false,
   });
 
@@ -24,19 +23,19 @@ const Department = () => {
   const labelStyle =
     "text-sm font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
-  const filtereddepartment = department.filter(
-    (x) =>
-      x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.code.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
+  const filtereddeviceModel = deviceModel.filter(
+    (device) =>
+      device.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      device.code.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      device.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
-  const totalPages = Math.ceil(filtereddepartment.length / entriesPerPage);
+  const totalPages = Math.ceil(filtereddeviceModel.length / entriesPerPage);
 
   const startIndex = (currentPage - 1) * entriesPerPage;
   const endIndex = startIndex + entriesPerPage;
 
-  const currentdepartment = filtereddepartment.slice(startIndex, endIndex);
+  const currentdeviceModel = filtereddeviceModel.slice(startIndex, endIndex);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -48,23 +47,22 @@ const Department = () => {
   };
 
   const handleSubmit = () => {
-    const { name, company, code, description, isActive } = formData;
+    const { name, company, code, isActive } = formData;
 
     if (!name || !company || !code) {
       toast.error("Please fill all required fields");
       return; // stop execution
     }
 
-    const newdepartment = {
+    const newdeviceModel = {
       id: Date.now(),
       name,
       code,
       company,
-      description,
       isActive,
     };
 
-    setDepartment((prev) => [...prev, newdepartment]);
+    setDeviceModel((prev) => [...prev, newdeviceModel]);
 
     setOpenModal(false);
 
@@ -72,11 +70,10 @@ const Department = () => {
       company: "",
       name: "",
       code: "",
-      description: "",
       isActive: false,
     });
 
-    toast.success("Added");
+    toast.success("Location added");
   };
 
   return (
@@ -85,9 +82,9 @@ const Department = () => {
       <div className="flex items-center justify-between">
         <h1 className="flex items-center gap-2 text-lg font-semibold">
           <FaAngleRight />
-          Masters
+          Device Management
           <FaAngleRight />
-          DepartmentMaster
+          Device Model
         </h1>
         {!openModal && (
           <button
@@ -134,25 +131,25 @@ const Department = () => {
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
-              <thead className="bg-gray-100">
+              <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
                   <th className="p-2 border">Sl.No</th>
-                  <th className="p-2 border">Department Name</th>
-                  <th className="p-2 border">Department Code</th>
+                  <th className="p-2 border">Name</th>
+                  <th className="p-2 border">Code</th>
                   <th className="p-2 border">Company</th>
                   <th className="p-2 border">Active</th>
                   <th className="p-2 border">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {currentdepartment.length === 0 ? (
+                {currentdeviceModel.length === 0 ? (
                   <tr>
                     <td colSpan="6" className="text-center p-4">
                       No Data Available
                     </td>
                   </tr>
                 ) : (
-                  currentdepartment.map((item, index) => (
+                  currentdeviceModel.map((item, index) => (
                     <tr key={item.id} className="text-center">
                       <td className="p-2 border">{index + 1}</td>
                       <td className="p-2 border">{item.name}</td>
@@ -167,8 +164,8 @@ const Department = () => {
                         </button>
                         <button
                           onClick={() =>
-                            setDepartment(
-                              department.filter((v) => v.id !== item.id),
+                            setDeviceModel(
+                              deviceModel.filter((v) => v.id !== item.id),
                             )
                           }
                           className="bg-red-500 text-white px-2 py-1 rounded text-xs"
@@ -186,8 +183,8 @@ const Department = () => {
           {/* Pagination */}
           <div className="flex justify-between items-center mt-4 text-sm">
             <span>
-              Showing {Math.min(endIndex, filtereddepartment.length)} of{" "}
-              {filtereddepartment.length} entries
+              Showing {Math.min(endIndex, filtereddeviceModel.length)} of{" "}
+              {filtereddeviceModel.length} entries
             </span>
 
             <div className="space-x-2">
@@ -251,6 +248,8 @@ const Department = () => {
             />
           </div>
 
+          {/* LOCATION GROUP INFORMATION */}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
               <label className={labelStyle}>
@@ -287,25 +286,11 @@ const Department = () => {
                 Company
                 <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
               </label>
-              <select
+              <input
                 name="company"
                 value={formData.company}
                 onChange={handleChange}
-                className={inputStyle}
-                required
-              >
-                <option>Select</option>
-                <option> Company 1</option>
-              </select>
-            </div>
-
-            <div>
-              <label className={labelStyle}>Description</label>
-              <input
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Description"
+                placeholder="Company"
                 className={inputStyle}
                 required
               />
@@ -337,4 +322,4 @@ const Department = () => {
   );
 };
 
-export default Department;
+export default DeviceModel;

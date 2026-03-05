@@ -3,9 +3,9 @@ import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
 
-const DeviceModel = () => {
+const Designation = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [deviceModel, setDeviceModel] = useState([]);
+  const [designation, setDesignation] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -14,6 +14,8 @@ const DeviceModel = () => {
     name: "",
     company: "",
     code: "",
+    department: "",
+    description: "",
     isActive: false,
   });
 
@@ -23,19 +25,19 @@ const DeviceModel = () => {
   const labelStyle =
     "text-sm font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
-  const filtereddeviceModel = deviceModel.filter(
-    (device) =>
-      device.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      device.code.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      device.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
+  const filtereddesignation = designation.filter(
+    (x) =>
+      x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      x.code.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      x.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
-  const totalPages = Math.ceil(filtereddeviceModel.length / entriesPerPage);
+  const totalPages = Math.ceil(filtereddesignation.length / entriesPerPage);
 
   const startIndex = (currentPage - 1) * entriesPerPage;
   const endIndex = startIndex + entriesPerPage;
 
-  const currentdeviceModel = filtereddeviceModel.slice(startIndex, endIndex);
+  const currentdesignation = filtereddesignation.slice(startIndex, endIndex);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -47,22 +49,24 @@ const DeviceModel = () => {
   };
 
   const handleSubmit = () => {
-    const { name, company, code, isActive } = formData;
+    const { name, company, code, department, description, isActive } = formData;
 
-    if (!name || !company || !code) {
+    if (!name || !company || !code || !department) {
       toast.error("Please fill all required fields");
       return; // stop execution
     }
 
-    const newdeviceModel = {
+    const newdesignation = {
       id: Date.now(),
       name,
       code,
       company,
+      department,
+      description,
       isActive,
     };
 
-    setDeviceModel((prev) => [...prev, newdeviceModel]);
+    setDesignation((prev) => [...prev, newdesignation]);
 
     setOpenModal(false);
 
@@ -70,10 +74,12 @@ const DeviceModel = () => {
       company: "",
       name: "",
       code: "",
+      department: "",
+      description: "",
       isActive: false,
     });
 
-    toast.success("Location added");
+    toast.success("Added");
   };
 
   return (
@@ -82,9 +88,9 @@ const DeviceModel = () => {
       <div className="flex items-center justify-between">
         <h1 className="flex items-center gap-2 text-lg font-semibold">
           <FaAngleRight />
-          Device Management
+          Masters
           <FaAngleRight />
-          Device Model
+          Designation
         </h1>
         {!openModal && (
           <button
@@ -131,30 +137,32 @@ const DeviceModel = () => {
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
-              <thead className="bg-gray-100">
+              <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
                   <th className="p-2 border">Sl.No</th>
-                  <th className="p-2 border">Name</th>
-                  <th className="p-2 border">Code</th>
+                  <th className="p-2 border">Designation Name</th>
+                  <th className="p-2 border">Designation Code</th>
                   <th className="p-2 border">Company</th>
+                  <th className="p-2 border">Department Name</th>
                   <th className="p-2 border">Active</th>
                   <th className="p-2 border">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {currentdeviceModel.length === 0 ? (
+                {currentdesignation.length === 0 ? (
                   <tr>
                     <td colSpan="6" className="text-center p-4">
                       No Data Available
                     </td>
                   </tr>
                 ) : (
-                  currentdeviceModel.map((item, index) => (
+                  currentdesignation.map((item, index) => (
                     <tr key={item.id} className="text-center">
                       <td className="p-2 border">{index + 1}</td>
                       <td className="p-2 border">{item.name}</td>
                       <td className="p-2 border">{item.code}</td>
                       <td className="p-2 border">{item.company}</td>
+                      <td className="p-2 border">{item.department}</td>
                       <td className="p-2 border">
                         {item.isActive ? "Y" : "N"}
                       </td>
@@ -164,8 +172,8 @@ const DeviceModel = () => {
                         </button>
                         <button
                           onClick={() =>
-                            setDeviceModel(
-                              deviceModel.filter((v) => v.id !== item.id),
+                            setDesignation(
+                              designation.filter((v) => v.id !== item.id),
                             )
                           }
                           className="bg-red-500 text-white px-2 py-1 rounded text-xs"
@@ -183,8 +191,8 @@ const DeviceModel = () => {
           {/* Pagination */}
           <div className="flex justify-between items-center mt-4 text-sm">
             <span>
-              Showing {Math.min(endIndex, filtereddeviceModel.length)} of{" "}
-              {filtereddeviceModel.length} entries
+              Showing {Math.min(endIndex, filtereddesignation.length)} of{" "}
+              {filtereddesignation.length} entries
             </span>
 
             <div className="space-x-2">
@@ -248,8 +256,6 @@ const DeviceModel = () => {
             />
           </div>
 
-          {/* LOCATION GROUP INFORMATION */}
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
               <label className={labelStyle}>
@@ -286,11 +292,44 @@ const DeviceModel = () => {
                 Company
                 <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
               </label>
-              <input
+              <select
                 name="company"
                 value={formData.company}
                 onChange={handleChange}
-                placeholder="Company"
+                className={inputStyle}
+                required
+              >
+                <option>Select</option>
+                <option> Company 1</option>
+              </select>
+            </div>
+            <div>
+              <label className={labelStyle}>
+                Department
+                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+              </label>
+              <select
+                name="department"
+                value={formData.department}
+                onChange={handleChange}
+                className={inputStyle}
+                required
+              >
+                <option>Select</option>
+                <option> Treasury And Markets</option>
+                <option> IT </option>
+                <option> Human Resources</option>
+                <option> Banking Division</option>
+                <option> Commercial / SME Banking</option>
+              </select>
+            </div>
+            <div>
+              <label className={labelStyle}>Description</label>
+              <input
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Description"
                 className={inputStyle}
                 required
               />
@@ -322,4 +361,4 @@ const DeviceModel = () => {
   );
 };
 
-export default DeviceModel;
+export default Designation;

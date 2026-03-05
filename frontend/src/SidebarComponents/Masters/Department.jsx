@@ -3,9 +3,9 @@ import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
 
-const Designation = () => {
+const Department = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [designation, setDesignation] = useState([]);
+  const [department, setDepartment] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -14,7 +14,6 @@ const Designation = () => {
     name: "",
     company: "",
     code: "",
-    department: "",
     description: "",
     isActive: false,
   });
@@ -25,19 +24,19 @@ const Designation = () => {
   const labelStyle =
     "text-sm font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
-  const filtereddesignation = designation.filter(
+  const filtereddepartment = department.filter(
     (x) =>
       x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
       x.code.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
       x.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
-  const totalPages = Math.ceil(filtereddesignation.length / entriesPerPage);
+  const totalPages = Math.ceil(filtereddepartment.length / entriesPerPage);
 
   const startIndex = (currentPage - 1) * entriesPerPage;
   const endIndex = startIndex + entriesPerPage;
 
-  const currentdesignation = filtereddesignation.slice(startIndex, endIndex);
+  const currentdepartment = filtereddepartment.slice(startIndex, endIndex);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -49,24 +48,23 @@ const Designation = () => {
   };
 
   const handleSubmit = () => {
-    const { name, company, code, department, description, isActive } = formData;
+    const { name, company, code, description, isActive } = formData;
 
-    if (!name || !company || !code || !department) {
+    if (!name || !company || !code) {
       toast.error("Please fill all required fields");
       return; // stop execution
     }
 
-    const newdesignation = {
+    const newdepartment = {
       id: Date.now(),
       name,
       code,
       company,
-      department,
       description,
       isActive,
     };
 
-    setDesignation((prev) => [...prev, newdesignation]);
+    setDepartment((prev) => [...prev, newdepartment]);
 
     setOpenModal(false);
 
@@ -74,7 +72,6 @@ const Designation = () => {
       company: "",
       name: "",
       code: "",
-      department: "",
       description: "",
       isActive: false,
     });
@@ -90,7 +87,7 @@ const Designation = () => {
           <FaAngleRight />
           Masters
           <FaAngleRight />
-          Designation
+          DepartmentMaster
         </h1>
         {!openModal && (
           <button
@@ -137,32 +134,30 @@ const Designation = () => {
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
-              <thead className="bg-gray-100">
+              <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
                   <th className="p-2 border">Sl.No</th>
-                  <th className="p-2 border">Designation Name</th>
-                  <th className="p-2 border">Designation Code</th>
-                  <th className="p-2 border">Company</th>
                   <th className="p-2 border">Department Name</th>
+                  <th className="p-2 border">Department Code</th>
+                  <th className="p-2 border">Company</th>
                   <th className="p-2 border">Active</th>
                   <th className="p-2 border">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {currentdesignation.length === 0 ? (
+                {currentdepartment.length === 0 ? (
                   <tr>
                     <td colSpan="6" className="text-center p-4">
                       No Data Available
                     </td>
                   </tr>
                 ) : (
-                  currentdesignation.map((item, index) => (
+                  currentdepartment.map((item, index) => (
                     <tr key={item.id} className="text-center">
                       <td className="p-2 border">{index + 1}</td>
                       <td className="p-2 border">{item.name}</td>
                       <td className="p-2 border">{item.code}</td>
                       <td className="p-2 border">{item.company}</td>
-                      <td className="p-2 border">{item.department}</td>
                       <td className="p-2 border">
                         {item.isActive ? "Y" : "N"}
                       </td>
@@ -172,8 +167,8 @@ const Designation = () => {
                         </button>
                         <button
                           onClick={() =>
-                            setDesignation(
-                              designation.filter((v) => v.id !== item.id),
+                            setDepartment(
+                              department.filter((v) => v.id !== item.id),
                             )
                           }
                           className="bg-red-500 text-white px-2 py-1 rounded text-xs"
@@ -191,8 +186,8 @@ const Designation = () => {
           {/* Pagination */}
           <div className="flex justify-between items-center mt-4 text-sm">
             <span>
-              Showing {Math.min(endIndex, filtereddesignation.length)} of{" "}
-              {filtereddesignation.length} entries
+              Showing {Math.min(endIndex, filtereddepartment.length)} of{" "}
+              {filtereddepartment.length} entries
             </span>
 
             <div className="space-x-2">
@@ -303,26 +298,7 @@ const Designation = () => {
                 <option> Company 1</option>
               </select>
             </div>
-            <div>
-              <label className={labelStyle}>
-                Department
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <select
-                name="department"
-                value={formData.department}
-                onChange={handleChange}
-                className={inputStyle}
-                required
-              >
-                <option>Select</option>
-                <option> Treasury And Markets</option>
-                <option> IT </option>
-                <option> Human Resources</option>
-                <option> Banking Division</option>
-                <option> Commercial / SME Banking</option>
-              </select>
-            </div>
+
             <div>
               <label className={labelStyle}>Description</label>
               <input
@@ -361,4 +337,4 @@ const Designation = () => {
   );
 };
 
-export default Designation;
+export default Department;

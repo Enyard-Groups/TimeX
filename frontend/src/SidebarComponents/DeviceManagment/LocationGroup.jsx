@@ -150,7 +150,7 @@ const LocationGroup = () => {
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
-              <thead className="bg-gray-100">
+              <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
                   <th className="p-2 border">Sl.No</th>
                   <th className="p-2 border">Location Group Name</th>

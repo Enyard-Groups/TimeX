@@ -3,9 +3,9 @@ import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
 
-const Shift = () => {
+const DeviceManagementSub = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [shift, setShift] = useState([]);
+  const [devicemanagement, setDevicemanagement] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -13,16 +13,14 @@ const Shift = () => {
   const [formData, setFormData] = useState({
     name: "",
     company: "",
-    code: "",
-    intime: "",
-    outtime: "",
-    weekoff1: "",
-    weekoff2: "",
-    ingt: "",
-    outgt: "",
-    minot: "",
-    maxot: "",
-    isHalfDay: false,
+    deviceip: "",
+    deviceserialno: "",
+    latitude: "",
+    longitude: "",
+    isFace: false,
+    isFingerprint: false,
+    isCardNo: false,
+    isPinNo: false,
     isActive: false,
   });
 
@@ -32,19 +30,27 @@ const Shift = () => {
   const labelStyle =
     "text-sm font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
-  const filteredshift = shift.filter(
-    (x) =>
-      x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.code.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
+  const filteredDevicemanagement = devicemanagement.filter(
+    (device) =>
+      device.deviceserialno
+        .toLowerCase()
+        .startsWith(searchTerm.toLowerCase()) ||
+      device.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      device.deviceip.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      device.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
-  const totalPages = Math.ceil(filteredshift.length / entriesPerPage);
+  const totalPages = Math.ceil(
+    filteredDevicemanagement.length / entriesPerPage,
+  );
 
   const startIndex = (currentPage - 1) * entriesPerPage;
   const endIndex = startIndex + entriesPerPage;
 
-  const currentshift = filteredshift.slice(startIndex, endIndex);
+  const currentdevicemanagement = filteredDevicemanagement.slice(
+    startIndex,
+    endIndex,
+  );
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -59,82 +65,53 @@ const Shift = () => {
     const {
       name,
       company,
-      code,
-      intime,
-      outtime,
-      weekoff1,
-      weekoff2,
-      ingt,
-      outgt,
-      minot,
-      maxot,
-      isHalfDay,
+      deviceip,
+      deviceserialno,
+      isFace,
+      isFingerprint,
+      isCardNo,
+      isPinNo,
       isActive,
     } = formData;
 
-    if (
-      !name ||
-      !code ||
-      !intime ||
-      !outtime ||
-      !ingt ||
-      !outgt ||
-      !minot ||
-      !outgt
-    ) {
+    if (!name || !company || !deviceip) {
       toast.error("Please fill all required fields");
       return; // stop execution
     }
 
-    const newshift = {
+    const newdevicemanagement = {
       id: Date.now(),
       name,
-      code,
+      deviceip,
       company,
-      intime,
-      outtime,
-      weekoff1,
-      weekoff2,
-      ingt,
-      outgt,
-      minot,
-      maxot,
-      isHalfDay,
+      deviceserialno,
+      isFace,
+      isFingerprint,
+      isCardNo,
+      isPinNo,
       isActive,
     };
 
-    setShift((prev) => [...prev, newshift]);
+    setDevicemanagement((prev) => [...prev, newdevicemanagement]);
 
     setOpenModal(false);
 
     setFormData({
       company: "",
       name: "",
-      code: "",
-      intime: "",
-      outtime: "",
-      weekoff1: "",
-      weekoff2: "",
-      ingt: "",
-      outgt: "",
-      minot: "",
-      maxot: "",
-      isHalfDay: false,
+      deviceip: "",
+      deviceserialno: "",
+      longitude: "",
+      latitude: "",
+      isFace: false,
+      isFingerprint: false,
+      isCardNo: false,
+      isPinNo: false,
       isActive: false,
     });
 
-    toast.success("Added");
+    toast.success("Location added");
   };
-
-  const times = [];
-
-  for (let h = 0; h < 24; h++) {
-    for (let m = 0; m < 60; m += 30) {
-      const hour = String(h).padStart(2, "0");
-      const min = String(m).padStart(2, "0");
-      times.push(`${hour}:${min}:00`);
-    }
-  }
 
   return (
     <>
@@ -142,9 +119,9 @@ const Shift = () => {
       <div className="flex items-center justify-between">
         <h1 className="flex items-center gap-2 text-lg font-semibold">
           <FaAngleRight />
-          Masters
+          Device Management
           <FaAngleRight />
-          Shift
+          Device Management
         </h1>
         {!openModal && (
           <button
@@ -191,52 +168,44 @@ const Shift = () => {
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
-              <thead className="bg-gray-100">
+              <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
                   <th className="p-2 border">Sl.No</th>
-                  <th className="p-2 border">Shift Name</th>
-                  <th className="p-2 border">Shift Code</th>
-                  <th className="p-2 border">InTime</th>
-                  <th className="p-2 border">OutTime</th>
-                  <th className="p-2 border">WeekOff1</th>
-                  <th className="p-2 border">WeekOff2</th>
-                  <th className="p-2 border">In GT</th>
-                  <th className="p-2 border">Out GT</th>
-                  <th className="p-2 border">MinOT</th>
-                  <th className="p-2 border">MaxOT</th>
-                  <th className="p-2 border">Half Day</th>
+                  <th className="p-2 border">Device Serial No</th>
+                  <th className="p-2 border">Name</th>
+                  <th className="p-2 border">Device IP</th>
+                  <th className="p-2 border">Face</th>
+                  <th className="p-2 border">FingerPrint</th>
+                  <th className="p-2 border">Card no</th>
+                  <th className="p-2 border">Pin no</th>
+                  <th className="p-2 border">Company</th>
                   <th className="p-2 border">Active</th>
                   <th className="p-2 border">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {currentshift.length === 0 ? (
+                {currentdevicemanagement.length === 0 ? (
                   <tr>
-                    <td colSpan="14" className="text-center p-4">
+                    <td colSpan="11" className="text-center p-4">
                       No Data Available
                     </td>
                   </tr>
                 ) : (
-                  currentshift.map((item, index) => (
+                  currentdevicemanagement.map((item, index) => (
                     <tr key={item.id} className="text-center">
                       <td className="p-2 border">{index + 1}</td>
+                      <td className="p-2 border">{item.deviceserialno}</td>
                       <td className="p-2 border">{item.name}</td>
-                      <td className="p-2 border">{item.code}</td>
-                      <td className="p-2 border">{item.intime}</td>
-                      <td className="p-2 border">{item.outtime}</td>
+                      <td className="p-2 border">{item.deviceip}</td>
+                      <td className="p-2 border">{item.isFace ? "Y" : "N"}</td>
                       <td className="p-2 border">
-                        {item.weekoff1 ? item.weekoff1 : "NIL"}
+                        {item.isFingerprint ? "Y" : "N"}
                       </td>
                       <td className="p-2 border">
-                        {item.weekoff12 ? item.weekoff2 : "NIL"}
+                        {item.isCardNo ? "Y" : "N"}
                       </td>
-                      <td className="p-2 border">{item.ingt}</td>
-                      <td className="p-2 border">{item.outgt}</td>
-                      <td className="p-2 border">{item.minot}</td>
-                      <td className="p-2 border">{item.maxot}</td>
-                      <td className="p-2 border">
-                        {item.isHalfDay ? "Y" : "N"}
-                      </td>
+                      <td className="p-2 border">{item.isPinNo ? "Y" : "N"}</td>
+                      <td className="p-2 border">{item.company}</td>
                       <td className="p-2 border">
                         {item.isActive ? "Y" : "N"}
                       </td>
@@ -246,7 +215,9 @@ const Shift = () => {
                         </button>
                         <button
                           onClick={() =>
-                            setShift(shift.filter((v) => v.id !== item.id))
+                            setDevicemanagement(
+                              devicemanagement.filter((v) => v.id !== item.id),
+                            )
                           }
                           className="bg-red-500 text-white px-2 py-1 rounded text-xs"
                         >
@@ -263,8 +234,8 @@ const Shift = () => {
           {/* Pagination */}
           <div className="flex justify-between items-center mt-4 text-sm">
             <span>
-              Showing {Math.min(endIndex, filteredshift.length)} of{" "}
-              {filteredshift.length} entries
+              Showing {Math.min(endIndex, filteredDevicemanagement.length)} of{" "}
+              {filteredDevicemanagement.length} entries
             </span>
 
             <div className="space-x-2">
@@ -328,7 +299,24 @@ const Shift = () => {
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* LOCATION GROUP INFORMATION */}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div>
+              <label className={labelStyle}>
+                Device Serial Number
+                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+              </label>
+              <input
+                name="deviceserialno"
+                value={formData.deviceserialno}
+                onChange={handleChange}
+                placeholder="Serial"
+                className={inputStyle}
+                required
+              />
+            </div>
+
             <div>
               <label className={labelStyle}>
                 Name
@@ -346,14 +334,32 @@ const Shift = () => {
 
             <div>
               <label className={labelStyle}>
-                Code
+                Device Model
+                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+              </label>
+              <select
+                name="devicemodel"
+                value={formData.devicemodel}
+                onChange={handleChange}
+                className={inputStyle}
+                required
+              >
+                <option>Select</option>
+                <option> 1</option>
+                <option> 2</option>
+              </select>
+            </div>
+
+            <div>
+              <label className={labelStyle}>
+                deviceip
                 <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
               </label>
               <input
-                name="code"
-                value={formData.code}
+                name="deviceip"
+                value={formData.deviceip}
                 onChange={handleChange}
-                placeholder="Code"
+                placeholder="deviceip"
                 className={inputStyle}
                 required
               />
@@ -361,191 +367,39 @@ const Shift = () => {
 
             <div>
               <label className={labelStyle}>
-                In Time
+                Company
                 <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
               </label>
-              <select
-                name="intime"
-                value={formData.intime}
-                onChange={handleChange}
-                className={inputStyle}
-                required
-              >
-                <option value="">hh-mm-ss</option>
-                {times.map((time, index) => (
-                  <option key={index} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                Out Time
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <select
-                name="outtime"
-                value={formData.outtime}
-                onChange={handleChange}
-                className={inputStyle}
-                required
-              >
-                <option value="">hh-mm-ss</option>
-                {times.map((time, index) => (
-                  <option key={index} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className={labelStyle}>WeekOff1</label>
-              <select
-                name="weekoff1"
-                value={formData.weekoff1}
-                onChange={handleChange}
-                className={inputStyle}
-                required
-              >
-                <option>Select</option>
-                <option> Monday</option>
-                <option> Tuesday</option>
-                <option> Wednesday</option>
-                <option> Thrusday</option>
-                <option> Friday</option>
-                <option> Saturday</option>
-                <option> Sunday</option>
-              </select>
-            </div>
-
-            <div>
-              <label className={labelStyle}>WeekOff2</label>
-              <select
-                name="weekoff2"
-                value={formData.weekoff2}
-                onChange={handleChange}
-                className={inputStyle}
-                required
-              >
-                <option>Select</option>
-                <option> Monday</option>
-                <option> Tuesday</option>
-                <option> Wednesday</option>
-                <option> Thrusday</option>
-                <option> Friday</option>
-                <option> Saturday</option>
-                <option> Sunday</option>
-              </select>
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                In Grace Time
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <select
-                name="ingt"
-                value={formData.ingt}
-                onChange={handleChange}
-                className={inputStyle}
-                required
-              >
-                <option value="">hh-mm-ss</option>
-                {times.map((time, index) => (
-                  <option key={index} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                Out Grace Time
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <select
-                name="outgt"
-                value={formData.outgt}
-                onChange={handleChange}
-                className={inputStyle}
-                required
-              >
-                <option value="">hh-mm-ss</option>
-                {times.map((time, index) => (
-                  <option key={index} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                Min OverTime
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <select
-                name="minot"
-                value={formData.minot}
-                onChange={handleChange}
-                className={inputStyle}
-                required
-              >
-                <option value="">hh-mm-ss</option>
-                {times.map((time, index) => (
-                  <option key={index} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                Max OverTime
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <select
-                name="maxot"
-                value={formData.maxot}
-                onChange={handleChange}
-                className={inputStyle}
-                required
-              >
-                <option value="">hh-mm-ss</option>
-                {times.map((time, index) => (
-                  <option key={index} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className={labelStyle}>Company</label>
-              <select
+              <input
                 name="company"
                 value={formData.company}
                 onChange={handleChange}
+                placeholder="Company"
                 className={inputStyle}
                 required
-              >
-                <option>Select</option>
-                <option> Company 1</option>
-              </select>
+              />
             </div>
 
-            <div className="flex items-center gap-2 mt-6">
-              <label className={labelStyle}>HalfDay</label>
+            <div>
+              <label className={labelStyle}>Longitude Address</label>
               <input
-                type="checkbox"
-                name="isHalfDay"
-                checked={formData.isHalfDay}
+                name="longitude"
+                value={formData.longitude}
                 onChange={handleChange}
+                placeholder="0"
+                className={inputStyle}
+                required
+              />
+            </div>
+            <div>
+              <label className={labelStyle}>Latitude Address</label>
+              <input
+                name="latitude"
+                value={formData.latitude}
+                onChange={handleChange}
+                placeholder="0"
+                className={inputStyle}
+                required
               />
             </div>
 
@@ -555,6 +409,42 @@ const Shift = () => {
                 type="checkbox"
                 name="isActive"
                 checked={formData.isActive}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="flex items-center gap-2 mt-6">
+              <label className={labelStyle}>Face</label>
+              <input
+                type="checkbox"
+                name="isFace"
+                checked={formData.isFace}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="flex items-center gap-2 mt-6">
+              <label className={labelStyle}>FingerPrint</label>
+              <input
+                type="checkbox"
+                name="isFingerprint"
+                checked={formData.isFingerprint}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="flex items-center gap-2 mt-6">
+              <label className={labelStyle}>Card No</label>
+              <input
+                type="checkbox"
+                name="isCardNo"
+                checked={formData.isCardNo}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="flex items-center gap-2 mt-6">
+              <label className={labelStyle}>Pin No</label>
+              <input
+                type="checkbox"
+                name="isPinNo"
+                checked={formData.isPinNo}
                 onChange={handleChange}
               />
             </div>
@@ -575,4 +465,4 @@ const Shift = () => {
   );
 };
 
-export default Shift;
+export default DeviceManagementSub;

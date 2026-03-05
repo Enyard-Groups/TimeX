@@ -37,7 +37,7 @@ const VisitorBooking = () => {
   });
 
   const inputStyle =
-    "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+    "w-full  border border-[oklch(0.8_0.001_106.424)]  border border-[oklch(0.8_0.001_106.424)]-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
 
   const labelStyle =
     "text-sm font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
@@ -201,7 +201,7 @@ const VisitorBooking = () => {
       </div>
 
       {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl border border-gray-200 p-4">
+        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)]  border border-[oklch(0.8_0.001_106.424)]-gray-200 p-4">
           {/* Top Controls */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
             <div>
@@ -212,7 +212,7 @@ const VisitorBooking = () => {
                   setEntriesPerPage(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
+                className=" border border-[oklch(0.8_0.001_106.424)] rounded-full px-1  border border-[oklch(0.8_0.001_106.424)]-[oklch(0.645_0.246_16.439)]"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -234,18 +234,18 @@ const VisitorBooking = () => {
 
           {/* Table */}
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
-              <thead className="bg-gray-100">
+            <table className="w-full text-sm  border-collapse">
+              <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
-                  <th className="p-2 border">Sl.No</th>
-                  <th className="p-2 border">Visitor Code</th>
-                  <th className="p-2 border">Visitor Name</th>
-                  <th className="p-2 border">V-Phone</th>
-                  <th className="p-2 border">CardReference</th>
-                  <th className="p-2 border">V-Date & Time</th>
-                  <th className="p-2 border">Organization</th>
-                  <th className="p-2 border">Meeting Person</th>
-                  <th className="p-2 border">Action</th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">Sl.No</th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">Visitor Code</th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">Visitor Name</th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">V-Phone</th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">CardReference</th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">V-Date & Time</th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">Organization</th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">Meeting Person</th>
+                  <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -258,15 +258,15 @@ const VisitorBooking = () => {
                 ) : (
                   currentVisitors.map((item, index) => (
                     <tr key={item.id} className="text-center">
-                      <td className="p-2 border">{index + 1}</td>
-                      <td className="p-2 border">{item.visitorCode}</td>
-                      <td className="p-2 border">{item.visitorName}</td>
-                      <td className="p-2 border">{item.phone}</td>
-                      <td className="p-2 border">{item.cardReference}</td>
-                      <td className="p-2 border">{item.vDateTime}</td>
-                      <td className="p-2 border">{item.organization}</td>
-                      <td className="p-2 border">{item.meetingPerson}</td>
-                      <td className="p-2 border space-x-2">
+                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">{index + 1}</td>
+                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">{item.visitorCode}</td>
+                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">{item.visitorName}</td>
+                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">{item.phone}</td>
+                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">{item.cardReference}</td>
+                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">{item.vDateTime}</td>
+                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">{item.organization}</td>
+                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">{item.meetingPerson}</td>
+                      <td className="p-2  border border-[oklch(0.8_0.001_106.424)] space-x-2">
                         <button className="bg-blue-500 text-white px-2 py-1 rounded text-xs">
                           Edit
                         </button>
@@ -299,7 +299,7 @@ const VisitorBooking = () => {
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="px-2 py-1 border rounded disabled:opacity-50"
+                className="px-2 py-1  border border-[oklch(0.8_0.001_106.424)] rounded disabled:opacity-50"
               >
                 First
               </button>
@@ -307,7 +307,7 @@ const VisitorBooking = () => {
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((prev) => prev - 1)}
-                className="px-2 py-1 border rounded disabled:opacity-50"
+                className="px-2 py-1  border border-[oklch(0.8_0.001_106.424)] rounded disabled:opacity-50"
               >
                 Previous
               </button>
@@ -319,7 +319,7 @@ const VisitorBooking = () => {
                   className={`px-2 py-1 rounded ${
                     currentPage === index + 1
                       ? "bg-green-500 text-white"
-                      : "border"
+                      : " border border-[oklch(0.8_0.001_106.424)]"
                   }`}
                 >
                   {index + 1}
@@ -329,7 +329,7 @@ const VisitorBooking = () => {
               <button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage((prev) => prev + 1)}
-                className="px-2 py-1 border rounded disabled:opacity-50"
+                className="px-2 py-1  border border-[oklch(0.8_0.001_106.424)] rounded disabled:opacity-50"
               >
                 Next
               </button>
@@ -337,7 +337,7 @@ const VisitorBooking = () => {
               <button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="px-2 py-1 border rounded disabled:opacity-50"
+                className="px-2 py-1  border border-[oklch(0.8_0.001_106.424)] rounded disabled:opacity-50"
               >
                 Last
               </button>
@@ -347,7 +347,7 @@ const VisitorBooking = () => {
       )}
 
       {openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.923_0.003_48.717)] p-6">
+        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)]  border border-[oklch(0.8_0.001_106.424)]-[oklch(0.923_0.003_48.717)] p-6">
           {/* Close */}
           <div className="flex justify-end">
             <RxCross2

@@ -167,7 +167,7 @@ const EmployeeCategory = () => {
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
-              <thead className="bg-gray-100">
+              <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
                   <th className="p-2 border">Sl.No</th>
                   <th className="p-2 border">Category Name</th>
@@ -340,7 +340,7 @@ const EmployeeCategory = () => {
             <div>
               <label className={labelStyle}>
                 Description
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                
               </label>
               <input
                 name="description"
@@ -355,7 +355,7 @@ const EmployeeCategory = () => {
             <div>
               <label className={labelStyle}>
                 Work Hours
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+               
               </label>
               <select
                 name="workhours"
@@ -376,7 +376,7 @@ const EmployeeCategory = () => {
             <div>
               <label className={labelStyle}>
                 Min Work Hours
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+               
               </label>
               <select
                 name="minworkhours"
@@ -397,7 +397,7 @@ const EmployeeCategory = () => {
             <div>
               <label className={labelStyle}>
                 Max OverTime
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+               
               </label>
               <select
                 name="maxot"
