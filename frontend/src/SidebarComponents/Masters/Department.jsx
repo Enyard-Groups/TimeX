@@ -88,7 +88,7 @@ const Department = () => {
           Masters
           <FaAngleRight />
           <div onClick={() => setOpenModal(false)} className="cursor-pointer">
-            DepartmentMaster
+            Department
           </div>
         </h1>
         {!openModal && (

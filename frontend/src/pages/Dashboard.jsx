@@ -15,7 +15,7 @@ const Dashboard = () => {
 
   return (
     <div
-      className="min-h-screen flex"
+      className="min-h-screen"
       style={{
         backgroundColor: "oklch(0.97 0.001 106.424)",
         scrollbarWidth: "none",
