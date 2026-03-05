@@ -73,7 +73,7 @@ const Login = () => {
               active ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10 pointer-events-none "
             }`}
           >
-            <img src="./Login.jpg" className="rounded-full" />
+            <img src="./Login.png" className="rounded-full" />
           </div>
         </div>
 
@@ -87,7 +87,7 @@ const Login = () => {
                 : "opacity-100 translate-x-0 pointer-events-auto z-10"
             }`}
           >
-            <img src="./Login.jpg" className="rounded-full" />
+            <img src="./Login.png" className="rounded-full" />
           </div>
 
           {/* Login Form */}
