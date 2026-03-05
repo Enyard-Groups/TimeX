@@ -24,7 +24,7 @@ const EmployeeMaster = () => {
     department: "",
     designation: "",
     empCategory: "",
-    employeeMaster: "",
+    shift: "",
     leavePlan: "",
     firstApprover: "",
     secondApprover: "",
@@ -92,7 +92,7 @@ const EmployeeMaster = () => {
       department: "",
       designation: "",
       empCategory: "",
-      employeeMaster: "",
+      shift: "",
       leavePlan: "",
       firstApprover: "",
       secondApprover: "",
@@ -189,7 +189,7 @@ const EmployeeMaster = () => {
                     Category
                   </th>
                   <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                    employeeMaster
+                    Shift
                   </th>
                   <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                     Designation
@@ -237,7 +237,7 @@ const EmployeeMaster = () => {
                         {item.empCategory}
                       </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                        {item.employeeMaster}
+                        {item.shift}
                       </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.designation}
@@ -564,12 +564,12 @@ const EmployeeMaster = () => {
               </select>
             </div>
 
-            {/* employeeMaster */}
+            {/* Shift */}
             <div>
-              <label className={labelStyle}>employeeMaster</label>
+              <label className={labelStyle}>Shift</label>
               <select
-                name="employeeMaster"
-                value={formData.employeeMaster}
+                name="shift"
+                value={formData.shift}
                 onChange={handleChange}
                 className={inputStyle}
               >
