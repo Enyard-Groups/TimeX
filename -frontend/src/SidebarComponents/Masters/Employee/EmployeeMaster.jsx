@@ -125,7 +125,7 @@ const EmployeeMaster = () => {
           </button>
         )}
       </div>
-
+      {!openModal && (
         <div className="mt-6 bg-white shadow-xl rounded-xl border border-gray-200 p-4">
           {/* Top Controls */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
@@ -280,7 +280,7 @@ const EmployeeMaster = () => {
             </div>
           </div>
         </div>
-
+      )}
       {openModal && (
         <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.923_0.003_48.717)] p-6">
           {/* Close */}

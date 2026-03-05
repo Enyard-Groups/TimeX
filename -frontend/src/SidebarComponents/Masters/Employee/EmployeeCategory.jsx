@@ -132,151 +132,155 @@ const EmployeeCategory = () => {
         )}
       </div>
 
-      <div className="mt-6 bg-white shadow-xl rounded-xl border border-gray-200 p-4">
-        {/* Top Controls */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-          <div>
-            <label className="mr-2 text-sm">Show</label>
-            <select
-              value={entriesPerPage}
+      {!openModal && (
+        <div className="mt-6 bg-white shadow-xl rounded-xl border border-gray-200 p-4">
+          {/* Top Controls */}
+          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+            <div>
+              <label className="mr-2 text-sm">Show</label>
+              <select
+                value={entriesPerPage}
+                onChange={(e) => {
+                  setEntriesPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+              </select>
+              <span className="ml-2 text-sm">entries</span>
+            </div>
+
+            <input
+              placeholder="Search"
+              value={searchTerm}
               onChange={(e) => {
-                setEntriesPerPage(Number(e.target.value));
+                setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
-            >
-              <option value={10}>10</option>
-              <option value={25}>25</option>
-              <option value={50}>50</option>
-            </select>
-            <span className="ml-2 text-sm">entries</span>
+              className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+            />
           </div>
 
-          <input
-            placeholder="Search"
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
-            }}
-            className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-          />
-        </div>
-
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm border-collapse">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="p-2 border">Sl.No</th>
-                <th className="p-2 border">Category Name</th>
-                <th className="p-2 border">Category Code</th>
-                <th className="p-2 border">Company</th>
-                <th className="p-2 border">Description</th>
-                <th className="p-2 border">Work Hours</th>
-                <th className="p-2 border">Min Work Hours</th>
-                <th className="p-2 border">MaxOT</th>
-                <th className="p-2 border">Active</th>
-                <th className="p-2 border">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentemployeeCategory.length === 0 ? (
+          {/* Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead className="bg-gray-100">
                 <tr>
-                  <td colSpan="10" className="text-center p-4">
-                    No Data Available
-                  </td>
+                  <th className="p-2 border">Sl.No</th>
+                  <th className="p-2 border">Category Name</th>
+                  <th className="p-2 border">Category Code</th>
+                  <th className="p-2 border">Company</th>
+                  <th className="p-2 border">Description</th>
+                  <th className="p-2 border">Work Hours</th>
+                  <th className="p-2 border">Min Work Hours</th>
+                  <th className="p-2 border">MaxOT</th>
+                  <th className="p-2 border">Active</th>
+                  <th className="p-2 border">Action</th>
                 </tr>
-              ) : (
-                currentemployeeCategory.map((item, index) => (
-                  <tr key={item.id} className="text-center">
-                    <td className="p-2 border">{index + 1}</td>
-                    <td className="p-2 border">{item.name}</td>
-                    <td className="p-2 border">{item.code}</td>
-                    <td className="p-2 border">{item.company}</td>
-                    <td className="p-2 border">{item.description}</td>
-                    <td className="p-2 border">{item.workhours}</td>
-                    <td className="p-2 border">{item.minworkhours}</td>
-                    <td className="p-2 border">{item.maxot}</td>
-                    <td className="p-2 border">{item.isActive ? "Y" : "N"}</td>
-                    <td className="p-2 border space-x-2">
-                      <button className="bg-blue-500 text-white px-2 py-1 rounded text-xs">
-                        Edit
-                      </button>
-                      <button
-                        onClick={() =>
-                          setEmployeeCategory(
-                            employeeCategory.filter((v) => v.id !== item.id),
-                          )
-                        }
-                        className="bg-red-500 text-white px-2 py-1 rounded text-xs"
-                      >
-                        Delete
-                      </button>
+              </thead>
+              <tbody>
+                {currentemployeeCategory.length === 0 ? (
+                  <tr>
+                    <td colSpan="10" className="text-center p-4">
+                      No Data Available
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                ) : (
+                  currentemployeeCategory.map((item, index) => (
+                    <tr key={item.id} className="text-center">
+                      <td className="p-2 border">{index + 1}</td>
+                      <td className="p-2 border">{item.name}</td>
+                      <td className="p-2 border">{item.code}</td>
+                      <td className="p-2 border">{item.company}</td>
+                      <td className="p-2 border">{item.description}</td>
+                      <td className="p-2 border">{item.workhours}</td>
+                      <td className="p-2 border">{item.minworkhours}</td>
+                      <td className="p-2 border">{item.maxot}</td>
+                      <td className="p-2 border">
+                        {item.isActive ? "Y" : "N"}
+                      </td>
+                      <td className="p-2 border space-x-2">
+                        <button className="bg-blue-500 text-white px-2 py-1 rounded text-xs">
+                          Edit
+                        </button>
+                        <button
+                          onClick={() =>
+                            setEmployeeCategory(
+                              employeeCategory.filter((v) => v.id !== item.id),
+                            )
+                          }
+                          className="bg-red-500 text-white px-2 py-1 rounded text-xs"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
 
-        {/* Pagination */}
-        <div className="flex justify-between items-center mt-4 text-sm">
-          <span>
-            Showing {Math.min(endIndex, filteredemployeeCategory.length)} of{" "}
-            {filteredemployeeCategory.length} entries
-          </span>
+          {/* Pagination */}
+          <div className="flex justify-between items-center mt-4 text-sm">
+            <span>
+              Showing {Math.min(endIndex, filteredemployeeCategory.length)} of{" "}
+              {filteredemployeeCategory.length} entries
+            </span>
 
-          <div className="space-x-2">
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(1)}
-              className="px-2 py-1 border rounded disabled:opacity-50"
-            >
-              First
-            </button>
-
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((prev) => prev - 1)}
-              className="px-2 py-1 border rounded disabled:opacity-50"
-            >
-              Previous
-            </button>
-
-            {[...Array(totalPages)].map((_, index) => (
+            <div className="space-x-2">
               <button
-                key={index}
-                onClick={() => setCurrentPage(index + 1)}
-                className={`px-2 py-1 rounded ${
-                  currentPage === index + 1
-                    ? "bg-green-500 text-white"
-                    : "border"
-                }`}
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(1)}
+                className="px-2 py-1 border rounded disabled:opacity-50"
               >
-                {index + 1}
+                First
               </button>
-            ))}
 
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((prev) => prev + 1)}
-              className="px-2 py-1 border rounded disabled:opacity-50"
-            >
-              Next
-            </button>
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((prev) => prev - 1)}
+                className="px-2 py-1 border rounded disabled:opacity-50"
+              >
+                Previous
+              </button>
 
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(totalPages)}
-              className="px-2 py-1 border rounded disabled:opacity-50"
-            >
-              Last
-            </button>
+              {[...Array(totalPages)].map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentPage(index + 1)}
+                  className={`px-2 py-1 rounded ${
+                    currentPage === index + 1
+                      ? "bg-green-500 text-white"
+                      : "border"
+                  }`}
+                >
+                  {index + 1}
+                </button>
+              ))}
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+                className="px-2 py-1 border rounded disabled:opacity-50"
+              >
+                Next
+              </button>
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(totalPages)}
+                className="px-2 py-1 border rounded disabled:opacity-50"
+              >
+                Last
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {openModal && (
         <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.923_0.003_48.717)] p-6">

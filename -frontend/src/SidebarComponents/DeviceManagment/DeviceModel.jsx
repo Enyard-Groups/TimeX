@@ -23,11 +23,12 @@ const DeviceModel = () => {
   const labelStyle =
     "text-sm font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
-  const filtereddeviceModel = deviceModel.filter((device) =>
-  device.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-  device.code.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-  device.company.toLowerCase().startsWith(searchTerm.toLowerCase())
-);
+  const filtereddeviceModel = deviceModel.filter(
+    (device) =>
+      device.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      device.code.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      device.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
+  );
 
   const totalPages = Math.ceil(filtereddeviceModel.length / entriesPerPage);
 
@@ -95,6 +96,7 @@ const DeviceModel = () => {
         )}
       </div>
 
+      {!openModal && (
         <div className="mt-6 bg-white shadow-xl rounded-xl border border-gray-200 p-4">
           {/* Top Controls */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
@@ -234,6 +236,7 @@ const DeviceModel = () => {
             </div>
           </div>
         </div>
+      )}
 
       {openModal && (
         <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.923_0.003_48.717)] p-6">

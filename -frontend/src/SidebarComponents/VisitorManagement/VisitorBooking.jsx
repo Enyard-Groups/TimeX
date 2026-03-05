@@ -91,11 +91,10 @@ const VisitorBooking = () => {
       toast.error("No data found");
       return;
     }
-    
+
     setVisitors(filtered); // Show filtered data in table
     setOpenModal(false); // Close modal
     setCurrentPage(1); // reset pagination
-    
   };
 
   const filteredVisitors = visitors.filter((visitor) =>
@@ -201,6 +200,7 @@ const VisitorBooking = () => {
         )}
       </div>
 
+      {!openModal && (
         <div className="mt-6 bg-white shadow-xl rounded-xl border border-gray-200 p-4">
           {/* Top Controls */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
@@ -344,6 +344,7 @@ const VisitorBooking = () => {
             </div>
           </div>
         </div>
+      )}
 
       {openModal && (
         <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.923_0.003_48.717)] p-6">
