@@ -11,7 +11,7 @@ const ApprovalRoute = ({ user }) => {
   return (
     <div>
       <Navbar user={user} />
-      <div className="md:ml-60 mt-20 p-6 md:p-10 min-h-screen">
+      <div className="md:ml-50 mt-16 p-6 md:p-10 min-h-screen">
         <Routes>
           <Route
             path="mannual-entry-approval"
