@@ -452,17 +452,17 @@ const Shift = () => {
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
                   <th className="px-5 py-2">SL.NO</th>
-                  <th className="px-5 py-2 ">Shift Name</th>
-                  <th className="px-5 py-2 ">Shift Code</th>
-                  <th className="px-5 py-2 ">InTime</th>
-                  <th className="px-5 py-2 ">OutTime</th>
+                  <th className="px-5 py-2 ">Shift_Name</th>
+                  <th className="px-5 py-2 ">Shift_Code</th>
+                  <th className="px-5 py-2 ">In_Time</th>
+                  <th className="px-5 py-2 ">Out_Time</th>
                   <th className="px-5 py-2 ">WeekOff1</th>
                   <th className="px-5 py-2 ">WeekOff2</th>
-                  <th className="px-5 py-2 ">In GT</th>
-                  <th className="px-5 py-2 ">Out GT</th>
+                  <th className="px-5 py-2 ">In_GT</th>
+                  <th className="px-5 py-2 ">Out_GT</th>
                   <th className="px-5 py-2 ">MinOT</th>
                   <th className="px-5 py-2 ">MaxOT</th>
-                  <th className="px-5 py-2 ">Half Day</th>
+                  <th className="px-5 py-2 ">Half_Day</th>
                   <th className="px-5 py-2 ">Active</th>
                   <th className="px-5 py-2 ">Action</th>
                 </tr>
