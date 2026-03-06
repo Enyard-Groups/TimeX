@@ -255,18 +255,18 @@ const DeviceManagementSub = () => {
             </div>
 
             <div className="flex">
-              <button onClick={handleCopy} className="px-3 py-1 text-gray-800">
+              <button onClick={handleCopy} className="px-3 py-1 cursor-pointer text-gray-800">
                 <GoCopy />
               </button>
 
               <button
                 onClick={handleExcel}
-                className="px-3 py-1 text-green-700"
+                className="px-3 py-1 cursor-pointer text-green-700"
               >
                 <FaFileExcel />
               </button>
 
-              <button onClick={handlePDF} className="px-3 py-1 text-red-600">
+              <button onClick={handlePDF} className="px-3 py-1 cursor-pointer text-red-600">
                 <FaFilePdf />
               </button>
             </div>
