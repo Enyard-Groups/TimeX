@@ -6,6 +6,12 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaEye, FaPen } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { GoCopy } from "react-icons/go";
+import { FaFileExcel } from "react-icons/fa";
+import { FaFilePdf } from "react-icons/fa";
 
 const EmployeeCategory = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -116,6 +122,144 @@ const EmployeeCategory = () => {
     });
   };
 
+  const handleCopy = () => {
+    const header = [
+      "SL.NO",
+      "Category Name",
+      "Category Code",
+      "Company",
+      "Description",
+      "Work Hours",
+      "Min Work Hours",
+      "MaxOT",
+      "Active",
+    ].join("\t");
+
+    const rows = filteredemployeeCategory
+      .map((item, index) =>
+        [
+          index + 1,
+          item.name,
+          item.code,
+          item.company,
+          item.description,
+          item.workhours
+            ? item.workhours.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "",
+          item.minworkhours
+            ? item.minworkhours.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "",
+          item.maxot
+            ? item.maxot.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "",
+          item.isActive ? "Y" : "N",
+        ].join("\t"),
+      )
+      .join("\n");
+
+    navigator.clipboard.writeText(header + "\n" + rows);
+    toast.success("Table copied");
+  };
+
+  const handleExcel = () => {
+    const excelData = filteredemployeeCategory.map((item, index) => ({
+      "SL.NO": index + 1,
+      "Category Name": item.name,
+      "Category Code": item.code,
+      Company: item.company,
+      Description: item.description,
+      "Work Hours": item.workhours
+        ? item.workhours.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        : "",
+      "Min Work Hours": item.minworkhours
+        ? item.minworkhours.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        : "",
+      MaxOT: item.maxot
+        ? item.maxot.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        : "",
+      Active: item.isActive ? "Y" : "N",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Employee Category");
+
+    XLSX.writeFile(workbook, "EmployeeCategory.xlsx");
+  };
+
+  const handlePDF = () => {
+    const doc = new jsPDF();
+
+    const tableColumn = [
+      "SL.NO",
+      "Category Name",
+      "Category Code",
+      "Company",
+      "Description",
+      "Work Hours",
+      "Min Work Hours",
+      "MaxOT",
+      "Active",
+    ];
+
+    const tableRows = [];
+
+    filteredemployeeCategory.forEach((item, index) => {
+      tableRows.push([
+        index + 1,
+        item.name,
+        item.code,
+        item.company,
+        item.description,
+        item.workhours
+          ? item.workhours.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "",
+        item.minworkhours
+          ? item.minworkhours.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "",
+        item.maxot
+          ? item.maxot.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "",
+        item.isActive ? "Y" : "N",
+      ]);
+    });
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+    });
+
+    doc.save("EmployeeCategory.pdf");
+  };
+
   return (
     <>
       {/* Header */}
@@ -158,7 +302,22 @@ const EmployeeCategory = () => {
               </select>
               <span className="ml-2 text-sm">entries</span>
             </div>
+            <div className="flex">
+              <button onClick={handleCopy} className="px-3 py-1 text-gray-800">
+                <GoCopy />
+              </button>
 
+              <button
+                onClick={handleExcel}
+                className="px-3 py-1 text-green-700"
+              >
+                <FaFileExcel />
+              </button>
+
+              <button onClick={handlePDF} className="px-3 py-1 text-red-600">
+                <FaFilePdf />
+              </button>
+            </div>
             <input
               placeholder="Search"
               value={searchTerm}
@@ -254,37 +413,41 @@ const EmployeeCategory = () => {
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.isActive ? "Y" : "N"}
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-3 flex flex-row">
-                        {/* View */}
-                        <FaEye
-                          onClick={() => {
-                            setFormData(item);
-                            setMode("view");
-                            setOpenModal(true);
-                          }}
-                          className="inline text-blue-500 cursor-pointer text-lg"
-                        />
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] ">
+                        <div className="flex flex-row space-x-3 ">
+                          {/* View */}
+                          <FaEye
+                            onClick={() => {
+                              setFormData(item);
+                              setMode("view");
+                              setOpenModal(true);
+                            }}
+                            className="inline text-blue-500 cursor-pointer text-lg"
+                          />
 
-                        {/* Edit */}
-                        <FaPen
-                          onClick={() => {
-                            setFormData(item);
-                            setEditId(item.id);
-                            setMode("edit");
-                            setOpenModal(true);
-                          }}
-                          className="inline text-green-500 cursor-pointer text-lg"
-                        />
+                          {/* Edit */}
+                          <FaPen
+                            onClick={() => {
+                              setFormData(item);
+                              setEditId(item.id);
+                              setMode("edit");
+                              setOpenModal(true);
+                            }}
+                            className="inline text-green-500 cursor-pointer text-lg"
+                          />
 
-                        {/* Delete */}
-                        <MdDeleteForever
-                          onClick={() =>
-                            setEmployeeCategory(
-                              employeeCategory.filter((v) => v.id !== item.id),
-                            )
-                          }
-                          className="inline text-red-500 cursor-pointer text-xl"
-                        />
+                          {/* Delete */}
+                          <MdDeleteForever
+                            onClick={() =>
+                              setEmployeeCategory(
+                                employeeCategory.filter(
+                                  (v) => v.id !== item.id,
+                                ),
+                              )
+                            }
+                            className="inline text-red-500 cursor-pointer text-xl"
+                          />
+                        </div>
                       </td>
                     </tr>
                   ))

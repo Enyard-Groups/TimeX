@@ -6,6 +6,12 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaEye, FaPen } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { GoCopy } from "react-icons/go";
+import { FaFileExcel } from "react-icons/fa";
+import { FaFilePdf } from "react-icons/fa";
 
 const CardDetach = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -196,6 +202,86 @@ const CardDetach = () => {
     });
   };
 
+  const handleCopy = () => {
+    const header =
+      "SL.NO\tVisitor Code\tVisitor Name\tCompany\tPhone\tEmail\tCICPA\tCompany Code\tEID\tCard Reference\tMeeting Person";
+
+    const rows = filteredVisitors
+      .map(
+        (v, i) =>
+          `${i + 1}\t${v.visitorCode}\t${v.visitorName}\t${v.organization}\t${v.phone}\t${v.email}\t${v.cicpaCard}\t${v.companyCode}\t${v.idNumber}\t${v.cardReference}\t${v.meetingPerson}`,
+      )
+      .join("\n");
+
+    const text = header + "\n" + rows;
+
+    navigator.clipboard.writeText(text);
+
+    toast.success("Table copied to clipboard");
+  };
+
+  const handleExcel = () => {
+    const data = filteredVisitors.map((v, i) => ({
+      "SL.NO": i + 1,
+      "Visitor Code": v.visitorCode,
+      "Visitor Name": v.visitorName,
+      Company: v.organization,
+      Phone: v.phone,
+      Email: v.email,
+      "CICPA Card": v.cicpaCard,
+      "Company Code": v.companyCode,
+      "EID Number": v.idNumber,
+      "Card Reference": v.cardReference,
+      "Meeting Person": v.meetingPerson,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Visitors");
+
+    XLSX.writeFile(workbook, "VisitorCardDetach.xlsx");
+  };
+
+  const handlePDF = () => {
+    const doc = new jsPDF();
+
+    const tableColumn = [
+      "SL.NO",
+      "Visitor Code",
+      "Visitor Name",
+      "Company",
+      "Phone",
+      "Email",
+      "CICPA",
+      "Company Code",
+      "EID",
+      "Card Ref",
+      "Meeting Person",
+    ];
+
+    const tableRows = filteredVisitors.map((v, i) => [
+      i + 1,
+      v.visitorCode,
+      v.visitorName,
+      v.organization,
+      v.phone,
+      v.email,
+      v.cicpaCard,
+      v.companyCode,
+      v.idNumber,
+      v.cardReference,
+      v.meetingPerson,
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+    });
+
+    doc.save("VisitorCardDetach.pdf");
+  };
+
   return (
     <>
       {/* Header */}
@@ -238,7 +324,22 @@ const CardDetach = () => {
               </select>
               <span className="ml-2 text-sm">entries</span>
             </div>
+            <div className="flex">
+              <button onClick={handleCopy} className="px-3 py-1 text-gray-800">
+                <GoCopy />
+              </button>
 
+              <button
+                onClick={handleExcel}
+                className="px-3 py-1 text-green-700"
+              >
+                <FaFileExcel />
+              </button>
+
+              <button onClick={handlePDF} className="px-3 py-1 text-red-600">
+                <FaFilePdf />
+              </button>
+            </div>
             <input
               placeholder="Search"
               value={searchTerm}
@@ -339,37 +440,39 @@ const CardDetach = () => {
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.meetingPerson}
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-3 flex flex-row">
-                        {/* View */}
-                        <FaEye
-                          onClick={() => {
-                            setFormData(item);
-                            setMode("view");
-                            setOpenModal(true);
-                          }}
-                          className="inline text-blue-500 cursor-pointer text-lg"
-                        />
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] ">
+                        <div className="flex flex-row space-x-3 ">
+                          {/* View */}
+                          <FaEye
+                            onClick={() => {
+                              setFormData(item);
+                              setMode("view");
+                              setOpenModal(true);
+                            }}
+                            className="inline text-blue-500 cursor-pointer text-lg"
+                          />
 
-                        {/* Edit */}
-                        <FaPen
-                          onClick={() => {
-                            setFormData(item);
-                            setEditId(item.id);
-                            setMode("edit");
-                            setOpenModal(true);
-                          }}
-                          className="inline text-green-500 cursor-pointer text-lg"
-                        />
+                          {/* Edit */}
+                          <FaPen
+                            onClick={() => {
+                              setFormData(item);
+                              setEditId(item.id);
+                              setMode("edit");
+                              setOpenModal(true);
+                            }}
+                            className="inline text-green-500 cursor-pointer text-lg"
+                          />
 
-                        {/* Delete */}
-                        <MdDeleteForever
-                          onClick={() =>
-                            setVisitors(
-                              visitors.filter((v) => v.id !== item.id),
-                            )
-                          }
-                          className="inline text-red-500 cursor-pointer text-xl"
-                        />
+                          {/* Delete */}
+                          <MdDeleteForever
+                            onClick={() =>
+                              setVisitors(
+                                visitors.filter((v) => v.id !== item.id),
+                              )
+                            }
+                            className="inline text-red-500 cursor-pointer text-xl"
+                          />
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -452,7 +555,7 @@ const CardDetach = () => {
               name="searchType"
               value={formData.searchType}
               onChange={handleChange}
-                disabled={mode === "view"}
+              disabled={mode === "view"}
               className={inputStyle}
             >
               <option>Mobile no.</option>
@@ -466,7 +569,7 @@ const CardDetach = () => {
               name="searchValue"
               value={formData.searchValue}
               onChange={handleChange}
-                disabled={mode === "view"}
+              disabled={mode === "view"}
               placeholder="Value"
               className={inputStyle}
               required

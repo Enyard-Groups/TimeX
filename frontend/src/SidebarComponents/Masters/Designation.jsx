@@ -4,6 +4,12 @@ import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
 import { FaEye, FaPen } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { GoCopy } from "react-icons/go";
+import { FaFileExcel } from "react-icons/fa";
+import { FaFilePdf } from "react-icons/fa";
 
 const Designation = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -94,6 +100,88 @@ const Designation = () => {
     });
   };
 
+  const handleCopy = () => {
+    const header = [
+      "SL.NO",
+      "Designation Name",
+      "Designation Code",
+      "Company",
+      "Department Name",
+      "Active",
+    ].join("\t");
+
+    const rows = filtereddesignation
+      .map((item, index) =>
+        [
+          index + 1,
+          item.name,
+          item.code,
+          item.company,
+          item.department,
+          item.isActive ? "Y" : "N",
+        ].join("\t"),
+      )
+      .join("\n");
+
+    const text = `${header}\n${rows}`;
+
+    navigator.clipboard.writeText(text);
+    toast.success("Table copied to clipboard");
+  };
+
+  const handleExcel = () => {
+    const excelData = filtereddesignation.map((item, index) => ({
+      "SL.NO": index + 1,
+      "Designation Name": item.name,
+      "Designation Code": item.code,
+      Company: item.company,
+      "Department Name": item.department,
+      Active: item.isActive ? "Y" : "N",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Designation");
+
+    XLSX.writeFile(workbook, "DesignationData.xlsx");
+  };
+
+  const handlePDF = () => {
+    const doc = new jsPDF();
+
+    const tableColumn = [
+      "SL.NO",
+      "Designation Name",
+      "Designation Code",
+      "Company",
+      "Department Name",
+      "Active",
+    ];
+
+    const tableRows = [];
+
+    filtereddesignation.forEach((item, index) => {
+      const row = [
+        index + 1,
+        item.name,
+        item.code,
+        item.company,
+        item.department,
+        item.isActive ? "Y" : "N",
+      ];
+
+      tableRows.push(row);
+    });
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+    });
+
+    doc.save("DesignationData.pdf");
+  };
+
   return (
     <>
       {/* Header */}
@@ -136,7 +224,22 @@ const Designation = () => {
               </select>
               <span className="ml-2 text-sm">entries</span>
             </div>
+            <div className="flex">
+              <button onClick={handleCopy} className="px-3 py-1 text-gray-800">
+                <GoCopy />
+              </button>
 
+              <button
+                onClick={handleExcel}
+                className="px-3 py-1 text-green-700"
+              >
+                <FaFileExcel />
+              </button>
+
+              <button onClick={handlePDF} className="px-3 py-1 text-red-600">
+                <FaFilePdf />
+              </button>
+            </div>
             <input
               placeholder="Search"
               value={searchTerm}
@@ -204,37 +307,39 @@ const Designation = () => {
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.isActive ? "Y" : "N"}
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-3 flex flex-row">
-                        {/* View */}
-                        <FaEye
-                          onClick={() => {
-                            setFormData(item);
-                            setMode("view");
-                            setOpenModal(true);
-                          }}
-                          className="inline text-blue-500 cursor-pointer text-lg"
-                        />
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] ">
+                        <div className="flex flex-row space-x-3 ">
+                          {/* View */}
+                          <FaEye
+                            onClick={() => {
+                              setFormData(item);
+                              setMode("view");
+                              setOpenModal(true);
+                            }}
+                            className="inline text-blue-500 cursor-pointer text-lg"
+                          />
 
-                        {/* Edit */}
-                        <FaPen
-                          onClick={() => {
-                            setFormData(item);
-                            setEditId(item.id);
-                            setMode("edit");
-                            setOpenModal(true);
-                          }}
-                          className="inline text-green-500 cursor-pointer text-lg"
-                        />
+                          {/* Edit */}
+                          <FaPen
+                            onClick={() => {
+                              setFormData(item);
+                              setEditId(item.id);
+                              setMode("edit");
+                              setOpenModal(true);
+                            }}
+                            className="inline text-green-500 cursor-pointer text-lg"
+                          />
 
-                        {/* Delete */}
-                        <MdDeleteForever
-                          onClick={() =>
-                            setDesignation(
-                              designation.filter((v) => v.id !== item.id),
-                            )
-                          }
-                          className="inline text-red-500 cursor-pointer text-xl"
-                        />
+                          {/* Delete */}
+                          <MdDeleteForever
+                            onClick={() =>
+                              setDesignation(
+                                designation.filter((v) => v.id !== item.id),
+                              )
+                            }
+                            className="inline text-red-500 cursor-pointer text-xl"
+                          />
+                        </div>
                       </td>
                     </tr>
                   ))

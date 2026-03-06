@@ -4,6 +4,12 @@ import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
 import { FaEye, FaPen } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { GoCopy } from "react-icons/go";
+import { FaFileExcel } from "react-icons/fa";
+import { FaFilePdf } from "react-icons/fa";
 
 const DeviceManagementSub = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -124,6 +130,87 @@ const DeviceManagementSub = () => {
     });
   };
 
+  const handleCopy = () => {
+    const header =
+      "SL.NO\tDevice Serial No\tName\tDevice IP\tFace\tFingerPrint\tCard No\tPin No\tCompany\tActive";
+
+    const rows = filteredDevicemanagement
+      .map(
+        (d, i) =>
+          `${i + 1}\t${d.deviceserialno}\t${d.name}\t${d.deviceip}\t${
+            d.isFace ? "Y" : "N"
+          }\t${d.isFingerprint ? "Y" : "N"}\t${d.isCardNo ? "Y" : "N"}\t${
+            d.isPinNo ? "Y" : "N"
+          }\t${d.company}\t${d.isActive ? "Y" : "N"}`,
+      )
+      .join("\n");
+
+    const text = header + "\n" + rows;
+
+    navigator.clipboard.writeText(text);
+
+    toast.success("Table copied to clipboard");
+  };
+
+  const handleExcel = () => {
+    const data = filteredDevicemanagement.map((d, i) => ({
+      "SL.NO": i + 1,
+      "Device Serial No": d.deviceserialno,
+      Name: d.name,
+      "Device IP": d.deviceip,
+      Face: d.isFace ? "Y" : "N",
+      FingerPrint: d.isFingerprint ? "Y" : "N",
+      "Card No": d.isCardNo ? "Y" : "N",
+      "Pin No": d.isPinNo ? "Y" : "N",
+      Company: d.company,
+      Active: d.isActive ? "Y" : "N",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Devices");
+
+    XLSX.writeFile(workbook, "DeviceManagement.xlsx");
+  };
+
+  const handlePDF = () => {
+    const doc = new jsPDF();
+
+    const tableColumn = [
+      "SL.NO",
+      "Device Serial No",
+      "Name",
+      "Device IP",
+      "Face",
+      "FingerPrint",
+      "Card No",
+      "Pin No",
+      "Company",
+      "Active",
+    ];
+
+    const tableRows = filteredDevicemanagement.map((d, i) => [
+      i + 1,
+      d.deviceserialno,
+      d.name,
+      d.deviceip,
+      d.isFace ? "Y" : "N",
+      d.isFingerprint ? "Y" : "N",
+      d.isCardNo ? "Y" : "N",
+      d.isPinNo ? "Y" : "N",
+      d.company,
+      d.isActive ? "Y" : "N",
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+    });
+
+    doc.save("DeviceManagement.pdf");
+  };
+
   return (
     <>
       {/* Header */}
@@ -165,6 +252,23 @@ const DeviceManagementSub = () => {
                 <option value={50}>50</option>
               </select>
               <span className="ml-2 text-sm">entries</span>
+            </div>
+
+            <div className="flex">
+              <button onClick={handleCopy} className="px-3 py-1 text-gray-800">
+                <GoCopy />
+              </button>
+
+              <button
+                onClick={handleExcel}
+                className="px-3 py-1 text-green-700"
+              >
+                <FaFileExcel />
+              </button>
+
+              <button onClick={handlePDF} className="px-3 py-1 text-red-600">
+                <FaFilePdf />
+              </button>
             </div>
 
             <input
@@ -258,37 +362,41 @@ const DeviceManagementSub = () => {
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.isActive ? "Y" : "N"}
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-3 flex flex-row">
-                        {/* View */}
-                        <FaEye
-                          onClick={() => {
-                            setFormData(item);
-                            setMode("view");
-                            setOpenModal(true);
-                          }}
-                          className="inline text-blue-500 cursor-pointer text-lg"
-                        />
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        <div className="flex flex-row space-x-3 ">
+                          {/* View */}
+                          <FaEye
+                            onClick={() => {
+                              setFormData(item);
+                              setMode("view");
+                              setOpenModal(true);
+                            }}
+                            className="inline text-blue-500 cursor-pointer text-lg"
+                          />
 
-                        {/* Edit */}
-                        <FaPen
-                          onClick={() => {
-                            setFormData(item);
-                            setEditId(item.id);
-                            setMode("edit");
-                            setOpenModal(true);
-                          }}
-                          className="inline text-green-500 cursor-pointer text-lg"
-                        />
+                          {/* Edit */}
+                          <FaPen
+                            onClick={() => {
+                              setFormData(item);
+                              setEditId(item.id);
+                              setMode("edit");
+                              setOpenModal(true);
+                            }}
+                            className="inline text-green-500 cursor-pointer text-lg"
+                          />
 
-                        {/* Delete */}
-                        <MdDeleteForever
-                          onClick={() =>
-                            setDevicemanagement(
-                              devicemanagement.filter((v) => v.id !== item.id),
-                            )
-                          }
-                          className="inline text-red-500 cursor-pointer text-xl"
-                        />
+                          {/* Delete */}
+                          <MdDeleteForever
+                            onClick={() =>
+                              setDevicemanagement(
+                                devicemanagement.filter(
+                                  (v) => v.id !== item.id,
+                                ),
+                              )
+                            }
+                            className="inline text-red-500 cursor-pointer text-xl"
+                          />
+                        </div>
                       </td>
                     </tr>
                   ))

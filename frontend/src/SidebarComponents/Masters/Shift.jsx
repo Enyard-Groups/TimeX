@@ -6,6 +6,12 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaEye, FaPen } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { GoCopy } from "react-icons/go";
+import { FaFileExcel } from "react-icons/fa";
+import { FaFilePdf } from "react-icons/fa";
 
 const Shift = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -140,6 +146,123 @@ const Shift = () => {
     });
   };
 
+  const handleCopy = () => {
+    const header = [
+      "SL.NO",
+      "Shift Name",
+      "Shift Code",
+      "InTime",
+      "OutTime",
+      "WeekOff1",
+      "WeekOff2",
+      "In GT",
+      "Out GT",
+      "MinOT",
+      "MaxOT",
+      "Half Day",
+      "Active",
+    ].join("\t");
+
+    const rows = filteredshift
+      .map((item, index) => {
+        return [
+          index + 1,
+          item.name,
+          item.code,
+          item.intime ? item.intime.toLocaleTimeString() : "",
+          item.outtime ? item.outtime.toLocaleTimeString() : "",
+          item.weekoff1 || "NIL",
+          item.weekoff2 || "NIL",
+          item.ingt ? item.ingt.toLocaleTimeString() : "",
+          item.outgt ? item.outgt.toLocaleTimeString() : "",
+          item.minot ? item.minot.toLocaleTimeString() : "",
+          item.maxot ? item.maxot.toLocaleTimeString() : "",
+          item.isHalfDay ? "Y" : "N",
+          item.isActive ? "Y" : "N",
+        ].join("\t");
+      })
+      .join("\n");
+
+    const text = `${header}\n${rows}`;
+
+    navigator.clipboard.writeText(text);
+    toast.success("Table copied to clipboard");
+  };
+
+  const handleExcel = () => {
+    const excelData = filteredshift.map((item, index) => ({
+      "SL.NO": index + 1,
+      "Shift Name": item.name,
+      "Shift Code": item.code,
+      InTime: item.intime ? item.intime.toLocaleTimeString() : "",
+      OutTime: item.outtime ? item.outtime.toLocaleTimeString() : "",
+      WeekOff1: item.weekoff1 || "NIL",
+      WeekOff2: item.weekoff2 || "NIL",
+      "In GT": item.ingt ? item.ingt.toLocaleTimeString() : "",
+      "Out GT": item.outgt ? item.outgt.toLocaleTimeString() : "",
+      MinOT: item.minot ? item.minot.toLocaleTimeString() : "",
+      MaxOT: item.maxot ? item.maxot.toLocaleTimeString() : "",
+      "Half Day": item.isHalfDay ? "Y" : "N",
+      Active: item.isActive ? "Y" : "N",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Shift");
+
+    XLSX.writeFile(workbook, "ShiftData.xlsx");
+  };
+
+  const handlePDF = () => {
+    const doc = new jsPDF();
+
+    const tableColumn = [
+      "SL.NO",
+      "Shift Name",
+      "Shift Code",
+      "InTime",
+      "OutTime",
+      "WeekOff1",
+      "WeekOff2",
+      "In GT",
+      "Out GT",
+      "MinOT",
+      "MaxOT",
+      "Half Day",
+      "Active",
+    ];
+
+    const tableRows = [];
+
+    filteredshift.forEach((item, index) => {
+      const row = [
+        index + 1,
+        item.name,
+        item.code,
+        item.intime ? item.intime.toLocaleTimeString() : "",
+        item.outtime ? item.outtime.toLocaleTimeString() : "",
+        item.weekoff1 || "NIL",
+        item.weekoff2 || "NIL",
+        item.ingt ? item.ingt.toLocaleTimeString() : "",
+        item.outgt ? item.outgt.toLocaleTimeString() : "",
+        item.minot ? item.minot.toLocaleTimeString() : "",
+        item.maxot ? item.maxot.toLocaleTimeString() : "",
+        item.isHalfDay ? "Y" : "N",
+        item.isActive ? "Y" : "N",
+      ];
+
+      tableRows.push(row);
+    });
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+    });
+
+    doc.save("ShiftData.pdf");
+  };
+
   return (
     <>
       {/* Header */}
@@ -182,7 +305,22 @@ const Shift = () => {
               </select>
               <span className="ml-2 text-sm">entries</span>
             </div>
+            <div className="flex">
+              <button onClick={handleCopy} className="px-3 py-1 text-gray-800">
+                <GoCopy />
+              </button>
 
+              <button
+                onClick={handleExcel}
+                className="px-3 py-1 text-green-700"
+              >
+                <FaFileExcel />
+              </button>
+
+              <button onClick={handlePDF} className="px-3 py-1 text-red-600">
+                <FaFilePdf />
+              </button>
+            </div>
             <input
               placeholder="Search"
               value={searchTerm}
@@ -292,35 +430,37 @@ const Shift = () => {
                       <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">
                         {item.isActive ? "Y" : "N"}
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-3 flex flex-row">
-                        {/* View */}
-                        <FaEye
-                          onClick={() => {
-                            setFormData(item);
-                            setMode("view");
-                            setOpenModal(true);
-                          }}
-                          className="inline text-blue-500 cursor-pointer text-lg"
-                        />
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        <div className="flex flex-row space-x-3 ">
+                          {/* View */}
+                          <FaEye
+                            onClick={() => {
+                              setFormData(item);
+                              setMode("view");
+                              setOpenModal(true);
+                            }}
+                            className="inline text-blue-500 cursor-pointer text-lg"
+                          />
 
-                        {/* Edit */}
-                        <FaPen
-                          onClick={() => {
-                            setFormData(item);
-                            setEditId(item.id);
-                            setMode("edit");
-                            setOpenModal(true);
-                          }}
-                          className="inline text-green-500 cursor-pointer text-lg"
-                        />
+                          {/* Edit */}
+                          <FaPen
+                            onClick={() => {
+                              setFormData(item);
+                              setEditId(item.id);
+                              setMode("edit");
+                              setOpenModal(true);
+                            }}
+                            className="inline text-green-500 cursor-pointer text-lg"
+                          />
 
-                        {/* Delete */}
-                        <MdDeleteForever
-                          onClick={() =>
-                            setShift(shift.filter((v) => v.id !== item.id))
-                          }
-                          className="inline text-red-500 cursor-pointer text-xl"
-                        />
+                          {/* Delete */}
+                          <MdDeleteForever
+                            onClick={() =>
+                              setShift(shift.filter((v) => v.id !== item.id))
+                            }
+                            className="inline text-red-500 cursor-pointer text-xl"
+                          />
+                        </div>
                       </td>
                     </tr>
                   ))

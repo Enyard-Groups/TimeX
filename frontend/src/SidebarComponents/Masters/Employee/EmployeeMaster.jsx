@@ -6,6 +6,12 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaEye, FaPen } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { GoCopy } from "react-icons/go";
+import { FaFileExcel } from "react-icons/fa";
+import { FaFilePdf } from "react-icons/fa";
 
 const EmployeeMaster = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -112,6 +118,93 @@ const EmployeeMaster = () => {
     });
   };
 
+  const handleCopy = () => {
+    const header = [
+      "SL.NO",
+      "Device ID",
+      "Company ID",
+      "Location",
+      "Full Name",
+      "Shift",
+      "Designation",
+    ].join("\t");
+
+    const rows = filteredemployeeMaster
+      .map((item, index) =>
+        [
+          index + 1,
+          item.deviceEnrollmentId,
+          item.companyEnrollmentId,
+          item.location,
+          item.fullName,
+          item.shift,
+          item.designation,
+        ].join("\t"),
+      )
+      .join("\n");
+
+    const text = `${header}\n${rows}`;
+
+    navigator.clipboard.writeText(text);
+    toast.success("Table copied to clipboard");
+  };
+
+  const handleExcel = () => {
+    const excelData = filteredemployeeMaster.map((item, index) => ({
+      "SL.NO": index + 1,
+      "Device ID": item.deviceEnrollmentId,
+      "Company ID": item.companyEnrollmentId,
+      Location: item.location,
+      "Full Name": item.fullName,
+      Shift: item.shift,
+      Designation: item.designation,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
+
+    XLSX.writeFile(workbook, "EmployeeMaster.xlsx");
+  };
+
+  const handlePDF = () => {
+    const doc = new jsPDF();
+
+    const tableColumn = [
+      "SL.NO",
+      "Device ID",
+      "Company ID",
+      "Location",
+      "Full Name",
+      "Shift",
+      "Designation",
+    ];
+
+    const tableRows = [];
+
+    filteredemployeeMaster.forEach((item, index) => {
+      const row = [
+        index + 1,
+        item.deviceEnrollmentId,
+        item.companyEnrollmentId,
+        item.location,
+        item.fullName,
+        item.shift,
+        item.designation,
+      ];
+
+      tableRows.push(row);
+    });
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+    });
+
+    doc.save("EmployeeMaster.pdf");
+  };
+
   return (
     <>
       {/* Header */}
@@ -152,6 +245,22 @@ const EmployeeMaster = () => {
                 <option value={50}>50</option>
               </select>
               <span className="ml-2 text-sm">entries</span>
+            </div>
+            <div className="flex">
+              <button onClick={handleCopy} className="px-3 py-1 text-gray-800">
+                <GoCopy />
+              </button>
+
+              <button
+                onClick={handleExcel}
+                className="px-3 py-1 text-green-700"
+              >
+                <FaFileExcel />
+              </button>
+
+              <button onClick={handlePDF} className="px-3 py-1 text-red-600">
+                <FaFilePdf />
+              </button>
             </div>
 
             <input
@@ -228,37 +337,39 @@ const EmployeeMaster = () => {
                         {item.designation}
                       </td>
 
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-3 flex flex-row">
-                        {/* View */}
-                        <FaEye
-                          onClick={() => {
-                            setFormData(item);
-                            setMode("view");
-                            setOpenModal(true);
-                          }}
-                          className="inline text-blue-500 cursor-pointer text-lg"
-                        />
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] ">
+                        <div className="flex flex-row space-x-3 ">
+                          {/* View */}
+                          <FaEye
+                            onClick={() => {
+                              setFormData(item);
+                              setMode("view");
+                              setOpenModal(true);
+                            }}
+                            className="inline text-blue-500 cursor-pointer text-lg"
+                          />
 
-                        {/* Edit */}
-                        <FaPen
-                          onClick={() => {
-                            setFormData(item);
-                            setEditId(item.id);
-                            setMode("edit");
-                            setOpenModal(true);
-                          }}
-                          className="inline text-green-500 cursor-pointer text-lg"
-                        />
+                          {/* Edit */}
+                          <FaPen
+                            onClick={() => {
+                              setFormData(item);
+                              setEditId(item.id);
+                              setMode("edit");
+                              setOpenModal(true);
+                            }}
+                            className="inline text-green-500 cursor-pointer text-lg"
+                          />
 
-                        {/* Delete */}
-                        <MdDeleteForever
-                          onClick={() =>
-                            setEmployeeMaster(
-                              employeeMaster.filter((v) => v.id !== item.id),
-                            )
-                          }
-                          className="inline text-red-500 cursor-pointer text-xl"
-                        />
+                          {/* Delete */}
+                          <MdDeleteForever
+                            onClick={() =>
+                              setEmployeeMaster(
+                                employeeMaster.filter((v) => v.id !== item.id),
+                              )
+                            }
+                            className="inline text-red-500 cursor-pointer text-xl"
+                          />
+                        </div>
                       </td>
                     </tr>
                   ))

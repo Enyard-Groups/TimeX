@@ -1,5 +1,12 @@
 import React, { useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { GoCopy } from "react-icons/go";
+import { FaFileExcel } from "react-icons/fa";
+import { FaFilePdf } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 const DeviceCommunication = () => {
   const [devicecommunication] = useState([]);
@@ -25,6 +32,101 @@ const DeviceCommunication = () => {
     startIndex,
     endIndex,
   );
+
+  // Copy Table Data
+  const handleCopy = () => {
+    const header = [
+      "Status",
+      "Serial No",
+      "Device Name",
+      "Transfer Time",
+      "Interval",
+      "Last Activity",
+      "FW Version",
+      "User Count",
+      "FP Count",
+      "Transaction Count",
+    ].join("\t");
+
+    const rows = filtereddevicecommunication
+      .map(
+        (d) =>
+          `${d.status}\t${d.serialno}\t${d.devicename}\t${d.transfername}\t${d.interval}\t${d.lastactivity}\t${d.fwversion}\t${d.usercount}\t${d.fpcount}\t${d.transactioncount}`,
+      )
+      .join("\n");
+
+    const text = `${header}\n${rows}`;
+
+    navigator.clipboard.writeText(text);
+    toast.success("Table copied to clipboard");
+  };
+
+  // Export Excel
+  const handleExcel = () => {
+    const excelData = filtereddevicecommunication.map((item) => ({
+      Status: item.status,
+      "Serial No": item.serialno,
+      "Device Name": item.devicename,
+      "Transfer Time": item.transfername,
+      Interval: item.interval,
+      "Last Activity": item.lastactivity,
+      "FW Version": item.fwversion,
+      "User Count": item.usercount,
+      "FP Count": item.fpcount,
+      "Transaction Count": item.transactioncount,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Device Communication");
+
+    XLSX.writeFile(workbook, "DeviceCommunication.xlsx");
+  };
+
+  // Export PDF
+  const handlePDF = () => {
+    const doc = new jsPDF();
+
+    const tableColumn = [
+      "Status",
+      "Serial No",
+      "Device Name",
+      "Transfer Time",
+      "Interval",
+      "Last Activity",
+      "FW Version",
+      "User Count",
+      "FP Count",
+      "Transaction Count",
+    ];
+
+    const tableRows = [];
+
+    filtereddevicecommunication.forEach((item) => {
+      const row = [
+        item.status,
+        item.serialno,
+        item.devicename,
+        item.transfername,
+        item.interval,
+        item.lastactivity,
+        item.fwversion,
+        item.usercount,
+        item.fpcount,
+        item.transactioncount,
+      ];
+
+      tableRows.push(row);
+    });
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+    });
+
+    doc.save("DeviceCommunication.pdf");
+  };
 
   return (
     <>
@@ -57,7 +159,19 @@ const DeviceCommunication = () => {
             </select>
             <span className="ml-2 text-sm">entries</span>
           </div>
+          <div className="flex">
+            <button onClick={handleCopy} className="px-3 py-1 text-gray-800">
+              <GoCopy />
+            </button>
 
+            <button onClick={handleExcel} className="px-3 py-1 text-green-700">
+              <FaFileExcel />
+            </button>
+
+            <button onClick={handlePDF} className="px-3 py-1 text-red-600">
+              <FaFilePdf />
+            </button>
+          </div>
           <input
             placeholder="Search"
             value={searchTerm}

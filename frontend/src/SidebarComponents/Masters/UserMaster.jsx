@@ -4,6 +4,12 @@ import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
 import { FaEye, FaPen } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { GoCopy } from "react-icons/go";
+import { FaFileExcel } from "react-icons/fa";
+import { FaFilePdf } from "react-icons/fa";
 
 const UserMaster = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -273,6 +279,71 @@ const UserMaster = () => {
     );
   };
 
+  const handleCopy = () => {
+    const header = "SL.NO\tUser Name\tEmployee\tEmployee Email\tRole\tActive";
+
+    const rows = filteredUsers
+      .map(
+        (u, i) =>
+          `${i + 1}\t${u.userName}\t${u.empname}\t${u.enrollmentId}\t${u.role}\t${
+            u.active ? "Y" : "N"
+          }`,
+      )
+      .join("\n");
+
+    const text = header + "\n" + rows;
+
+    navigator.clipboard.writeText(text);
+    toast.success("Table copied to clipboard");
+  };
+
+  const handleExcel = () => {
+    const data = filteredUsers.map((u, i) => ({
+      "SL.NO": i + 1,
+      "User Name": u.userName,
+      Employee: u.empname,
+      "Employee Email": u.enrollmentId,
+      Role: u.role,
+      Active: u.active ? "Y" : "N",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+
+    XLSX.writeFile(workbook, "UserMaster.xlsx");
+  };
+
+  const handlePDF = () => {
+    const doc = new jsPDF();
+
+    const tableColumn = [
+      "SL.NO",
+      "User Name",
+      "Employee",
+      "Employee Email",
+      "Role",
+      "Active",
+    ];
+
+    const tableRows = filteredUsers.map((u, i) => [
+      i + 1,
+      u.userName,
+      u.empname,
+      u.enrollmentId,
+      u.role,
+      u.active ? "Y" : "N",
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+    });
+
+    doc.save("UserMaster.pdf");
+  };
+
   return (
     <>
       {/* Header */}
@@ -315,7 +386,22 @@ const UserMaster = () => {
               </select>
               <span className="ml-2 text-sm">entries</span>
             </div>
+            <div className="flex">
+              <button onClick={handleCopy} className="px-3 py-1 text-gray-800">
+                <GoCopy />
+              </button>
 
+              <button
+                onClick={handleExcel}
+                className="px-3 py-1 text-green-700"
+              >
+                <FaFileExcel />
+              </button>
+
+              <button onClick={handlePDF} className="px-3 py-1 text-red-600">
+                <FaFilePdf />
+              </button>
+            </div>
             <input
               placeholder="Search"
               value={searchTerm}
@@ -383,35 +469,37 @@ const UserMaster = () => {
                       <td className="p-2  border  border-[oklch(0.8_0.001_106.424)]">
                         {user.active ? "Y" : "N"}
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-3 flex flex-row">
-                        {/* View */}
-                        <FaEye
-                          onClick={() => {
-                            setFormData(user);
-                            setMode("view");
-                            setOpenModal(true);
-                          }}
-                          className="inline text-blue-500 cursor-pointer text-lg"
-                        />
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                        <div className="flex flex-row space-x-3 ">
+                          {/* View */}
+                          <FaEye
+                            onClick={() => {
+                              setFormData(user);
+                              setMode("view");
+                              setOpenModal(true);
+                            }}
+                            className="inline text-blue-500 cursor-pointer text-lg"
+                          />
 
-                        {/* Edit */}
-                        <FaPen
-                          onClick={() => {
-                            setFormData(user);
-                            setEditId(user.id);
-                            setMode("edit");
-                            setOpenModal(true);
-                          }}
-                          className="inline text-green-500 cursor-pointer text-lg"
-                        />
+                          {/* Edit */}
+                          <FaPen
+                            onClick={() => {
+                              setFormData(user);
+                              setEditId(user.id);
+                              setMode("edit");
+                              setOpenModal(true);
+                            }}
+                            className="inline text-green-500 cursor-pointer text-lg"
+                          />
 
-                        {/* Delete */}
-                        <MdDeleteForever
-                          onClick={() =>
-                            setUsers(users.filter((v) => v.id !== user.id))
-                          }
-                          className="inline text-red-500 cursor-pointer text-xl"
-                        />
+                          {/* Delete */}
+                          <MdDeleteForever
+                            onClick={() =>
+                              setUsers(users.filter((v) => v.id !== user.id))
+                            }
+                            className="inline text-red-500 cursor-pointer text-xl"
+                          />
+                        </div>
                       </td>
                     </tr>
                   ))
