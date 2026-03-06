@@ -4,8 +4,11 @@ import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { FaEye, FaPen } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
 
 const CardDetach = () => {
+  const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [visitors, setVisitors] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -253,7 +256,7 @@ const CardDetach = () => {
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
                   <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                    Sl.No
+                    SL.NO
                   </th>
                   <th
                     className="p-2 
@@ -336,27 +339,37 @@ const CardDetach = () => {
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.meetingPerson}
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-2">
-                        <button
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-3 flex flex-row">
+                        {/* View */}
+                        <FaEye
+                          onClick={() => {
+                            setFormData(item);
+                            setMode("view");
+                            setOpenModal(true);
+                          }}
+                          className="inline text-blue-500 cursor-pointer text-lg"
+                        />
+
+                        {/* Edit */}
+                        <FaPen
                           onClick={() => {
                             setFormData(item);
                             setEditId(item.id);
+                            setMode("edit");
                             setOpenModal(true);
                           }}
-                          className="bg-blue-500 text-white px-2 py-1 rounded text-xs"
-                        >
-                          Edit
-                        </button>
-                        <button
+                          className="inline text-green-500 cursor-pointer text-lg"
+                        />
+
+                        {/* Delete */}
+                        <MdDeleteForever
                           onClick={() =>
                             setVisitors(
                               visitors.filter((v) => v.id !== item.id),
                             )
                           }
-                          className="bg-red-500 text-white px-2 py-1 rounded text-xs"
-                        >
-                          Delete
-                        </button>
+                          className="inline text-red-500 cursor-pointer text-xl"
+                        />
                       </td>
                     </tr>
                   ))
@@ -439,6 +452,7 @@ const CardDetach = () => {
               name="searchType"
               value={formData.searchType}
               onChange={handleChange}
+                disabled={mode === "view"}
               className={inputStyle}
             >
               <option>Mobile no.</option>
@@ -452,6 +466,7 @@ const CardDetach = () => {
               name="searchValue"
               value={formData.searchValue}
               onChange={handleChange}
+                disabled={mode === "view"}
               placeholder="Value"
               className={inputStyle}
               required
@@ -480,6 +495,7 @@ const CardDetach = () => {
                 name="visitorName"
                 value={formData.visitorName}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="Visitor Name"
                 className={inputStyle}
                 required
@@ -495,6 +511,7 @@ const CardDetach = () => {
                 name="company"
                 value={formData.company}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="Company"
                 className={inputStyle}
                 required
@@ -511,6 +528,7 @@ const CardDetach = () => {
                 name="mobile"
                 value={formData.mobile}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="Contact No"
                 className={inputStyle}
                 required
@@ -526,6 +544,7 @@ const CardDetach = () => {
                 name="contactPerson"
                 value={formData.contactPerson}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 className={inputStyle}
                 required
               >
@@ -549,6 +568,7 @@ const CardDetach = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="E-Mail"
                 className={inputStyle}
                 required
@@ -571,6 +591,7 @@ const CardDetach = () => {
                 name="cicpaCard"
                 value={formData.cicpaCard}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="CICPA Card Number"
                 className={inputStyle}
               />
@@ -585,6 +606,7 @@ const CardDetach = () => {
                 name="companyCode"
                 value={formData.companyCode}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="Company Code"
                 className={inputStyle}
               />
@@ -622,6 +644,7 @@ const CardDetach = () => {
                 name="idNumber"
                 value={formData.idNumber}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="ID Number"
                 className={inputStyle}
                 required
@@ -637,6 +660,7 @@ const CardDetach = () => {
                 name="nationality"
                 value={formData.nationality}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="Nationality"
                 className={inputStyle}
                 required
@@ -675,6 +699,7 @@ const CardDetach = () => {
                 name="accessCard"
                 value={formData.accessCard}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 className={inputStyle}
                 required
               >
@@ -690,6 +715,7 @@ const CardDetach = () => {
                 name="isPermanent"
                 checked={formData.isPermanent}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 required
               />
               <span>Is Permanent</span>
@@ -697,14 +723,16 @@ const CardDetach = () => {
           </div>
 
           {/* Save */}
-          <div className="flex justify-end mt-10">
-            <button
-              onClick={handleSubmit}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
-            >
-              Save
-            </button>
-          </div>
+          {mode !== "view" && (
+            <div className="flex justify-end mt-10">
+              <button
+                onClick={handleSubmit}
+                className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+              >
+                Save
+              </button>
+            </div>
+          )}
         </div>
       )}
     </>

@@ -20,16 +20,12 @@ const EmployeeMaster = () => {
     deviceEnrollmentId: "",
     companyEnrollmentId: "",
     fullName: "",
-    gender: "Male",
-    email: "",
     mobile: "",
     dob: null,
     doj: null,
     company: "",
     location: "",
-    department: "",
     designation: "",
-    empCategory: "",
     shift: "",
     leavePlan: "",
     firstApprover: "",
@@ -98,16 +94,12 @@ const EmployeeMaster = () => {
       deviceEnrollmentId: "",
       companyEnrollmentId: "",
       fullName: "",
-      gender: "Male",
-      email: "",
       mobile: "",
       dob: "",
       doj: "",
       company: "",
       location: "",
-      department: "",
       designation: "",
-      empCategory: "",
       shift: "",
       leavePlan: "",
       firstApprover: "",
@@ -179,7 +171,7 @@ const EmployeeMaster = () => {
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
                   <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                    Sl.No
+                    SL.NO
                   </th>
                   <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                     Device ID
@@ -188,28 +180,16 @@ const EmployeeMaster = () => {
                     Company ID
                   </th>
                   <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                    Gender
-                  </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                     Location
                   </th>
                   <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                     Full Name
                   </th>
                   <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                    Email
-                  </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                    Category
-                  </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                     Shift
                   </th>
                   <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                     Designation
-                  </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                    Department
                   </th>
                   <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                     Action
@@ -236,29 +216,16 @@ const EmployeeMaster = () => {
                         {item.companyEnrollmentId}
                       </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                        {item.gender === "Male" ? "M" : "F"}
-                      </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.location}
                       </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.fullName}
                       </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                        {item.email}
-                      </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                        {item.empCategory}
-                      </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.shift}
                       </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.designation}
-                      </td>
-
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                        {item.department}
                       </td>
 
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-3 flex flex-row">
@@ -414,49 +381,6 @@ const EmployeeMaster = () => {
               />
             </div>
 
-            {/* Gender */}
-            <div>
-              <label className={labelStyle}>Gender</label>
-              <div className="flex gap-4 mt-2">
-                <label>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="Male"
-                    checked={formData.gender === "Male"}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                  />{" "}
-                  Male
-                </label>
-
-                <label>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="Female"
-                    checked={formData.gender === "Female"}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                  />{" "}
-                  Female
-                </label>
-              </div>
-            </div>
-
-            {/* Email */}
-            <div>
-              <label className={labelStyle}>Email</label>
-              <input
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                placeholder="Email"
-                className={inputStyle}
-              />
-            </div>
-
             {/* Mobile */}
             <div>
               <label className={labelStyle}>Mobile</label>
@@ -531,25 +455,6 @@ const EmployeeMaster = () => {
               </select>
             </div>
 
-            {/* Department */}
-            <div>
-              <label className={labelStyle}>Department</label>
-              <select
-                name="department"
-                value={formData.department}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                className={inputStyle}
-              >
-                <option>-Select-</option>
-                <option> Treasury And Markets</option>
-                <option> IT </option>
-                <option> Human Resources</option>
-                <option> Banking Division</option>
-                <option> Commercial / SME Banking</option>
-              </select>
-            </div>
-
             {/* Designation */}
             <div>
               <label className={labelStyle}>Designation</label>
@@ -584,25 +489,6 @@ const EmployeeMaster = () => {
                 <option>Client Service Executive</option>
                 <option>Talent Acquisition Specialist</option>
                 <option>Driver</option>
-              </select>
-            </div>
-
-            {/* Emp Category */}
-            <div>
-              <label className={labelStyle}>Emp Category</label>
-              <select
-                name="empCategory"
-                value={formData.empCategory}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                className={inputStyle}
-              >
-                <option>-Select-</option>
-                <option>Full Time Equivalent</option>
-                <option>Contingent</option>
-                <option>Freelence</option>
-                <option>Contract</option>
-                <option>Permanent</option>
               </select>
             </div>
 

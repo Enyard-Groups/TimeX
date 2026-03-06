@@ -200,7 +200,7 @@ const Shift = () => {
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
                   <th className="p-2  border  border-[oklch(0.8_0.001_106.424)]">
-                    Sl.No
+                    SL.NO
                   </th>
                   <th className="p-2  border border-[oklch(0.8_0.001_106.424)]">
                     Shift Name
