@@ -2,14 +2,19 @@ import React, { useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { FaEye, FaPen } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
 
 const EmployeeCategory = () => {
+  const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [employeeCategory, setEmployeeCategory] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [editId, setEditId] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     company: "",
@@ -84,9 +89,20 @@ const EmployeeCategory = () => {
       isActive,
     };
 
-    setEmployeeCategory((prev) => [...prev, newemployeeCategory]);
+    if (editId) {
+      setEmployeeCategory((prev) =>
+        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
+      );
+
+      toast.success("Data updated");
+    } else {
+      setEmployeeCategory((prev) => [...prev, newemployeeCategory]);
+
+      toast.success("Data Added");
+    }
 
     setOpenModal(false);
+    setEditId(null);
 
     setFormData({
       company: "",
@@ -98,19 +114,7 @@ const EmployeeCategory = () => {
       maxot: "",
       isActive: false,
     });
-
-    toast.success("Added");
   };
-
-  const times = [];
-
-  for (let h = 0; h < 24; h++) {
-    for (let m = 0; m < 60; m += 30) {
-      const hour = String(h).padStart(2, "0");
-      const min = String(m).padStart(2, "0");
-      times.push(`${hour}:${min}:00`);
-    }
-  }
 
   return (
     <>
@@ -229,31 +233,58 @@ const EmployeeCategory = () => {
                         {item.description}
                       </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                        {item.workhours}
+                        <td>
+                          {item.workhours
+                            ? item.workhours.toLocaleTimeString()
+                            : ""}
+                        </td>
                       </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                        {item.minworkhours}
+                        <td>
+                          {item.minworkhours
+                            ? item.minworkhours.toLocaleTimeString()
+                            : ""}
+                        </td>
                       </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                        {item.maxot}
+                        <td>
+                          {item.maxot ? item.maxot.toLocaleTimeString() : ""}
+                        </td>
                       </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.isActive ? "Y" : "N"}
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-2">
-                        <button className="bg-blue-500 text-white px-2 py-1 rounded text-xs">
-                          Edit
-                        </button>
-                        <button
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-3 flex flex-row">
+                        {/* View */}
+                        <FaEye
+                          onClick={() => {
+                            setFormData(item);
+                            setMode("view");
+                            setOpenModal(true);
+                          }}
+                          className="inline text-blue-500 cursor-pointer text-lg"
+                        />
+
+                        {/* Edit */}
+                        <FaPen
+                          onClick={() => {
+                            setFormData(item);
+                            setEditId(item.id);
+                            setMode("edit");
+                            setOpenModal(true);
+                          }}
+                          className="inline text-green-500 cursor-pointer text-lg"
+                        />
+
+                        {/* Delete */}
+                        <MdDeleteForever
                           onClick={() =>
                             setEmployeeCategory(
                               employeeCategory.filter((v) => v.id !== item.id),
                             )
                           }
-                          className="bg-red-500 text-white px-2 py-1 rounded text-xs"
-                        >
-                          Delete
-                        </button>
+                          className="inline text-red-500 cursor-pointer text-xl"
+                        />
                       </td>
                     </tr>
                   ))
@@ -340,6 +371,7 @@ const EmployeeCategory = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="Name"
                 className={inputStyle}
                 required
@@ -355,6 +387,7 @@ const EmployeeCategory = () => {
                 name="code"
                 value={formData.code}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="Code"
                 className={inputStyle}
                 required
@@ -367,6 +400,7 @@ const EmployeeCategory = () => {
                 name="company"
                 value={formData.company}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 className={inputStyle}
                 required
               >
@@ -381,6 +415,7 @@ const EmployeeCategory = () => {
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="Description"
                 className={inputStyle}
                 required
@@ -389,56 +424,51 @@ const EmployeeCategory = () => {
 
             <div>
               <label className={labelStyle}>Work Hours</label>
-              <select
-                name="workhours"
-                value={formData.workhours}
-                onChange={handleChange}
+              <DatePicker
+                placeholderText="hh:mm"
+                selected={formData.workhours}
+                onChange={(time) =>
+                  setFormData({ ...formData, workhours: time })
+                }
+                showTimeSelect
+                showTimeSelectOnly
+                timeIntervals={30}
+                timeCaption="Time"
+                dateFormat="HH:mm"
                 className={inputStyle}
-                required
-              >
-                <option value="">hh-mm-ss</option>
-                {times.map((time, index) => (
-                  <option key={index} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
 
             <div>
               <label className={labelStyle}>Min Work Hours</label>
-              <select
-                name="minworkhours"
-                value={formData.minworkhours}
-                onChange={handleChange}
+              <DatePicker
+                placeholderText="hh:mm"
+                selected={formData.minworkhours}
+                onChange={(time) =>
+                  setFormData({ ...formData, minworkhours: time })
+                }
+                showTimeSelect
+                showTimeSelectOnly
+                timeIntervals={30}
+                timeCaption="Time"
+                dateFormat="HH:mm"
                 className={inputStyle}
-                required
-              >
-                <option value="">hh-mm-ss</option>
-                {times.map((time, index) => (
-                  <option key={index} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
 
             <div>
               <label className={labelStyle}>Max OverTime</label>
-              <select
-                name="maxot"
-                value={formData.maxot}
-                onChange={handleChange}
+              <DatePicker
+                placeholderText="hh:mm"
+                selected={formData.maxot}
+                onChange={(time) => setFormData({ ...formData, maxot: time })}
+                showTimeSelect
+                showTimeSelectOnly
+                timeIntervals={30}
+                timeCaption="Time"
+                dateFormat="HH:mm"
                 className={inputStyle}
-                required
-              >
-                <option value="">hh-mm-ss</option>
-                {times.map((time, index) => (
-                  <option key={index} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
 
             <div className="flex items-center gap-2 mt-6">
@@ -448,19 +478,22 @@ const EmployeeCategory = () => {
                 name="isActive"
                 checked={formData.isActive}
                 onChange={handleChange}
+                disabled={mode === "view"}
               />
             </div>
           </div>
 
           {/* Save */}
-          <div className="flex justify-end mt-10">
-            <button
-              onClick={handleSubmit}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
-            >
-              Save
-            </button>
-          </div>
+          {mode !== "view" && (
+            <div className="flex justify-end mt-10">
+              <button
+                onClick={handleSubmit}
+                className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+              >
+                Save
+              </button>
+            </div>
+          )}
         </div>
       )}
     </>

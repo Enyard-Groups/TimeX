@@ -23,7 +23,7 @@ const RecentActivity = () => {
       </h2>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left border-collapse">
+        <table className="w-full text-md text-left border-collapse">
           <thead>
             <tr className="border-b border-gray-200 text-gray-600">
               <th className="py-3 px-4">Employee ID</th>

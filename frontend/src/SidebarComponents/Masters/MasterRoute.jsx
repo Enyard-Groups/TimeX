@@ -3,7 +3,6 @@ import { Route, Routes } from "react-router-dom";
 import EmployeeMaster from "./Employee/EmployeeMaster";
 import EmployeeCategory from "./Employee/EmployeeCategory";
 import HolidayMaster from "./Holiday/HolidayMaster";
-import RamadanSchedule from "./EmpTimeSchedule/RamadanSchedule";
 import Navbar from "../../components/Navbar";
 import Department from "./Department";
 import Designation from "./Designation";
@@ -27,7 +26,6 @@ const MasterRoute = ({ user }) => {
           <Route path="employee-master" element={<EmployeeMaster />} />
           <Route path="employee-category" element={<EmployeeCategory />} />
           <Route path="holiday-master" element={<HolidayMaster />} />
-          <Route path="ramdan-schedule" element={<RamadanSchedule />} />
           <Route path="user-master" element={<UserMaster />} />
           <Route path="claim-category" element={<ClaimCategory />} />
           <Route path="issue-type" element={<IssueType />} />

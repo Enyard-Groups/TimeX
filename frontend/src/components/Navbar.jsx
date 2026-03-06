@@ -115,14 +115,14 @@ export default function Navbar() {
 
                   <div className="overflow-y-auto h-[calc(100%-56px)] p-3">
                     {notifications.length === 0 ? (
-                      <div className="flex items-center justify-center h-full text-sm opacity-60 text-[oklch(0.147_0.004_49.25)]">
+                      <div className="flex items-center justify-center h-full text-md opacity-60 text-[oklch(0.147_0.004_49.25)]">
                         No Notifications
                       </div>
                     ) : (
                       notifications.map((item, index) => (
                         <div
                           key={index}
-                          className="p-3 mb-2 rounded-xl bg-[oklch(0.97_0.001_106.424)] hover:bg-[oklch(0.923_0.003_48.717)] transition text-sm text-[oklch(0.147_0.004_49.25)]"
+                          className="p-3 mb-2 rounded-xl bg-[oklch(0.97_0.001_106.424)] hover:bg-[oklch(0.923_0.003_48.717)] transition text-md text-[oklch(0.147_0.004_49.25)]"
                         >
                           {item.message}
                         </div>
@@ -138,7 +138,7 @@ export default function Navbar() {
               <p className="text-md font-bold">
                 {user?.name || formattedName || "User"}
               </p>
-              <p className="text-sm mt-1 opacity-60">
+              <p className="text-md mt-1 opacity-60">
                 {user?.role?.charAt(0).toUpperCase() +
                   user?.role?.slice(1).toLowerCase()}
               </p>
@@ -161,14 +161,14 @@ export default function Navbar() {
                   <Link to="/my-profile">
                     <button
                       onClick={() => setDropdownOpen(false)}
-                      className="w-full text-left px-6 my-2 pt-2 text-sm font-semibold text-[oklch(0.147_0.004_49.25)]"
+                      className="w-full text-left px-6 my-2 pt-2 text-md font-semibold text-[oklch(0.147_0.004_49.25)]"
                     >
                       My Profile
                     </button>
                   </Link>
 
                   <div className="m-3 px-3 text-[oklch(0.147_0.004_49.25)]">
-                    <p className="text-sm font-bold">
+                    <p className="text-md font-bold">
                       {user?.name || formattedName || "User"}
                     </p>
                     <p className="text-xs mt-1 opacity-60">{user?.email}</p>
@@ -179,7 +179,7 @@ export default function Navbar() {
                       setDropdownOpen(false);
                       handleLogout();
                     }}
-                    className="w-full text-left px-6 py-3 text-sm font-semibold border-t border-[oklch(0.923_0.003_48.717)] text-[oklch(0.577_0.245_27.325)]"
+                    className="w-full text-left px-6 py-3 text-md font-semibold border-t border-[oklch(0.923_0.003_48.717)] text-[oklch(0.577_0.245_27.325)]"
                   >
                     Logout
                   </button>

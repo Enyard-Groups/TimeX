@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const CardDetach = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -9,7 +11,7 @@ const CardDetach = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [editId, setEditId] = useState(null);
   const [formData, setFormData] = useState({
     searchType: "Mobile no.",
     searchValue: "",
@@ -20,10 +22,10 @@ const CardDetach = () => {
     email: "",
     cicpaCard: "",
     companyCode: "",
-    cicpaExpiry: "",
+    cicpaExpiry: null,
     idNumber: "",
     nationality: "",
-    idExpiry: "",
+    idExpiry: null,
     accessCard: "",
     isPermanent: false,
   });
@@ -157,9 +159,20 @@ const CardDetach = () => {
       meetingPerson: contactPerson,
     };
 
-    setVisitors((prev) => [...prev, newVisitor]);
+    if (editId) {
+      setVisitors((prev) =>
+        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
+      );
+
+      toast.success("Data updated");
+    } else {
+      setVisitors((prev) => [...prev, newVisitor]);
+
+      toast.success("Data Added");
+    }
 
     setOpenModal(false);
+    setEditId(null);
 
     setFormData({
       searchType: "Mobile no.",
@@ -178,8 +191,6 @@ const CardDetach = () => {
       accessCard: "",
       isPermanent: false,
     });
-
-    toast.success("Visitor Details Added Successfully");
   };
 
   return (
@@ -326,7 +337,14 @@ const CardDetach = () => {
                         {item.meetingPerson}
                       </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-2">
-                        <button className="bg-blue-500 text-white px-2 py-1 rounded text-xs">
+                        <button
+                          onClick={() => {
+                            setFormData(item);
+                            setEditId(item.id);
+                            setOpenModal(true);
+                          }}
+                          className="bg-blue-500 text-white px-2 py-1 rounded text-xs"
+                        >
                           Edit
                         </button>
                         <button
@@ -577,13 +595,14 @@ const CardDetach = () => {
                 CICPA Expiry Date
                 <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
               </label>
-              <input
-                type="date"
-                name="cicpaExpiry"
-                value={formData.cicpaExpiry}
-                onChange={handleChange}
+              <DatePicker
+                placeholderText="dd/mm/yyyy"
+                selected={formData.cicpaExpiry}
+                onChange={(date) =>
+                  setFormData({ ...formData, cicpaExpiry: date })
+                }
                 className={inputStyle}
-                required
+                portalId="root"
               />
             </div>
           </div>
@@ -629,13 +648,14 @@ const CardDetach = () => {
                 Expiry Date
                 <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
               </label>
-              <input
-                type="date"
-                name="idExpiry"
-                value={formData.idExpiry}
-                onChange={handleChange}
+              <DatePicker
+                placeholderText="dd/mm/yyyy"
+                selected={formData.idExpiry}
+                onChange={(date) =>
+                  setFormData({ ...formData, idExpiry: date })
+                }
                 className={inputStyle}
-                required
+                portalId="root"
               />
             </div>
           </div>

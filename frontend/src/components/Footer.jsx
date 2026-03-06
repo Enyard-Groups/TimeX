@@ -12,7 +12,7 @@ const Footer = () => {
       }}
     >
       <div
-        className="text-sm flex justify-center items-center gap-2"
+        className="text-md flex justify-center items-center gap-2"
         style={{ color: "oklch(0.423 0.003 48.717)" }}
       >
         © {currentYear} TimeX |{" "}

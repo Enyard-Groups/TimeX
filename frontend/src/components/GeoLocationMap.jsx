@@ -78,7 +78,7 @@ const GeoLocationMap = () => {
               }}
             >
               <Tooltip direction="top" offset={[0, -10]} opacity={1}>
-                <div className="text-sm">
+                <div className="text-md">
                   <strong>{location.name}</strong>
                   <br />
                   Total Users: {location.value}

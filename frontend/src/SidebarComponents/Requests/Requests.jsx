@@ -15,9 +15,9 @@ const Requests = ({ user }) => {
           {/* Requests Main Button */}
           <div
             onClick={() => setOpenRequests(!openRequests)}
-            className="flex items-center justify-between cursor-pointer text-sm p-2 hover:bg-gray-200 rounded"
+            className="flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded"
           >
-            <div className="flex items-center gap-2 font-medium text-sm">
+            <div className="flex items-center gap-2 font-medium text-md">
               <IoInformationCircle />
               <span>REQUESTS</span>
               {openRequests ? (
@@ -30,7 +30,7 @@ const Requests = ({ user }) => {
 
           {/* Sub Menu */}
           {openRequests && (
-            <div className="ml-6 mt-2 flex flex-col gap-2 text-sm space-y-2">
+            <div className="ml-6 mt-2 flex flex-col gap-2 text-md space-y-2">
               <Link
                 to="/requests/mannual-entry-req"
                 className="hover:text-[oklch(0.645_0.246_16.439)]"

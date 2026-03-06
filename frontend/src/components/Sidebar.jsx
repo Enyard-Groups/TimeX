@@ -24,12 +24,14 @@ const Sidebar = ({ user }) => {
       }}
     >
       <nav className="px-4 space-y-2">
-
         {isAdmin ? (
           <div
             className="space-y-5"
             style={{ color: "oklch(0.147 0.004 49.25)" }}
           >
+            <div className="mt-5 pl-7 font-bold text-md">
+              <Link to="/dashboard">DASHBOARD</Link>
+            </div>
             <Master user={user} />
             <DeviceManagement user={user} />
             <Transaction user={user} />
@@ -42,7 +44,6 @@ const Sidebar = ({ user }) => {
           </div>
         ) : (
           <div className="space-y-2">
-
             <Link
               to="/myattendance"
               className="block w-full text-left px-4 py-3 rounded-2xl font-medium transition-all"
@@ -62,10 +63,8 @@ const Sidebar = ({ user }) => {
             >
               Apply for Leave
             </Link>
-
           </div>
         )}
-
       </nav>
     </div>
   );

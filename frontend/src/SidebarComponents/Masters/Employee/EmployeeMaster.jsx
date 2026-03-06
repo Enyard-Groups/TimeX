@@ -2,13 +2,19 @@ import React, { useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { FaEye, FaPen } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
 
 const EmployeeMaster = () => {
+  const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [employeeMaster, setEmployeeMaster] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [editId, setEditId] = useState(null);
 
   const [formData, setFormData] = useState({
     deviceEnrollmentId: "",
@@ -17,8 +23,8 @@ const EmployeeMaster = () => {
     gender: "Male",
     email: "",
     mobile: "",
-    dob: "",
-    doj: "",
+    dob: null,
+    doj: null,
     company: "",
     location: "",
     department: "",
@@ -74,9 +80,19 @@ const EmployeeMaster = () => {
       return;
     }
 
-    setEmployeeMaster((prev) => [...prev, { id: Date.now(), ...formData }]);
+    if (editId) {
+      setEmployeeMaster((prev) =>
+        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
+      );
+
+      toast.success("Data updated");
+    } else {
+      setEmployeeMaster((prev) => [...prev, { id: Date.now(), ...formData }]);
+      toast.success("Data added");
+    }
 
     setOpenModal(false);
+    setEditId(null);
 
     setFormData({
       deviceEnrollmentId: "",
@@ -102,8 +118,6 @@ const EmployeeMaster = () => {
       active: false,
       isMobileUser: false,
     });
-
-    toast.success("Employee added");
   };
 
   return (
@@ -247,21 +261,37 @@ const EmployeeMaster = () => {
                         {item.department}
                       </td>
 
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-2">
-                        <button className="bg-blue-500 text-white px-2 py-1 rounded text-xs">
-                          Edit
-                        </button>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-3 flex flex-row">
+                        {/* View */}
+                        <FaEye
+                          onClick={() => {
+                            setFormData(item);
+                            setMode("view");
+                            setOpenModal(true);
+                          }}
+                          className="inline text-blue-500 cursor-pointer text-lg"
+                        />
 
-                        <button
+                        {/* Edit */}
+                        <FaPen
+                          onClick={() => {
+                            setFormData(item);
+                            setEditId(item.id);
+                            setMode("edit");
+                            setOpenModal(true);
+                          }}
+                          className="inline text-green-500 cursor-pointer text-lg"
+                        />
+
+                        {/* Delete */}
+                        <MdDeleteForever
                           onClick={() =>
                             setEmployeeMaster(
                               employeeMaster.filter((v) => v.id !== item.id),
                             )
                           }
-                          className="bg-red-500 text-white px-2 py-1 rounded text-xs"
-                        >
-                          Delete
-                        </button>
+                          className="inline text-red-500 cursor-pointer text-xl"
+                        />
                       </td>
                     </tr>
                   ))
@@ -347,6 +377,7 @@ const EmployeeMaster = () => {
                 name="deviceEnrollmentId"
                 value={formData.deviceEnrollmentId}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="DeviceID"
                 className={inputStyle}
               />
@@ -361,6 +392,7 @@ const EmployeeMaster = () => {
                 name="companyEnrollmentId"
                 value={formData.companyEnrollmentId}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="CompanyID"
                 className={inputStyle}
               />
@@ -376,6 +408,7 @@ const EmployeeMaster = () => {
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="Full Name"
                 className={inputStyle}
               />
@@ -392,6 +425,7 @@ const EmployeeMaster = () => {
                     value="Male"
                     checked={formData.gender === "Male"}
                     onChange={handleChange}
+                    disabled={mode === "view"}
                   />{" "}
                   Male
                 </label>
@@ -403,6 +437,7 @@ const EmployeeMaster = () => {
                     value="Female"
                     checked={formData.gender === "Female"}
                     onChange={handleChange}
+                    disabled={mode === "view"}
                   />{" "}
                   Female
                 </label>
@@ -416,6 +451,7 @@ const EmployeeMaster = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="Email"
                 className={inputStyle}
               />
@@ -428,6 +464,7 @@ const EmployeeMaster = () => {
                 name="mobile"
                 value={formData.mobile}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="Mobile"
                 className={inputStyle}
               />
@@ -436,12 +473,12 @@ const EmployeeMaster = () => {
             {/* Date Of Birth */}
             <div>
               <label className={labelStyle}>Date Of Birth</label>
-              <input
-                type="date"
-                name="dob"
-                value={formData.dob}
-                onChange={handleChange}
+              <DatePicker
+                placeholderText="dd/mm/yyyy"
+                selected={formData.dob}
+                onChange={(date) => setFormData({ ...formData, dob: date })}
                 className={inputStyle}
+                portalId="root"
               />
             </div>
           </div>
@@ -450,12 +487,12 @@ const EmployeeMaster = () => {
             {/* Date Of Join */}
             <div>
               <label className={labelStyle}>Date Of Join</label>
-              <input
-                type="date"
-                name="doj"
-                value={formData.doj}
-                onChange={handleChange}
+              <DatePicker
+                placeholderText="dd/mm/yyyy"
+                selected={formData.doj}
+                onChange={(date) => setFormData({ ...formData, doj: date })}
                 className={inputStyle}
+                portalId="root"
               />
             </div>
 
@@ -466,6 +503,7 @@ const EmployeeMaster = () => {
                 name="company"
                 value={formData.company}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 className={inputStyle}
               >
                 <option>-Select-</option>
@@ -480,6 +518,7 @@ const EmployeeMaster = () => {
                 name="location"
                 value={formData.location}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 className={inputStyle}
               >
                 <option>-Select-</option>
@@ -499,6 +538,7 @@ const EmployeeMaster = () => {
                 name="department"
                 value={formData.department}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 className={inputStyle}
               >
                 <option>-Select-</option>
@@ -517,6 +557,7 @@ const EmployeeMaster = () => {
                 name="designation"
                 value={formData.designation}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 className={inputStyle}
               >
                 <option>-Select-</option>
@@ -553,6 +594,7 @@ const EmployeeMaster = () => {
                 name="empCategory"
                 value={formData.empCategory}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 className={inputStyle}
               >
                 <option>-Select-</option>
@@ -571,6 +613,7 @@ const EmployeeMaster = () => {
                 name="shift"
                 value={formData.shift}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 className={inputStyle}
               >
                 <option>-Select-</option>
@@ -588,6 +631,7 @@ const EmployeeMaster = () => {
                 name="leavePlan"
                 value={formData.leavePlan}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 className={inputStyle}
               >
                 <option>-Select-</option>
@@ -604,6 +648,7 @@ const EmployeeMaster = () => {
                 name="firstApprover"
                 value={formData.firstApprover}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 className={inputStyle}
               >
                 <option>-Select-</option>
@@ -619,6 +664,7 @@ const EmployeeMaster = () => {
                 name="secondApprover"
                 value={formData.secondApprover}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 className={inputStyle}
               >
                 <option>-Select-</option>
@@ -635,6 +681,7 @@ const EmployeeMaster = () => {
                 name="isManager"
                 checked={formData.isManager}
                 onChange={handleChange}
+                disabled={mode === "view"}
               />
             </div>
 
@@ -649,6 +696,7 @@ const EmployeeMaster = () => {
                     value="Card"
                     checked={formData.type === "Card"}
                     onChange={handleChange}
+                    disabled={mode === "view"}
                   />{" "}
                   Card
                 </label>
@@ -660,6 +708,7 @@ const EmployeeMaster = () => {
                     value="User"
                     checked={formData.type === "User"}
                     onChange={handleChange}
+                    disabled={mode === "view"}
                   />{" "}
                   User
                 </label>
@@ -674,6 +723,7 @@ const EmployeeMaster = () => {
                 name="breakHoursFriday"
                 checked={formData.breakHoursFriday}
                 onChange={handleChange}
+                disabled={mode === "view"}
               />
             </div>
 
@@ -685,6 +735,7 @@ const EmployeeMaster = () => {
                 name="active"
                 checked={formData.active}
                 onChange={handleChange}
+                disabled={mode === "view"}
               />
             </div>
 
@@ -696,19 +747,22 @@ const EmployeeMaster = () => {
                 name="isMobileUser"
                 checked={formData.isMobileUser}
                 onChange={handleChange}
+                disabled={mode === "view"}
               />
             </div>
           </div>
 
           {/* Save */}
-          <div className="flex justify-end mt-10">
-            <button
-              onClick={handleSubmit}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
-            >
-              Save
-            </button>
-          </div>
+          {mode !== "view" && (
+            <div className="flex justify-end mt-10">
+              <button
+                onClick={handleSubmit}
+                className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+              >
+                Save
+              </button>
+            </div>
+          )}
         </div>
       )}
     </>

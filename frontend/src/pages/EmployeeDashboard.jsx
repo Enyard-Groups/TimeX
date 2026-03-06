@@ -17,7 +17,7 @@ const EmployeeDashboard = ({ user }) => {
       <div className="p-8 bg-white rounded-3xl border shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
         <div>
           <h3 className="text-xl mb-2">Today’s Attendance</h3>
-          <p className="text-sm opacity-60">
+          <p className="text-md opacity-60">
             Make sure to punch in and out on time.
           </p>
         </div>
@@ -49,7 +49,7 @@ const EmployeeDashboard = ({ user }) => {
         <h3 className="text-md mb-6">February Attendance History</h3>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-md">
             <thead className="opacity-50 border-b">
               <tr>
                 <th className="text-left py-3">Date</th>

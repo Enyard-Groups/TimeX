@@ -2,14 +2,17 @@ import React, { useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
+import { FaEye, FaPen } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
 
 const DeviceModel = () => {
+  const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [deviceModel, setDeviceModel] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [editId, setEditId] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     company: "",
@@ -62,9 +65,20 @@ const DeviceModel = () => {
       isActive,
     };
 
-    setDeviceModel((prev) => [...prev, newdeviceModel]);
+    if (editId) {
+      setDeviceModel((prev) =>
+        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
+      );
+
+      toast.success("Data updated");
+    } else {
+      setDeviceModel((prev) => [...prev, newdeviceModel]);
+
+      toast.success("Data Added");
+    }
 
     setOpenModal(false);
+    setEditId(null);
 
     setFormData({
       company: "",
@@ -72,8 +86,6 @@ const DeviceModel = () => {
       code: "",
       isActive: false,
     });
-
-    toast.success("Location added");
   };
 
   return (
@@ -180,20 +192,37 @@ const DeviceModel = () => {
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         {item.isActive ? "Y" : "N"}
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-2">
-                        <button className="bg-blue-500 text-white px-2 py-1 rounded text-xs">
-                          Edit
-                        </button>
-                        <button
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-3 flex flex-row">
+                        {/* View */}
+                        <FaEye
+                          onClick={() => {
+                            setFormData(item);
+                            setMode("view");
+                            setOpenModal(true);
+                          }}
+                          className="inline text-blue-500 cursor-pointer text-lg"
+                        />
+
+                        {/* Edit */}
+                        <FaPen
+                          onClick={() => {
+                            setFormData(item);
+                            setEditId(item.id);
+                            setMode("edit");
+                            setOpenModal(true);
+                          }}
+                          className="inline text-green-500 cursor-pointer text-lg"
+                        />
+
+                        {/* Delete */}
+                        <MdDeleteForever
                           onClick={() =>
                             setDeviceModel(
                               deviceModel.filter((v) => v.id !== item.id),
                             )
                           }
-                          className="bg-red-500 text-white px-2 py-1 rounded text-xs"
-                        >
-                          Delete
-                        </button>
+                          className="inline text-red-500 cursor-pointer text-xl"
+                        />
                       </td>
                     </tr>
                   ))
@@ -282,6 +311,7 @@ const DeviceModel = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="Name"
                 className={inputStyle}
                 required
@@ -297,6 +327,7 @@ const DeviceModel = () => {
                 name="code"
                 value={formData.code}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="Code"
                 className={inputStyle}
                 required
@@ -312,6 +343,7 @@ const DeviceModel = () => {
                 name="company"
                 value={formData.company}
                 onChange={handleChange}
+                disabled={mode === "view"}
                 placeholder="Company"
                 className={inputStyle}
                 required
@@ -325,19 +357,22 @@ const DeviceModel = () => {
                 name="isActive"
                 checked={formData.isActive}
                 onChange={handleChange}
+                disabled={mode === "view"}
               />
             </div>
           </div>
 
           {/* Save */}
-          <div className="flex justify-end mt-10">
-            <button
-              onClick={handleSubmit}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
-            >
-              Save
-            </button>
-          </div>
+          {mode !== "view" && (
+            <div className="flex justify-end mt-10">
+              <button
+                onClick={handleSubmit}
+                className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+              >
+                Save
+              </button>
+            </div>
+          )}
         </div>
       )}
     </>

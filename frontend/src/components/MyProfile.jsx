@@ -41,7 +41,7 @@ const MyProfile = () => {
           {/* Profile Info */}
           <div className="space-y-6">
             <div>
-              <label className="block text-sm text-gray-600 mb-1">
+              <label className="block text-md text-gray-600 mb-1">
                 Full Name
               </label>
               <p className="text-gray-800 font-medium">
@@ -50,7 +50,7 @@ const MyProfile = () => {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-600 mb-1">
+              <label className="block text-md text-gray-600 mb-1">
                 Email Address
               </label>
               <p className="text-gray-800 font-medium">

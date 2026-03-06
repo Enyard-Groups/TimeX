@@ -79,7 +79,7 @@ const AdminDashboard = ({ user }) => {
   return (
     <>
       <div className="mb-10 font-bold">
-        <h2 className="text-xl tracking-tight">
+        <h2 className="text-2xl tracking-tight">
           Welcome back,{" "}
           <span style={{ color: "oklch(0.645 0.246 16.439)" }}>
             {user?.name || formattedName}
@@ -104,7 +104,7 @@ const AdminDashboard = ({ user }) => {
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />
 
           <p
-            className="text-sm mb-2"
+            className="text-md mb-2"
             style={{ color: "oklch(0.2 0.004 49.25)" }}
           >
             Total Employees
@@ -138,7 +138,7 @@ const AdminDashboard = ({ user }) => {
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />
 
           <p
-            className="text-sm mb-2"
+            className="text-md mb-2"
             style={{ color: "oklch(0.2 0.004 49.25)" }}
           >
             Present Today
@@ -172,7 +172,7 @@ const AdminDashboard = ({ user }) => {
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />
 
           <p
-            className="text-sm mb-2"
+            className="text-md mb-2"
             style={{ color: "oklch(0.2 0.004 49.25)" }}
           >
             Absent
@@ -206,7 +206,7 @@ const AdminDashboard = ({ user }) => {
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />
 
           <p
-            className="text-sm mb-2"
+            className="text-md mb-2"
             style={{ color: "oklch(0.2 0.004 49.25)" }}
           >
             Leave Requests

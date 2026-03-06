@@ -69,7 +69,7 @@ const DonutChart = ({attendanceData}) => {
         {/* Center Total */}
         {total > 0 && (
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <p className="text-sm text-gray-500">Total</p>
+            <p className="text-md text-gray-500">Total</p>
             <p className="text-2xl font-semibold text-gray-800">{total}</p>
           </div>
         )}
@@ -77,7 +77,7 @@ const DonutChart = ({attendanceData}) => {
 
       {/* Custom Legend */}
       {total > 0 && (
-        <div className="flex justify-center gap-6 mt-6 text-sm">
+        <div className="flex justify-center gap-6 mt-6 text-md">
           <div className="flex items-center gap-2">
             <span
               className="w-3 h-3 rounded-full"

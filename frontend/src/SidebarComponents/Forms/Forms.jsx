@@ -14,9 +14,9 @@ const Forms = ({ user }) => {
           {/* Forms Main Button */}
           <div
             onClick={() => setOpenForms(!openForms)}
-            className="flex items-center justify-between cursor-pointer text-sm p-2 hover:bg-gray-200 rounded"
+            className="flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded"
           >
-            <div className="flex items-center gap-2 font-medium text-sm">
+            <div className="flex items-center gap-2 font-medium text-md">
               <LuClipboardList />
               <span>FORMS</span>
               {openForms ? (
@@ -29,7 +29,7 @@ const Forms = ({ user }) => {
 
           {/* Sub Menu */}
           {openForms && (
-            <div className="ml-6 mt-2 flex flex-col gap-2 text-sm space-y-2">
+            <div className="ml-6 mt-2 flex flex-col gap-2 text-md space-y-2">
               <Link
                 to="/forms/monthly-fire-safety-inspections"
                 className="hover:text-[oklch(0.645_0.246_16.439)]"

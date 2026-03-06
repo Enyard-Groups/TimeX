@@ -1,9 +1,713 @@
-import React from 'react'
+import React, { useState } from "react";
+import { FaAngleRight } from "react-icons/fa6";
+import { RxCross2 } from "react-icons/rx";
+import toast from "react-hot-toast";
+import { FaEye, FaPen } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
 
 const UserMaster = () => {
-  return (
-    <div>UserMaster</div>
-  )
-}
+  const [mode, setMode] = useState(""); // "view" | "edit"
+  const [openModal, setOpenModal] = useState(false);
+  const [activeTab, setActiveTab] = useState("details");
+  const [editId, setEditId] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [entriesPerPage, setEntriesPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [menuData, setMenuData] = useState([
+    {
+      parentMenuID: 0,
+      menuID: 100,
+      menuName: "DASHBOARD",
+      url: "/dashboard",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 0,
+      menuID: 200,
+      menuName: "MASTERS",
+      url: "#",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 0,
+      menuID: 300,
+      menuName: "DEVICE MANAGEMENT",
+      url: "#",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 0,
+      menuID: 400,
+      menuName: "TRANSACTION",
+      url: "#",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 0,
+      menuID: 500,
+      menuName: "GEOFENCING",
+      url: "#",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 0,
+      menuID: 600,
+      menuName: "REQUESTS",
+      url: "#",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 0,
+      menuID: 700,
+      menuName: "REPORTS",
+      url: "#",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 0,
+      menuID: 800,
+      menuName: "VISITOR MANAGEMENT",
+      url: "#",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 0,
+      menuID: 900,
+      menuName: "FORMS",
+      url: "#",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 200,
+      menuID: 2003,
+      menuName: "DEPARTMENT",
+      url: "/masters/department",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 200,
+      menuID: 2004,
+      menuName: "DESIGNATION",
+      url: "/masters/",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 200,
+      menuID: 2005,
+      menuName: "SHIFT",
+      url: "/masters/",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 200,
+      menuID: 2006,
+      menuName: "EMPLOYEE",
+      url: "/masters/",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 200,
+      menuID: 2007,
+      menuName: "USER MASTER",
+      url: "/masters/",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 200,
+      menuID: 2008,
+      menuName: "ISSUE TYPE",
+      url: "/masters/",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 200,
+      menuID: 2010,
+      menuName: "HOLIDAY",
+      url: "/masters/",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 200,
+      menuID: 2013,
+      menuName: "CLAIM CATEGORY",
+      url: "/masters/",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 300,
+      menuID: 3001,
+      menuName: "LOCATION GROUP",
+      url: "",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 300,
+      menuID: 3002,
+      menuName: "DEVICE COMMUNICATION",
+      url: "",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 300,
+      menuID: 3003,
+      menuName: "DEVICE MANAGEMENT",
+      url: "",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 300,
+      menuID: 3004,
+      menuName: "DEVICE MODEL",
+      url: "",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 400,
+      menuID: 4001,
+      menuName: "MONITORING",
+      url: "",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 600,
+      menuID: 4002,
+      menuName: "MANNUAL ENRTY REQUEST",
+      url: "",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 70132,
+      menuID: 4003,
+      menuName: "MANNUAL ENTRY APPROVAL",
+      url: "",
+      isSelected: false,
+    },
+    {
+      parentMenuID: 400,
+      menuID: 4004,
+      menuName: "SHIFT PLANNER",
+      url: "",
+      isSelected: false,
+    },
+  ]);
 
-export default UserMaster
+  const [formData, setFormData] = useState({
+    userName: "",
+    empname: "",
+    enrollmentId: "",
+    company: "",
+    password: "",
+    active: false,
+    role: "Company Admin",
+  });
+
+  const inputStyle =
+    "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+
+  const labelStyle = "text-sm font-medium mb-1 block";
+
+  const filteredUsers = users.filter(
+    (u) =>
+      u.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.empname.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  const totalPages = Math.ceil(filteredUsers.length / entriesPerPage);
+  const startIndex = (currentPage - 1) * entriesPerPage;
+  const endIndex = startIndex + entriesPerPage;
+  const currentUsers = filteredUsers.slice(startIndex, endIndex);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = () => {
+    if (!formData.userName || !formData.company || !formData.empname) {
+      toast.error("Please fill required fields");
+      return;
+    }
+
+    const newUser = {
+      id: Date.now(),
+      ...formData,
+    };
+
+    if (editId) {
+      setUsers((prev) =>
+        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
+      );
+
+      toast.success("Data updated");
+    } else {
+      setUsers((prev) => [...prev, newUser]);
+
+      toast.success("Data Added");
+    }
+
+    setOpenModal(false);
+    setEditId(null);
+    setActiveTab("details");
+
+    setFormData({
+      userName: "",
+      empname: "",
+      enrollmentId: "",
+      company: "",
+      password: "",
+      active: false,
+      role: "User",
+    });
+  };
+
+  const handleCheckbox = (id) => {
+    setMenuData((prev) =>
+      prev.map((menu) =>
+        menu.menuID === id ? { ...menu, isSelected: !menu.isSelected } : menu,
+      ),
+    );
+  };
+
+  return (
+    <>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="flex items-center gap-2 text-lg font-semibold">
+          <FaAngleRight /> Masters <FaAngleRight />
+          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+            User Master
+          </div>
+        </h1>
+
+        {!openModal && (
+          <button
+            onClick={() => setOpenModal(true)}
+            className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md"
+          >
+            + Add New
+          </button>
+        )}
+      </div>
+
+      {/* ========================= LIST VIEW ========================= */}
+      {!openModal && (
+        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-4">
+          {/* Top Controls */}
+          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+            <div>
+              <label className="mr-2 text-sm">Show</label>
+              <select
+                value={entriesPerPage}
+                onChange={(e) => {
+                  setEntriesPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+              </select>
+              <span className="ml-2 text-sm">entries</span>
+            </div>
+
+            <input
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+            />
+          </div>
+
+          {/* Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead className="bg-[oklch(0.948_0.001_106.424)]">
+                <tr>
+                  <th className="p-2  border  border-[oklch(0.8_0.001_106.424)]">
+                    SL.No
+                  </th>
+                  <th className="p-2  border  border-[oklch(0.8_0.001_106.424)]">
+                    User Name
+                  </th>
+                  <th className="p-2  border  border-[oklch(0.8_0.001_106.424)]">
+                    Employee
+                  </th>
+                  <th className="p-2  border  border-[oklch(0.8_0.001_106.424)]">
+                    Employee Email
+                  </th>
+                  <th className="p-2  border  border-[oklch(0.8_0.001_106.424)]">
+                    Role
+                  </th>
+                  <th className="p-2  border  border-[oklch(0.8_0.001_106.424)]">
+                    Active
+                  </th>
+                  <th className="p-2  border  border-[oklch(0.8_0.001_106.424)]">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentUsers.length === 0 ? (
+                  <tr>
+                    <td colSpan="7" className="text-center p-4">
+                      No Data Available
+                    </td>
+                  </tr>
+                ) : (
+                  currentUsers.map((user, index) => (
+                    <tr key={user.id} className="text-center">
+                      <td className="p-2  border  border-[oklch(0.8_0.001_106.424)]">
+                        {index + 1}
+                      </td>
+                      <td className="p-2  border  border-[oklch(0.8_0.001_106.424)]">
+                        {user.userName}
+                      </td>
+                      <td className="p-2  border  border-[oklch(0.8_0.001_106.424)]">
+                        {user.empname}
+                      </td>
+                      <td className="p-2  border  border-[oklch(0.8_0.001_106.424)]">
+                        {user.enrollmentId}
+                      </td>
+                      <td className="p-2  border  border-[oklch(0.8_0.001_106.424)]">
+                        {user.role}
+                      </td>
+                      <td className="p-2  border  border-[oklch(0.8_0.001_106.424)]">
+                        {user.active ? "Y" : "N"}
+                      </td>
+                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] space-x-3 flex flex-row">
+                        {/* View */}
+                        <FaEye
+                          onClick={() => {
+                            setFormData(user);
+                            setMode("view");
+                            setOpenModal(true);
+                          }}
+                          className="inline text-blue-500 cursor-pointer text-lg"
+                        />
+
+                        {/* Edit */}
+                        <FaPen
+                          onClick={() => {
+                            setFormData(user);
+                            setEditId(user.id);
+                            setMode("edit");
+                            setOpenModal(true);
+                          }}
+                          className="inline text-green-500 cursor-pointer text-lg"
+                        />
+
+                        {/* Delete */}
+                        <MdDeleteForever
+                          onClick={() =>
+                            setUsers(users.filter((v) => v.id !== user.id))
+                          }
+                          className="inline text-red-500 cursor-pointer text-xl"
+                        />
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          <div className="flex justify-between items-center mt-4 text-sm">
+            <span>
+              Showing {Math.min(endIndex, filteredUsers.length)} of{" "}
+              {filteredUsers.length} entries
+            </span>
+
+            <div className="space-x-2">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(1)}
+                className="px-2 py-1  border rounded disabled:opacity-50"
+              >
+                First
+              </button>
+
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((prev) => prev - 1)}
+                className="px-2 py-1  border rounded disabled:opacity-50"
+              >
+                Previous
+              </button>
+
+              {[...Array(totalPages)].map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentPage(index + 1)}
+                  className={`px-2 py-1 rounded ${
+                    currentPage === index + 1
+                      ? "bg-green-500 text-white"
+                      : " border"
+                  }`}
+                >
+                  {index + 1}
+                </button>
+              ))}
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+                className="px-2 py-1  border rounded disabled:opacity-50"
+              >
+                Next
+              </button>
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(totalPages)}
+                className="px-2 py-1  border rounded disabled:opacity-50"
+              >
+                Last
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================= MODAL ========================= */}
+      {openModal && (
+        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6">
+          <div className="flex justify-between items-center border-b pb-3 mb-6">
+            <div className="flex gap-6">
+              <button
+                onClick={() => setActiveTab("details")}
+                className={`${
+                  activeTab === "details"
+                    ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
+                    : ""
+                }`}
+              >
+                User Details
+              </button>
+
+              <button
+                onClick={() => setActiveTab("roles")}
+                className={`${
+                  activeTab === "roles"
+                    ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
+                    : ""
+                }`}
+              >
+                User Roles
+              </button>
+
+              <button
+                onClick={() => setActiveTab("menu")}
+                className={`${
+                  activeTab === "menu"
+                    ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
+                    : ""
+                }`}
+              >
+                User Menu
+              </button>
+            </div>
+
+            <RxCross2
+              onClick={() => setOpenModal(false)}
+              className="cursor-pointer text-lg text-red-500"
+            />
+          </div>
+
+          {/* -------- TAB CONTENT -------- */}
+
+          {activeTab === "details" && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className={labelStyle}>
+                  User Name{" "}
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <input
+                  name="userName"
+                  value={formData.userName}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  className={inputStyle}
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>
+                  Employee Name{" "}
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <input
+                  name="empname"
+                  value={formData.empname}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  className={inputStyle}
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>Enrollment ID | Email</label>
+                <input
+                  name="enrollmentId"
+                  value={formData.enrollmentId}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  className={inputStyle}
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>
+                  Company{" "}
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <select
+                  name="company"
+                  value={formData.company}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  className={inputStyle}
+                >
+                  <option value="">Select</option>
+                  <option>Company</option>
+                </select>
+              </div>
+
+              <div>
+                <label className={labelStyle}>Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  className={inputStyle}
+                />
+              </div>
+
+              <div className="flex items-center gap-2 mt-6">
+                <label className={labelStyle}>Active</label>
+                <input
+                  type="checkbox"
+                  name="active"
+                  checked={formData.active}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                />
+              </div>
+            </div>
+          )}
+
+          {activeTab === "roles" && (
+            <div>
+              <label className={labelStyle}>User Role</label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                disabled={mode === "view"}
+                className={inputStyle}
+              >
+                <option>Company Admin</option>
+                <option>Manager / Approver</option>
+                <option>User</option>
+              </select>
+            </div>
+          )}
+
+          {activeTab === "menu" && (
+            <div className="w-full border border-[oklch(0.8_0.001_106.424)] rounded-md overflow-hidden">
+              {/* Header */}
+              <div className="bg-[oklch(0.645_0.246_16.439)] text-white text-center font-semibold py-2">
+                Select Menu to give the Access to the Current User:
+              </div>
+
+              {/* Table */}
+              <div className="overflow-auto max-h-[600px]">
+                <table className="w-full text-sm border-collapse">
+                  <thead className="bg-[oklch(0.948_0.001_106.424)]">
+                    <tr>
+                      <th className="border border-[oklch(0.8_0.001_106.424)] p-2 w-10"></th>
+                      <th className="border border-[oklch(0.8_0.001_106.424)]  p-2">
+                        ParentMenu ID
+                      </th>
+                      <th className="border border-[oklch(0.8_0.001_106.424)] p-2">
+                        Menu ID
+                      </th>
+                      <th className="border border-[oklch(0.8_0.001_106.424)] p-2 text-left">
+                        Menu Name
+                      </th>
+                      <th className="border border-[oklch(0.8_0.001_106.424)] p-2 text-left">
+                        URL
+                      </th>
+                      <th className="border border-[oklch(0.8_0.001_106.424)] p-2">
+                        IsSelected
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {menuData.map((menu, index) => (
+                      <tr key={index} className="hover:bg-gray-50">
+                        <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
+                          <input
+                            type="checkbox"
+                            checked={menu.isSelected}
+                            onChange={() => handleCheckbox(menu.menuID)}
+                          />
+                        </td>
+
+                        <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
+                          {menu.parentMenuID}
+                        </td>
+
+                        <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
+                          {menu.menuID}
+                        </td>
+
+                        <td className="border border-[oklch(0.8_0.001_106.424)] p-2 ">
+                          {menu.menuName}
+                        </td>
+
+                        <td className="border border-[oklch(0.8_0.001_106.424)] p-2">
+                          {menu.url}
+                        </td>
+
+                        <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
+                          {menu.isSelected ? "True" : "False"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {mode !== "view" && (
+            <div className="flex justify-end mt-10">
+              <button
+                onClick={handleSubmit}
+                className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+              >
+                Save
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </>
+  );
+};
+
+export default UserMaster;
