@@ -169,14 +169,50 @@ const Shift = () => {
           index + 1,
           item.name,
           item.code,
-          item.intime ? item.intime.toLocaleTimeString() : "",
-          item.outtime ? item.outtime.toLocaleTimeString() : "",
+          item.intime
+            ? item.intime.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              })
+            : "",
+          item.outtime
+            ? item.outtime.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              })
+            : "",
           item.weekoff1 || "NIL",
           item.weekoff2 || "NIL",
-          item.ingt ? item.ingt.toLocaleTimeString() : "",
-          item.outgt ? item.outgt.toLocaleTimeString() : "",
-          item.minot ? item.minot.toLocaleTimeString() : "",
-          item.maxot ? item.maxot.toLocaleTimeString() : "",
+          item.ingt
+            ? item.ingt.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              })
+            : "",
+          item.outgt
+            ? item.outgt.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              })
+            : "",
+          item.minot
+            ? item.minot.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              })
+            : "",
+          item.maxot
+            ? item.maxot.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              })
+            : "",
           item.isHalfDay ? "Y" : "N",
           item.isActive ? "Y" : "N",
         ].join("\t");
@@ -194,14 +230,50 @@ const Shift = () => {
       "SL.NO": index + 1,
       "Shift Name": item.name,
       "Shift Code": item.code,
-      InTime: item.intime ? item.intime.toLocaleTimeString() : "",
-      OutTime: item.outtime ? item.outtime.toLocaleTimeString() : "",
+      InTime: item.intime
+        ? item.intime.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          })
+        : "",
+      OutTime: item.outtime
+        ? item.outtime.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          })
+        : "",
       WeekOff1: item.weekoff1 || "NIL",
       WeekOff2: item.weekoff2 || "NIL",
-      "In GT": item.ingt ? item.ingt.toLocaleTimeString() : "",
-      "Out GT": item.outgt ? item.outgt.toLocaleTimeString() : "",
-      MinOT: item.minot ? item.minot.toLocaleTimeString() : "",
-      MaxOT: item.maxot ? item.maxot.toLocaleTimeString() : "",
+      "In GT": item.ingt
+        ? item.ingt.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          })
+        : "",
+      "Out GT": item.outgt
+        ? item.outgt.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          })
+        : "",
+      MinOT: item.minot
+        ? item.minot.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          })
+        : "",
+      MaxOT: item.maxot
+        ? item.maxot.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          })
+        : "",
       "Half Day": item.isHalfDay ? "Y" : "N",
       Active: item.isActive ? "Y" : "N",
     }));
@@ -240,14 +312,50 @@ const Shift = () => {
         index + 1,
         item.name,
         item.code,
-        item.intime ? item.intime.toLocaleTimeString() : "",
-        item.outtime ? item.outtime.toLocaleTimeString() : "",
+        item.intime
+          ? item.intime.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            })
+          : "",
+        item.outtime
+          ? item.outtime.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            })
+          : "",
         item.weekoff1 || "NIL",
         item.weekoff2 || "NIL",
-        item.ingt ? item.ingt.toLocaleTimeString() : "",
-        item.outgt ? item.outgt.toLocaleTimeString() : "",
-        item.minot ? item.minot.toLocaleTimeString() : "",
-        item.maxot ? item.maxot.toLocaleTimeString() : "",
+        item.ingt
+          ? item.ingt.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            })
+          : "",
+        item.outgt
+          ? item.outgt.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            })
+          : "",
+        item.minot
+          ? item.minot.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            })
+          : "",
+        item.maxot
+          ? item.maxot.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            })
+          : "",
         item.isHalfDay ? "Y" : "N",
         item.isActive ? "Y" : "N",
       ];
@@ -306,7 +414,10 @@ const Shift = () => {
               <span className="ml-2 text-sm">entries</span>
             </div>
             <div className="flex">
-              <button onClick={handleCopy} className="px-3 py-1 cursor-pointer text-gray-800">
+              <button
+                onClick={handleCopy}
+                className="px-3 py-1 cursor-pointer text-gray-800"
+              >
                 <GoCopy />
               </button>
 
@@ -317,7 +428,10 @@ const Shift = () => {
                 <FaFileExcel />
               </button>
 
-              <button onClick={handlePDF} className="px-3 py-1 cursor-pointer text-red-600">
+              <button
+                onClick={handlePDF}
+                className="px-3 py-1 cursor-pointer text-red-600"
+              >
                 <FaFilePdf />
               </button>
             </div>
@@ -401,10 +515,22 @@ const Shift = () => {
                         {item.code}
                       </td>
                       <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">
-                        {item.intime ? item.intime.toLocaleTimeString() : ""}
+                        {item.intime
+                          ? item.intime.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            })
+                          : ""}
                       </td>
                       <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">
-                        {item.outtime ? item.outtime.toLocaleTimeString() : ""}
+                        {item.outtime
+                          ? item.outtime.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            })
+                          : ""}
                       </td>
                       <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">
                         {item.weekoff1 ? item.weekoff1 : "NIL"}
@@ -413,16 +539,40 @@ const Shift = () => {
                         {item.weekoff12 ? item.weekoff2 : "NIL"}
                       </td>
                       <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">
-                        {item.ingt ? item.ingt.toLocaleTimeString() : ""}
+                        {item.ingt
+                          ? item.ingt.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            })
+                          : ""}
                       </td>
                       <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">
-                        {item.outgt ? item.outgt.toLocaleTimeString() : ""}
+                        {item.outgt
+                          ? item.outgt.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            })
+                          : ""}
                       </td>
                       <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">
-                        {item.minot ? item.minot.toLocaleTimeString() : ""}
+                        {item.minot
+                          ? item.minot.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            })
+                          : ""}
                       </td>
                       <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">
-                        {item.maxot ? item.maxot.toLocaleTimeString() : ""}
+                        {item.maxot
+                          ? item.maxot.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            })
+                          : ""}
                       </td>
                       <td className="p-2  border border-[oklch(0.8_0.001_106.424)]">
                         {item.isHalfDay ? "Y" : "N"}

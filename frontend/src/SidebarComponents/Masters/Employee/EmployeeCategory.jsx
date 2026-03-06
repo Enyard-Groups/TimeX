@@ -303,7 +303,10 @@ const EmployeeCategory = () => {
               <span className="ml-2 text-sm">entries</span>
             </div>
             <div className="flex">
-              <button onClick={handleCopy} className="px-3 py-1 cursor-pointer text-gray-800">
+              <button
+                onClick={handleCopy}
+                className="px-3 py-1 cursor-pointer text-gray-800"
+              >
                 <GoCopy />
               </button>
 
@@ -314,7 +317,10 @@ const EmployeeCategory = () => {
                 <FaFileExcel />
               </button>
 
-              <button onClick={handlePDF} className="px-3 py-1 cursor-pointer text-red-600">
+              <button
+                onClick={handlePDF}
+                className="px-3 py-1 cursor-pointer text-red-600"
+              >
                 <FaFilePdf />
               </button>
             </div>
@@ -394,20 +400,34 @@ const EmployeeCategory = () => {
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         <td>
                           {item.workhours
-                            ? item.workhours.toLocaleTimeString()
+                            ? item.workhours.toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                              })
                             : ""}
                         </td>
                       </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         <td>
                           {item.minworkhours
-                            ? item.minworkhours.toLocaleTimeString()
+                            ? item.minworkhours.toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                              })
                             : ""}
                         </td>
                       </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
                         <td>
-                          {item.maxot ? item.maxot.toLocaleTimeString() : ""}
+                          {item.maxot
+                            ? item.maxot.toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                              })
+                            : ""}
                         </td>
                       </td>
                       <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
