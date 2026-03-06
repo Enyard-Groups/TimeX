@@ -29,10 +29,10 @@ const Designation = () => {
   });
 
   const inputStyle =
-    "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+    "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
 
   const labelStyle =
-    "text-sm font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
+    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const filtereddesignation = designation.filter(
     (x) =>
@@ -148,7 +148,7 @@ const Designation = () => {
   };
 
   const handlePDF = () => {
-    const doc = new jsPDF();
+    const doc = new jsPDF("landscape");
 
     const tableColumn = [
       "SL.NO",
@@ -205,11 +205,11 @@ const Designation = () => {
       </div>
 
       {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-4">
+        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6">
           {/* Top Controls */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
             <div>
-              <label className="mr-2 text-sm">Show</label>
+              <label className="mr-2 text-md">Show</label>
               <select
                 value={entriesPerPage}
                 onChange={(e) => {
@@ -222,10 +222,13 @@ const Designation = () => {
                 <option value={25}>25</option>
                 <option value={50}>50</option>
               </select>
-              <span className="ml-2 text-sm">entries</span>
+              <span className="ml-2 text-md">entries</span>
             </div>
             <div className="flex">
-              <button onClick={handleCopy} className="px-3 py-1 cursor-pointer text-gray-800">
+              <button
+                onClick={handleCopy}
+                className="px-3 py-1 cursor-pointer text-gray-800"
+              >
                 <GoCopy />
               </button>
 
@@ -236,7 +239,10 @@ const Designation = () => {
                 <FaFileExcel />
               </button>
 
-              <button onClick={handlePDF} className="px-3 py-1 cursor-pointer text-red-600">
+              <button
+                onClick={handlePDF}
+                className="px-3 py-1 cursor-pointer text-red-600"
+              >
                 <FaFilePdf />
               </button>
             </div>
@@ -252,62 +258,39 @@ const Designation = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+          <div className="overflow-x-auto min-h-[250px]">
+            <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                    SL.NO
-                  </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                    Designation Name
-                  </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                    Designation Code
-                  </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                    Company
-                  </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                    Department Name
-                  </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                    Active
-                  </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                    Action
-                  </th>
+                  <th className="p-2">SL.NO</th>
+                  <th className="p-2">Designation Name</th>
+                  <th className="p-2">Designation Code</th>
+                  <th className="p-2">Company</th>
+                  <th className="p-2">Department Name</th>
+                  <th className="p-2">Active</th>
+                  <th className="p-2">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {currentdesignation.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="text-center p-4">
+                    <td colSpan="6" className="sm:text-center p-10">
                       No Data Available
                     </td>
                   </tr>
                 ) : (
                   currentdesignation.map((item, index) => (
-                    <tr key={item.id} className="text-center">
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                        {index + 1}
-                      </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                        {item.name}
-                      </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                        {item.code}
-                      </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                        {item.company}
-                      </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                        {item.department}
-                      </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                        {item.isActive ? "Y" : "N"}
-                      </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] ">
+                    <tr
+                      key={item.id}
+                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] "
+                    >
+                      <td className="p-2">{index + 1}</td>
+                      <td className="p-2">{item.name}</td>
+                      <td className="p-2">{item.code}</td>
+                      <td className="p-2">{item.company}</td>
+                      <td className="p-2">{item.department}</td>
+                      <td className="p-2">{item.isActive ? "Y" : "N"}</td>
+                      <td className="p-2">
                         <div className="flex flex-row space-x-3 ">
                           {/* View */}
                           <FaEye

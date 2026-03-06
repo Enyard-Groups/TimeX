@@ -33,10 +33,10 @@ const EmployeeCategory = () => {
   });
 
   const inputStyle =
-    "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+    "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
 
   const labelStyle =
-    "text-sm font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
+    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const filteredemployeeCategory = employeeCategory.filter(
     (x) =>
@@ -207,7 +207,7 @@ const EmployeeCategory = () => {
   };
 
   const handlePDF = () => {
-    const doc = new jsPDF();
+    const doc = new jsPDF("landscape");
 
     const tableColumn = [
       "SL.NO",
@@ -283,11 +283,11 @@ const EmployeeCategory = () => {
       </div>
 
       {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-4">
+        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6">
           {/* Top Controls */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
             <div>
-              <label className="mr-2 text-sm">Show</label>
+              <label className="mr-2 text-md">Show</label>
               <select
                 value={entriesPerPage}
                 onChange={(e) => {
@@ -300,7 +300,7 @@ const EmployeeCategory = () => {
                 <option value={25}>25</option>
                 <option value={50}>50</option>
               </select>
-              <span className="ml-2 text-sm">entries</span>
+              <span className="ml-2 text-md">entries</span>
             </div>
             <div className="flex">
               <button
@@ -336,38 +336,38 @@ const EmployeeCategory = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+          <div className="overflow-x-auto min-h-[250px]">
+            <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  <th className="py-2 px-6">
                     SL.NO
                   </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  <th className="py-2 px-6">
                     Category Name
                   </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  <th className="py-2 px-6">
                     Category Code
                   </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  <th className="py-2 px-6">
                     Company
                   </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  <th className="py-2 px-6">
                     Description
                   </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                    Work Hours
+                  <th className="py-2 px-6">
+                    WorkHours
                   </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
-                    Min Work Hours
+                  <th className="py-2 px-6">
+                    Min WorkHours
                   </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  <th className="py-2 px-6">
                     MaxOT
                   </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  <th className="py-2 px-6">
                     Active
                   </th>
-                  <th className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                  <th className="py-2 px-6">
                     Action
                   </th>
                 </tr>
@@ -375,29 +375,29 @@ const EmployeeCategory = () => {
               <tbody>
                 {currentemployeeCategory.length === 0 ? (
                   <tr>
-                    <td colSpan="10" className="text-center p-4">
+                    <td colSpan="10" className="md:text-center p-10">
                       No Data Available
                     </td>
                   </tr>
                 ) : (
                   currentemployeeCategory.map((item, index) => (
-                    <tr key={item.id} className="text-center">
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                    <tr key={item.id} className="text-center border-b border-[oklch(0.8_0.001_106.424)] ">
+                      <td className="py-2 px-6">
                         {index + 1}
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      <td className="py-2 px-6">
                         {item.name}
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      <td className="py-2 px-6">
                         {item.code}
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      <td className="py-2 px-6">
                         {item.company}
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      <td className="py-2 px-6">
                         {item.description}
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      <td className="py-2 px-6">
                         <td>
                           {item.workhours
                             ? item.workhours.toLocaleTimeString([], {
@@ -408,7 +408,7 @@ const EmployeeCategory = () => {
                             : ""}
                         </td>
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      <td className="py-2 px-6">
                         <td>
                           {item.minworkhours
                             ? item.minworkhours.toLocaleTimeString([], {
@@ -419,7 +419,7 @@ const EmployeeCategory = () => {
                             : ""}
                         </td>
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      <td className="py-2 px-6">
                         <td>
                           {item.maxot
                             ? item.maxot.toLocaleTimeString([], {
@@ -430,10 +430,10 @@ const EmployeeCategory = () => {
                             : ""}
                         </td>
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)]">
+                      <td className="py-2 px-6">
                         {item.isActive ? "Y" : "N"}
                       </td>
-                      <td className="p-2 border border-[oklch(0.8_0.001_106.424)] ">
+                      <td className="py-2 px-6">
                         <div className="flex flex-row space-x-3 ">
                           {/* View */}
                           <FaEye
