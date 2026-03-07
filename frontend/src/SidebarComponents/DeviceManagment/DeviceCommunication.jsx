@@ -387,7 +387,7 @@ const DeviceCommunication = () => {
         </div>
 
         {/* Pagination */}
-        <div className="flex justify-between items-center mt-4 text-sm flex-wrap gap-4">
+        <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
           <span>
             Showing{" "}
             {filtereddevicecommunication.length === 0 ? "0" : startIndex + 1} to{" "}
