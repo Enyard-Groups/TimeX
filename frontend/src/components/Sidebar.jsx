@@ -14,6 +14,8 @@ const Sidebar = ({ user }) => {
   if (!user) return null;
 
   const isAdmin = user.role === "admin";
+  const isdashboardActive = location.pathname.startsWith("/dashboard");
+  const activeClass = "text-[oklch(0.645_0.246_16.439)]";
 
   return (
     <div
@@ -29,7 +31,9 @@ const Sidebar = ({ user }) => {
             className="space-y-5"
             style={{ color: "oklch(0.147 0.004 49.25)" }}
           >
-            <div className="mt-5 pl-7 font-bold text-md">
+            <div
+              className={`mt-5 pl-7 font-bold text-md ${isdashboardActive ? activeClass : ""}`}
+            >
               <Link to="/dashboard">DASHBOARD</Link>
             </div>
             <Master user={user} />

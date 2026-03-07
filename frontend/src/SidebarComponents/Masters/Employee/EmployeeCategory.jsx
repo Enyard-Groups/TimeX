@@ -24,11 +24,7 @@ const EmployeeCategory = () => {
   const [formData, setFormData] = useState({
     name: "",
     company: "",
-    code: "",
-    description: "",
     workhours: "",
-    minworkhours: "",
-    maxot: "",
     isActive: false,
   });
 
@@ -41,7 +37,6 @@ const EmployeeCategory = () => {
   const filteredemployeeCategory = employeeCategory.filter(
     (x) =>
       x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.code.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
       x.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
@@ -67,18 +62,9 @@ const EmployeeCategory = () => {
   };
 
   const handleSubmit = () => {
-    const {
-      name,
-      company,
-      code,
-      description,
-      workhours,
-      minworkhours,
-      maxot,
-      isActive,
-    } = formData;
+    const { name, company, workhours, isActive } = formData;
 
-    if (!name || !code) {
+    if (!name) {
       toast.error("Please fill all required fields");
       return; // stop execution
     }
@@ -86,12 +72,8 @@ const EmployeeCategory = () => {
     const newemployeeCategory = {
       id: Date.now(),
       name,
-      code,
       company,
-      description,
       workhours,
-      minworkhours,
-      maxot,
       isActive,
     };
 
@@ -113,11 +95,7 @@ const EmployeeCategory = () => {
     setFormData({
       company: "",
       name: "",
-      code: "",
-      description: "",
       workhours: "",
-      minworkhours: "",
-      maxot: "",
       isActive: false,
     });
   };
@@ -126,12 +104,8 @@ const EmployeeCategory = () => {
     const header = [
       "SL.NO",
       "Category Name",
-      "Category Code",
       "Company",
-      "Description",
       "Work Hours",
-      "Min Work Hours",
-      "MaxOT",
       "Active",
     ].join("\t");
 
@@ -140,23 +114,9 @@ const EmployeeCategory = () => {
         [
           index + 1,
           item.name,
-          item.code,
           item.company,
-          item.description,
           item.workhours
             ? item.workhours.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-            : "",
-          item.minworkhours
-            ? item.minworkhours.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-            : "",
-          item.maxot
-            ? item.maxot.toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               })
@@ -174,23 +134,9 @@ const EmployeeCategory = () => {
     const excelData = filteredemployeeCategory.map((item, index) => ({
       "SL.NO": index + 1,
       "Category Name": item.name,
-      "Category Code": item.code,
       Company: item.company,
-      Description: item.description,
       "Work Hours": item.workhours
         ? item.workhours.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-        : "",
-      "Min Work Hours": item.minworkhours
-        ? item.minworkhours.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-        : "",
-      MaxOT: item.maxot
-        ? item.maxot.toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
           })
@@ -212,12 +158,8 @@ const EmployeeCategory = () => {
     const tableColumn = [
       "SL.NO",
       "Category Name",
-      "Category Code",
       "Company",
-      "Description",
       "Work Hours",
-      "Min Work Hours",
-      "MaxOT",
       "Active",
     ];
 
@@ -227,23 +169,9 @@ const EmployeeCategory = () => {
       tableRows.push([
         index + 1,
         item.name,
-        item.code,
         item.company,
-        item.description,
         item.workhours
           ? item.workhours.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          : "",
-        item.minworkhours
-          ? item.minworkhours.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          : "",
-        item.maxot
-          ? item.maxot.toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
             })
@@ -340,36 +268,12 @@ const EmployeeCategory = () => {
             <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
-                  <th className="py-2 px-6">
-                    SL.NO
-                  </th>
-                  <th className="py-2 px-6">
-                    Category Name
-                  </th>
-                  <th className="py-2 px-6">
-                    Category Code
-                  </th>
-                  <th className="py-2 px-6">
-                    Company
-                  </th>
-                  <th className="py-2 px-6">
-                    Description
-                  </th>
-                  <th className="py-2 px-6">
-                    WorkHours
-                  </th>
-                  <th className="py-2 px-6">
-                    Min WorkHours
-                  </th>
-                  <th className="py-2 px-6">
-                    MaxOT
-                  </th>
-                  <th className="py-2 px-6">
-                    Active
-                  </th>
-                  <th className="py-2 px-6">
-                    Action
-                  </th>
+                  <th className="py-2 px-6">SL.NO</th>
+                  <th className="py-2 px-6">Category Name</th>
+                  <th className="py-2 px-6">Company</th>
+                  <th className="py-2 px-6">WorkHours</th>
+                  <th className="py-2 px-6">Active</th>
+                  <th className="py-2 px-6">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -381,60 +285,25 @@ const EmployeeCategory = () => {
                   </tr>
                 ) : (
                   currentemployeeCategory.map((item, index) => (
-                    <tr key={item.id} className="text-center border-b border-[oklch(0.8_0.001_106.424)] ">
+                    <tr
+                      key={item.id}
+                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] "
+                    >
+                      <td className="py-2 px-6">{index + 1}</td>
+                      <td className="py-2 px-6">{item.name}</td>
+                      <td className="py-2 px-6">{item.company}</td>
                       <td className="py-2 px-6">
-                        {index + 1}
+                        {item.workhours
+                          ? item.workhours.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            })
+                          : ""}
                       </td>
+                      <td className="py-2 px-6">{item.isActive ? "Y" : "N"}</td>
                       <td className="py-2 px-6">
-                        {item.name}
-                      </td>
-                      <td className="py-2 px-6">
-                        {item.code}
-                      </td>
-                      <td className="py-2 px-6">
-                        {item.company}
-                      </td>
-                      <td className="py-2 px-6">
-                        {item.description}
-                      </td>
-                      <td className="py-2 px-6">
-                        <td>
-                          {item.workhours
-                            ? item.workhours.toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: false,
-                              })
-                            : ""}
-                        </td>
-                      </td>
-                      <td className="py-2 px-6">
-                        <td>
-                          {item.minworkhours
-                            ? item.minworkhours.toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: false,
-                              })
-                            : ""}
-                        </td>
-                      </td>
-                      <td className="py-2 px-6">
-                        <td>
-                          {item.maxot
-                            ? item.maxot.toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: false,
-                              })
-                            : ""}
-                        </td>
-                      </td>
-                      <td className="py-2 px-6">
-                        {item.isActive ? "Y" : "N"}
-                      </td>
-                      <td className="py-2 px-6">
-                        <div className="flex flex-row space-x-3 ">
+                        <div className="flex flex-row space-x-3 justify-center ">
                           {/* View */}
                           <FaEye
                             onClick={() => {
@@ -535,148 +404,89 @@ const EmployeeCategory = () => {
       )}
 
       {openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.923_0.003_48.717)] p-6">
-          {/* Close */}
-          <div className="flex justify-end">
-            <RxCross2
-              onClick={() => setOpenModal(false)}
-              className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-            />
+        <div className="fixed inset-0 bg-black/70 flex justify-center items-start z-50 p-6 overflow-y-auto">
+          <div className="bg-white w-full max-w-6xl shadow-xl rounded-xl border border-[oklch(0.923_0.003_48.717)] p-6 relative">
+            {/* Close */}
+            <div className="flex justify-end">
+              <RxCross2
+                onClick={() => setOpenModal(false)}
+                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div>
+                <label className={labelStyle}>
+                  Name
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <input
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  placeholder="Name"
+                  className={inputStyle}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>Company</label>
+                <select
+                  name="company"
+                  value={formData.company}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  className={inputStyle}
+                  required
+                >
+                  <option>Select</option>
+                  <option> Company 1</option>
+                </select>
+              </div>
+
+              <div>
+                <label className={labelStyle}>Work Hours</label>
+                <DatePicker
+                  placeholderText="hh:mm"
+                  selected={formData.workhours}
+                  onChange={(time) =>
+                    setFormData({ ...formData, workhours: time })
+                  }
+                  showTimeSelect
+                  showTimeSelectOnly
+                  timeIntervals={30}
+                  timeCaption="Time"
+                  dateFormat="HH:mm"
+                  className={inputStyle}
+                />
+              </div>
+
+              <div className="flex items-center gap-2 mt-6">
+                <label className={labelStyle}>Active</label>
+                <input
+                  type="checkbox"
+                  name="isActive"
+                  checked={formData.isActive}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                />
+              </div>
+            </div>
+
+            {/* Save */}
+            {mode !== "view" && (
+              <div className="flex justify-end mt-10">
+                <button
+                  onClick={handleSubmit}
+                  className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+                >
+                  Save
+                </button>
+              </div>
+            )}
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div>
-              <label className={labelStyle}>
-                Name
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <input
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                placeholder="Name"
-                className={inputStyle}
-                required
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                Code
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <input
-                name="code"
-                value={formData.code}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                placeholder="Code"
-                className={inputStyle}
-                required
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>Company</label>
-              <select
-                name="company"
-                value={formData.company}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                className={inputStyle}
-                required
-              >
-                <option>Select</option>
-                <option> Company 1</option>
-              </select>
-            </div>
-
-            <div>
-              <label className={labelStyle}>Description</label>
-              <input
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                placeholder="Description"
-                className={inputStyle}
-                required
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>Work Hours</label>
-              <DatePicker
-                placeholderText="hh:mm"
-                selected={formData.workhours}
-                onChange={(time) =>
-                  setFormData({ ...formData, workhours: time })
-                }
-                showTimeSelect
-                showTimeSelectOnly
-                timeIntervals={30}
-                timeCaption="Time"
-                dateFormat="HH:mm"
-                className={inputStyle}
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>Min Work Hours</label>
-              <DatePicker
-                placeholderText="hh:mm"
-                selected={formData.minworkhours}
-                onChange={(time) =>
-                  setFormData({ ...formData, minworkhours: time })
-                }
-                showTimeSelect
-                showTimeSelectOnly
-                timeIntervals={30}
-                timeCaption="Time"
-                dateFormat="HH:mm"
-                className={inputStyle}
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>Max OverTime</label>
-              <DatePicker
-                placeholderText="hh:mm"
-                selected={formData.maxot}
-                onChange={(time) => setFormData({ ...formData, maxot: time })}
-                showTimeSelect
-                showTimeSelectOnly
-                timeIntervals={30}
-                timeCaption="Time"
-                dateFormat="HH:mm"
-                className={inputStyle}
-              />
-            </div>
-
-            <div className="flex items-center gap-2 mt-6">
-              <label className={labelStyle}>Active</label>
-              <input
-                type="checkbox"
-                name="isActive"
-                checked={formData.isActive}
-                onChange={handleChange}
-                disabled={mode === "view"}
-              />
-            </div>
-          </div>
-
-          {/* Save */}
-          {mode !== "view" && (
-            <div className="flex justify-end mt-10">
-              <button
-                onClick={handleSubmit}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
-              >
-                Save
-              </button>
-            </div>
-          )}
         </div>
       )}
     </>

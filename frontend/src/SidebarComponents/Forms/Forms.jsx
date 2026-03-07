@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { LuClipboardList } from "react-icons/lu";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
@@ -7,6 +7,9 @@ const Forms = ({ user }) => {
   const [openForms, setOpenForms] = useState(false);
 
   const isAdmin = user.role === "admin";
+  const isformsActive = location.pathname.startsWith("/forms");
+  const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+
   return (
     <>
       {isAdmin && (
@@ -14,11 +17,13 @@ const Forms = ({ user }) => {
           {/* Forms Main Button */}
           <div
             onClick={() => setOpenForms(!openForms)}
-            className="flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded"
+            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+              isformsActive ? activeClass : ""
+            }`}
           >
-            <div className="flex items-center gap-2 font-medium text-md">
+            <div className="flex items-center gap-2 font-medium text-lg">
               <LuClipboardList />
-              <span>FORMS</span>
+              <span>Forms</span>
               {openForms ? (
                 <MdKeyboardArrowUp className="text-xl" />
               ) : (
@@ -29,83 +34,127 @@ const Forms = ({ user }) => {
 
           {/* Sub Menu */}
           {openForms && (
-            <div className="ml-6 mt-2 flex flex-col gap-2 text-md space-y-2">
-              <Link
+            <div className="ml-6 mt-2 flex flex-col gap-2 text-lg space-y-2">
+              <NavLink
                 to="/forms/monthly-fire-safety-inspections"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                MONTHLY FIRE SAFETY INSPECTIONS
-              </Link>
+                Monthly Fire Safety Inspections
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/forms/incident-accident"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                INCIDENT / ACCIDENT
-              </Link>
+                Incident / Accident
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/forms/leave-application"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                LEAVE APPLICATION
-              </Link>
+                Leave Application
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/forms/opt-out-req-form"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                OPT OUT REQUEST FORM
-              </Link>
+                Opt Out Request From
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/forms/passport-req"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                PASSPORT REQUEST
-              </Link>
+                Passport Request
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/forms/shift-hand-over"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                SHIFT HAND OVER
-              </Link>
+                Shift Hand Over
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/forms/staff-training-checklist"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                STAFF TRAINING CHECKLIST
-              </Link>
+                Staff Training Checklist
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/forms/tpc-form"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                TPC FORM
-              </Link>
+                TPC Form
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/forms/weekly-overtime-form"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                WEEKLY OVERTIME FORM
-              </Link>
+                Weekly Overtime Form
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/forms/patolling-checklist"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                PATROLLING CHECKLIST
-              </Link>
+                Patrolling Checklist
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/forms/facility-complaint-form"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                FACILITY COMPLAINT FORM
-              </Link>
+                Facility Complaint Form
+              </NavLink>
             </div>
           )}
         </div>

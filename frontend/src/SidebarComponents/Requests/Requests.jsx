@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { IoInformationCircle } from "react-icons/io5";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
@@ -7,6 +7,8 @@ const Requests = ({ user }) => {
   const [openRequests, setOpenRequests] = useState(false);
 
   const isAdmin = user.role === "admin";
+  const isrequestsActive = location.pathname.startsWith("/requests");
+  const activeClass = "text-[oklch(0.645_0.246_16.439)]";
 
   return (
     <>
@@ -15,11 +17,13 @@ const Requests = ({ user }) => {
           {/* Requests Main Button */}
           <div
             onClick={() => setOpenRequests(!openRequests)}
-            className="flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded"
+            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+              isrequestsActive ? activeClass : ""
+            }`}
           >
-            <div className="flex items-center gap-2 font-medium text-md">
+            <div className="flex items-center gap-2 font-medium text-lg">
               <IoInformationCircle />
-              <span>REQUESTS</span>
+              <span>Requests</span>
               {openRequests ? (
                 <MdKeyboardArrowUp className="text-xl" />
               ) : (
@@ -30,55 +34,83 @@ const Requests = ({ user }) => {
 
           {/* Sub Menu */}
           {openRequests && (
-            <div className="ml-6 mt-2 flex flex-col gap-2 text-md space-y-2">
-              <Link
+            <div className="ml-6 mt-2 flex flex-col gap-2 text-lg space-y-2">
+              <NavLink
                 to="/requests/mannual-entry-req"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                MANUAL ENTRY REQUEST
-              </Link>
+                Mannual Entry Request
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/requests/leave-req"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                LEAVE REQUEST
-              </Link>
+                Leave Request
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/requests/claim-req"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                CLAIM REQUEST
-              </Link>
+                Claim Request
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/requests/business-travel-req"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                BUSINESS TRAVEL REQUEST
-              </Link>
+                Business Travel Request
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/requests/leave-summary"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                LEAVE SUMMARY
-              </Link>
+                Leave Summary
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/requests/wft-req"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                WFT REQUEST
-              </Link>
+                WFT Request
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/requests/wft-summary"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                WFT SUMMARY
-              </Link>
+                WFT Summary
+              </NavLink>
             </div>
           )}
         </div>

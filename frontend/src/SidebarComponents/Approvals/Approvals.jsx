@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
@@ -7,6 +7,8 @@ const Approvals = ({ user }) => {
   const [openApprovals, setOpenApprovals] = useState(false);
 
   const isAdmin = user.role === "admin";
+  const isApprovalsActive = location.pathname.startsWith("/approvals");
+  const activeClass = "text-[oklch(0.645_0.246_16.439)]";
 
   return (
     <>
@@ -15,11 +17,13 @@ const Approvals = ({ user }) => {
           {/* Approvals Main Button */}
           <div
             onClick={() => setOpenApprovals(!openApprovals)}
-            className="flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded"
+            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+              isApprovalsActive ? activeClass : ""
+            }`}
           >
-            <div className="flex items-center gap-2 font-medium text-md">
+            <div className="flex items-center gap-2 font-medium text-lg">
               <FaCheckCircle />
-              <span>APPROVALS</span>
+              <span>Approvals</span>
               {openApprovals ? (
                 <MdKeyboardArrowUp className="text-xl" />
               ) : (
@@ -30,41 +34,61 @@ const Approvals = ({ user }) => {
 
           {/* Sub Menu */}
           {openApprovals && (
-            <div className="ml-6 mt-2 flex flex-col gap-2 text-md space-y-2">
-              <Link
+            <div className="ml-6 mt-2 flex flex-col gap-2 text-lg space-y-2">
+              <NavLink
                 to="/approvals/mannual-entry-approval"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                MANUAL ENTRY APPROVAL
-              </Link>
+                Mannual Entry Approval
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/approvals/leave-req-approval"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                LEAVE REQUEST APPROVAL
-              </Link>
+                Leave Request Approval
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/approvals/bussiness-travel-approval"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                BUSINESS TRAVEL APPROVAL
-              </Link>
+                Business Travel Approval
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/approvals/wft-approval"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                WFT APPROVAL
-              </Link>
+                WFT Approval
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/approvals/claim-approval"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                CLAIM APPROVAL
-              </Link>
+                Claim Approval
+              </NavLink>
             </div>
           )}
         </div>

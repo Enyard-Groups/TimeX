@@ -67,32 +67,9 @@ const Shift = () => {
   };
 
   const handleSubmit = () => {
-    const {
-      name,
-      company,
-      code,
-      intime,
-      outtime,
-      weekoff1,
-      weekoff2,
-      ingt,
-      outgt,
-      minot,
-      maxot,
-      isHalfDay,
-      isActive,
-    } = formData;
+    const { name, company, code, intime, outtime, isActive } = formData;
 
-    if (
-      !name ||
-      !code ||
-      !intime ||
-      !outtime ||
-      !ingt ||
-      !outgt ||
-      !minot ||
-      !outgt
-    ) {
+    if (!name || !code || !intime || !outtime) {
       toast.error("Please fill all required fields");
       return; // stop execution
     }
@@ -104,13 +81,6 @@ const Shift = () => {
       company,
       intime,
       outtime,
-      weekoff1,
-      weekoff2,
-      ingt,
-      outgt,
-      minot,
-      maxot,
-      isHalfDay,
       isActive,
     };
 
@@ -135,13 +105,6 @@ const Shift = () => {
       code: "",
       intime: null,
       outtime: "",
-      weekoff1: "",
-      weekoff2: "",
-      ingt: "",
-      outgt: "",
-      minot: "",
-      maxot: "",
-      isHalfDay: false,
       isActive: false,
     });
   };
@@ -153,13 +116,6 @@ const Shift = () => {
       "Shift Code",
       "InTime",
       "OutTime",
-      "WeekOff1",
-      "WeekOff2",
-      "In GT",
-      "Out GT",
-      "MinOT",
-      "MaxOT",
-      "Half Day",
       "Active",
     ].join("\t");
 
@@ -183,37 +139,6 @@ const Shift = () => {
                 hour12: false,
               })
             : "",
-          item.weekoff1 || "NIL",
-          item.weekoff2 || "NIL",
-          item.ingt
-            ? item.ingt.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-              })
-            : "",
-          item.outgt
-            ? item.outgt.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-              })
-            : "",
-          item.minot
-            ? item.minot.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-              })
-            : "",
-          item.maxot
-            ? item.maxot.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-              })
-            : "",
-          item.isHalfDay ? "Y" : "N",
           item.isActive ? "Y" : "N",
         ].join("\t");
       })
@@ -244,37 +169,6 @@ const Shift = () => {
             hour12: false,
           })
         : "",
-      WeekOff1: item.weekoff1 || "NIL",
-      WeekOff2: item.weekoff2 || "NIL",
-      "In GT": item.ingt
-        ? item.ingt.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-          })
-        : "",
-      "Out GT": item.outgt
-        ? item.outgt.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-          })
-        : "",
-      MinOT: item.minot
-        ? item.minot.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-          })
-        : "",
-      MaxOT: item.maxot
-        ? item.maxot.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-          })
-        : "",
-      "Half Day": item.isHalfDay ? "Y" : "N",
       Active: item.isActive ? "Y" : "N",
     }));
 
@@ -295,13 +189,6 @@ const Shift = () => {
       "Shift Code",
       "InTime",
       "OutTime",
-      "WeekOff1",
-      "WeekOff2",
-      "In GT",
-      "Out GT",
-      "MinOT",
-      "MaxOT",
-      "Half Day",
       "Active",
     ];
 
@@ -326,37 +213,6 @@ const Shift = () => {
               hour12: false,
             })
           : "",
-        item.weekoff1 || "NIL",
-        item.weekoff2 || "NIL",
-        item.ingt
-          ? item.ingt.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: false,
-            })
-          : "",
-        item.outgt
-          ? item.outgt.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: false,
-            })
-          : "",
-        item.minot
-          ? item.minot.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: false,
-            })
-          : "",
-        item.maxot
-          ? item.maxot.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: false,
-            })
-          : "",
-        item.isHalfDay ? "Y" : "N",
         item.isActive ? "Y" : "N",
       ];
 
@@ -452,17 +308,10 @@ const Shift = () => {
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
                   <th className="px-5 py-2">SL.NO</th>
-                  <th className="px-5 py-2 ">Shift_Name</th>
-                  <th className="px-5 py-2 ">Shift_Code</th>
-                  <th className="px-5 py-2 ">In_Time</th>
-                  <th className="px-5 py-2 ">Out_Time</th>
-                  <th className="px-5 py-2 ">WeekOff1</th>
-                  <th className="px-5 py-2 ">WeekOff2</th>
-                  <th className="px-5 py-2 ">In_GT</th>
-                  <th className="px-5 py-2 ">Out_GT</th>
-                  <th className="px-5 py-2 ">MinOT</th>
-                  <th className="px-5 py-2 ">MaxOT</th>
-                  <th className="px-5 py-2 ">Half_Day</th>
+                  <th className="px-5 py-2 ">Shift Name</th>
+                  <th className="px-5 py-2 ">Shift Code</th>
+                  <th className="px-5 py-2 ">In Time</th>
+                  <th className="px-5 py-2 ">Out Time</th>
                   <th className="px-5 py-2 ">Active</th>
                   <th className="px-5 py-2 ">Action</th>
                 </tr>
@@ -502,55 +351,10 @@ const Shift = () => {
                           : ""}
                       </td>
                       <td className="px-5 py-2 ">
-                        {item.weekoff1 ? item.weekoff1 : "NIL"}
-                      </td>
-                      <td className="px-5 py-2 ">
-                        {item.weekoff12 ? item.weekoff2 : "NIL"}
-                      </td>
-                      <td className="px-5 py-2 ">
-                        {item.ingt
-                          ? item.ingt.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: false,
-                            })
-                          : ""}
-                      </td>
-                      <td className="px-5 py-2 ">
-                        {item.outgt
-                          ? item.outgt.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: false,
-                            })
-                          : ""}
-                      </td>
-                      <td className="px-5 py-2 ">
-                        {item.minot
-                          ? item.minot.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: false,
-                            })
-                          : ""}
-                      </td>
-                      <td className="px-5 py-2 ">
-                        {item.maxot
-                          ? item.maxot.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: false,
-                            })
-                          : ""}
-                      </td>
-                      <td className="px-5 py-2 ">
-                        {item.isHalfDay ? "Y" : "N"}
-                      </td>
-                      <td className="px-5 py-2 ">
                         {item.isActive ? "Y" : "N"}
                       </td>
                       <td className="p-2">
-                        <div className="flex flex-row space-x-3 ">
+                        <div className="flex flex-row space-x-3 justify-center ">
                           {/* View */}
                           <FaEye
                             onClick={() => {
@@ -647,253 +451,130 @@ const Shift = () => {
       )}
 
       {openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl  border  border-[oklch(0.923_0.003_48.717)] p-6">
-          {/* Close */}
-          <div className="flex justify-end">
-            <RxCross2
-              onClick={() => setOpenModal(false)}
-              className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-            />
+        <div className="fixed inset-0 bg-black/70 flex justify-center items-start z-50 p-6 overflow-y-auto">
+          <div className="bg-white w-full max-w-6xl shadow-xl rounded-xl border border-[oklch(0.923_0.003_48.717)] p-6 relative">
+            {/* Close */}
+            <div className="flex justify-end">
+              <RxCross2
+                onClick={() => setOpenModal(false)}
+                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div>
+                <label className={labelStyle}>
+                  Shift Name
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <input
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Name"
+                  className={inputStyle}
+                  disabled={mode === "view"}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>
+                  Code
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <input
+                  name="code"
+                  value={formData.code}
+                  onChange={handleChange}
+                  placeholder="Code"
+                  className={inputStyle}
+                  disabled={mode === "view"}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>
+                  In Time
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <DatePicker
+                  placeholderText="hh:mm"
+                  selected={formData.intime}
+                  onChange={(time) =>
+                    setFormData({ ...formData, intime: time })
+                  }
+                  showTimeInput
+                  showTimeSelectOnly
+                  timeIntervals={30}
+                  timeCaption="Time"
+                  dateFormat="HH:mm"
+                  className={inputStyle}
+                  disabled={mode === "view"}
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>
+                  Out Time
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <DatePicker
+                  placeholderText="hh:mm"
+                  selected={formData.outtime}
+                  onChange={(time) =>
+                    setFormData({ ...formData, outtime: time })
+                  }
+                  showTimeInput
+                  showTimeSelectOnly
+                  timeIntervals={30}
+                  timeCaption="Time"
+                  dateFormat="HH:mm"
+                  className={inputStyle}
+                  disabled={mode === "view"}
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>Company</label>
+                <select
+                  name="company"
+                  value={formData.company}
+                  onChange={handleChange}
+                  className={inputStyle}
+                  disabled={mode === "view"}
+                  required
+                >
+                  <option>Select</option>
+                  <option> Company 1</option>
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2 mt-6">
+                <label className={labelStyle}>Active</label>
+                <input
+                  type="checkbox"
+                  name="isActive"
+                  checked={formData.isActive}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                />
+              </div>
+            </div>
+
+            {/* Save */}
+            {mode !== "view" && (
+              <div className="flex justify-end mt-10">
+                <button
+                  onClick={handleSubmit}
+                  className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+                >
+                  Save
+                </button>
+              </div>
+            )}
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div>
-              <label className={labelStyle}>
-                Name
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <input
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Name"
-                className={inputStyle}
-                disabled={mode === "view"}
-                required
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                Code
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <input
-                name="code"
-                value={formData.code}
-                onChange={handleChange}
-                placeholder="Code"
-                className={inputStyle}
-                disabled={mode === "view"}
-                required
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                In Time
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <DatePicker
-                placeholderText="hh:mm"
-                selected={formData.intime}
-                onChange={(time) => setFormData({ ...formData, intime: time })}
-                showTimeSelect
-                showTimeSelectOnly
-                timeIntervals={30}
-                timeCaption="Time"
-                dateFormat="HH:mm"
-                className={inputStyle}
-                disabled={mode === "view"}
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                Out Time
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <DatePicker
-                placeholderText="hh:mm"
-                selected={formData.outtime}
-                onChange={(time) => setFormData({ ...formData, outtime: time })}
-                showTimeSelect
-                showTimeSelectOnly
-                timeIntervals={30}
-                timeCaption="Time"
-                dateFormat="HH:mm"
-                className={inputStyle}
-                disabled={mode === "view"}
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>WeekOff1</label>
-              <select
-                name="weekoff1"
-                value={formData.weekoff1}
-                onChange={handleChange}
-                className={inputStyle}
-                disabled={mode === "view"}
-                required
-              >
-                <option>Select</option>
-                <option> Monday</option>
-                <option> Tuesday</option>
-                <option> Wednesday</option>
-                <option> Thrusday</option>
-                <option> Friday</option>
-                <option> Saturday</option>
-                <option> Sunday</option>
-              </select>
-            </div>
-
-            <div>
-              <label className={labelStyle}>WeekOff2</label>
-              <select
-                name="weekoff2"
-                value={formData.weekoff2}
-                onChange={handleChange}
-                className={inputStyle}
-                disabled={mode === "view"}
-                required
-              >
-                <option>Select</option>
-                <option> Monday</option>
-                <option> Tuesday</option>
-                <option> Wednesday</option>
-                <option> Thrusday</option>
-                <option> Friday</option>
-                <option> Saturday</option>
-                <option> Sunday</option>
-              </select>
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                In Grace Time
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <DatePicker
-                placeholderText="hh:mm"
-                selected={formData.ingt}
-                onChange={(time) => setFormData({ ...formData, ingt: time })}
-                showTimeSelect
-                showTimeSelectOnly
-                timeIntervals={30}
-                timeCaption="Time"
-                dateFormat="HH:mm"
-                className={inputStyle}
-                disabled={mode === "view"}
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                Out Grace Time
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <DatePicker
-                placeholderText="hh:mm"
-                selected={formData.outgt}
-                onChange={(time) => setFormData({ ...formData, outgt: time })}
-                showTimeSelect
-                showTimeSelectOnly
-                timeIntervals={30}
-                timeCaption="Time"
-                dateFormat="HH:mm"
-                className={inputStyle}
-                disabled={mode === "view"}
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                Min OverTime
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <DatePicker
-                placeholderText="hh:mm"
-                selected={formData.minot}
-                onChange={(time) => setFormData({ ...formData, minot: time })}
-                showTimeSelect
-                showTimeSelectOnly
-                timeIntervals={30}
-                timeCaption="Time"
-                dateFormat="HH:mm"
-                className={inputStyle}
-                disabled={mode === "view"}
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                Max OverTime
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <DatePicker
-                placeholderText="hh:mm"
-                selected={formData.maxot}
-                onChange={(time) => setFormData({ ...formData, maxot: time })}
-                showTimeSelect
-                showTimeSelectOnly
-                timeIntervals={30}
-                timeCaption="Time"
-                dateFormat="HH:mm"
-                className={inputStyle}
-                disabled={mode === "view"}
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>Company</label>
-              <select
-                name="company"
-                value={formData.company}
-                onChange={handleChange}
-                className={inputStyle}
-                disabled={mode === "view"}
-                required
-              >
-                <option>Select</option>
-                <option> Company 1</option>
-              </select>
-            </div>
-
-            <div className="flex items-center gap-2 mt-6">
-              <label className={labelStyle}>HalfDay</label>
-              <input
-                type="checkbox"
-                name="isHalfDay"
-                checked={formData.isHalfDay}
-                onChange={handleChange}
-                disabled={mode === "view"}
-              />
-            </div>
-
-            <div className="flex items-center gap-2 mt-6">
-              <label className={labelStyle}>Active</label>
-              <input
-                type="checkbox"
-                name="isActive"
-                checked={formData.isActive}
-                onChange={handleChange}
-                disabled={mode === "view"}
-              />
-            </div>
-          </div>
-
-          {/* Save */}
-          {mode !== "view" && (
-            <div className="flex justify-end mt-10">
-              <button
-                onClick={handleSubmit}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
-              >
-                Save
-              </button>
-            </div>
-          )}
         </div>
       )}
     </>

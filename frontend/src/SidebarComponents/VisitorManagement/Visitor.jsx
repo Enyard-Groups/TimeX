@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { FaVimeoV } from "react-icons/fa";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-
 
 const Visitor = ({ user }) => {
   const [openVisitor, setOpenVisitor] = useState(false);
 
-  const isAdmin = user.role === "admin"; 
+  const isAdmin = user.role === "admin";
+  const isvisitorActive = location.pathname.startsWith("/visitor");
+  const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+
   return (
     <>
       {isAdmin && (
@@ -15,35 +17,45 @@ const Visitor = ({ user }) => {
           {/* Visitor Main Button */}
           <div
             onClick={() => setOpenVisitor(!openVisitor)}
-            className="flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded"
+            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+              isvisitorActive ? activeClass : ""
+            }`}
           >
-            <div className="flex items-center gap-2 font-medium text-md">
+            <div className="flex items-center gap-2 font-medium text-lg">
               <FaVimeoV />
-              <span>VISITOR</span>
+              <span>Visitor</span>
               {openVisitor ? (
-                      <MdKeyboardArrowUp className='text-xl'/>
-                    ) : (
-                      <MdKeyboardArrowDown className='text-xl'/>
-                    )}
+                <MdKeyboardArrowUp className="text-xl" />
+              ) : (
+                <MdKeyboardArrowDown className="text-xl" />
+              )}
             </div>
           </div>
 
           {/* Sub Menu */}
           {openVisitor && (
-            <div className="ml-6 mt-2 flex flex-col gap-2 text-md space-y-2">
-              <Link
+            <div className="ml-6 mt-2 flex flex-col gap-2 text-lg space-y-2">
+              <NavLink
                 to="/visitor/visitor-booking"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                VISITOR BOOKING
-              </Link>
+                Visitor Booking
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/visitor/card-detach"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                CARD DETACH
-              </Link>
+                Card Detach
+              </NavLink>
             </div>
           )}
         </div>

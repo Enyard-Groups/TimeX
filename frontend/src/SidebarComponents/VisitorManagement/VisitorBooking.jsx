@@ -351,33 +351,15 @@ const VisitorBooking = () => {
             <table className="w-full text-lg  border-collapse">
               <thead className="bg-[oklch(0.948_0.001_106.424)]">
                 <tr>
-                  <th className="py-2 px-6">
-                    SL.NO
-                  </th>
-                  <th className="py-2 px-6">
-                    Visitor_Code
-                  </th>
-                  <th className="py-2 px-6">
-                    Visitor_Name
-                  </th>
-                  <th className="py-2 px-6">
-                    V_Phone
-                  </th>
-                  <th className="py-2 px-6">
-                    CardReference
-                  </th>
-                  <th className="py-2 px-6">
-                    V_Date_&_Time
-                  </th>
-                  <th className="py-2 px-6">
-                    Organization
-                  </th>
-                  <th className="py-2 px-6">
-                    Meeting Person
-                  </th>
-                  <th className="py-2 px-6">
-                    Action
-                  </th>
+                  <th className="py-2 px-6">SL.NO</th>
+                  <th className="py-2 px-6">Visitor Code</th>
+                  <th className="py-2 px-6">Visitor Name</th>
+                  <th className="py-2 px-6">Visitor Phone</th>
+                  <th className="py-2 px-6">Card Reference</th>
+                  <th className="py-2 px-6">Visitor Date&Time</th>
+                  <th className="py-2 px-6">Organization</th>
+                  <th className="py-2 px-6">Meeting Person</th>
+                  <th className="py-2 px-6">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -389,33 +371,20 @@ const VisitorBooking = () => {
                   </tr>
                 ) : (
                   currentVisitors.map((item, index) => (
-                    <tr key={item.id} className="text-center border-b border-[oklch(0.8_0.001_106.424)] ">
+                    <tr
+                      key={item.id}
+                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] "
+                    >
+                      <td className="py-2 px-6">{index + 1}</td>
+                      <td className="py-2 px-6">{item.visitorCode}</td>
+                      <td className="py-2 px-6">{item.visitorName}</td>
+                      <td className="py-2 px-6">{item.phone}</td>
+                      <td className="py-2 px-6">{item.cardReference}</td>
+                      <td className="py-2 px-6">{item.vDateTime}</td>
+                      <td className="py-2 px-6">{item.organization}</td>
+                      <td className="py-2 px-6">{item.meetingPerson}</td>
                       <td className="py-2 px-6">
-                        {index + 1}
-                      </td>
-                      <td className="py-2 px-6">
-                        {item.visitorCode}
-                      </td>
-                      <td className="py-2 px-6">
-                        {item.visitorName}
-                      </td>
-                      <td className="py-2 px-6">
-                        {item.phone}
-                      </td>
-                      <td className="py-2 px-6">
-                        {item.cardReference}
-                      </td>
-                      <td className="py-2 px-6">
-                        {item.vDateTime}
-                      </td>
-                      <td className="py-2 px-6">
-                        {item.organization}
-                      </td>
-                      <td className="py-2 px-6">
-                        {item.meetingPerson}
-                      </td>
-                      <td className="py-2 px-6">
-                        <div className="flex flex-row space-x-3 ">
+                        <div className="flex flex-row space-x-3 justify-center ">
                           {/* View */}
                           <FaEye
                             onClick={() => {
@@ -514,344 +483,358 @@ const VisitorBooking = () => {
       )}
 
       {openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl  border  border-[oklch(0.923_0.003_48.717)] p-6">
-          {/* Close */}
-          <div className="flex justify-end">
-            <RxCross2
-              onClick={() => setOpenModal(false)}
-              className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-            />
-          </div>
-
-          {/* Search Section */}
-          <div className="flex flex-col md:flex-row gap-4 mt-4">
-            <select
-              name="searchType"
-              value={formData.searchType}
-              onChange={handleChange}
-              disabled={mode === "view"}
-              className={inputStyle}
-            >
-              <option>Mobile no.</option>
-              <option>CICPA no.</option>
-              <option>EID no.</option>
-              <option>Visitor</option>
-              <option>QR Code</option>
-            </select>
-
-            <input
-              name="searchValue"
-              value={formData.searchValue}
-              onChange={handleChange}
-              disabled={mode === "view"}
-              placeholder="Value"
-              className={inputStyle}
-              required
-            />
-
-            <button
-              onClick={handleSearch}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md"
-            >
-              Search
-            </button>
-          </div>
-
-          {/* VISITOR INFORMATION */}
-          <h2 className="text-center font-semibold mt-8 mb-4">
-            VISITOR INFORMATION
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div>
-              <label className={labelStyle}>
-                Visitor Name
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <input
-                name="visitorName"
-                value={formData.visitorName}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                placeholder="Visitor Name"
-                className={inputStyle}
-                required
+        <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-6 overflow-y-auto">
+          <div className="bg-white w-full max-w-6xl shadow-xl rounded-xl border border-[oklch(0.923_0.003_48.717)] p-6 relative">
+            {/* Close */}
+            <div className="flex justify-end">
+              <RxCross2
+                onClick={() => setOpenModal(false)}
+                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
               />
             </div>
 
-            <div>
-              <label className={labelStyle}>
-                Purpose Of Visit
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
+            {/* Search Section */}
+            <div className="flex flex-col md:flex-row gap-4 mt-4">
               <select
-                name="purpose"
-                value={formData.purpose}
+                name="searchType"
+                value={formData.searchType}
                 onChange={handleChange}
                 disabled={mode === "view"}
                 className={inputStyle}
-                required
               >
-                <option>Select</option>
-                <option>Business</option>
-                <option>Meeting</option>
-                <option>Interview</option>
-                <option>Contractor</option>
-                <option>Personal</option>
-                <option>Delivery</option>
+                <option>Mobile no.</option>
+                <option>CICPA no.</option>
+                <option>EID no.</option>
+                <option>Visitor</option>
+                <option>QR Code</option>
               </select>
-            </div>
 
-            <div className="grid grid-cols-2">
-              <div>
-                <label className={labelStyle}>Date</label>
-                <div
-                  name="visitDate"
-                  value={formData.visitDate}
-                  className={inputStyle}
-                >
-                  {formData.visitDate}
-                </div>
-              </div>
-
-              <div>
-                <label className={labelStyle}>Time</label>
-                <div
-                  name="visitTime"
-                  value={formData.visitTime}
-                  className={inputStyle}
-                >
-                  {formData.visitTime}
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                Company
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
               <input
-                name="company"
-                value={formData.company}
+                name="searchValue"
+                value={formData.searchValue}
                 onChange={handleChange}
                 disabled={mode === "view"}
-                placeholder="Company"
+                placeholder="Value"
                 className={inputStyle}
                 required
               />
-            </div>
 
-            <div>
-              <label className={labelStyle}>
-                Mobile No
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <input
-                type="number"
-                name="mobile"
-                value={formData.mobile}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                placeholder="Contact No"
-                className={inputStyle}
-                required
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                F1 Point of Contact
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <select
-                name="contactPerson"
-                value={formData.contactPerson}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                className={inputStyle}
-                required
-              >
-                <option>Select</option>
-                <option>Name1</option>
-                <option>name2</option>
-                <option>Name3</option>
-                <option>Name4</option>
-                <option>Name5</option>
-                <option>Name6</option>
-              </select>
-            </div>
-
-            <div>
-              <label className={labelStyle}>E-Mail</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                placeholder="E-Mail"
-                className={inputStyle}
-                required
-              />
-            </div>
-          </div>
-
-          {/* CICPA SECTION */}
-          <h2 className="text-center font-semibold mt-10 mb-4">
-            CICPA INFORMATION
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div>
-              <label className={labelStyle}>CICPA Card No</label>
-              <input
-                name="cicpaCard"
-                value={formData.cicpaCard}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                placeholder="CICPA Card Number"
-                className={inputStyle}
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>Company Code</label>
-              <input
-                name="companyCode"
-                value={formData.companyCode}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                placeholder="Company Code"
-                className={inputStyle}
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>CICPA Expiry Date</label>
-              <DatePicker
-                placeholderText="dd/mm/yyyy"
-                selected={formData.cicpaExpiry}
-                onChange={(date) =>
-                  setFormData({ ...formData, cicpaExpiry: date })
-                }
-                className={inputStyle}
-                portalId="root"
-              />
-            </div>
-          </div>
-
-          {/* ID SECTION */}
-          <h2 className="text-center font-semibold mt-10 mb-4">
-            ID INFORMATION
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div>
-              <label className={labelStyle}>Id Type</label>
-              <select
-                name="idType"
-                value={formData.idType}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                className={inputStyle}
-                required
-              >
-                <option>EID</option>
-                <option>Passport</option>
-                <option>Driving License</option>
-              </select>
-            </div>
-
-            <div>
-              <label className={labelStyle}>Number</label>
-              <input
-                name="idNumber"
-                value={formData.idNumber}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                placeholder="ID Number"
-                className={inputStyle}
-                required
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>Nationality</label>
-              <input
-                name="nationality"
-                value={formData.nationality}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                placeholder="Nationality"
-                className={inputStyle}
-                required
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>Expiry Date</label>
-              <DatePicker
-                placeholderText="dd/mm/yyyy"
-                selected={formData.idExpiry}
-                onChange={(date) =>
-                  setFormData({ ...formData, idExpiry: date })
-                }
-                className={inputStyle}
-                portalId="root"
-              />
-            </div>
-          </div>
-
-          {/* ACCESS CARD */}
-          <h2 className="text-center font-semibold mt-10 mb-4">
-            ACCESS CARD INFORMATION
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div>
-              <label className={labelStyle}>
-                Access Card
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <select
-                name="accessCard"
-                value={formData.accessCard}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                className={inputStyle}
-                required
-              >
-                <option>Select</option>
-                <option>Card 1</option>
-                <option>Card 2</option>
-              </select>
-            </div>
-
-            <div className="flex items-center gap-2 mt-6">
-              <input
-                type="checkbox"
-                name="isPermanent"
-                checked={formData.isPermanent}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                required
-              />
-              <span>Is Permanent</span>
-            </div>
-          </div>
-
-          {/* Save */}
-          {mode !== "view" && (
-            <div className="flex justify-end mt-10">
               <button
-                onClick={handleSubmit}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+                onClick={handleSearch}
+                className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md"
               >
-                Save
+                Search
               </button>
             </div>
-          )}
+
+            {/* VISITOR INFORMATION */}
+            <h2 className="text-center font-semibold mt-8 mb-4">
+              VISITOR INFORMATION
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div>
+                <label className={labelStyle}>
+                  Visitor Name
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <input
+                  name="visitorName"
+                  value={formData.visitorName}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  placeholder="Visitor Name"
+                  className={inputStyle}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>
+                  Purpose Of Visit
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <select
+                  name="purpose"
+                  value={formData.purpose}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  className={inputStyle}
+                  required
+                >
+                  <option>Select</option>
+                  <option>Business</option>
+                  <option>Meeting</option>
+                  <option>Interview</option>
+                  <option>Contractor</option>
+                  <option>Personal</option>
+                  <option>Delivery</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2">
+                <div>
+                  <label className={labelStyle}>Date</label>
+                  <div
+                    name="visitDate"
+                    value={formData.visitDate}
+                    className={inputStyle}
+                  >
+                    {formData.visitDate}
+                  </div>
+                </div>
+
+                <div>
+                  <label className={labelStyle}>Time</label>
+                  <div
+                    name="visitTime"
+                    value={formData.visitTime}
+                    className={inputStyle}
+                  >
+                    {formData.visitTime}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className={labelStyle}>
+                  Company
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <input
+                  name="company"
+                  value={formData.company}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  placeholder="Company"
+                  className={inputStyle}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>
+                  Mobile No
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <input
+                  type="number"
+                  name="mobile"
+                  value={formData.mobile}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  placeholder="Contact No"
+                  className={inputStyle}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>
+                  F1 Point of Contact
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <select
+                  name="contactPerson"
+                  value={formData.contactPerson}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  className={inputStyle}
+                  required
+                >
+                  <option>Select</option>
+                  <option>Name1</option>
+                  <option>name2</option>
+                  <option>Name3</option>
+                  <option>Name4</option>
+                  <option>Name5</option>
+                  <option>Name6</option>
+                </select>
+              </div>
+
+              <div>
+                <label className={labelStyle}>E-Mail</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  placeholder="E-Mail"
+                  className={inputStyle}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* CICPA SECTION */}
+            <h2 className="text-center font-semibold mt-10 mb-4">
+              CICPA INFORMATION
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div>
+                <label className={labelStyle}>CICPA Card No</label>
+                <input
+                  name="cicpaCard"
+                  value={formData.cicpaCard}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  placeholder="CICPA Card Number"
+                  className={inputStyle}
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>Company Code</label>
+                <input
+                  name="companyCode"
+                  value={formData.companyCode}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  placeholder="Company Code"
+                  className={inputStyle}
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>CICPA Expiry Date</label>
+                <DatePicker
+                  placeholderText="dd/mm/yyyy"
+                  selected={formData.cicpaExpiry}
+                  onChange={(date) =>
+                    setFormData({ ...formData, cicpaExpiry: date })
+                  }
+                  className={inputStyle}
+                  dateFormat="dd/MM/yyyy"
+                  showYearDropdown
+                  showMonthDropdown
+                  dropdownMode="select"
+                  scrollableYearDropdown
+                  minDate={new Date(1950, 0, 1)}
+                  maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
+                />
+              </div>
+            </div>
+
+            {/* ID SECTION */}
+            <h2 className="text-center font-semibold mt-10 mb-4">
+              ID INFORMATION
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div>
+                <label className={labelStyle}>Id Type</label>
+                <select
+                  name="idType"
+                  value={formData.idType}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  className={inputStyle}
+                  required
+                >
+                  <option>EID</option>
+                  <option>Passport</option>
+                  <option>Driving License</option>
+                </select>
+              </div>
+
+              <div>
+                <label className={labelStyle}>Number</label>
+                <input
+                  name="idNumber"
+                  value={formData.idNumber}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  placeholder="ID Number"
+                  className={inputStyle}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>Nationality</label>
+                <input
+                  name="nationality"
+                  value={formData.nationality}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  placeholder="Nationality"
+                  className={inputStyle}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>Expiry Date</label>
+                <DatePicker
+                  placeholderText="dd/mm/yyyy"
+                  selected={formData.idExpiry}
+                  onChange={(date) =>
+                    setFormData({ ...formData, idExpiry: date })
+                  }
+                  className={inputStyle}
+                  dateFormat="dd/MM/yyyy"
+                  showYearDropdown
+                  showMonthDropdown
+                  dropdownMode="select"
+                  scrollableYearDropdown
+                  minDate={new Date(1950, 0, 1)}
+                  maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
+                />
+              </div>
+            </div>
+
+            {/* ACCESS CARD */}
+            <h2 className="text-center font-semibold mt-10 mb-4">
+              ACCESS CARD INFORMATION
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div>
+                <label className={labelStyle}>
+                  Access Card
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <select
+                  name="accessCard"
+                  value={formData.accessCard}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  className={inputStyle}
+                  required
+                >
+                  <option>Select</option>
+                  <option>Card 1</option>
+                  <option>Card 2</option>
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2 mt-6">
+                <input
+                  type="checkbox"
+                  name="isPermanent"
+                  checked={formData.isPermanent}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  required
+                />
+                <span>Is Permanent</span>
+              </div>
+            </div>
+
+            {/* Save */}
+            {mode !== "view" && (
+              <div className="flex justify-end mt-10">
+                <button
+                  onClick={handleSubmit}
+                  className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+                >
+                  Save
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </>

@@ -453,7 +453,7 @@ const UserMaster = () => {
                       <td className="p-2">{user.role}</td>
                       <td className="p-2">{user.active ? "Y" : "N"}</td>
                       <td className="p-2">
-                        <div className="flex flex-row space-x-3 ">
+                        <div className="flex flex-row space-x-3 justify-center ">
                           {/* View */}
                           <FaEye
                             onClick={() => {
@@ -551,7 +551,8 @@ const UserMaster = () => {
 
       {/* ========================= MODAL ========================= */}
       {openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6">
+        <div className="fixed inset-0 bg-black/70 flex justify-center items-start z-50 p-6 overflow-y-auto">
+          <div className="bg-white w-full max-w-6xl shadow-xl rounded-xl border border-[oklch(0.923_0.003_48.717)] p-6 relative">
           <div className="flex justify-between items-center border-b pb-3 mb-6">
             <div className="flex gap-6">
               <button
@@ -775,6 +776,7 @@ const UserMaster = () => {
               </button>
             </div>
           )}
+        </div>
         </div>
       )}
     </>

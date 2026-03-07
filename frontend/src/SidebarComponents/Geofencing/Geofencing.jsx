@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { IoMdLocate } from "react-icons/io";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-
 
 const Geofencing = ({ user }) => {
   const [openGeofencing, setOpenGeofencing] = useState(false);
 
-  const isAdmin = user.role === "admin"; 
+  const isAdmin = user.role === "admin";
+  const isgeofencingActive = location.pathname.startsWith("/geofencing");
+  const activeClass = "text-[oklch(0.645_0.246_16.439)]";
 
   return (
     <>
@@ -16,35 +17,45 @@ const Geofencing = ({ user }) => {
           {/* Geofencing Main Button */}
           <div
             onClick={() => setOpenGeofencing(!openGeofencing)}
-            className="flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded"
+            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+              isgeofencingActive ? activeClass : ""
+            }`}
           >
-            <div className="flex items-center gap-2 font-medium text-md">
+            <div className="flex items-center gap-2 font-medium text-lg">
               <IoMdLocate />
-              <span>GEOFENCING</span>
+              <span>Geofencing</span>
               {openGeofencing ? (
-                      <MdKeyboardArrowUp className='text-xl'/>
-                    ) : (
-                      <MdKeyboardArrowDown className='text-xl'/>
-                    )}
+                <MdKeyboardArrowUp className="text-xl" />
+              ) : (
+                <MdKeyboardArrowDown className="text-xl" />
+              )}
             </div>
           </div>
 
           {/* Sub Menu */}
           {openGeofencing && (
-            <div className="ml-6 mt-2 flex flex-col gap-2 text-md space-y-2">
-              <Link
+            <div className="ml-6 mt-2 flex flex-col gap-2 text-lg space-y-2">
+              <NavLink
                 to="/geofencing/geofencing-master"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                GEOFENCING MASTER
-              </Link>
+                Geofencing Master
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/geofencing/employee-geofencing"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                EMPLOYEE GEOFENCING
-              </Link>
+                Employee Geofencing
+              </NavLink>
             </div>
           )}
         </div>

@@ -288,7 +288,7 @@ const LocationGroup = () => {
                       <td className="py-2 px-6">{item.sitemanagername}</td>
                       <td className="py-2 px-6">{item.organization}</td>
                       <td className="py-2 px-6">
-                        <div className="flex flex-row space-x-3 ">
+                        <div className="flex flex-row space-x-3 justify-center ">
                           {/* View */}
                           <FaEye
                             onClick={() => {
@@ -387,116 +387,118 @@ const LocationGroup = () => {
       )}
 
       {openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.923_0.003_48.717)] p-6">
-          {/* Close */}
-          <div className="flex justify-end">
-            <RxCross2
-              onClick={() => setOpenModal(false)}
-              className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-            />
+        <div className="fixed inset-0 bg-black/70 flex justify-center items-start z-50 p-6 overflow-y-auto">
+          <div className="bg-white w-full max-w-6xl shadow-xl rounded-xl border border-[oklch(0.923_0.003_48.717)] p-6 relative">
+            {/* Close */}
+            <div className="flex justify-end">
+              <RxCross2
+                onClick={() => setOpenModal(false)}
+                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
+              />
+            </div>
+
+            {/* LOCATION GROUP INFORMATION */}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div>
+                <label className={labelStyle}>
+                  Company
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <input
+                  name="company"
+                  value={formData.company}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  placeholder="Company"
+                  className={inputStyle}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>
+                  Location Group Name
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <input
+                  name="locationgroupname"
+                  value={formData.locationgroupname}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  placeholder="Location Group Name"
+                  className={inputStyle}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>
+                  Discription
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <input
+                  name="discription"
+                  value={formData.discription}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  placeholder="Discription"
+                  className={inputStyle}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>
+                  Site Manager Name
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <select
+                  name="sitemanagername"
+                  value={formData.sitemanagername}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  className={inputStyle}
+                  required
+                >
+                  <option>Select</option>
+                  <option>Name 1</option>
+                  <option>Name 2</option>
+                </select>
+              </div>
+
+              <div>
+                <label className={labelStyle}>
+                  Time Keeper Name
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
+                <select
+                  name="timekeepername"
+                  value={formData.timekeepername}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  className={inputStyle}
+                  required
+                >
+                  <option>Select</option>
+                  <option>Name 1</option>
+                  <option>Name 2</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Save */}
+            {mode !== "view" && (
+              <div className="flex justify-end mt-10">
+                <button
+                  onClick={handleSubmit}
+                  className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+                >
+                  Save
+                </button>
+              </div>
+            )}
           </div>
-
-          {/* LOCATION GROUP INFORMATION */}
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div>
-              <label className={labelStyle}>
-                Company
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <input
-                name="company"
-                value={formData.company}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                placeholder="Company"
-                className={inputStyle}
-                required
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                Location Group Name
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <input
-                name="locationgroupname"
-                value={formData.locationgroupname}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                placeholder="Location Group Name"
-                className={inputStyle}
-                required
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                Discription
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <input
-                name="discription"
-                value={formData.discription}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                placeholder="Discription"
-                className={inputStyle}
-                required
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                Site Manager Name
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <select
-                name="sitemanagername"
-                value={formData.sitemanagername}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                className={inputStyle}
-                required
-              >
-                <option>Select</option>
-                <option>Name 1</option>
-                <option>Name 2</option>
-              </select>
-            </div>
-
-            <div>
-              <label className={labelStyle}>
-                Time Keeper Name
-                <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-              </label>
-              <select
-                name="timekeepername"
-                value={formData.timekeepername}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                className={inputStyle}
-                required
-              >
-                <option>Select</option>
-                <option>Name 1</option>
-                <option>Name 2</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Save */}
-          {mode !== "view" && (
-            <div className="flex justify-end mt-10">
-              <button
-                onClick={handleSubmit}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
-              >
-                Save
-              </button>
-            </div>
-          )}
         </div>
       )}
     </>

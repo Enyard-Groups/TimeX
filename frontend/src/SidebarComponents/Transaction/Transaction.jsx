@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { PiNotePencilFill } from "react-icons/pi";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-
 
 const Transaction = ({ user }) => {
   const [openTransaction, setOpenTransaction] = useState(false);
 
   const isAdmin = user.role === "admin";
+  const istransactionActive = location.pathname.startsWith("/transaction");
+  const activeClass = "text-[oklch(0.645_0.246_16.439)]";
 
   return (
     <>
@@ -16,42 +17,56 @@ const Transaction = ({ user }) => {
           {/* Transaction Main Button */}
           <div
             onClick={() => setOpenTransaction(!openTransaction)}
-            className="flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded"
+            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+              istransactionActive ? activeClass : ""
+            }`}
           >
-            <div className="flex items-center gap-2 font-medium text-md">
+            <div className="flex items-center gap-2 font-medium text-lg">
               <PiNotePencilFill />
-              <span>TRANSACTION</span>
+              <span>Transaction</span>
               {openTransaction ? (
-                      <MdKeyboardArrowUp className='text-xl'/>
-                    ) : (
-                      <MdKeyboardArrowDown className='text-xl'/>
-                    )}
+                <MdKeyboardArrowUp className="text-xl" />
+              ) : (
+                <MdKeyboardArrowDown className="text-xl" />
+              )}
             </div>
           </div>
 
           {/* Sub Menu */}
           {openTransaction && (
-            <div className="ml-6 mt-2 flex flex-col gap-2 text-md space-y-2">
-              <Link
+            <div className="ml-6 mt-2 flex flex-col gap-2 text-lg space-y-2">
+              <NavLink
                 to="/transaction/monitoring"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                MONITORING
-              </Link>
+                Monitoring
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/transaction/shift-planner"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                SHIFT PLANNER
-              </Link>
+                Shift Planner
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/transaction/shift-upload"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                SHIFT UPLOAD
-              </Link>
+                Shift Upload
+              </NavLink>
             </div>
           )}
         </div>

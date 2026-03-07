@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { RiContactsFill } from "react-icons/ri";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
@@ -8,6 +8,9 @@ const Master = ({ user }) => {
   const [openEmployee, setOpenEmployee] = useState(false);
   const [openHoliday, setOpenHoliday] = useState(false);
   const isAdmin = user.role === "admin";
+  const ismastersActive = location.pathname.startsWith("/masters");
+  const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+
   return (
     <>
       {isAdmin && (
@@ -15,11 +18,13 @@ const Master = ({ user }) => {
           {/* Masters Main Button */}
           <div
             onClick={() => setOpenMasters(!openMasters)}
-            className="flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded"
+            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+              ismastersActive ? activeClass : ""
+            }`}
           >
-            <div className="flex items-center gap-2 font-medium text-md">
+            <div className="flex items-center gap-2 font-medium text-lg">
               <RiContactsFill />
-              <span>MASTERS</span>
+              <span>Masters</span>
               {openMasters ? (
                 <MdKeyboardArrowUp className="text-xl" />
               ) : (
@@ -30,27 +35,39 @@ const Master = ({ user }) => {
 
           {/* Sub Menu */}
           {openMasters && (
-            <div className="ml-6 mt-2 flex flex-col gap-2 text-md space-y-2">
-              <Link
+            <div className="ml-6 mt-2 flex flex-col gap-2 text-lg space-y-2">
+              <NavLink
                 to="/masters/department"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                DEPARTMENT
-              </Link>
+                Department
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/masters/designation"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-               DESIGNATION
-              </Link>
+                Designation
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/masters/shift"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                SHIFT NAME
-              </Link>
+                Shift
+              </NavLink>
 
               {/* EMPLOYEE DROPDOWN */}
               <div>
@@ -58,7 +75,7 @@ const Master = ({ user }) => {
                   onClick={() => setOpenEmployee(!openEmployee)}
                   className="flex justify-between items-center cursor-pointer hover:text-[oklch(0.645_0.246_16.439)]"
                 >
-                  <span>EMPLOYEE</span>
+                  <span>Employee</span>
                   {openEmployee ? (
                     <MdKeyboardArrowUp />
                   ) : (
@@ -68,35 +85,51 @@ const Master = ({ user }) => {
 
                 {openEmployee && (
                   <div className="ml-4 mt-2 flex flex-col gap-2">
-                    <Link
+                    <NavLink
                       to="/masters/employee-master"
-                      className="hover:text-[oklch(0.645_0.246_16.439)]"
+                      className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
                     >
-                      EMPLOYEE MASTER
-                    </Link>
-                    <Link
+                      Employee Master
+                    </NavLink>
+                    <NavLink
                       to="/masters/employee-category"
-                      className="hover:text-[oklch(0.645_0.246_16.439)]"
+                      className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
                     >
-                      EMPLOYEE CATEGORY
-                    </Link>
+                      Employee Category
+                    </NavLink>
                   </div>
                 )}
               </div>
 
-              <Link
+              <NavLink
                 to="/masters/user-master"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                USER MASTER
-              </Link>
+                User Master
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/masters/issue-type"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                ISSUE TYPE
-              </Link>
+                Issue Type
+              </NavLink>
 
               {/* HOLIDAY DROPDOWN */}
               <div>
@@ -104,7 +137,7 @@ const Master = ({ user }) => {
                   onClick={() => setOpenHoliday(!openHoliday)}
                   className="flex justify-between items-center cursor-pointer hover:text-[oklch(0.645_0.246_16.439)]"
                 >
-                  <span>HOLIDAY</span>
+                  <span>Holiday</span>
                   {openHoliday ? (
                     <MdKeyboardArrowUp />
                   ) : (
@@ -114,43 +147,63 @@ const Master = ({ user }) => {
 
                 {openHoliday && (
                   <div className="ml-4 mt-2 flex flex-col gap-2">
-                    <Link
+                    <NavLink
                       to="/masters/holiday-master"
-                      className="hover:text-[oklch(0.645_0.246_16.439)]"
+                      className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
                     >
-                      HOLIDAY MASTER
-                    </Link>
+                      Holiday Master
+                    </NavLink>
                   </div>
                 )}
               </div>
 
-              <Link
+              <NavLink
                 to="/masters/claim-category"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                CLAIM CATEGORY
-              </Link>
+                Claim Category
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/masters/leave"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                LEAVE
-              </Link>
+                Leave
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/masters/performance-report"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                PERFORMANCE REPORT
-              </Link>
+                Performance Report
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/masters/performance-dashboard"
-                className="hover:text-[oklch(0.645_0.246_16.439)]"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
               >
-                PERFORMANCE DASHBOARD
-              </Link>
+                Performance Dashboard
+              </NavLink>
             </div>
           )}
         </div>
