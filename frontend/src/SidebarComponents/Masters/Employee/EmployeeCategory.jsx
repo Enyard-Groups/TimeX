@@ -117,8 +117,6 @@ const EmployeeCategory = () => {
           item.company,
           item.workhours
             ? item.workhours.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
               })
             : "",
           item.isActive ? "Y" : "N",
@@ -137,8 +135,6 @@ const EmployeeCategory = () => {
       Company: item.company,
       "Work Hours": item.workhours
         ? item.workhours.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
           })
         : "",
       Active: item.isActive ? "Y" : "N",
@@ -172,8 +168,6 @@ const EmployeeCategory = () => {
         item.company,
         item.workhours
           ? item.workhours.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
             })
           : "",
         item.isActive ? "Y" : "N",
@@ -295,8 +289,6 @@ const EmployeeCategory = () => {
                       <td className="py-2 px-6">
                         {item.workhours
                           ? item.workhours.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
                               hour12: false,
                             })
                           : ""}
@@ -454,11 +446,11 @@ const EmployeeCategory = () => {
                   onChange={(time) =>
                     setFormData({ ...formData, workhours: time })
                   }
-                  showTimeSelect
+                  showTimeInput
                   showTimeSelectOnly
                   timeIntervals={30}
                   timeCaption="Time"
-                  dateFormat="HH:mm"
+                  dateFormat="HH:mm:ss"
                   className={inputStyle}
                 />
               </div>

@@ -27,13 +27,6 @@ const Shift = () => {
     code: "",
     intime: null,
     outtime: null,
-    weekoff1: "",
-    weekoff2: "",
-    ingt: null,
-    outgt: null,
-    minot: null,
-    maxot: null,
-    isHalfDay: false,
     isActive: false,
   });
 
@@ -104,7 +97,7 @@ const Shift = () => {
       name: "",
       code: "",
       intime: null,
-      outtime: "",
+      outtime :null,
       isActive: false,
     });
   };
@@ -127,15 +120,11 @@ const Shift = () => {
           item.code,
           item.intime
             ? item.intime.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
                 hour12: false,
               })
             : "",
           item.outtime
             ? item.outtime.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
                 hour12: false,
               })
             : "",
@@ -157,15 +146,11 @@ const Shift = () => {
       "Shift Code": item.code,
       InTime: item.intime
         ? item.intime.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
             hour12: false,
           })
         : "",
       OutTime: item.outtime
         ? item.outtime.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
             hour12: false,
           })
         : "",
@@ -201,15 +186,11 @@ const Shift = () => {
         item.code,
         item.intime
           ? item.intime.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
               hour12: false,
             })
           : "",
         item.outtime
           ? item.outtime.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
               hour12: false,
             })
           : "",
@@ -335,8 +316,6 @@ const Shift = () => {
                       <td className="px-5 py-2 ">
                         {item.intime
                           ? item.intime.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
                               hour12: false,
                             })
                           : ""}
@@ -344,8 +323,6 @@ const Shift = () => {
                       <td className="px-5 py-2 ">
                         {item.outtime
                           ? item.outtime.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
                               hour12: false,
                             })
                           : ""}
@@ -509,7 +486,7 @@ const Shift = () => {
                   showTimeSelectOnly
                   timeIntervals={30}
                   timeCaption="Time"
-                  dateFormat="HH:mm"
+                  dateFormat="HH:mm:ss"
                   className={inputStyle}
                   disabled={mode === "view"}
                 />
@@ -530,7 +507,7 @@ const Shift = () => {
                   showTimeSelectOnly
                   timeIntervals={30}
                   timeCaption="Time"
-                  dateFormat="HH:mm"
+                  dateFormat="HH:mm:ss"
                   className={inputStyle}
                   disabled={mode === "view"}
                 />
