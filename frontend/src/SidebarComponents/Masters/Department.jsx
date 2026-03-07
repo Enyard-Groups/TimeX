@@ -10,6 +10,7 @@ import autoTable from "jspdf-autotable";
 import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
+import { GrPrevious, GrNext } from "react-icons/gr";
 
 const Department = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -40,12 +41,16 @@ const Department = () => {
       x.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
-  const totalPages = Math.ceil(filtereddepartment.length / entriesPerPage);
+  const endIndex = currentPage * entriesPerPage;
 
-  const startIndex = (currentPage - 1) * entriesPerPage;
-  const endIndex = startIndex + entriesPerPage;
+  const startIndex = endIndex - entriesPerPage;
 
   const currentdepartment = filtereddepartment.slice(startIndex, endIndex);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filtereddepartment.length / entriesPerPage),
+  );
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -212,6 +217,7 @@ const Department = () => {
                 <option value={10}>10</option>
                 <option value={25}>25</option>
                 <option value={50}>50</option>
+                <option value={100}>100</option>
               </select>
               <span className="ml-2 text-md">entries</span>
             </div>
@@ -328,49 +334,37 @@ const Department = () => {
               {filtereddepartment.length} entries
             </span>
 
-            <div className="space-x-2">
+            <div className="flex flex-row space-x-2">
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
-                className="px-2 py-1 border rounded disabled:opacity-50"
+                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
               >
                 First
               </button>
 
               <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((prev) => prev - 1)}
-                className="px-2 py-1 border rounded disabled:opacity-50"
+                disabled={currentPage == 1}
+                onClick={() => setCurrentPage(currentPage - 1)}
+                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
               >
-                Previous
+                <GrPrevious />
               </button>
 
-              {[...Array(totalPages)].map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentPage(index + 1)}
-                  className={`px-2 py-1 rounded ${
-                    currentPage === index + 1
-                      ? "bg-green-500 text-white"
-                      : "border"
-                  }`}
-                >
-                  {startIndex + index + 1}
-                </button>
-              ))}
+              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
 
               <button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-                className="px-2 py-1 border rounded disabled:opacity-50"
+                disabled={currentPage == totalPages}
+                onClick={() => setCurrentPage(currentPage + 1)}
+                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
               >
-                Next
+                <GrNext />
               </button>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="px-2 py-1 border rounded disabled:opacity-50"
+                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
               >
                 Last
               </button>
