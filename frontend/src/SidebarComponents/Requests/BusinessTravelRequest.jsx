@@ -2,7 +2,7 @@ import React from 'react'
 
 const BusinessTravelRequest = () => {
   return (
-    <div>BusinessTravelRequest</div>
+    <div>Business Travel Request</div>
   )
 }
 
