@@ -355,7 +355,7 @@ const VisitorBooking = () => {
           {/* Table */}
           <div className="overflow-x-auto min-h-[300px]">
             <table className="w-full text-lg border-collapse">
-              <thead className="text-md bg-[oklch(0.98_0.02_16.439)] text-[oklch(0.70_0.246_16.439)] ">
+              <thead className="text-md bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)] ">
                 <tr>
                   <th className="py-2 px-6 font-semibold">SL.NO</th>
                   <th className="py-2 px-6 font-semibold">Visitor Code</th>
@@ -478,8 +478,8 @@ const VisitorBooking = () => {
       )}
 
       {openModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-6 overflow-y-auto">
-          <div className="bg-white w-full max-w-6xl shadow-xl rounded-xl border border-[oklch(0.923_0.003_48.717)] p-6 relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6">
             {/* Close */}
             <div className="flex justify-end">
               <RxCross2
