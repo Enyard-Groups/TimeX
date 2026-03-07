@@ -215,7 +215,7 @@ const DeviceManagementSub = () => {
   };
 
   return (
-    <>
+    <div className="mb-16">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
@@ -257,39 +257,39 @@ const DeviceManagementSub = () => {
               </select>
               <span className="ml-2 text-md">entries</span>
             </div>
+            <div className="flex flex-wrap gap-2 items-center justify-center">
+              <input
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+              />
+              <div className="flex">
+                <button
+                  onClick={handleCopy}
+                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+                >
+                  <GoCopy />
+                </button>
 
-            <div className="flex">
-              <button
-                onClick={handleCopy}
-                className="text-xl px-3 py-1 cursor-pointer text-gray-800"
-              >
-                <GoCopy />
-              </button>
+                <button
+                  onClick={handleExcel}
+                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
+                >
+                  <FaFileExcel />
+                </button>
 
-              <button
-                onClick={handleExcel}
-                className="text-xl px-3 py-1 cursor-pointer text-green-700"
-              >
-                <FaFileExcel />
-              </button>
-
-              <button
-                onClick={handlePDF}
-                className="text-xl px-3 py-1 cursor-pointer text-red-600"
-              >
-                <FaFilePdf />
-              </button>
+                <button
+                  onClick={handlePDF}
+                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
+                >
+                  <FaFilePdf />
+                </button>
+              </div>
             </div>
-
-            <input
-              placeholder="Search"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-            />
           </div>
 
           {/* Table */}
@@ -379,7 +379,7 @@ const DeviceManagementSub = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-between items-center mt-4 text-sm">
+          <div className="flex justify-between items-center mt-4 text-sm flex-wrap gap-4">
             <span>
               Showing{" "}
               {filteredDevicemanagement.length === 0 ? "0" : startIndex + 1} to{" "}
@@ -387,7 +387,7 @@ const DeviceManagementSub = () => {
               {filteredDevicemanagement.length} entries
             </span>
 
-            <div className="flex flex-row space-x-2">
+            <div className="flex flex-row space-x-1">
               <button
                 disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
@@ -614,7 +614,7 @@ const DeviceManagementSub = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

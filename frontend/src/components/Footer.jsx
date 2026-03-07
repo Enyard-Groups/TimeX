@@ -5,18 +5,18 @@ const Footer = () => {
 
   return (
     <div
-      className="relative py-4 bottom-0 h-14 px-4 md:px-14 border-t"
+      className="fixed w-full pt-1 sm:pt-2 z-40 bottom-0 h-12 border-t "
       style={{
         backgroundColor: "oklch(1 0 0)",
         borderColor: "oklch(0.823 0.003 48.717)",
       }}
     >
       <div
-        className="text-md flex justify-center items-center gap-2"
+        className=" text-md gap-2 text-center"
         style={{ color: "oklch(0.423 0.003 48.717)" }}
       >
         © {currentYear} TimeX |{" "}
-        <a href="https://enyard.in" className="underline" target="_blank">
+        <a href="https://enyard.in" target="_blank">
           ENYARD.
         </a>{" "}
         | All rights reserved.

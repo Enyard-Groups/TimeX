@@ -19,7 +19,6 @@ import MyAttendance from "./EmployeeSidebar/MyAttendance";
 import ApplyForLeave from "./EmployeeSidebar/ApplyForLeave";
 import MyProfile from "./components/MyProfile";
 import { load, setAuth, setUser } from "./action";
-import Footer from "./components/Footer";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -35,7 +34,6 @@ const App = () => {
     dispatch(load());
   }, [dispatch]);
 
-  
   if (loading) {
     return null;
   }
@@ -101,8 +99,6 @@ const App = () => {
           />
         </Routes>
       </BrowserRouter>
-
-      <Footer />
     </>
   );
 };

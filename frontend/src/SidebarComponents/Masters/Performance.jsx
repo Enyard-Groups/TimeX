@@ -274,168 +274,180 @@ const Performance = () => {
 
   return (
     <>
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 pt-1.5 text-lg font-semibold flex-wrap">
-          <FaAngleRight />
-          Masters
-          <FaAngleRight />
-          Performance Report
-        </h1>
-      </div>
-
-      <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)]  p-6">
-        {/* Top Controls */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-          <div>
-            <label className="mr-2 text-sm">Show</label>
-            <select
-              value={entriesPerPage}
-              onChange={(e) => {
-                setEntriesPerPage(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-              className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
-            >
-              <option value={10}>10</option>
-              <option value={25}>25</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-            </select>
-            <span className="ml-2 text-md">entries</span>
-          </div>
-          <div className="flex">
-            <button
-              onClick={handleCopy}
-              className="text-xl px-3 py-1 cursor-pointer text-gray-800"
-            >
-              <GoCopy />
-            </button>
-
-            <button
-              onClick={handleExcel}
-              className="text-xl px-3 py-1 cursor-pointer text-green-700"
-            >
-              <FaFileExcel />
-            </button>
-
-            <button
-              onClick={handlePDF}
-              className="text-xl px-3 py-1 cursor-pointer text-red-600"
-            >
-              <FaFilePdf />
-            </button>
-          </div>
-          <input
-            placeholder="Search"
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
-            }}
-            className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-          />
+      <div className="mb-16">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <h1 className="flex items-center gap-2 pt-1.5 text-lg font-semibold flex-wrap">
+            <FaAngleRight />
+            Masters
+            <FaAngleRight />
+            Performance Report
+          </h1>
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto min-h-[300px]">
-          <table className="w-full text-lg border-collapse">
-            <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-              <tr>
-                <th className="py-2 px-6 font-semibold">SerialSerial No</th>
-                <th className="py-2 px-6 font-semibold">SerialFirst Name</th>
-                <th className="py-2 px-6 font-semibold">SerialDaily Hours</th>
-                <th className="py-2 px-6 font-semibold">SerialDaily Target</th>
-                <th className="py-2 px-6 font-semibold">SerialDaily Status</th>
-                <th className="py-2 px-6 font-semibold">
-                  SerialTotal Weekly Hours{" "}
-                </th>
-                <th className="py-2 px-6 font-semibold">SerialTarget Weekly</th>
-                <th className="py-2 px-6 font-semibold">SerialWeekly Status</th>
-                <th className="py-2 px-6 font-semibold">
-                  SerialTotal Monthly Hours
-                </th>
-                <th className="py-2 px-6 font-semibold">
-                  SerialTarget Monthly
-                </th>
-                <th className="py-2 px-6 font-semibold">
-                  SerialMonthly Status
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentperformance.length === 0 ? (
+        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)]  p-6">
+          {/* Top Controls */}
+          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+            <div>
+              <label className="mr-2 text-sm">Show</label>
+              <select
+                value={entriesPerPage}
+                onChange={(e) => {
+                  setEntriesPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+              <span className="ml-2 text-md">entries</span>
+            </div>
+            <div className="flex flex-wrap gap-2 items-center justify-center">
+              <input
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+              />
+              <div className="flex">
+                <button
+                  onClick={handleCopy}
+                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+                >
+                  <GoCopy />
+                </button>
+
+                <button
+                  onClick={handleExcel}
+                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
+                >
+                  <FaFileExcel />
+                </button>
+
+                <button
+                  onClick={handlePDF}
+                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
+                >
+                  <FaFilePdf />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Table */}
+          <div className="overflow-x-auto min-h-[300px]">
+            <table className="w-full text-lg border-collapse">
+              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
-                  <td colSpan="11" className="sm:text-center p-10">
-                    No Data Available
-                  </td>
+                  <th className="py-2 px-6 font-semibold">SerialSerial No</th>
+                  <th className="py-2 px-6 font-semibold">SerialFirst Name</th>
+                  <th className="py-2 px-6 font-semibold">SerialDaily Hours</th>
+                  <th className="py-2 px-6 font-semibold">
+                    SerialDaily Target
+                  </th>
+                  <th className="py-2 px-6 font-semibold">
+                    SerialDaily Status
+                  </th>
+                  <th className="py-2 px-6 font-semibold">
+                    SerialTotal Weekly Hours{" "}
+                  </th>
+                  <th className="py-2 px-6 font-semibold">
+                    SerialTarget Weekly
+                  </th>
+                  <th className="py-2 px-6 font-semibold">
+                    SerialWeekly Status
+                  </th>
+                  <th className="py-2 px-6 font-semibold">
+                    SerialTotal Monthly Hours
+                  </th>
+                  <th className="py-2 px-6 font-semibold">
+                    SerialTarget Monthly
+                  </th>
+                  <th className="py-2 px-6 font-semibold">
+                    SerialMonthly Status
+                  </th>
                 </tr>
-              ) : (
-                currentperformance.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
-                  >
-                    <td className="py-2 px-6">{item.serialno}</td>
-                    <td className="py-2 px-6">{item.firstname}</td>
-                    <td className="py-2 px-6">{item.dailyhours}</td>
-                    <td className="py-2 px-6">{item.dailytarget}</td>
-                    <td className="py-2 px-6">{item.dailystatus}</td>
-                    <td className="py-2 px-6">{item.totalweeklyhours}</td>
-                    <td className="py-2 px-6">{item.targetweekly}</td>
-                    <td className="py-2 px-6">{item.weeklystatus}</td>
-                    <td className="py-2 px-6">{item.totalmonthlyhours}</td>
-                    <td className="py-2 px-6">{item.targetmonthly}</td>
-                    <td className="py-2 px-6">{item.monthlystatus}</td>
+              </thead>
+              <tbody>
+                {currentperformance.length === 0 ? (
+                  <tr>
+                    <td colSpan="11" className="sm:text-center p-10">
+                      No Data Available
+                    </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                ) : (
+                  currentperformance.map((item) => (
+                    <tr
+                      key={item.id}
+                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                    >
+                      <td className="py-2 px-6">{item.serialno}</td>
+                      <td className="py-2 px-6">{item.firstname}</td>
+                      <td className="py-2 px-6">{item.dailyhours}</td>
+                      <td className="py-2 px-6">{item.dailytarget}</td>
+                      <td className="py-2 px-6">{item.dailystatus}</td>
+                      <td className="py-2 px-6">{item.totalweeklyhours}</td>
+                      <td className="py-2 px-6">{item.targetweekly}</td>
+                      <td className="py-2 px-6">{item.weeklystatus}</td>
+                      <td className="py-2 px-6">{item.totalmonthlyhours}</td>
+                      <td className="py-2 px-6">{item.targetmonthly}</td>
+                      <td className="py-2 px-6">{item.monthlystatus}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
 
-        {/* Pagination */}
-        <div className="flex justify-between items-center mt-4 text-sm">
-          <span>
-            Showing {filteredperformance.length === 0 ? "0" : startIndex + 1} to{" "}
-            {Math.min(endIndex, filteredperformance.length)} of{" "}
-            {filteredperformance.length} entries
-          </span>
+          {/* Pagination */}
+          <div className="flex justify-between items-center mt-4 text-sm flex-wrap gap-4">
+            <span>
+              Showing {filteredperformance.length === 0 ? "0" : startIndex + 1}{" "}
+              to {Math.min(endIndex, filteredperformance.length)} of{" "}
+              {filteredperformance.length} entries
+            </span>
 
-          <div className="flex flex-row space-x-2">
-            <button
-              disabled={currentPage == 1}
-              onClick={() => setCurrentPage(1)}
-              className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
-            >
-              First
-            </button>
+            <div className="flex flex-row space-x-1">
+              <button
+                disabled={currentPage == 1}
+                onClick={() => setCurrentPage(1)}
+                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+              >
+                First
+              </button>
 
-            <button
-              disabled={currentPage == 1}
-              onClick={() => setCurrentPage(currentPage - 1)}
-              className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
-            >
-              <GrPrevious />
-            </button>
+              <button
+                disabled={currentPage == 1}
+                onClick={() => setCurrentPage(currentPage - 1)}
+                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+              >
+                <GrPrevious />
+              </button>
 
-            <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
 
-            <button
-              disabled={currentPage == totalPages}
-              onClick={() => setCurrentPage(currentPage + 1)}
-              className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
-            >
-              <GrNext />
-            </button>
+              <button
+                disabled={currentPage == totalPages}
+                onClick={() => setCurrentPage(currentPage + 1)}
+                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+              >
+                <GrNext />
+              </button>
 
-            <button
-              disabled={currentPage == totalPages}
-              onClick={() => setCurrentPage(totalPages)}
-              className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
-            >
-              Last
-            </button>
+              <button
+                disabled={currentPage == totalPages}
+                onClick={() => setCurrentPage(totalPages)}
+                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+              >
+                Last
+              </button>
+            </div>
           </div>
         </div>
       </div>

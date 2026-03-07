@@ -4,6 +4,7 @@ import { logout } from "../action";
 import Sidebar from "./Sidebar";
 import { Link, useNavigate } from "react-router-dom";
 import { IoMdNotificationsOutline } from "react-icons/io";
+import Footer from "./Footer";
 
 export default function Navbar() {
   const dispatch = useDispatch();
@@ -82,8 +83,12 @@ export default function Navbar() {
             {/* Logo */}
             <div className="text-2xl font-black tracking-tight text-[oklch(0.147_0.004_49.25)]">
               <Link to="/dashboard">
-                Time
-                <span className="text-[oklch(0.645_0.246_16.439)]">X</span>
+                <img
+                  src="../timexlogo.png"
+                  alt=""
+                  height="100px"
+                  width="100px"
+                />
               </Link>
             </div>
           </div>
@@ -194,11 +199,15 @@ export default function Navbar() {
       <aside
         ref={sidebarRef}
         className={`fixed top-0 left-0 h-full transition-transform duration-300 ${
-          sidebarOpen ? "translate-x-0 w-56" : "-translate-x-full"
+          sidebarOpen
+            ? "translate-x-0 w-56 backdrop-blur-xl"
+            : "-translate-x-full "
         } md:translate-x-0 md:w-56 z-40 bg-[oklch(1_0_0)] border-r border-[oklch(0.923_0.003_48.717)]`}
       >
         <Sidebar user={user} />
       </aside>
+
+      <Footer />
     </>
   );
 }

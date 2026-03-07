@@ -353,438 +353,442 @@ const UserMaster = () => {
 
   return (
     <>
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-lg font-semibold">
-          <FaAngleRight /> Masters <FaAngleRight />
-          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
-            User Master
-          </div>
-        </h1>
+      <div className="mb-16">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <h1 className="flex items-center gap-2 text-lg font-semibold">
+            <FaAngleRight /> Masters <FaAngleRight />
+            <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+              User Master
+            </div>
+          </h1>
+
+          {!openModal && (
+            <button
+              onClick={() => setOpenModal(true)}
+              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md"
+            >
+              + Add New
+            </button>
+          )}
+        </div>
 
         {!openModal && (
-          <button
-            onClick={() => setOpenModal(true)}
-            className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md"
-          >
-            + Add New
-          </button>
-        )}
-      </div>
+          <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">
+            {/* Top Controls */}
+            <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+              <div>
+                <label className="mr-2 text-md">Show</label>
+                <select
+                  value={entriesPerPage}
+                  onChange={(e) => {
+                    setEntriesPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
+                >
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+                <span className="ml-2 text-md">entries</span>
+              </div>
+              <div className="flex flex-wrap gap-2 items-center justify-center">
+                <input
+                  placeholder="Search"
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+                />
+                <div className="flex">
+                  <button
+                    onClick={handleCopy}
+                    className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+                  >
+                    <GoCopy />
+                  </button>
 
-      {/* ========================= LIST VIEW ========================= */}
-      {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">
-          {/* Top Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <div>
-              <label className="mr-2 text-md">Show</label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="ml-2 text-md">entries</span>
+                  <button
+                    onClick={handleExcel}
+                    className="text-xl px-3 py-1 cursor-pointer text-green-700"
+                  >
+                    <FaFileExcel />
+                  </button>
+
+                  <button
+                    onClick={handlePDF}
+                    className="text-xl px-3 py-1 cursor-pointer text-red-600"
+                  >
+                    <FaFilePdf />
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="flex">
-              <button
-                onClick={handleCopy}
-                className="text-xl px-3 py-1 cursor-pointer text-gray-800"
-              >
-                <GoCopy />
-              </button>
 
-              <button
-                onClick={handleExcel}
-                className="text-xl px-3 py-1 cursor-pointer text-green-700"
-              >
-                <FaFileExcel />
-              </button>
-
-              <button
-                onClick={handlePDF}
-                className="text-xl px-3 py-1 cursor-pointer text-red-600"
-              >
-                <FaFilePdf />
-              </button>
-            </div>
-            <input
-              placeholder="Search"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-            />
-          </div>
-
-          {/* Table */}
-          <div className="overflow-x-auto min-h-[250px]">
-            <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="p-2 font-semibold">SL.NO</th>
-                  <th className="p-2 font-semibold">User Name</th>
-                  <th className="p-2 font-semibold">Employee</th>
-                  <th className="p-2 font-semibold">Employee Email</th>
-                  <th className="p-2 font-semibold">Role</th>
-                  <th className="p-2 font-semibold">Active</th>
-                  <th className="p-2 font-semibold">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentUsers.length === 0 ? (
+            {/* Table */}
+            <div className="overflow-x-auto min-h-[250px]">
+              <table className="w-full text-lg border-collapse">
+                <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                   <tr>
-                    <td colSpan="7" className="sm:text-center p-10">
-                      No Data Available
-                    </td>
+                    <th className="p-2 font-semibold">SL.NO</th>
+                    <th className="p-2 font-semibold">User Name</th>
+                    <th className="p-2 font-semibold">Employee</th>
+                    <th className="p-2 font-semibold">Employee Email</th>
+                    <th className="p-2 font-semibold">Role</th>
+                    <th className="p-2 font-semibold">Active</th>
+                    <th className="p-2 font-semibold">Action</th>
                   </tr>
-                ) : (
-                  currentUsers.map((user, index) => (
-                    <tr
-                      key={user.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)] "
-                    >
-                      <td className="p-2">{index + 1}</td>
-                      <td className="p-2">{user.userName}</td>
-                      <td className="p-2">{user.empname}</td>
-                      <td className="p-2">{user.enrollmentId}</td>
-                      <td className="p-2">{user.role}</td>
-                      <td className="p-2">{user.active ? "Y" : "N"}</td>
-                      <td className="p-2">
-                        <div className="flex flex-row space-x-3 justify-center ">
-                          {/* View */}
-                          <FaEye
-                            onClick={() => {
-                              setFormData(user);
-                              setMode("view");
-                              setOpenModal(true);
-                            }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />
-
-                          {/* Edit */}
-                          <FaPen
-                            onClick={() => {
-                              setFormData(user);
-                              setEditId(user.id);
-                              setMode("edit");
-                              setOpenModal(true);
-                            }}
-                            className="inline text-green-500 cursor-pointer text-lg"
-                          />
-
-                          {/* Delete */}
-                          <MdDeleteForever
-                            onClick={() =>
-                              setUsers(users.filter((v) => v.id !== user.id))
-                            }
-                            className="inline text-red-500 cursor-pointer text-xl"
-                          />
-                        </div>
+                </thead>
+                <tbody>
+                  {currentUsers.length === 0 ? (
+                    <tr>
+                      <td colSpan="7" className="sm:text-center p-10">
+                        No Data Available
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                  ) : (
+                    currentUsers.map((user, index) => (
+                      <tr
+                        key={user.id}
+                        className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)] "
+                      >
+                        <td className="p-2">{index + 1}</td>
+                        <td className="p-2">{user.userName}</td>
+                        <td className="p-2">{user.empname}</td>
+                        <td className="p-2">{user.enrollmentId}</td>
+                        <td className="p-2">{user.role}</td>
+                        <td className="p-2">{user.active ? "Y" : "N"}</td>
+                        <td className="p-2">
+                          <div className="flex flex-row space-x-3 justify-center ">
+                            {/* View */}
+                            <FaEye
+                              onClick={() => {
+                                setFormData(user);
+                                setMode("view");
+                                setOpenModal(true);
+                              }}
+                              className="inline text-blue-500 cursor-pointer text-lg"
+                            />
 
-          {/* Pagination */}
-          <div className="flex justify-between items-center mt-4 text-sm">
-            <span>
-              Showing {filteredUsers.length === 0 ? "0" : startIndex + 1} to{" "}
-              {Math.min(endIndex, filteredUsers.length)} of{" "}
-              {filteredUsers.length} entries
-            </span>
+                            {/* Edit */}
+                            <FaPen
+                              onClick={() => {
+                                setFormData(user);
+                                setEditId(user.id);
+                                setMode("edit");
+                                setOpenModal(true);
+                              }}
+                              className="inline text-green-500 cursor-pointer text-lg"
+                            />
 
-            <div className="flex flex-row space-x-2">
-              <button
-                disabled={currentPage == 1}
-                onClick={() => setCurrentPage(1)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
-              >
-                First
-              </button>
-
-              <button
-                disabled={currentPage == 1}
-                onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
-              >
-                <GrPrevious />
-              </button>
-
-              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
-
-              <button
-                disabled={currentPage == totalPages}
-                onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
-              >
-                <GrNext />
-              </button>
-
-              <button
-                disabled={currentPage == totalPages}
-                onClick={() => setCurrentPage(totalPages)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
-              >
-                Last
-              </button>
+                            {/* Delete */}
+                            <MdDeleteForever
+                              onClick={() =>
+                                setUsers(users.filter((v) => v.id !== user.id))
+                              }
+                              className="inline text-red-500 cursor-pointer text-xl"
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
-          </div>
-        </div>
-      )}
 
-      {/* ========================= MODAL ========================= */}
-      {openModal && (
-         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6">
-            <div className="flex justify-between items-center border-b pb-3 mb-6">
-              <div className="flex gap-6">
+            {/* Pagination */}
+            <div className="flex justify-between items-center mt-4 text-sm flex-wrap gap-4">
+              <span>
+                Showing {filteredUsers.length === 0 ? "0" : startIndex + 1} to{" "}
+                {Math.min(endIndex, filteredUsers.length)} of{" "}
+                {filteredUsers.length} entries
+              </span>
+
+              <div className="flex flex-row space-x-1">
                 <button
-                  onClick={() => setActiveTab("details")}
-                  className={`${
-                    activeTab === "details"
-                      ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
-                      : ""
-                  }`}
+                  disabled={currentPage == 1}
+                  onClick={() => setCurrentPage(1)}
+                  className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
                 >
-                  User Details
+                  First
                 </button>
 
                 <button
-                  onClick={() => setActiveTab("roles")}
-                  className={`${
-                    activeTab === "roles"
-                      ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
-                      : ""
-                  }`}
+                  disabled={currentPage == 1}
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
                 >
-                  User Roles
+                  <GrPrevious />
+                </button>
+
+                <div className="p-3 px-4 shadow rounded-full">
+                  {currentPage}
+                </div>
+
+                <button
+                  disabled={currentPage == totalPages}
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                >
+                  <GrNext />
                 </button>
 
                 <button
-                  onClick={() => setActiveTab("menu")}
-                  className={`${
-                    activeTab === "menu"
-                      ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
-                      : ""
-                  }`}
+                  disabled={currentPage == totalPages}
+                  onClick={() => setCurrentPage(totalPages)}
+                  className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
                 >
-                  User Menu
+                  Last
                 </button>
               </div>
-
-              <RxCross2
-                onClick={() => setOpenModal(false)}
-                className="cursor-pointer text-lg text-red-500"
-              />
             </div>
+          </div>
+        )}
 
-            {/* -------- TAB CONTENT -------- */}
+        {openModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6">
+              <div className="flex justify-between items-center border-b pb-3 mb-6">
+                <div className="flex gap-6">
+                  <button
+                    onClick={() => setActiveTab("details")}
+                    className={`${
+                      activeTab === "details"
+                        ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
+                        : ""
+                    }`}
+                  >
+                    User Details
+                  </button>
 
-            {activeTab === "details" && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <label className={labelStyle}>
-                    User Name{" "}
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <input
-                    name="userName"
-                    value={formData.userName}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                    className={inputStyle}
-                  />
+                  <button
+                    onClick={() => setActiveTab("roles")}
+                    className={`${
+                      activeTab === "roles"
+                        ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
+                        : ""
+                    }`}
+                  >
+                    User Roles
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab("menu")}
+                    className={`${
+                      activeTab === "menu"
+                        ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
+                        : ""
+                    }`}
+                  >
+                    User Menu
+                  </button>
                 </div>
 
-                <div>
-                  <label className={labelStyle}>
-                    Employee Name{" "}
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <input
-                    name="empname"
-                    value={formData.empname}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                    className={inputStyle}
-                  />
-                </div>
+                <RxCross2
+                  onClick={() => setOpenModal(false)}
+                  className="cursor-pointer text-lg text-red-500"
+                />
+              </div>
 
-                <div>
-                  <label className={labelStyle}>Enrollment ID | Email</label>
-                  <input
-                    name="enrollmentId"
-                    value={formData.enrollmentId}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                    className={inputStyle}
-                  />
-                </div>
+              {/* -------- TAB CONTENT -------- */}
 
+              {activeTab === "details" && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label className={labelStyle}>
+                      User Name{" "}
+                      <span className="text-[oklch(0.577_0.245_27.325)]">
+                        {" "}
+                        *{" "}
+                      </span>
+                    </label>
+                    <input
+                      name="userName"
+                      value={formData.userName}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                    />
+                  </div>
+
+                  <div>
+                    <label className={labelStyle}>
+                      Employee Name{" "}
+                      <span className="text-[oklch(0.577_0.245_27.325)]">
+                        {" "}
+                        *{" "}
+                      </span>
+                    </label>
+                    <input
+                      name="empname"
+                      value={formData.empname}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                    />
+                  </div>
+
+                  <div>
+                    <label className={labelStyle}>Enrollment ID | Email</label>
+                    <input
+                      name="enrollmentId"
+                      value={formData.enrollmentId}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                    />
+                  </div>
+
+                  <div>
+                    <label className={labelStyle}>
+                      Company{" "}
+                      <span className="text-[oklch(0.577_0.245_27.325)]">
+                        {" "}
+                        *{" "}
+                      </span>
+                    </label>
+                    <select
+                      name="company"
+                      value={formData.company}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                    >
+                      <option value="">Select</option>
+                      <option>Company</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className={labelStyle}>Password</label>
+                    <input
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2 mt-6">
+                    <label className={labelStyle}>Active</label>
+                    <input
+                      type="checkbox"
+                      name="active"
+                      checked={formData.active}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "roles" && (
                 <div>
-                  <label className={labelStyle}>
-                    Company{" "}
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
+                  <label className={labelStyle}>User Role</label>
                   <select
-                    name="company"
-                    value={formData.company}
+                    name="role"
+                    value={formData.role}
                     onChange={handleChange}
                     disabled={mode === "view"}
                     className={inputStyle}
                   >
-                    <option value="">Select</option>
-                    <option>Company</option>
+                    <option>Company Admin</option>
+                    <option>Manager / Approver</option>
+                    <option>User</option>
                   </select>
                 </div>
+              )}
 
-                <div>
-                  <label className={labelStyle}>Password</label>
-                  <input
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                    className={inputStyle}
-                  />
-                </div>
+              {activeTab === "menu" && (
+                <div className="w-full border border-[oklch(0.8_0.001_106.424)] rounded-md overflow-hidden">
+                  {/* Header */}
+                  <div className="bg-[oklch(0.645_0.246_16.439)] text-white text-center font-semibold py-2">
+                    Select Menu to give the Access to the Current User:
+                  </div>
 
-                <div className="flex items-center gap-2 mt-6">
-                  <label className={labelStyle}>Active</label>
-                  <input
-                    type="checkbox"
-                    name="active"
-                    checked={formData.active}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                  />
-                </div>
-              </div>
-            )}
-
-            {activeTab === "roles" && (
-              <div>
-                <label className={labelStyle}>User Role</label>
-                <select
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  disabled={mode === "view"}
-                  className={inputStyle}
-                >
-                  <option>Company Admin</option>
-                  <option>Manager / Approver</option>
-                  <option>User</option>
-                </select>
-              </div>
-            )}
-
-            {activeTab === "menu" && (
-              <div className="w-full border border-[oklch(0.8_0.001_106.424)] rounded-md overflow-hidden">
-                {/* Header */}
-                <div className="bg-[oklch(0.645_0.246_16.439)] text-white text-center font-semibold py-2">
-                  Select Menu to give the Access to the Current User:
-                </div>
-
-                {/* Table */}
-                <div className="overflow-auto max-h-[600px]">
-                  <table className="w-full text-sm border-collapse">
-                    <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                      <tr>
-                        <th className="border border-[oklch(0.8_0.001_106.424)] p-2 w-10"></th>
-                        <th className="border border-[oklch(0.8_0.001_106.424)]  p-2">
-                          ParentMenu ID
-                        </th>
-                        <th className="border border-[oklch(0.8_0.001_106.424)] p-2">
-                          Menu ID
-                        </th>
-                        <th className="border border-[oklch(0.8_0.001_106.424)] p-2 text-left">
-                          Menu Name
-                        </th>
-                        <th className="border border-[oklch(0.8_0.001_106.424)] p-2 text-left">
-                          URL
-                        </th>
-                        <th className="border border-[oklch(0.8_0.001_106.424)] p-2">
-                          IsSelected
-                        </th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      {menuData.map((menu, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
-                          <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
-                            <input
-                              type="checkbox"
-                              checked={menu.isSelected}
-                              onChange={() => handleCheckbox(menu.menuID)}
-                            />
-                          </td>
-
-                          <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
-                            {menu.parentMenuID}
-                          </td>
-
-                          <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
-                            {menu.menuID}
-                          </td>
-
-                          <td className="border border-[oklch(0.8_0.001_106.424)] p-2 ">
-                            {menu.menuName}
-                          </td>
-
-                          <td className="border border-[oklch(0.8_0.001_106.424)] p-2">
-                            {menu.url}
-                          </td>
-
-                          <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
-                            {menu.isSelected ? "True" : "False"}
-                          </td>
+                  {/* Table */}
+                  <div className="overflow-auto max-h-[600px]">
+                    <table className="w-full text-sm border-collapse">
+                      <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
+                        <tr>
+                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2 w-10"></th>
+                          <th className="border border-[oklch(0.8_0.001_106.424)]  p-2">
+                            ParentMenu ID
+                          </th>
+                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2">
+                            Menu ID
+                          </th>
+                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2 text-left">
+                            Menu Name
+                          </th>
+                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2 text-left">
+                            URL
+                          </th>
+                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2">
+                            IsSelected
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
+                      </thead>
 
-            {mode !== "view" && (
-              <div className="flex justify-end mt-10">
-                <button
-                  onClick={handleSubmit}
-                  className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
-                >
-                  Save
-                </button>
-              </div>
-            )}
+                      <tbody>
+                        {menuData.map((menu, index) => (
+                          <tr key={index} className="hover:bg-gray-50">
+                            <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
+                              <input
+                                type="checkbox"
+                                checked={menu.isSelected}
+                                onChange={() => handleCheckbox(menu.menuID)}
+                              />
+                            </td>
+
+                            <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
+                              {menu.parentMenuID}
+                            </td>
+
+                            <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
+                              {menu.menuID}
+                            </td>
+
+                            <td className="border border-[oklch(0.8_0.001_106.424)] p-2 ">
+                              {menu.menuName}
+                            </td>
+
+                            <td className="border border-[oklch(0.8_0.001_106.424)] p-2">
+                              {menu.url}
+                            </td>
+
+                            <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
+                              {menu.isSelected ? "True" : "False"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {mode !== "view" && (
+                <div className="flex justify-end mt-10">
+                  <button
+                    onClick={handleSubmit}
+                    className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+                  >
+                    Save
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </>
   );
 };

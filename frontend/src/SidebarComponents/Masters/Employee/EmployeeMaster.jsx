@@ -211,7 +211,7 @@ const EmployeeMaster = () => {
   };
 
   return (
-    <>
+    <div className="mb-16">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
@@ -231,6 +231,7 @@ const EmployeeMaster = () => {
           </button>
         )}
       </div>
+
       {!openModal && (
         <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6">
           {/* Top Controls */}
@@ -252,38 +253,39 @@ const EmployeeMaster = () => {
               </select>
               <span className="ml-2 text-md">entries</span>
             </div>
-            <div className="flex">
-              <button
-                onClick={handleCopy}
-                className="text-xl px-3 py-1 cursor-pointer text-gray-800"
-              >
-                <GoCopy />
-              </button>
+            <div className="flex flex-wrap gap-2 items-center justify-center">
+              <input
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+              />
+              <div className="flex">
+                <button
+                  onClick={handleCopy}
+                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+                >
+                  <GoCopy />
+                </button>
 
-              <button
-                onClick={handleExcel}
-                className="text-xl px-3 py-1 cursor-pointer text-green-700"
-              >
-                <FaFileExcel />
-              </button>
+                <button
+                  onClick={handleExcel}
+                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
+                >
+                  <FaFileExcel />
+                </button>
 
-              <button
-                onClick={handlePDF}
-                className="text-xl px-3 py-1 cursor-pointer text-red-600"
-              >
-                <FaFilePdf />
-              </button>
+                <button
+                  onClick={handlePDF}
+                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
+                >
+                  <FaFilePdf />
+                </button>
+              </div>
             </div>
-
-            <input
-              placeholder="Search"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-            />
           </div>
 
           {/* Table */}
@@ -364,7 +366,7 @@ const EmployeeMaster = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-between items-center mt-4 text-sm">
+          <div className="flex justify-between items-center mt-4 text-sm flex-wrap gap-4">
             <span>
               Showing{" "}
               {filteredemployeeMaster.length === 0 ? "0" : startIndex + 1} to{" "}
@@ -372,7 +374,7 @@ const EmployeeMaster = () => {
               {filteredemployeeMaster.length} entries
             </span>
 
-            <div className="flex flex-row space-x-2">
+            <div className="flex flex-row space-x-1">
               <button
                 disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
@@ -410,6 +412,7 @@ const EmployeeMaster = () => {
           </div>
         </div>
       )}
+
       {openModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6">
@@ -753,7 +756,7 @@ const EmployeeMaster = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

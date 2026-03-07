@@ -19,16 +19,16 @@ const Sidebar = ({ user }) => {
 
   return (
     <div
-      className="h-screen overflow-y-auto pt-24 pb-10"
+      className="h-screen overflow-y-auto pt-24 pb-24"
       style={{
         backgroundColor: "oklch(1 0 0)",
         scrollbarWidth: "none",
       }}
     >
-      <nav className="px-4 space-y-2">
+      <nav className="px-4 space-y-2 ">
         {isAdmin ? (
           <div
-            className="space-y-5"
+            className="space-y-5 "
             style={{ color: "oklch(0.147 0.004 49.25)" }}
           >
             <div
