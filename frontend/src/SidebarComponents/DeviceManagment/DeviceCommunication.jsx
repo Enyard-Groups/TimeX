@@ -9,16 +9,43 @@ import { FaFilePdf } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 const DeviceCommunication = () => {
-  const [devicecommunication] = useState([]);
+  const [devicecommunication] = useState([
+    {
+      id: 1,
+      status: "Online",
+      serialno: "SN001",
+      devicename: "ZKTeco F18",
+      transfername: "10:30 AM",
+      interval: "5 min",
+      lastactivity: "2026-03-07 10:25 AM",
+      fwversion: "v6.2.1",
+      usercount: 120,
+      fpcount: 95,
+      transactioncount: 3500,
+    },
+    {
+      id: 2,
+      status: "Offline",
+      serialno: "SN002",
+      devicename: "ZKTeco K40",
+      transfername: "09:45 AM",
+      interval: "10 min",
+      lastactivity: "2026-03-07 09:40 AM",
+      fwversion: "v5.9.0",
+      usercount: 80,
+      fpcount: 60,
+      transactioncount: 2100,
+    },
+  ]);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
   const filtereddevicecommunication = devicecommunication.filter(
     (device) =>
-      device.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      device.deviceip.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      device.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
+      device.devicename.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      device.serialno.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      device.status.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const totalPages = Math.ceil(
@@ -219,7 +246,17 @@ const DeviceCommunication = () => {
               ) : (
                 currentdevicecommunication.map((item) => (
                   <tr key={item.id} className="text-center">
-                    <td className="py-2 px-6">{item.status}</td>
+                    <td className="py-2 px-6">
+                      <span
+                        className={
+                          item.status === "Online"
+                            ? "bg-green-100 text-green-700 rounded-xl px-2 py-1"
+                            : "bg-red-100 text-red-700 rounded-xl px-2 py-1"
+                        }
+                      >
+                        {item.status}
+                      </span>
+                    </td>
                     <td className="py-2 px-6">{item.serialno}</td>
                     <td className="py-2 px-6">{item.devicename}</td>
                     <td className="py-2 px-6">{item.transfername}</td>

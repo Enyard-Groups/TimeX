@@ -7,67 +7,65 @@ import { useEffect, useState } from "react";
 import RecentActivity from "../components/RecentActivity";
 
 const AdminDashboard = ({ user }) => {
+  const [attendanceData, setAttendanceData] = useState([]);
 
-   const [attendanceData, setAttendanceData] = useState([]);
-  
-    useEffect(() => {
-      const data = [
-        {
-          day: "Monday",
-          total: 100,
-          leave: 5,
-          absent: 10,
-          latein: 8,
-          earlyin: 12,
-        },
-        {
-          day: "Tuesday",
-          total: 100,
-          leave: 3,
-          absent: 2,
-          latein: 10,
-          earlyin: 15,
-        },
-        {
-          day: "Wednesday",
-          total: 100,
-          leave: 4,
-          absent: 8,
-          latein: 9,
-          earlyin: 10,
-        },
-        {
-          day: "Thursday",
-          total: 100,
-          leave: 6,
-          absent: 5,
-          latein: 11,
-          earlyin: 9,
-        },
-        {
-          day: "Friday",
-          total: 100,
-          leave: 7,
-          absent: 0,
-          latein: 2,
-          earlyin: 11,
-        },
-        {
-          day: "Saturday",
-          total: 100,
-          leave: 8,
-          absent: 15,
-          latein: 7,
-          earlyin: 6,
-        },
-      ];
-      setAttendanceData(data);
-    }, []);
+  useEffect(() => {
+    const data = [
+      {
+        day: "Monday",
+        total: 100,
+        leave: 5,
+        absent: 10,
+        latein: 8,
+        earlyin: 12,
+      },
+      {
+        day: "Tuesday",
+        total: 100,
+        leave: 3,
+        absent: 2,
+        latein: 10,
+        earlyin: 15,
+      },
+      {
+        day: "Wednesday",
+        total: 100,
+        leave: 4,
+        absent: 8,
+        latein: 9,
+        earlyin: 10,
+      },
+      {
+        day: "Thursday",
+        total: 100,
+        leave: 6,
+        absent: 5,
+        latein: 11,
+        earlyin: 9,
+      },
+      {
+        day: "Friday",
+        total: 100,
+        leave: 7,
+        absent: 0,
+        latein: 2,
+        earlyin: 11,
+      },
+      {
+        day: "Saturday",
+        total: 100,
+        leave: 8,
+        absent: 15,
+        latein: 7,
+        earlyin: 6,
+      },
+    ];
+    setAttendanceData(data);
+  }, []);
 
   const formattedName =
     user?.email?.split("@")[0].charAt(0).toUpperCase() +
     user?.email?.split("@")[0].slice(1).toLowerCase();
- 
 
   const latest = attendanceData[attendanceData.length - 1] || {};
 
@@ -233,7 +231,10 @@ const AdminDashboard = ({ user }) => {
           >
             Company Attendance Overview
           </h4>
-          <AttendanceBarChart className="col-span-2" attendanceData={attendanceData}/>
+          <AttendanceBarChart
+            className="col-span-2"
+            attendanceData={attendanceData}
+          />
         </div>
 
         <div className=" text-center bg-white rounded-3xl shadow-md  hover:scale-105 active:scale-95 transition-all duration-300">
@@ -248,13 +249,11 @@ const AdminDashboard = ({ user }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-        <LeaveDistributionChart/>
+        <LeaveDistributionChart />
         <GeoLocationMap />
       </div>
 
-      <RecentActivity/>
-       
-      
+      <RecentActivity />
     </>
   );
 };
