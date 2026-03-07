@@ -10,6 +10,7 @@ import autoTable from "jspdf-autotable";
 import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
+import { GrPrevious, GrNext } from "react-icons/gr";
 
 const UserMaster = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -220,10 +221,16 @@ const UserMaster = () => {
       u.empname.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const totalPages = Math.ceil(filteredUsers.length / entriesPerPage);
-  const startIndex = (currentPage - 1) * entriesPerPage;
-  const endIndex = startIndex + entriesPerPage;
+  const endIndex = currentPage * entriesPerPage;
+
+  const startIndex = endIndex - entriesPerPage;
+
   const currentUsers = filteredUsers.slice(startIndex, endIndex);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredUsers.length / entriesPerPage),
+  );
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -383,6 +390,7 @@ const UserMaster = () => {
                 <option value={10}>10</option>
                 <option value={25}>25</option>
                 <option value={50}>50</option>
+                <option value={100}>100</option>
               </select>
               <span className="ml-2 text-md">entries</span>
             </div>
@@ -422,7 +430,7 @@ const UserMaster = () => {
           {/* Table */}
           <div className="overflow-x-auto min-h-[250px]">
             <table className="w-full text-lg border-collapse">
-             <thead className="bg-[oklch(0.98_0.02_16.439)]  text-[oklch(0.70_0.246_16.439)]">
+              <thead className="bg-[oklch(0.98_0.02_16.439)]  text-[oklch(0.70_0.246_16.439)]">
                 <tr>
                   <th className="p-2 font-semibold">SL.NO</th>
                   <th className="p-2 font-semibold">User Name</th>
@@ -494,53 +502,42 @@ const UserMaster = () => {
           {/* Pagination */}
           <div className="flex justify-between items-center mt-4 text-sm">
             <span>
-              Showing {Math.min(endIndex, filteredUsers.length)} of{" "}
+              Showing {filteredUsers.length === 0 ? "0" : startIndex + 1} to{" "}
+              {Math.min(endIndex, filteredUsers.length)} of{" "}
               {filteredUsers.length} entries
             </span>
 
-            <div className="space-x-2">
+            <div className="flex flex-row space-x-2">
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
-                className="px-2 py-1  border rounded disabled:opacity-50"
+                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
               >
                 First
               </button>
 
               <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((prev) => prev - 1)}
-                className="px-2 py-1  border rounded disabled:opacity-50"
+                disabled={currentPage == 1}
+                onClick={() => setCurrentPage(currentPage - 1)}
+                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
               >
-                Previous
+                <GrPrevious />
               </button>
 
-              {[...Array(totalPages)].map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentPage(index + 1)}
-                  className={`px-2 py-1 rounded ${
-                    currentPage === index + 1
-                      ? "bg-green-500 text-white"
-                      : " border"
-                  }`}
-                >
-                  {index + 1}
-                </button>
-              ))}
+              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
 
               <button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-                className="px-2 py-1  border rounded disabled:opacity-50"
+                disabled={currentPage == totalPages}
+                onClick={() => setCurrentPage(currentPage + 1)}
+                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
               >
-                Next
+                <GrNext />
               </button>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="px-2 py-1  border rounded disabled:opacity-50"
+                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
               >
                 Last
               </button>
@@ -553,230 +550,239 @@ const UserMaster = () => {
       {openModal && (
         <div className="fixed inset-0 bg-black/70 flex justify-center items-start z-50 p-6 overflow-y-auto">
           <div className="bg-white w-full max-w-6xl shadow-xl rounded-xl border border-[oklch(0.923_0.003_48.717)] p-6 relative">
-          <div className="flex justify-between items-center border-b pb-3 mb-6">
-            <div className="flex gap-6">
-              <button
-                onClick={() => setActiveTab("details")}
-                className={`${
-                  activeTab === "details"
-                    ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
-                    : ""
-                }`}
-              >
-                User Details
-              </button>
+            <div className="flex justify-between items-center border-b pb-3 mb-6">
+              <div className="flex gap-6">
+                <button
+                  onClick={() => setActiveTab("details")}
+                  className={`${
+                    activeTab === "details"
+                      ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
+                      : ""
+                  }`}
+                >
+                  User Details
+                </button>
 
-              <button
-                onClick={() => setActiveTab("roles")}
-                className={`${
-                  activeTab === "roles"
-                    ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
-                    : ""
-                }`}
-              >
-                User Roles
-              </button>
+                <button
+                  onClick={() => setActiveTab("roles")}
+                  className={`${
+                    activeTab === "roles"
+                      ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
+                      : ""
+                  }`}
+                >
+                  User Roles
+                </button>
 
-              <button
-                onClick={() => setActiveTab("menu")}
-                className={`${
-                  activeTab === "menu"
-                    ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
-                    : ""
-                }`}
-              >
-                User Menu
-              </button>
+                <button
+                  onClick={() => setActiveTab("menu")}
+                  className={`${
+                    activeTab === "menu"
+                      ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
+                      : ""
+                  }`}
+                >
+                  User Menu
+                </button>
+              </div>
+
+              <RxCross2
+                onClick={() => setOpenModal(false)}
+                className="cursor-pointer text-lg text-red-500"
+              />
             </div>
 
-            <RxCross2
-              onClick={() => setOpenModal(false)}
-              className="cursor-pointer text-lg text-red-500"
-            />
-          </div>
+            {/* -------- TAB CONTENT -------- */}
 
-          {/* -------- TAB CONTENT -------- */}
+            {activeTab === "details" && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className={labelStyle}>
+                    User Name{" "}
+                    <span className="text-[oklch(0.577_0.245_27.325)]">
+                      {" "}
+                      *{" "}
+                    </span>
+                  </label>
+                  <input
+                    name="userName"
+                    value={formData.userName}
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                    className={inputStyle}
+                  />
+                </div>
 
-          {activeTab === "details" && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label className={labelStyle}>
-                  User Name{" "}
-                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-                </label>
-                <input
-                  name="userName"
-                  value={formData.userName}
-                  onChange={handleChange}
-                  disabled={mode === "view"}
-                  className={inputStyle}
-                />
+                <div>
+                  <label className={labelStyle}>
+                    Employee Name{" "}
+                    <span className="text-[oklch(0.577_0.245_27.325)]">
+                      {" "}
+                      *{" "}
+                    </span>
+                  </label>
+                  <input
+                    name="empname"
+                    value={formData.empname}
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                    className={inputStyle}
+                  />
+                </div>
+
+                <div>
+                  <label className={labelStyle}>Enrollment ID | Email</label>
+                  <input
+                    name="enrollmentId"
+                    value={formData.enrollmentId}
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                    className={inputStyle}
+                  />
+                </div>
+
+                <div>
+                  <label className={labelStyle}>
+                    Company{" "}
+                    <span className="text-[oklch(0.577_0.245_27.325)]">
+                      {" "}
+                      *{" "}
+                    </span>
+                  </label>
+                  <select
+                    name="company"
+                    value={formData.company}
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                    className={inputStyle}
+                  >
+                    <option value="">Select</option>
+                    <option>Company</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className={labelStyle}>Password</label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                    className={inputStyle}
+                  />
+                </div>
+
+                <div className="flex items-center gap-2 mt-6">
+                  <label className={labelStyle}>Active</label>
+                  <input
+                    type="checkbox"
+                    name="active"
+                    checked={formData.active}
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                  />
+                </div>
               </div>
+            )}
 
+            {activeTab === "roles" && (
               <div>
-                <label className={labelStyle}>
-                  Employee Name{" "}
-                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-                </label>
-                <input
-                  name="empname"
-                  value={formData.empname}
-                  onChange={handleChange}
-                  disabled={mode === "view"}
-                  className={inputStyle}
-                />
-              </div>
-
-              <div>
-                <label className={labelStyle}>Enrollment ID | Email</label>
-                <input
-                  name="enrollmentId"
-                  value={formData.enrollmentId}
-                  onChange={handleChange}
-                  disabled={mode === "view"}
-                  className={inputStyle}
-                />
-              </div>
-
-              <div>
-                <label className={labelStyle}>
-                  Company{" "}
-                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-                </label>
+                <label className={labelStyle}>User Role</label>
                 <select
-                  name="company"
-                  value={formData.company}
+                  name="role"
+                  value={formData.role}
                   onChange={handleChange}
                   disabled={mode === "view"}
                   className={inputStyle}
                 >
-                  <option value="">Select</option>
-                  <option>Company</option>
+                  <option>Company Admin</option>
+                  <option>Manager / Approver</option>
+                  <option>User</option>
                 </select>
               </div>
+            )}
 
-              <div>
-                <label className={labelStyle}>Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  disabled={mode === "view"}
-                  className={inputStyle}
-                />
-              </div>
+            {activeTab === "menu" && (
+              <div className="w-full border border-[oklch(0.8_0.001_106.424)] rounded-md overflow-hidden">
+                {/* Header */}
+                <div className="bg-[oklch(0.645_0.246_16.439)] text-white text-center font-semibold py-2">
+                  Select Menu to give the Access to the Current User:
+                </div>
 
-              <div className="flex items-center gap-2 mt-6">
-                <label className={labelStyle}>Active</label>
-                <input
-                  type="checkbox"
-                  name="active"
-                  checked={formData.active}
-                  onChange={handleChange}
-                  disabled={mode === "view"}
-                />
-              </div>
-            </div>
-          )}
-
-          {activeTab === "roles" && (
-            <div>
-              <label className={labelStyle}>User Role</label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                disabled={mode === "view"}
-                className={inputStyle}
-              >
-                <option>Company Admin</option>
-                <option>Manager / Approver</option>
-                <option>User</option>
-              </select>
-            </div>
-          )}
-
-          {activeTab === "menu" && (
-            <div className="w-full border border-[oklch(0.8_0.001_106.424)] rounded-md overflow-hidden">
-              {/* Header */}
-              <div className="bg-[oklch(0.645_0.246_16.439)] text-white text-center font-semibold py-2">
-                Select Menu to give the Access to the Current User:
-              </div>
-
-              {/* Table */}
-              <div className="overflow-auto max-h-[600px]">
-                <table className="w-full text-sm border-collapse">
-                  <thead className="bg-[oklch(0.98_0.02_16.439)]  text-[oklch(0.70_0.246_16.439)]">
-                    <tr>
-                      <th className="border border-[oklch(0.8_0.001_106.424)] p-2 w-10"></th>
-                      <th className="border border-[oklch(0.8_0.001_106.424)]  p-2">
-                        ParentMenu ID
-                      </th>
-                      <th className="border border-[oklch(0.8_0.001_106.424)] p-2">
-                        Menu ID
-                      </th>
-                      <th className="border border-[oklch(0.8_0.001_106.424)] p-2 text-left">
-                        Menu Name
-                      </th>
-                      <th className="border border-[oklch(0.8_0.001_106.424)] p-2 text-left">
-                        URL
-                      </th>
-                      <th className="border border-[oklch(0.8_0.001_106.424)] p-2">
-                        IsSelected
-                      </th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {menuData.map((menu, index) => (
-                      <tr key={index} className="hover:bg-gray-50">
-                        <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
-                          <input
-                            type="checkbox"
-                            checked={menu.isSelected}
-                            onChange={() => handleCheckbox(menu.menuID)}
-                          />
-                        </td>
-
-                        <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
-                          {menu.parentMenuID}
-                        </td>
-
-                        <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
-                          {menu.menuID}
-                        </td>
-
-                        <td className="border border-[oklch(0.8_0.001_106.424)] p-2 ">
-                          {menu.menuName}
-                        </td>
-
-                        <td className="border border-[oklch(0.8_0.001_106.424)] p-2">
-                          {menu.url}
-                        </td>
-
-                        <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
-                          {menu.isSelected ? "True" : "False"}
-                        </td>
+                {/* Table */}
+                <div className="overflow-auto max-h-[600px]">
+                  <table className="w-full text-sm border-collapse">
+                    <thead className="bg-[oklch(0.98_0.02_16.439)]  text-[oklch(0.70_0.246_16.439)]">
+                      <tr>
+                        <th className="border border-[oklch(0.8_0.001_106.424)] p-2 w-10"></th>
+                        <th className="border border-[oklch(0.8_0.001_106.424)]  p-2">
+                          ParentMenu ID
+                        </th>
+                        <th className="border border-[oklch(0.8_0.001_106.424)] p-2">
+                          Menu ID
+                        </th>
+                        <th className="border border-[oklch(0.8_0.001_106.424)] p-2 text-left">
+                          Menu Name
+                        </th>
+                        <th className="border border-[oklch(0.8_0.001_106.424)] p-2 text-left">
+                          URL
+                        </th>
+                        <th className="border border-[oklch(0.8_0.001_106.424)] p-2">
+                          IsSelected
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
+                    </thead>
 
-          {mode !== "view" && (
-            <div className="flex justify-end mt-10">
-              <button
-                onClick={handleSubmit}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
-              >
-                Save
-              </button>
-            </div>
-          )}
-        </div>
+                    <tbody>
+                      {menuData.map((menu, index) => (
+                        <tr key={index} className="hover:bg-gray-50">
+                          <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
+                            <input
+                              type="checkbox"
+                              checked={menu.isSelected}
+                              onChange={() => handleCheckbox(menu.menuID)}
+                            />
+                          </td>
+
+                          <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
+                            {menu.parentMenuID}
+                          </td>
+
+                          <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
+                            {menu.menuID}
+                          </td>
+
+                          <td className="border border-[oklch(0.8_0.001_106.424)] p-2 ">
+                            {menu.menuName}
+                          </td>
+
+                          <td className="border border-[oklch(0.8_0.001_106.424)] p-2">
+                            {menu.url}
+                          </td>
+
+                          <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
+                            {menu.isSelected ? "True" : "False"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {mode !== "view" && (
+              <div className="flex justify-end mt-10">
+                <button
+                  onClick={handleSubmit}
+                  className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+                >
+                  Save
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </>

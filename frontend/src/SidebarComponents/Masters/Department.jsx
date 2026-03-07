@@ -330,7 +330,8 @@ const Department = () => {
           {/* Pagination */}
           <div className="flex justify-between items-center mt-4 text-sm">
             <span>
-              Showing {Math.min(endIndex, filtereddepartment.length)} of{" "}
+              Showing {filtereddepartment.length === 0 ? "0" : startIndex + 1}{" "}
+              to {Math.min(endIndex, filtereddepartment.length)} of{" "}
               {filtereddepartment.length} entries
             </span>
 
@@ -370,6 +371,7 @@ const Department = () => {
               </button>
             </div>
           </div>
+          
         </div>
       )}
 
