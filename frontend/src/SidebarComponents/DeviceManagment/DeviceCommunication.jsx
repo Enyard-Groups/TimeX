@@ -220,20 +220,20 @@ const DeviceCommunication = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto min-h-[250px]">
+        <div className="overflow-x-auto min-h-[300px]">
           <table className="w-full text-lg border-collapse">
-            <thead className="bg-[oklch(0.948_0.001_106.424)]">
+            <thead className="bg-[oklch(0.98_0.02_16.439)] text-[oklch(0.70_0.246_16.439)]">
               <tr>
-                <th className="py-2 px-6">Status</th>
-                <th className="py-2 px-6">Serial No</th>
-                <th className="py-2 px-6">Device Name</th>
-                <th className="py-2 px-6">Transfer Time</th>
-                <th className="py-2 px-6">Interval</th>
-                <th className="py-2 px-6">LastActivity</th>
-                <th className="py-2 px-6">FW Version</th>
-                <th className="py-2 px-6">User Count</th>
-                <th className="py-2 px-6">FP Count</th>
-                <th className="py-2 px-6">Transaction Count</th>
+                <th className="py-2 px-6 font-semibold">Status</th>
+                <th className="py-2 px-6 font-semibold">Serial No</th>
+                <th className="py-2 px-6 font-semibold">Device Name</th>
+                <th className="py-2 px-6 font-semibold">Transfer Time</th>
+                <th className="py-2 px-6 font-semibold">Interval</th>
+                <th className="py-2 px-6 font-semibold">LastActivity</th>
+                <th className="py-2 px-6 font-semibold">FW Version</th>
+                <th className="py-2 px-6 font-semibold">User Count</th>
+                <th className="py-2 px-6 font-semibold">FP Count</th>
+                <th className="py-2 px-6 font-semibold">Transaction Count</th>
               </tr>
             </thead>
             <tbody>
@@ -245,7 +245,10 @@ const DeviceCommunication = () => {
                 </tr>
               ) : (
                 currentdevicecommunication.map((item) => (
-                  <tr key={item.id} className="text-center">
+                  <tr
+                    key={item.id}
+                    className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                  >
                     <td className="py-2 px-6">
                       <span
                         className={

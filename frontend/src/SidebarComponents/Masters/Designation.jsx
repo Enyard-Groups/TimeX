@@ -260,15 +260,15 @@ const Designation = () => {
           {/* Table */}
           <div className="overflow-x-auto min-h-[250px]">
             <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.948_0.001_106.424)]">
+              <thead className="bg-[oklch(0.98_0.02_16.439)]  text-[oklch(0.70_0.246_16.439)]">
                 <tr>
-                  <th className="p-2">SL.NO</th>
-                  <th className="p-2">Designation Name</th>
-                  <th className="p-2">Designation Code</th>
-                  <th className="p-2">Company</th>
-                  <th className="p-2">Department Name</th>
-                  <th className="p-2">Active</th>
-                  <th className="p-2">Action</th>
+                  <th className="p-2 font-semibold">SL.NO</th>
+                  <th className="p-2 font-semibold">Designation Name</th>
+                  <th className="p-2 font-semibold">Designation Code</th>
+                  <th className="p-2 font-semibold">Company</th>
+                  <th className="p-2 font-semibold">Department Name</th>
+                  <th className="p-2 font-semibold">Active</th>
+                  <th className="p-2 font-semibold">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -282,7 +282,7 @@ const Designation = () => {
                   currentdesignation.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] "
+                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                     >
                       <td className="p-2">{index + 1}</td>
                       <td className="p-2">{item.name}</td>

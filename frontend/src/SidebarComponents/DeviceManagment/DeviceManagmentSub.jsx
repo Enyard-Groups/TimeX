@@ -289,21 +289,21 @@ const DeviceManagementSub = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto min-h-[250px]">
+          <div className="overflow-x-auto min-h-[300px]">
             <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.948_0.001_106.424)]">
+              <thead className="bg-[oklch(0.98_0.02_16.439)]  text-[oklch(0.70_0.246_16.439)]">
                 <tr>
-                  <th className="py-2 px-6">SL.NO</th>
-                  <th className="py-2 px-6">Device Serial No</th>
-                  <th className="py-2 px-6">Name</th>
-                  <th className="py-2 px-6">Device IP</th>
-                  <th className="py-2 px-6">Face</th>
-                  <th className="py-2 px-6">FingerPrint</th>
-                  <th className="py-2 px-6">Card No</th>
-                  <th className="py-2 px-6">Pin No</th>
-                  <th className="py-2 px-6">Company</th>
-                  <th className="py-2 px-6">Active</th>
-                  <th className="py-2 px-6">Action</th>
+                  <th className="py-2 px-6 font-semibold">SL.NO</th>
+                  <th className="py-2 px-6 font-semibold">Device Serial No</th>
+                  <th className="py-2 px-6 font-semibold">Name</th>
+                  <th className="py-2 px-6 font-semibold">Device IP</th>
+                  <th className="py-2 px-6 font-semibold">Face</th>
+                  <th className="py-2 px-6 font-semibold">FingerPrint</th>
+                  <th className="py-2 px-6 font-semibold">Card No</th>
+                  <th className="py-2 px-6 font-semibold">Pin No</th>
+                  <th className="py-2 px-6 font-semibold">Company</th>
+                  <th className="py-2 px-6 font-semibold">Active</th>
+                  <th className="py-2 px-6 font-semibold">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -317,7 +317,7 @@ const DeviceManagementSub = () => {
                   currentdevicemanagement.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] "
+                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                     >
                       <td className="py-2 px-6">{index + 1}</td>
                       <td className="py-2 px-6">{item.deviceserialno}</td>

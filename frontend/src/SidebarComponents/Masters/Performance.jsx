@@ -9,34 +9,36 @@ import { FaFilePdf } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 const Performance = () => {
-  const [performance] = useState([ {
-    id: 1,
-    serialno: "EMP001",
-    firstname: "Sharma",
-    dailyhours: 8,
-    dailytarget: 8,
-    dailystatus: "Good",
-    totalweeklyhours: 40,
-    targetweekly: 40,
-    weeklystatus: "Good",
-    totalmonthlyhours: 160,
-    targetmonthly: 160,
-    monthlystatus: "Good",
-  },
-  {
-    id: 2,
-    serialno: "EMP002",
-    firstname: "Drishti",
-    dailyhours: 6,
-    dailytarget: 8,
-    dailystatus: "Poor",
-    totalweeklyhours: 32,
-    targetweekly: 40,
-    weeklystatus: "Poor",
-    totalmonthlyhours: 120,
-    targetmonthly: 160,
-    monthlystatus: "Poor",
-  }]);
+  const [performance] = useState([
+    {
+      id: 1,
+      serialno: "EMP001",
+      firstname: "Sharma",
+      dailyhours: 8,
+      dailytarget: 8,
+      dailystatus: "Good",
+      totalweeklyhours: 40,
+      targetweekly: 40,
+      weeklystatus: "Good",
+      totalmonthlyhours: 160,
+      targetmonthly: 160,
+      monthlystatus: "Good",
+    },
+    {
+      id: 2,
+      serialno: "EMP002",
+      firstname: "Drishti",
+      dailyhours: 6,
+      dailytarget: 8,
+      dailystatus: "Poor",
+      totalweeklyhours: 32,
+      targetweekly: 40,
+      weeklystatus: "Poor",
+      totalmonthlyhours: 120,
+      targetmonthly: 160,
+      monthlystatus: "Poor",
+    },
+  ]);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -218,21 +220,29 @@ const Performance = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto min-h-[250px]">
+        <div className="overflow-x-auto min-h-[300px]">
           <table className="w-full text-lg border-collapse">
-            <thead className="bg-[oklch(0.948_0.001_106.424)]">
+            <thead className="bg-[oklch(0.98_0.02_16.439)]  text-[oklch(0.70_0.246_16.439)]">
               <tr>
-                <th className="py-2 px-6">Serial No</th>
-                <th className="py-2 px-6">First Name</th>
-                <th className="py-2 px-6">Daily Hours</th>
-                <th className="py-2 px-6">Daily Target</th>
-                <th className="py-2 px-6">Daily Status</th>
-                <th className="py-2 px-6">Total Weekly Hours </th>
-                <th className="py-2 px-6">Target Weekly</th>
-                <th className="py-2 px-6">Weekly Status</th>
-                <th className="py-2 px-6">Total Monthly Hours</th>
-                <th className="py-2 px-6">Target Monthly</th>
-                <th className="py-2 px-6">Monthly Status</th>
+                <th className="py-2 px-6 font-semibold">SerialSerial No</th>
+                <th className="py-2 px-6 font-semibold">SerialFirst Name</th>
+                <th className="py-2 px-6 font-semibold">SerialDaily Hours</th>
+                <th className="py-2 px-6 font-semibold">SerialDaily Target</th>
+                <th className="py-2 px-6 font-semibold">SerialDaily Status</th>
+                <th className="py-2 px-6 font-semibold">
+                  SerialTotal Weekly Hours{" "}
+                </th>
+                <th className="py-2 px-6 font-semibold">SerialTarget Weekly</th>
+                <th className="py-2 px-6 font-semibold">SerialWeekly Status</th>
+                <th className="py-2 px-6 font-semibold">
+                  SerialTotal Monthly Hours
+                </th>
+                <th className="py-2 px-6 font-semibold">
+                  SerialTarget Monthly
+                </th>
+                <th className="py-2 px-6 font-semibold">
+                  SerialMonthly Status
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -244,7 +254,10 @@ const Performance = () => {
                 </tr>
               ) : (
                 currentperformance.map((item) => (
-                  <tr key={item.id} className="text-center">
+                  <tr
+                    key={item.id}
+                    className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                  >
                     <td className="py-2 px-6">{item.serialno}</td>
                     <td className="py-2 px-6">{item.firstname}</td>
                     <td className="py-2 px-6">{item.dailyhours}</td>
