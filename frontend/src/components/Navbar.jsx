@@ -76,6 +76,7 @@ export default function Navbar() {
             <button
               className="p-2 rounded-xl md:hidden transition-all bg-[oklch(0.97_0.001_106.424)] text-[oklch(0.147_0.004_49.25)]"
               onClick={() => setSidebarOpen(!sidebarOpen)}
+              ref={sidebarRef}
             >
               {sidebarOpen ? "✕" : "☰"}
             </button>

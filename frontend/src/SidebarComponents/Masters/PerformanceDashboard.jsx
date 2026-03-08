@@ -60,7 +60,7 @@ const PerformanceDashboard = () => {
   const COLORS = ["#153f24", "#d66c32", "#ab0f0f"];
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 min-h-screen mb-16">
       {/* Summary Cards */}
       <div className="grid md:grid-cols-4 gap-5 mb-8">
         {summary.map((card, index) => (
