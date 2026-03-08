@@ -7,7 +7,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import { FaUsers, FaUserCheck, FaUserTimes, FaUserClock } from "react-icons/fa";
+import { FaUsers, FaUserCheck, FaUserTimes, FaUserClock, FaAngleRight } from "react-icons/fa";
 
 const PerformanceDashboard = () => {
   // Summary Cards
@@ -60,111 +60,123 @@ const PerformanceDashboard = () => {
   const COLORS = ["#153f24", "#d66c32", "#ab0f0f"];
 
   return (
-    <div className="bg-gray-50 min-h-screen mb-16">
-      {/* Summary Cards */}
-      <div className="grid md:grid-cols-4 gap-5 mb-8">
-        {summary.map((card, index) => (
-          <div
-            key={index}
-            className={`bg-gradient-to-r ${card.color} rounded-xl shadow-lg p-6 flex items-center justify-between transition transform hover:-translate-y-1 hover:shadow-xl`}
-          >
-            <div>
-              <p className="text-sm font-medium">{card.title}</p>
-              <h2 className="text-3xl font-bold">{card.value}</h2>
-            </div>
-
-            <div className="text-3xl opacity-70">{card.icon}</div>
-          </div>
-        ))}
+    <>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="flex items-center gap-2 pt-1.5 text-lg font-semibold flex-wrap mb-6">
+          <FaAngleRight />
+          Masters
+          <FaAngleRight />
+          Performance Dashboard
+        </h1>
       </div>
 
-      {/* Charts */}
-      <div className="grid md:grid-cols-2 gap-6 mb-6">
-        {/* Daily */}
-        <div className="bg-white rounded-xl shadow-lg p-3 ">
-          <h3 className="font-semibold mb-4 text-blue-600 text-lg">
-            Daily Attendance
-          </h3>
-
-          <ResponsiveContainer width="100%" height={260}>
-            <PieChart>
-              <Pie
-                data={dailyData}
-                dataKey="value"
-                innerRadius={60}
-                outerRadius={90}
-                paddingAngle={4}
-                label
-                className="focus:outline-none"
-              >
-                {dailyData.map((entry, index) => (
-                  <Cell key={index} fill={COLORS[index]} />
-                ))}
-              </Pie>
-
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Weekly */}
-        <div className="bg-white rounded-xl shadow-lg p-3">
-          <h3 className="font-semibold mb-4 text-green-600 text-lg">
-            Weekly Attendance
-          </h3>
-
-          <ResponsiveContainer width="100%" height={260}>
-            <PieChart>
-              <Pie
-                data={weeklyData}
-                dataKey="value"
-                innerRadius={60}
-                outerRadius={90}
-                paddingAngle={4}
-                label
-                className="focus:outline-none"
-              >
-                {weeklyData.map((entry, index) => (
-                  <Cell key={index} fill={COLORS[index]} />
-                ))}
-              </Pie>
-
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Monthly */}
-      <div className="bg-white rounded-xl shadow-lg p-3">
-        <h3 className="font-semibold mb-4 text-orange-500 text-lg">
-          Monthly Attendance
-        </h3>
-
-        <ResponsiveContainer width="100%" height={320}>
-          <PieChart>
-            <Pie
-              data={monthlyData}
-              dataKey="value"
-              innerRadius={70}
-              outerRadius={100}
-              paddingAngle={5}
-              label
-              className="focus:outline-none"
+      <div className="bg-gray-50 min-h-screen mb-16">
+        {/* Summary Cards */}
+        <div className="grid md:grid-cols-4 gap-5 mb-8">
+          {summary.map((card, index) => (
+            <div
+              key={index}
+              className={`bg-gradient-to-r ${card.color} rounded-xl shadow-lg p-6 flex items-center justify-between transition transform hover:-translate-y-1 hover:shadow-xl`}
             >
-              {monthlyData.map((entry, index) => (
-                <Cell key={index} fill={COLORS[index]} />
-              ))}
-            </Pie>
+              <div>
+                <p className="text-sm font-medium">{card.title}</p>
+                <h2 className="text-3xl font-bold">{card.value}</h2>
+              </div>
 
-            <Tooltip />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
+              <div className="text-3xl opacity-70">{card.icon}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Charts */}
+        <div className="grid md:grid-cols-2 gap-6 mb-6">
+          {/* Daily */}
+          <div className="bg-white rounded-xl shadow-lg p-3 ">
+            <h3 className="font-semibold mb-4 text-blue-600 text-lg">
+              Daily Attendance
+            </h3>
+
+            <ResponsiveContainer width="100%" height={260}>
+              <PieChart>
+                <Pie
+                  data={dailyData}
+                  dataKey="value"
+                  innerRadius={60}
+                  outerRadius={90}
+                  paddingAngle={4}
+                  label
+                  className="focus:outline-none"
+                >
+                  {dailyData.map((entry, index) => (
+                    <Cell key={index} fill={COLORS[index]} />
+                  ))}
+                </Pie>
+
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Weekly */}
+          <div className="bg-white rounded-xl shadow-lg p-3">
+            <h3 className="font-semibold mb-4 text-green-600 text-lg">
+              Weekly Attendance
+            </h3>
+
+            <ResponsiveContainer width="100%" height={260}>
+              <PieChart>
+                <Pie
+                  data={weeklyData}
+                  dataKey="value"
+                  innerRadius={60}
+                  outerRadius={90}
+                  paddingAngle={4}
+                  label
+                  className="focus:outline-none"
+                >
+                  {weeklyData.map((entry, index) => (
+                    <Cell key={index} fill={COLORS[index]} />
+                  ))}
+                </Pie>
+
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Monthly */}
+        <div className="bg-white rounded-xl shadow-lg p-3">
+          <h3 className="font-semibold mb-4 text-orange-500 text-lg">
+            Monthly Attendance
+          </h3>
+
+          <ResponsiveContainer width="100%" height={320}>
+            <PieChart>
+              <Pie
+                data={monthlyData}
+                dataKey="value"
+                innerRadius={70}
+                outerRadius={100}
+                paddingAngle={5}
+                label
+                className="focus:outline-none"
+              >
+                {monthlyData.map((entry, index) => (
+                  <Cell key={index} fill={COLORS[index]} />
+                ))}
+              </Pie>
+
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
