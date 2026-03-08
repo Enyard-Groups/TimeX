@@ -136,83 +136,85 @@ const ShiftUpload = () => {
         </h1>
       </div>
 
-      {/* Filters */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6">
-        <div>
-          <label className={labelStyle}>
-            From Punch Date
-            <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-          </label>
-          <DatePicker
-            placeholderText="dd/mm/yyyy"
-            selected={formData.frompunch}
-            onChange={(date) => setFormData({ ...formData, frompunch: date })}
-            className={inputStyle}
-            dateFormat="dd/MM/yyyy"
-            showYearDropdown
-            showMonthDropdown
-            dropdownMode="select"
-            scrollableYearDropdown
-            minDate={new Date(1950, 0, 1)}
-            maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
-          />
+      <div className="bg-[oklch(1_0_0)] p-6 rounded-xl shadow-sm border border-[oklch(0.923_0.003_48.717)]">
+        {/* Filters */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6">
+          <div>
+            <label className={labelStyle}>
+              From Punch Date
+              <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+            </label>
+            <DatePicker
+              placeholderText="dd/mm/yyyy"
+              selected={formData.frompunch}
+              onChange={(date) => setFormData({ ...formData, frompunch: date })}
+              className={inputStyle}
+              dateFormat="dd/MM/yyyy"
+              showYearDropdown
+              showMonthDropdown
+              dropdownMode="select"
+              scrollableYearDropdown
+              minDate={new Date(1950, 0, 1)}
+              maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
+            />
+          </div>
+
+          <div>
+            <label className={labelStyle}>
+              To Punch Date
+              <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+            </label>
+
+            <DatePicker
+              placeholderText={
+                !formData.frompunch ? "Select Start Date" : "dd/mm/yyyy"
+              }
+              selected={formData.topunch}
+              onChange={(date) => setFormData({ ...formData, topunch: date })}
+              className={inputStyle}
+              dateFormat="dd/MM/yyyy"
+              showYearDropdown
+              showMonthDropdown
+              dropdownMode="select"
+              scrollableYearDropdown
+              minDate={formData.frompunch}
+              maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
+              disabled={!formData.frompunch}
+            />
+          </div>
+
+          <div>
+            {" "}
+            <button
+              className="px-6 py-2 mt-4 rounded-lg text-white bg-[oklch(0.645_0.246_16.439)]"
+              onClick={handleDownload}
+            >
+              Download
+            </button>
+          </div>
         </div>
 
         <div>
-          <label className={labelStyle}>
-            To Punch Date
-            <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-          </label>
-
-          <DatePicker
-            placeholderText={
-              !formData.frompunch ? "Select Start Date" : "dd/mm/yyyy"
-            }
-            selected={formData.topunch}
-            onChange={(date) => setFormData({ ...formData, topunch: date })}
-            className={inputStyle}
-            dateFormat="dd/MM/yyyy"
-            showYearDropdown
-            showMonthDropdown
-            dropdownMode="select"
-            scrollableYearDropdown
-            minDate={formData.frompunch}
-            maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
-            disabled={!formData.frompunch}
+          <label className={labelStyle}>File Upload</label>
+          <input
+            type="file"
+            accept=".xlsx,.xls,image/*"
+            onChange={handleFileChange}
+            className="text-sm"
           />
-        </div>
 
-        <div>
-          {" "}
           <button
-            className="px-6 py-2 mt-4 rounded-lg text-white bg-[oklch(0.645_0.246_16.439)]"
-            onClick={handleDownload}
+            onClick={handleUpload}
+            className="px-4 py-2 bg-[oklch(0.57_0.001_106.424)] text-white rounded"
           >
-            Download
+            Import
           </button>
         </div>
+
+        {preview && (
+          <img src={preview} alt="preview" className="w-40 mt-4 rounded-md" />
+        )}
       </div>
-
-      <div>
-        <label className={labelStyle}>File Upload</label>
-        <input
-          type="file"
-          accept=".xlsx,.xls,image/*"
-          onChange={handleFileChange}
-          className="text-sm"
-        />
-
-        <button
-          onClick={handleUpload}
-          className="px-4 py-2 bg-[oklch(0.57_0.001_106.424)] text-white rounded"
-        >
-          Import
-        </button>
-      </div>
-
-      {preview && (
-        <img src={preview} alt="preview" className="w-40 mt-4 rounded-md" />
-      )}
     </div>
   );
 };
