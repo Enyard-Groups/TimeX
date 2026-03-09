@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import SpinnerDatePicker from "../SpinnerDatePicker";
 import { FaEye, FaPen } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import * as XLSX from "xlsx";
@@ -22,6 +21,8 @@ const CardDetach = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [showCicpaExpiryPicker, setShowCicpaExpiryPicker] = useState(false);
+  const [showIdExpiryPicker, setShowIdExpiryPicker] = useState(false);
   const [formData, setFormData] = useState({
     searchType: "Mobile no.",
     searchValue: "",
@@ -32,10 +33,10 @@ const CardDetach = () => {
     email: "",
     cicpaCard: "",
     companyCode: "",
-    cicpaExpiry: null,
+    cicpaExpiry: "",
     idNumber: "",
     nationality: "",
-    idExpiry: null,
+    idExpiry: "",
     accessCard: "",
     isPermanent: false,
   });
@@ -693,7 +694,7 @@ const CardDetach = () => {
                   />
                 </div>
 
-                <div>
+                <div className="relative">
                   <label className={labelStyle}>
                     CICPA Expiry Date
                     <span className="text-[oklch(0.577_0.245_27.325)]">
@@ -701,21 +702,24 @@ const CardDetach = () => {
                       *{" "}
                     </span>
                   </label>
-                  <DatePicker
-                    placeholderText="dd/mm/yyyy"
-                    selected={formData.cicpaExpiry}
-                    onChange={(date) =>
-                      setFormData({ ...formData, cicpaExpiry: date })
-                    }
+                  <input
+                    name="cicpaExpiry"
+                    value={formData.cicpaExpiry}
+                    onChange={handleChange}
+                    onClick={() => setShowCicpaExpiryPicker(true)}
+                    disabled={mode === "view"}
+                    placeholder="dd/mm/yyyy"
                     className={inputStyle}
-                    dateFormat="dd/MM/yyyy"
-                    showYearDropdown
-                    showMonthDropdown
-                    dropdownMode="select"
-                    scrollableYearDropdown
-                    minDate={new Date(1950, 0, 1)}
-                    maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
                   />
+                  {showCicpaExpiryPicker && (
+                    <SpinnerDatePicker
+                      value={formData.cicpaExpiry}
+                      onChange={(date) =>
+                        setFormData({ ...formData, cicpaExpiry: date })
+                      }
+                      onClose={() => setShowCicpaExpiryPicker(false)}
+                    />
+                  )}
                 </div>
               </div>
 
@@ -763,7 +767,7 @@ const CardDetach = () => {
                   />
                 </div>
 
-                <div>
+                <div className="relative">
                   <label className={labelStyle}>
                     Expiry Date
                     <span className="text-[oklch(0.577_0.245_27.325)]">
@@ -771,21 +775,24 @@ const CardDetach = () => {
                       *{" "}
                     </span>
                   </label>
-                  <DatePicker
-                    placeholderText="dd/mm/yyyy"
-                    selected={formData.idExpiry}
-                    onChange={(date) =>
-                      setFormData({ ...formData, idExpiry: date })
-                    }
+                  <input
+                    name="idExpiry"
+                    value={formData.idExpiry}
+                    onChange={handleChange}
+                    onClick={() => setShowIdExpiryPicker(true)}
+                    disabled={mode === "view"}
+                    placeholder="dd/mm/yyyy"
                     className={inputStyle}
-                    dateFormat="dd/MM/yyyy"
-                    showYearDropdown
-                    showMonthDropdown
-                    dropdownMode="select"
-                    scrollableYearDropdown
-                    minDate={new Date(1950, 0, 1)}
-                    maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
                   />
+                  {showIdExpiryPicker && (
+                    <SpinnerDatePicker
+                      value={formData.idExpiry}
+                      onChange={(date) =>
+                        setFormData({ ...formData, idExpiry: date })
+                      }
+                      onClose={() => setShowIdExpiryPicker(false)}
+                    />
+                  )}
                 </div>
               </div>
 

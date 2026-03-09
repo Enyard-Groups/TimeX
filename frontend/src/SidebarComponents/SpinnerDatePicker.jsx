@@ -23,11 +23,13 @@ const years = Array.from(
 );
 
 export default function SpinnerDatePicker({ value, onChange, onClose }) {
-  /* ---------- Parse dd/mm/yyyy ---------- */
+  /* ---------- Parse value (Date | dd/mm/yyyy | undefined) ---------- */
 
   let baseDate = new Date();
 
-  if (value && value.includes("/")) {
+  if (value instanceof Date) {
+    baseDate = value;
+  } else if (typeof value === "string" && value.includes("/")) {
     const [d, m, y] = value.split("/");
     baseDate = new Date(Number(y), Number(m) - 1, Number(d));
   }
@@ -74,6 +76,26 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
     setTempYear(years[next]);
   };
 
+  /* ---------- Mouse wheel support ---------- */
+
+  const handleWheelDay = (event) => {
+    event.preventDefault();
+    const dir = event.deltaY < 0 ? "up" : "down";
+    spin(setTempDay, days, tempDay, dir);
+  };
+
+  const handleWheelMonth = (event) => {
+    event.preventDefault();
+    const dir = event.deltaY < 0 ? "up" : "down";
+    spin(setTempMonth, months, tempMonth, dir);
+  };
+
+  const handleWheelYear = (event) => {
+    event.preventDefault();
+    const dir = event.deltaY < 0 ? "up" : "down";
+    spinYear(dir);
+  };
+
   /* ---------- OK / Cancel ---------- */
 
   const handleOk = () => {
@@ -100,15 +122,32 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
     onClose && onClose();
   };
 
+  /* ---------- Derived display ---------- */
+
+  const monthIndex = months.indexOf(tempMonth);
+  const headerDate = new Date(tempYear, monthIndex, Number(tempDay) || 1);
+  const headerLabel = headerDate.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
   /* ---------- UI ---------- */
 
   return (
-    <div className="absolute z-50 mt-2 bg-white shadow-xl rounded-2xl p-3 w-fit">
-      <div className="flex items-center gap-1">
+    <div className="absolute z-50 mt-2 bg-white shadow-2xl rounded-2xl px-6 py-5 w-[280px]">
+      <div className="text-sky-500 text-lg font-medium text-center mb-3">
+        {headerLabel}
+      </div>
+
+      <div className="h-px bg-[oklch(0.9_0.001_106.424)] mb-4" />
+
+      <div className="flex items-center justify-center gap-4">
         {/* DAY */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center" onWheel={handleWheelDay}>
           <button
-            className="text-gray-500 hover:text-black"
+            className="text-gray-400 hover:text-black"
             onClick={() => spin(setTempDay, days, tempDay, "up")}
           >
             ▲
@@ -120,23 +159,23 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
               let v = e.target.value.replace(/\D/g, "");
               if (v.length <= 2) setTempDay(v);
             }}
-            className="w-10 text-center py-2 rounded-lg"
+            className="w-12 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-sky-400 focus:outline-none"
           />
 
           <button
-            className="text-gray-500 hover:text-black"
+            className="text-gray-400 hover:text-black"
             onClick={() => spin(setTempDay, days, tempDay, "down")}
           >
             ▼
           </button>
         </div>
 
-        <div className="text-xl text-gray-400">/</div>
+        <div className="text-2xl text-gray-300">/</div>
 
         {/* MONTH */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center" onWheel={handleWheelMonth}>
           <button
-            className="text-gray-500 hover:text-black"
+            className="text-gray-400 hover:text-black"
             onClick={() => spin(setTempMonth, months, tempMonth, "up")}
           >
             ▲
@@ -153,23 +192,23 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
 
               if (match) setTempMonth(match);
             }}
-            className="w-10 text-center py-2 rounded-lg"
+            className="w-14 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-sky-400 focus:outline-none"
           />
 
           <button
-            className="text-gray-500 hover:text-black"
+            className="text-gray-400 hover:text-black"
             onClick={() => spin(setTempMonth, months, tempMonth, "down")}
           >
             ▼
           </button>
         </div>
 
-        <div className="text-xl text-gray-400">/</div>
+        <div className="text-2xl text-gray-300">/</div>
 
         {/* YEAR */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center" onWheel={handleWheelYear}>
           <button
-            className="text-gray-500 hover:text-black"
+            className="text-gray-400 hover:text-black"
             onClick={() => spinYear("up")}
           >
             ▲
@@ -181,11 +220,11 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
               let v = e.target.value.replace(/\D/g, "");
               if (v.length <= 4) setTempYear(v);
             }}
-            className="w-10 text-center py-2 rounded-lg"
+            className="w-16 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-sky-400 focus:outline-none"
           />
 
           <button
-            className="text-gray-500 hover:text-black"
+            className="text-gray-400 hover:text-black"
             onClick={() => spinYear("down")}
           >
             ▼
@@ -195,7 +234,7 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
 
       {/* ACTION BUTTONS */}
 
-      <div className="flex justify-end gap-3 mt-4">
+      <div className="flex justify-end gap-3 mt-5 text-sm">
         <button
           onClick={handleCancel}
           className="px-4 py-1 rounded-lg border text-gray-600 hover:bg-gray-100"

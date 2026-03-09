@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import SpinnerDatePicker from "../SpinnerDatePicker";
 import toast from "react-hot-toast";
 import { FaAngleRight } from "react-icons/fa";
 import * as XLSX from "xlsx";
 
 const ShiftUpload = () => {
   const [formData, setFormData] = useState({
-    frompunch: null,
-    topunch: null,
+    frompunch: "",
+    topunch: "",
     location: "",
     employee: "",
   });
@@ -31,13 +30,22 @@ const ShiftUpload = () => {
     return dates;
   };
 
+  const parseDate = (dateStr) => {
+    if (!dateStr) return null;
+    const [d, m, y] = dateStr.split("/");
+    return new Date(y, m - 1, d);
+  };
+
+  const fromDateObj = parseDate(formData.frompunch);
+  const toDateObj = parseDate(formData.topunch);
+
   const dateRange =
-    formData.frompunch && formData.topunch
-      ? getDatesBetween(formData.frompunch, formData.topunch)
-      : [];
+    fromDateObj && toDateObj ? getDatesBetween(fromDateObj, toDateObj) : [];
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [showFromSpinner, setShowFromSpinner] = useState(false);
+  const [showToSpinner, setShowToSpinner] = useState(false);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -99,7 +107,7 @@ const ShiftUpload = () => {
   };
 
   const handleDownload = () => {
-    if (!formData.frompunch || !formData.topunch) {
+    if (!fromDateObj || !toDateObj) {
       toast.error("Please select date range");
       return;
     }
@@ -139,48 +147,60 @@ const ShiftUpload = () => {
       <div className="bg-[oklch(1_0_0)] p-6 rounded-xl shadow-sm border border-[oklch(0.923_0.003_48.717)]">
         {/* Filters */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6">
-          <div>
+          <div className="relative">
             <label className={labelStyle}>
               From Punch Date
               <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
             </label>
-            <DatePicker
-              placeholderText="dd/mm/yyyy"
-              selected={formData.frompunch}
-              onChange={(date) => setFormData({ ...formData, frompunch: date })}
+            <input
+              name="frompunch"
+              value={formData.frompunch}
+              onChange={(e) =>
+                setFormData({ ...formData, frompunch: e.target.value })
+              }
+              onClick={() => setShowFromSpinner(true)}
+              placeholder="dd/mm/yyyy"
               className={inputStyle}
-              dateFormat="dd/MM/yyyy"
-              showYearDropdown
-              showMonthDropdown
-              dropdownMode="select"
-              scrollableYearDropdown
-              minDate={new Date(1950, 0, 1)}
-              maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
             />
+            {showFromSpinner && (
+              <SpinnerDatePicker
+                value={formData.frompunch}
+                onChange={(date) =>
+                  setFormData({ ...formData, frompunch: date })
+                }
+                onClose={() => setShowFromSpinner(false)}
+              />
+            )}
           </div>
 
-          <div>
+          <div className="relative">
             <label className={labelStyle}>
               To Punch Date
               <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
             </label>
 
-            <DatePicker
-              placeholderText={
+            <input
+              name="topunch"
+              value={formData.topunch}
+              onChange={(e) =>
+                setFormData({ ...formData, topunch: e.target.value })
+              }
+              onClick={() => setShowToSpinner(true)}
+              placeholder={
                 !formData.frompunch ? "Select Start Date" : "dd/mm/yyyy"
               }
-              selected={formData.topunch}
-              onChange={(date) => setFormData({ ...formData, topunch: date })}
               className={inputStyle}
-              dateFormat="dd/MM/yyyy"
-              showYearDropdown
-              showMonthDropdown
-              dropdownMode="select"
-              scrollableYearDropdown
-              minDate={formData.frompunch}
-              maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
               disabled={!formData.frompunch}
             />
+            {showToSpinner && (
+              <SpinnerDatePicker
+                value={formData.topunch}
+                onChange={(date) =>
+                  setFormData({ ...formData, topunch: date })
+                }
+                onClose={() => setShowToSpinner(false)}
+              />
+            )}
           </div>
 
           <div>

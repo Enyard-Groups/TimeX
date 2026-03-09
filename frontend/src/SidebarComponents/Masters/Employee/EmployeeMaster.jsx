@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import SpinnerDatePicker from "../../SpinnerDatePicker";
 import { FaEye, FaPen } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import * as XLSX from "xlsx";
@@ -22,14 +21,16 @@ const EmployeeMaster = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [showDobPicker, setShowDobPicker] = useState(false);
+  const [showDojPicker, setShowDojPicker] = useState(false);
 
   const [formData, setFormData] = useState({
     deviceEnrollmentId: "",
     companyEnrollmentId: "",
     fullName: "",
     mobile: "",
-    dob: null,
-    doj: null,
+    dob: "",
+    doj: "",
     company: "",
     location: "",
     designation: "",
@@ -483,41 +484,51 @@ const EmployeeMaster = () => {
               </div>
 
               {/* Date Of Birth */}
-              <div>
+              <div className="relative">
                 <label className={labelStyle}>Date Of Birth</label>
-                <DatePicker
-                  placeholderText="dd/mm/yyyy"
-                  selected={formData.dob}
-                  onChange={(date) => setFormData({ ...formData, dob: date })}
+                <input
+                  name="dob"
+                  value={formData.dob}
+                  onChange={handleChange}
+                  onClick={() => setShowDobPicker(true)}
+                  disabled={mode === "view"}
+                  placeholder="dd/mm/yyyy"
                   className={inputStyle}
-                  dateFormat="dd/MM/yyyy"
-                  showYearDropdown
-                  showMonthDropdown
-                  dropdownMode="select"
-                  scrollableYearDropdown
-                  minDate={new Date(1950, 0, 1)}
-                  maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
                 />
+                {showDobPicker && (
+                  <SpinnerDatePicker
+                    value={formData.dob}
+                    onChange={(date) =>
+                      setFormData({ ...formData, dob: date })
+                    }
+                    onClose={() => setShowDobPicker(false)}
+                  />
+                )}
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 border-t pt-4">
               {/* Date Of Join */}
-              <div>
+              <div className="relative">
                 <label className={labelStyle}>Date Of Join</label>
-                <DatePicker
-                  placeholderText="dd/mm/yyyy"
-                  selected={formData.doj}
-                  onChange={(date) => setFormData({ ...formData, doj: date })}
+                <input
+                  name="doj"
+                  value={formData.doj}
+                  onChange={handleChange}
+                  onClick={() => setShowDojPicker(true)}
+                  disabled={mode === "view"}
+                  placeholder="dd/mm/yyyy"
                   className={inputStyle}
-                  dateFormat="dd/MM/yyyy"
-                  showYearDropdown
-                  showMonthDropdown
-                  dropdownMode="select"
-                  scrollableYearDropdown
-                  minDate={new Date(1950, 0, 1)}
-                  maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
                 />
+                {showDojPicker && (
+                  <SpinnerDatePicker
+                    value={formData.doj}
+                    onChange={(date) =>
+                      setFormData({ ...formData, doj: date })
+                    }
+                    onClose={() => setShowDojPicker(false)}
+                  />
+                )}
               </div>
 
               {/* Company */}

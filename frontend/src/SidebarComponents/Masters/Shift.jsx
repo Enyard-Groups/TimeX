@@ -11,8 +11,7 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
-import DatePicker from "react-multi-date-picker";
-import TimePicker from "react-multi-date-picker/plugins/time_picker";
+import SpinnerTimePicker from "../SpinnerTimePicker";
 
 const Shift = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -22,13 +21,15 @@ const Shift = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [showInTimePicker, setShowInTimePicker] = useState(false);
+  const [showOutTimePicker, setShowOutTimePicker] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
     company: "",
     code: "",
-    intime: new Date().setHours(0, 0, 0, 0, 0, 0),
-    outtime: new Date().setHours(0, 0, 0, 0, 0, 0),
+    intime: null,
+    outtime: null,
     isActive: false,
   });
 
@@ -107,8 +108,8 @@ const Shift = () => {
       company: "",
       name: "",
       code: "",
-      intime: new Date().setHours(0, 0, 0, 0, 0, 0),
-      outtime: new Date().setHours(0, 0, 0, 0, 0, 0),
+      intime: null,
+      outtime: null,
       isActive: false,
     });
   };
@@ -477,7 +478,7 @@ const Shift = () => {
                   />
                 </div>
 
-                <div>
+                <div className="relative">
                   <label className={labelStyle}>
                     In Time
                     <span className="text-[oklch(0.577_0.245_27.325)]">
@@ -485,20 +486,32 @@ const Shift = () => {
                       *{" "}
                     </span>
                   </label>
-                  <DatePicker
-                    disableDayPicker
-                    format="HH:mm:ss"
-                    value={formData.intime}
-                    onChange={(time) =>
-                      setFormData({ ...formData, intime: time?.toDate() })
-                    }
-                    plugins={[<TimePicker header={false} disabledClock />]}
-                    className={inputStyle}
-                    disabled={mode === "view"}
-                  />
+                  <div
+                    className={`${inputStyle} cursor-pointer`}
+                    onClick={() => {
+                      if (mode !== "view") {
+                        setShowInTimePicker(true);
+                      }
+                    }}
+                  >
+                    {formData.intime
+                      ? formData.intime.toLocaleTimeString([], {
+                          hour12: false,
+                        })
+                      : "HH:MM:SS"}
+                  </div>
+                  {showInTimePicker && (
+                    <SpinnerTimePicker
+                      value={formData.intime}
+                      onChange={(date) =>
+                        setFormData({ ...formData, intime: date })
+                      }
+                      onClose={() => setShowInTimePicker(false)}
+                    />
+                  )}
                 </div>
 
-                <div>
+                <div className="relative">
                   <label className={labelStyle}>
                     Out Time
                     <span className="text-[oklch(0.577_0.245_27.325)]">
@@ -506,31 +519,29 @@ const Shift = () => {
                       *{" "}
                     </span>
                   </label>
-                  <DatePicker
-                    disableDayPicker
-                    format="HH:mm:ss"
-                    value={formData.outtime}
-                    onChange={(time) =>
-                      setFormData({ ...formData, outtime: time?.toDate() })
-                    }
-                    plugins={[<TimePicker header={false} disabledClock />]}
-                    className={inputStyle}
-                    disabled={mode === "view"}
-                  />
-                  {/* <DatePicker
-                    placeholderText="hh:mm"
-                    selected={formData.outtime}
-                    onChange={(time) =>
-                      setFormData({ ...formData, outtime: time })
-                    }
-                    showTimeInput
-                    showTimeSelectOnly
-                    timeIntervals={30}
-                    timeCaption="Time"
-                    dateFormat="HH:mm:ss"
-                    className={inputStyle}
-                    disabled={mode === "view"}
-                  /> */}
+                  <div
+                    className={`${inputStyle} cursor-pointer`}
+                    onClick={() => {
+                      if (mode !== "view") {
+                        setShowOutTimePicker(true);
+                      }
+                    }}
+                  >
+                    {formData.outtime
+                      ? formData.outtime.toLocaleTimeString([], {
+                          hour12: false,
+                        })
+                      : "HH:MM:SS"}
+                  </div>
+                  {showOutTimePicker && (
+                    <SpinnerTimePicker
+                      value={formData.outtime}
+                      onChange={(date) =>
+                        setFormData({ ...formData, outtime: date })
+                      }
+                      onClose={() => setShowOutTimePicker(false)}
+                    />
+                  )}
                 </div>
 
                 <div>

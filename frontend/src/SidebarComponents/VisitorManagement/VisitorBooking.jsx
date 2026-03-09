@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import SpinnerDatePicker from "../SpinnerDatePicker";
 import { FaEye, FaPen } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import * as XLSX from "xlsx";
@@ -22,9 +21,14 @@ const VisitorBooking = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [showCicpaExpiryPicker, setShowCicpaExpiryPicker] = useState(false);
+  const [showIdExpiryPicker, setShowIdExpiryPicker] = useState(false);
   const now = new Date();
-  const today = now.toISOString().split("T")[0];
-  const currentTime = now.toTimeString().slice(0, 5);
+  const today = now
+    .toLocaleDateString("en-GB")
+    .split("/")
+    .join("/");
+  const currentTime = now.toTimeString().slice(0, 8);
 
   const [formData, setFormData] = useState({
     searchType: "Mobile no.",
@@ -39,11 +43,11 @@ const VisitorBooking = () => {
     email: "",
     cicpaCard: "",
     companyCode: "",
-    cicpaExpiry: null,
+    cicpaExpiry: "",
     idType: "EID",
     idNumber: "",
     nationality: "",
-    idExpiry: null,
+    idExpiry: "",
     accessCard: "",
     isPermanent: false,
   });
@@ -708,23 +712,26 @@ const VisitorBooking = () => {
                   />
                 </div>
 
-                <div>
+                <div className="relative">
                   <label className={labelStyle}>CICPA Expiry Date</label>
-                  <DatePicker
-                    placeholderText="dd/mm/yyyy"
-                    selected={formData.cicpaExpiry}
-                    onChange={(date) =>
-                      setFormData({ ...formData, cicpaExpiry: date })
-                    }
+                  <input
+                    name="cicpaExpiry"
+                    value={formData.cicpaExpiry}
+                    onChange={handleChange}
+                    onClick={() => setShowCicpaExpiryPicker(true)}
+                    disabled={mode === "view"}
+                    placeholder="dd/mm/yyyy"
                     className={inputStyle}
-                    dateFormat="dd/MM/yyyy"
-                    showYearDropdown
-                    showMonthDropdown
-                    dropdownMode="select"
-                    scrollableYearDropdown
-                    minDate={new Date(1950, 0, 1)}
-                    maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
                   />
+                  {showCicpaExpiryPicker && (
+                    <SpinnerDatePicker
+                      value={formData.cicpaExpiry}
+                      onChange={(date) =>
+                        setFormData({ ...formData, cicpaExpiry: date })
+                      }
+                      onClose={() => setShowCicpaExpiryPicker(false)}
+                    />
+                  )}
                 </div>
               </div>
 
@@ -776,23 +783,26 @@ const VisitorBooking = () => {
                   />
                 </div>
 
-                <div>
+                <div className="relative">
                   <label className={labelStyle}>Expiry Date</label>
-                  <DatePicker
-                    placeholderText="dd/mm/yyyy"
-                    selected={formData.idExpiry}
-                    onChange={(date) =>
-                      setFormData({ ...formData, idExpiry: date })
-                    }
+                  <input
+                    name="idExpiry"
+                    value={formData.idExpiry}
+                    onChange={handleChange}
+                    onClick={() => setShowIdExpiryPicker(true)}
+                    disabled={mode === "view"}
+                    placeholder="dd/mm/yyyy"
                     className={inputStyle}
-                    dateFormat="dd/MM/yyyy"
-                    showYearDropdown
-                    showMonthDropdown
-                    dropdownMode="select"
-                    scrollableYearDropdown
-                    minDate={new Date(1950, 0, 1)}
-                    maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
                   />
+                  {showIdExpiryPicker && (
+                    <SpinnerDatePicker
+                      value={formData.idExpiry}
+                      onChange={(date) =>
+                        setFormData({ ...formData, idExpiry: date })
+                      }
+                      onClose={() => setShowIdExpiryPicker(false)}
+                    />
+                  )}
                 </div>
               </div>
 

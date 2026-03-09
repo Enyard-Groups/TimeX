@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import SpinnerTimePicker from "../../SpinnerTimePicker";
 import { FaEye, FaPen } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import * as XLSX from "xlsx";
@@ -22,10 +21,11 @@ const EmployeeCategory = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [showWorkHoursPicker, setShowWorkHoursPicker] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     company: "",
-    workhours: "",
+    workhours: null,
     isActive: false,
   });
 
@@ -98,7 +98,7 @@ const EmployeeCategory = () => {
     setFormData({
       company: "",
       name: "",
-      workhours: "",
+      workhours: null,
       isActive: false,
     });
   };
@@ -423,21 +423,28 @@ const EmployeeCategory = () => {
                 </select>
               </div>
 
-              <div>
+              <div className="relative">
                 <label className={labelStyle}>Work Hours</label>
-                <DatePicker
-                  placeholderText="hh:mm"
-                  selected={formData.workhours}
-                  onChange={(time) =>
-                    setFormData({ ...formData, workhours: time })
-                  }
-                  showTimeInput
-                  showTimeSelectOnly
-                  timeIntervals={30}
-                  timeCaption="Time"
-                  dateFormat="HH:mm:ss"
-                  className={inputStyle}
-                />
+                <div
+                  className={`${inputStyle} cursor-pointer`}
+                  onClick={() => setShowWorkHoursPicker(true)}
+                >
+                  {formData.workhours
+                    ? formData.workhours.toLocaleTimeString([], {
+                        hour12: false,
+                      })
+                    : "HH:MM:SS"}
+                </div>
+
+                {showWorkHoursPicker && (
+                  <SpinnerTimePicker
+                    value={formData.workhours}
+                    onChange={(date) =>
+                      setFormData({ ...formData, workhours: date })
+                    }
+                    onClose={() => setShowWorkHoursPicker(false)}
+                  />
+                )}
               </div>
 
               <div className="flex items-center gap-2 mt-6">
