@@ -532,7 +532,7 @@ const GeofencingMaster = () => {
                     <button
                       disabled={mode === "view"}
                       onClick={handleSearchLocation}
-                      className="bg-gray-200 px-4 py-1 rounded-full"
+                      className="bg-gray-200 px-4 py-1 rounded ml-2"
                     >
                       Search
                     </button>

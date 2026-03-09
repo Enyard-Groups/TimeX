@@ -174,9 +174,9 @@ const EmployeeGeofencing = () => {
         </h1>
       </div>
 
-      <div className="border rounded-lg p-4 mt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-6">
-          <label className="flex items-center gap-2 cursor-pointer">
+      <div className="border rounded-lg mt-6 p-4 flex flex-col md:flex-row items-center justify-between ">
+        <div className="flex flex-col p-8 gap-2">
+          <label className="flex gap-3">
             <input
               type="radio"
               name="mode"
@@ -187,7 +187,7 @@ const EmployeeGeofencing = () => {
             Single
           </label>
 
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex gap-3">
             <input
               type="radio"
               name="mode"
@@ -197,42 +197,41 @@ const EmployeeGeofencing = () => {
             />
             Multiple
           </label>
-
-          {showSingleLocation && (
-            <select
-              value={selectedLocation}
-              onChange={(e) => setSelectedLocation(e.target.value)}
-              className="shadow-md ml-4 rounded-md p-2 w-64"
-            >
-              <option value="">Select Location</option>
-              {locations.map((loc) => (
-                <option key={loc} value={loc}>
-                  {loc}
-                </option>
-              ))}
-            </select>
-          )}
-
-          {showMultipleLocation && (
-            <select
-              size={5}
-              value={selectedLocation}
-              onChange={(e) => setSelectedLocation(e.target.value)}
-              className="shadow-md ml-4 rounded-md p-2 w-64"
-            >
-              <option value="">Select Location</option>
-              {locations.map((loc) => (
-                <option key={loc} value={loc}>
-                  {loc}
-                </option>
-              ))}
-            </select>
-          )}
         </div>
+
+        {showSingleLocation && (
+          <select
+            value={selectedLocation}
+            onChange={(e) => setSelectedLocation(e.target.value)}
+            className="shadow-md ml-4 rounded-md p-2 w-40 md:w-70"
+          >
+            <option value="">Select Location</option>
+            {locations.map((loc) => (
+              <option key={loc} value={loc}>
+                {loc}
+              </option>
+            ))}
+          </select>
+        )}
+
+        {showMultipleLocation && (
+          <select
+            size={3}
+            value={selectedLocation}
+            onChange={(e) => setSelectedLocation(e.target.value)}
+            className="shadow-md ml-4 rounded-md p-2 w-40 md:w-70"
+          >
+            {locations.map((loc) => (
+              <option key={loc} value={loc}>
+                {loc}
+              </option>
+            ))}
+          </select>
+        )}
 
         <button
           onClick={applyLocation}
-          className="px-4 py-2 border rounded-md text-blue-600 border-blue-500 hover:bg-blue-50"
+          className="px-4 py-2 m-4 border rounded-md text-[oklch(0.645_0.246_16.439)] border-[oklch(0.645_0.246_16.439)]"
         >
           + Assign Location
         </button>
