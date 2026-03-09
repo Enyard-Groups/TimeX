@@ -3,13 +3,17 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import toast from "react-hot-toast";
 import * as XLSX from "xlsx";
+import SpinnerDatePicker from "../SpinnerDatePicker";
 
 const CalenderView = () => {
   const [openCalenderGrid, setOpenCalenderGrid] = useState(false);
   const [shifts, setShifts] = useState({});
+
+  const [showstartSpinner, setshowstartSpinner] = useState(false);
+  const [showendSpinner, setshowendSpinner] = useState(false);
   const [formData, setFormData] = useState({
-    startdate: null,
-    enddate: null,
+    startdate: "",
+    enddate: "",
     location: "",
     employee: "",
   });
@@ -46,12 +50,24 @@ const CalenderView = () => {
       return; // stop execution
     }
 
+    // convert dd/mm/yyyy → Date
+    const [sd, sm, sy] = startdate.split("/");
+    const [ed, em, ey] = enddate.split("/");
+
+    const start = new Date(sy, sm - 1, sd);
+    const end = new Date(ey, em - 1, ed);
+
+    if (end < start) {
+      toast.error("End date cannot be before start date");
+      return;
+    }
+
     setOpenCalenderGrid(!openCalenderGrid);
   };
 
   const getDatesBetween = (start, end) => {
     const dates = [];
-    let current = new Date(start);
+    const current = new Date(start);
 
     while (current <= end) {
       dates.push(new Date(current));
@@ -61,15 +77,21 @@ const CalenderView = () => {
     return dates;
   };
 
+  const parseDate = (dateStr) => {
+    if (!dateStr) return null;
+
+    const [d, m, y] = dateStr.split("/");
+    return new Date(y, m - 1, d);
+  };
+
+  const startDateObj = parseDate(formData.startdate);
+  const endDateObj = parseDate(formData.enddate);
+
   const dateRange =
-    formData.startdate && formData.enddate
-      ? getDatesBetween(formData.startdate, formData.enddate)
-      : [];
+    startDateObj && endDateObj ? getDatesBetween(startDateObj, endDateObj) : [];
 
   // find first day index (0 = Sun, 1 = Mon...)
-  const startDayIndex = formData.startdate
-    ? new Date(formData.startdate).getDay()
-    : 0;
+  const startDayIndex = startDateObj ? startDateObj.getDay() : 0;
 
   const handleAssign = () => {
     const totalDates = dateRange.length;
@@ -92,8 +114,8 @@ const CalenderView = () => {
     });
 
     setFormData({
-      startdate: null,
-      enddate: null,
+      startdate: "",
+      enddate: "",
       location: "",
       employee: "",
     });
@@ -142,19 +164,24 @@ const CalenderView = () => {
             StartDate
             <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
           </label>
-          <DatePicker
-            placeholderText="dd/mm/yyyy"
-            selected={formData.startdate}
-            onChange={(date) => setFormData({ ...formData, startdate: date })}
+          <input
+            name="startdate"
+            value={formData.startdate}
+            onChange={handleChange}
+            onClick={() => {
+              (setshowstartSpinner(true), setshowendSpinner(false));
+            }}
+            placeholder="dd/mm/yyyy"
             className={inputStyle}
-            dateFormat="dd/MM/yyyy"
-            showYearDropdown
-            showMonthDropdown
-            dropdownMode="select"
-            scrollableYearDropdown
-            minDate={new Date(1950, 0, 1)}
-            maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
           />
+
+          {showstartSpinner && (
+            <SpinnerDatePicker
+              value={formData.startdate}
+              onChange={(date) => setFormData({ ...formData, startdate: date })}
+              onClose={() => setshowstartSpinner(false)}
+            />
+          )}
         </div>
 
         <div>
@@ -162,23 +189,27 @@ const CalenderView = () => {
             End Date
             <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
           </label>
-
-          <DatePicker
-            placeholderText={
+          <input
+            name="enddate"
+            value={formData.enddate}
+            onChange={handleChange}
+            onClick={() => {
+              (setshowendSpinner(true), setshowstartSpinner(false));
+            }}
+            placeholder={
               !formData.startdate ? "Select Start Date" : "dd/mm/yyyy"
             }
-            selected={formData.enddate}
-            onChange={(date) => setFormData({ ...formData, enddate: date })}
             className={inputStyle}
-            dateFormat="dd/MM/yyyy"
-            showYearDropdown
-            showMonthDropdown
-            dropdownMode="select"
-            scrollableYearDropdown
-            minDate={formData.startdate}
-            maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
             disabled={!formData.startdate}
           />
+
+          {showendSpinner && (
+            <SpinnerDatePicker
+              value={formData.enddate}
+              onChange={(date) => setFormData({ ...formData, enddate: date })}
+              onClose={() => setshowendSpinner(false)}
+            />
+          )}
         </div>
 
         <div>

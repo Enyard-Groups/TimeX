@@ -13,6 +13,7 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import SpinnerDatePicker from "../../SpinnerDatePicker";
 
 const HolidayMaster = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -22,6 +23,8 @@ const HolidayMaster = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [showHstartSpinner, setShowHstartSpinner] = useState(false);
+  const [showHendSpinner, setShowHendSpinner] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -462,41 +465,53 @@ const HolidayMaster = () => {
               {/* Holiday Start */}
               <div>
                 <label className={labelStyle}>Holiday Start</label>
-                <DatePicker
-                  placeholderText="dd/mm/yyyy"
-                  selected={formData.holidaystart}
-                  onChange={(date) =>
-                    setFormData({ ...formData, holidaystart: date })
-                  }
+                <input
+                  name="holidaystart"
+                  value={formData.holidaystart}
+                  onChange={handleChange}
+                  onClick={() => {
+                    (setShowHstartSpinner(true), setShowHendSpinner(false));
+                  }}
+                  disabled={mode === "view"}
+                  placeholder="dd/mm/yyyy"
                   className={inputStyle}
-                  dateFormat="dd/MM/yyyy"
-                  showYearDropdown
-                  showMonthDropdown
-                  dropdownMode="select"
-                  scrollableYearDropdown
-                  minDate={new Date(1950, 0, 1)}
-                  maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
                 />
+
+                {showHstartSpinner && (
+                  <SpinnerDatePicker
+                    value={formData.holidaystart}
+                    onChange={(date) =>
+                      setFormData({ ...formData, holidaystart: date })
+                    }
+                    onClose={() => setShowHstartSpinner(false)}
+                  />
+                )}
               </div>
 
               {/* Holiday End */}
               <div>
                 <label className={labelStyle}>Holiday End</label>
-                <DatePicker
-                  placeholderText="dd/mm/yyyy"
-                  selected={formData.holidayend}
-                  onChange={(date) =>
-                    setFormData({ ...formData, holidayend: date })
-                  }
+                <input
+                  name="holidayend"
+                  value={formData.holidayend}
+                  onChange={handleChange}
+                  onClick={() => {
+                    (setShowHendSpinner(true), setShowHstartSpinner(false));
+                  }}
+                  disabled={mode === "view"}
+                  placeholder="dd/mm/yyyy"
                   className={inputStyle}
-                  dateFormat="dd/MM/yyyy"
-                  showYearDropdown
-                  showMonthDropdown
-                  dropdownMode="select"
-                  scrollableYearDropdown
-                  minDate={new Date(1950, 0, 1)}
-                  maxDate={new Date(new Date().getFullYear() + 15, 11, 31)}
                 />
+
+                {showHendSpinner && (
+                  <SpinnerDatePicker
+                    value={formData.holidayend}
+                    onChange={(date) =>
+                      setFormData({ ...formData, holidayend: date })
+                    }
+                    onClose={() => setShowHendSpinner(false)}
+                  />
+                )}
               </div>
 
               {/* Location */}

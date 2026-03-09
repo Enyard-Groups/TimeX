@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { FaEye, FaPen } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import * as XLSX from "xlsx";
@@ -13,6 +11,8 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import DatePicker from "react-multi-date-picker";
+import TimePicker from "react-multi-date-picker/plugins/time_picker";
 
 const Shift = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -22,12 +22,13 @@ const Shift = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+
   const [formData, setFormData] = useState({
     name: "",
     company: "",
     code: "",
-    intime: null,
-    outtime: null,
+    intime: new Date().setHours(0, 0, 0, 0, 0, 0),
+    outtime: new Date().setHours(0, 0, 0, 0, 0, 0),
     isActive: false,
   });
 
@@ -72,6 +73,11 @@ const Shift = () => {
       return; // stop execution
     }
 
+    if (new Date(outtime) <= new Date(intime)) {
+      toast.error("Out Time must be after In Time");
+      return;
+    }
+
     const newshift = {
       id: Date.now(),
       name,
@@ -101,8 +107,8 @@ const Shift = () => {
       company: "",
       name: "",
       code: "",
-      intime: null,
-      outtime: null,
+      intime: new Date().setHours(0, 0, 0, 0, 0, 0),
+      outtime: new Date().setHours(0, 0, 0, 0, 0, 0),
       isActive: false,
     });
   };
@@ -484,16 +490,13 @@ const Shift = () => {
                     </span>
                   </label>
                   <DatePicker
-                    placeholderText="hh:mm"
-                    selected={formData.intime}
+                    disableDayPicker
+                    format="HH:mm:ss"
+                    value={formData.intime}
                     onChange={(time) =>
-                      setFormData({ ...formData, intime: time })
+                      setFormData({ ...formData, intime: time?.toDate() })
                     }
-                    showTimeInput
-                    showTimeSelectOnly
-                    timeIntervals={30}
-                    timeCaption="Time"
-                    dateFormat="HH:mm:ss"
+                    plugins={[<TimePicker header={false} disabledClock />]}
                     className={inputStyle}
                     disabled={mode === "view"}
                   />
@@ -508,6 +511,17 @@ const Shift = () => {
                     </span>
                   </label>
                   <DatePicker
+                    disableDayPicker
+                    format="HH:mm:ss"
+                    value={formData.outtime}
+                    onChange={(time) =>
+                      setFormData({ ...formData, outtime: time?.toDate() })
+                    }
+                    plugins={[<TimePicker header={false} disabledClock />]}
+                    className={inputStyle}
+                    disabled={mode === "view"}
+                  />
+                  {/* <DatePicker
                     placeholderText="hh:mm"
                     selected={formData.outtime}
                     onChange={(time) =>
@@ -520,7 +534,7 @@ const Shift = () => {
                     dateFormat="HH:mm:ss"
                     className={inputStyle}
                     disabled={mode === "view"}
-                  />
+                  /> */}
                 </div>
 
                 <div>
