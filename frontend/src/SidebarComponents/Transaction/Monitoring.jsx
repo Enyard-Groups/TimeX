@@ -412,7 +412,7 @@ const Monitoring = () => {
             <span className="ml-2 text-md">entries</span>
           </div>
           <div className="flex flex-wrap gap-2 items-center justify-center">
-            <input
+            <input                       
               placeholder="Search"
               value={searchTerm}
               onChange={(e) => {

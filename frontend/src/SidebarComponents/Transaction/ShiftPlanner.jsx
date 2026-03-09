@@ -28,7 +28,7 @@ const ShiftPlanner = () => {
             activeTab === "calendar"
               ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
               : "text-[oklch(0.45_0.004_49.25)]"
-          }`}
+          }`}                      
           >
             Calendar View
           </button>

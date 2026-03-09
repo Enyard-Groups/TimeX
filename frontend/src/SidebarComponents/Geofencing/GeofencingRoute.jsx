@@ -1,6 +1,8 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Navbar from "../../components/Navbar";
+import GeofencingMaster from "./GeofencingMaster";
+import EmployeeGeofencing from "./EmployeeGeofencing";
 
 const GeofencingRoute = ({ user }) => {
   return (
@@ -8,9 +10,8 @@ const GeofencingRoute = ({ user }) => {
       <Navbar user={user} />
       <div className="md:ml-50 mt-16 p-6 md:p-10 min-h-screen">
         <Routes>
-          <Route path="geofencing-master" element={<div>GeofencingMaster</div>} />
-          <Route path="employee-geofencing" element={<div>EmployeeGeofencing</div>} />
-         
+          <Route path="geofencing-master" element={<GeofencingMaster />} />
+          <Route path="employee-geofencing" element={<EmployeeGeofencing />} />
         </Routes>
       </div>
     </div>
