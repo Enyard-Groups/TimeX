@@ -24,12 +24,12 @@ const Visitor = ({ user }) => {
             <div className="flex items-center gap-2 font-medium text-lg">
               <FaVimeoV />
               <span>Visitor</span>
-              {openVisitor ? (
-                <MdKeyboardArrowUp className="text-xl" />
-              ) : (
-                <MdKeyboardArrowDown className="text-xl" />
-              )}
             </div>
+            {openVisitor ? (
+              <MdKeyboardArrowUp className="text-xl" />
+            ) : (
+              <MdKeyboardArrowDown className="text-xl" />
+            )}
           </div>
 
           {/* Sub Menu */}

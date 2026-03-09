@@ -24,12 +24,12 @@ const Forms = ({ user }) => {
             <div className="flex items-center gap-2 font-medium text-lg">
               <LuClipboardList />
               <span>Forms</span>
-              {openForms ? (
-                <MdKeyboardArrowUp className="text-xl" />
-              ) : (
-                <MdKeyboardArrowDown className="text-xl" />
-              )}
             </div>
+            {openForms ? (
+              <MdKeyboardArrowUp className="text-xl" />
+            ) : (
+              <MdKeyboardArrowDown className="text-xl" />
+            )}
           </div>
 
           {/* Sub Menu */}

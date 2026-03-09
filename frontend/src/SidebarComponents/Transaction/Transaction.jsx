@@ -24,12 +24,12 @@ const Transaction = ({ user }) => {
             <div className="flex items-center gap-2 font-medium text-lg">
               <PiNotePencilFill />
               <span>Transaction</span>
-              {openTransaction ? (
-                <MdKeyboardArrowUp className="text-xl" />
-              ) : (
-                <MdKeyboardArrowDown className="text-xl" />
-              )}
             </div>
+            {openTransaction ? (
+              <MdKeyboardArrowUp className="text-xl" />
+            ) : (
+              <MdKeyboardArrowDown className="text-xl" />
+            )}
           </div>
 
           {/* Sub Menu */}

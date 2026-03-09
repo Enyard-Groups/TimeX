@@ -29,12 +29,12 @@ const Reports = ({ user }) => {
             <div className="flex items-center gap-2 font-medium text-lg">
               <MdOutlineStorage />
               <span>Reports</span>
-              {openReports ? (
-                <MdKeyboardArrowUp className="text-xl" />
-              ) : (
-                <MdKeyboardArrowDown className="text-xl" />
-              )}
             </div>
+            {openReports ? (
+              <MdKeyboardArrowUp className="text-xl" />
+            ) : (
+              <MdKeyboardArrowDown className="text-xl" />
+            )}
           </div>
 
           {/* Sub Menu */}
@@ -69,10 +69,10 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/mannual-entry-status"
                       className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
-                }
+                        isActive
+                          ? activeClass
+                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                      }
                     >
                       Mannual Entry Status
                     </NavLink>
@@ -80,10 +80,10 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/mannual-entry-report"
                       className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
-                }
+                        isActive
+                          ? activeClass
+                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                      }
                     >
                       Mannual Entry Report
                     </NavLink>
@@ -91,10 +91,10 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/mannual-entry-summary"
                       className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
-                }
+                        isActive
+                          ? activeClass
+                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                      }
                     >
                       Mannual Entry Summary
                     </NavLink>
@@ -133,20 +133,20 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/attendance-by-employee"
                       className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
-                }
+                        isActive
+                          ? activeClass
+                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                      }
                     >
                       Attendance By Employee
                     </NavLink>
                     <NavLink
                       to="/reports/attendance-by-location"
                       className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
-                }
+                        isActive
+                          ? activeClass
+                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                      }
                     >
                       Attendance By Location
                     </NavLink>
@@ -154,10 +154,10 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/attendance-summary"
                       className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
-                }
+                        isActive
+                          ? activeClass
+                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                      }
                     >
                       Attendance Summary
                     </NavLink>
@@ -165,10 +165,10 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/attendance-summary-location"
                       className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
-                }
+                        isActive
+                          ? activeClass
+                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                      }
                     >
                       Attendance Summary Location
                     </NavLink>
@@ -176,10 +176,10 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/employee-weekly-report"
                       className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
-                }
+                        isActive
+                          ? activeClass
+                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                      }
                     >
                       Employee Weekly Report
                     </NavLink>
@@ -216,10 +216,10 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/absence-report"
                       className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
-                }
+                        isActive
+                          ? activeClass
+                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                      }
                     >
                       Absence Report
                     </NavLink>
@@ -227,10 +227,10 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/absence-summary-report"
                       className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
-                }
+                        isActive
+                          ? activeClass
+                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                      }
                     >
                       Absence Summary Report
                     </NavLink>
@@ -267,10 +267,10 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/early-out-report"
                       className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
-                }
+                        isActive
+                          ? activeClass
+                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                      }
                     >
                       Early Out Report
                     </NavLink>
@@ -292,10 +292,10 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/leave-montly-summary"
                       className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
-                }
+                        isActive
+                          ? activeClass
+                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                      }
                     >
                       Leave Monthly Summary
                     </NavLink>
@@ -303,10 +303,10 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/leave-summary-datewise"
                       className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
-                }
+                        isActive
+                          ? activeClass
+                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                      }
                     >
                       Leave Summary Datewise
                     </NavLink>

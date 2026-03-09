@@ -24,12 +24,12 @@ const Approvals = ({ user }) => {
             <div className="flex items-center gap-2 font-medium text-lg">
               <FaCheckCircle />
               <span>Approvals</span>
-              {openApprovals ? (
-                <MdKeyboardArrowUp className="text-xl" />
-              ) : (
-                <MdKeyboardArrowDown className="text-xl" />
-              )}
             </div>
+            {openApprovals ? (
+              <MdKeyboardArrowUp className="text-xl" />
+            ) : (
+              <MdKeyboardArrowDown className="text-xl" />
+            )}
           </div>
 
           {/* Sub Menu */}

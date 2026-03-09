@@ -22,15 +22,15 @@ const Master = ({ user }) => {
               ismastersActive ? activeClass : ""
             }`}
           >
-            <div className="flex items-center gap-2 font-medium text-lg">
+            <div className="flex items-center gap-2 mt-2 font-medium text-lg">
               <RiContactsFill />
               <span>Masters</span>
-              {openMasters ? (
-                <MdKeyboardArrowUp className="text-xl" />
-              ) : (
-                <MdKeyboardArrowDown className="text-xl" />
-              )}
             </div>
+            {openMasters ? (
+              <MdKeyboardArrowUp className="text-xl" />
+            ) : (
+              <MdKeyboardArrowDown className="text-xl" />
+            )}
           </div>
 
           {/* Sub Menu */}
@@ -88,20 +88,20 @@ const Master = ({ user }) => {
                     <NavLink
                       to="/masters/employee-master"
                       className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
-                }
+                        isActive
+                          ? activeClass
+                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                      }
                     >
                       Employee Master
                     </NavLink>
                     <NavLink
                       to="/masters/employee-category"
                       className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
-                }
+                        isActive
+                          ? activeClass
+                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                      }
                     >
                       Employee Category
                     </NavLink>
@@ -150,10 +150,10 @@ const Master = ({ user }) => {
                     <NavLink
                       to="/masters/holiday-master"
                       className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
-                }
+                        isActive
+                          ? activeClass
+                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                      }
                     >
                       Holiday Master
                     </NavLink>

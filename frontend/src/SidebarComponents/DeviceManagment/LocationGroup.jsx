@@ -204,7 +204,6 @@ const LocationGroup = () => {
         )}
       </div>
 
-      {!openModal && (
         <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6">
           {/* Top Controls */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
@@ -384,7 +383,7 @@ const LocationGroup = () => {
             </div>
           </div>
         </div>
-      )}
+      
 
       {openModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">

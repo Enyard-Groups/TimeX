@@ -6,7 +6,8 @@ import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 const DeviceManagement = ({ user }) => {
   const [opendevicemanagements, setOpendevicemanagements] = useState(false);
   const isAdmin = user.role === "admin";
-  const isdevicemanagementsActive = location.pathname.startsWith("/devicemanagements");
+  const isdevicemanagementsActive =
+    location.pathname.startsWith("/devicemanagements");
   const activeClass = "text-[oklch(0.645_0.246_16.439)]";
 
   return (
@@ -23,12 +24,12 @@ const DeviceManagement = ({ user }) => {
             <div className="flex items-center gap-2 font-medium text-lg">
               <TbDeviceDesktopFilled />
               <span>Device Management</span>
-              {opendevicemanagements ? (
-                <MdKeyboardArrowUp className="text-2xl" />
-              ) : (
-                <MdKeyboardArrowDown className="text-2xl" />
-              )}
             </div>
+            {opendevicemanagements ? (
+              <MdKeyboardArrowUp className="text-2xl" />
+            ) : (
+              <MdKeyboardArrowDown className="text-2xl" />
+            )}
           </div>
 
           {/* Sub Menu */}

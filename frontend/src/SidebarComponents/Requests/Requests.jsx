@@ -24,12 +24,12 @@ const Requests = ({ user }) => {
             <div className="flex items-center gap-2 font-medium text-lg">
               <IoInformationCircle />
               <span>Requests</span>
-              {openRequests ? (
-                <MdKeyboardArrowUp className="text-xl" />
-              ) : (
-                <MdKeyboardArrowDown className="text-xl" />
-              )}
             </div>
+            {openRequests ? (
+              <MdKeyboardArrowUp className="text-xl" />
+            ) : (
+              <MdKeyboardArrowDown className="text-xl" />
+            )}
           </div>
 
           {/* Sub Menu */}

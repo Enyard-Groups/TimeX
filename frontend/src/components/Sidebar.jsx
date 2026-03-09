@@ -9,6 +9,7 @@ import Approvals from "../SidebarComponents/Approvals/Approvals";
 import Reports from "../SidebarComponents/Reports/Reports";
 import Visitor from "../SidebarComponents/VisitorManagement/Visitor";
 import Forms from "../SidebarComponents/Forms/Forms";
+import { RxDashboard } from "react-icons/rx";
 
 const Sidebar = ({ user }) => {
   if (!user) return null;
@@ -32,9 +33,14 @@ const Sidebar = ({ user }) => {
             style={{ color: "oklch(0.147 0.004 49.25)" }}
           >
             <div
-              className={`mt-5 pl-7 font-bold text-md ${isdashboardActive ? activeClass : ""}`}
+              className={`mt-5 pl-2 font-bold text-md ${isdashboardActive ? activeClass : ""}`}
             >
-              <Link to="/dashboard">DASHBOARD</Link>
+              <div className="flex items-center gap-2 font-medium text-lg">
+                <RxDashboard />
+                <span>
+                  <Link to="/dashboard">Dashboard</Link>
+                </span>
+              </div>
             </div>
             <Master user={user} />
             <DeviceManagement user={user} />

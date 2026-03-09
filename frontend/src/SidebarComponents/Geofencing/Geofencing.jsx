@@ -24,12 +24,12 @@ const Geofencing = ({ user }) => {
             <div className="flex items-center gap-2 font-medium text-lg">
               <IoMdLocate />
               <span>Geofencing</span>
-              {openGeofencing ? (
-                <MdKeyboardArrowUp className="text-xl" />
-              ) : (
-                <MdKeyboardArrowDown className="text-xl" />
-              )}
             </div>
+            {openGeofencing ? (
+              <MdKeyboardArrowUp className="text-xl" />
+            ) : (
+              <MdKeyboardArrowDown className="text-xl" />
+            )}
           </div>
 
           {/* Sub Menu */}

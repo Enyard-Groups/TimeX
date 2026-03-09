@@ -5,14 +5,14 @@ const Footer = () => {
 
   return (
     <div
-      className="fixed w-full pt-1 sm:pt-2 z-40 bottom-0 h-12 border-t "
+      className="fixed w-full pt-3 z-10 bottom-0 h-12 border-t "
       style={{
         backgroundColor: "oklch(1 0 0)",
         borderColor: "oklch(0.823 0.003 48.717)",
       }}
     >
       <div
-        className=" text-md gap-2 text-center"
+        className="text-sm gap-2 text-center"
         style={{ color: "oklch(0.423 0.003 48.717)" }}
       >
         © {currentYear} TimeX |{" "}

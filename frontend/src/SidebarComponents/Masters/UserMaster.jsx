@@ -373,182 +373,178 @@ const UserMaster = () => {
           )}
         </div>
 
-        {!openModal && (
-          <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">
-            {/* Top Controls */}
-            <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-              <div>
-                <label className="mr-2 text-md">Show</label>
-                <select
-                  value={entriesPerPage}
-                  onChange={(e) => {
-                    setEntriesPerPage(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                  className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
-                >
-                  <option value={10}>10</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </select>
-                <span className="ml-2 text-md">entries</span>
-              </div>
-              <div className="flex flex-wrap gap-2 items-center justify-center">
-                <input
-                  placeholder="Search"
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-                />
-                <div className="flex">
-                  <button
-                    onClick={handleCopy}
-                    className="text-xl px-3 py-1 cursor-pointer text-gray-800"
-                  >
-                    <GoCopy />
-                  </button>
-
-                  <button
-                    onClick={handleExcel}
-                    className="text-xl px-3 py-1 cursor-pointer text-green-700"
-                  >
-                    <FaFileExcel />
-                  </button>
-
-                  <button
-                    onClick={handlePDF}
-                    className="text-xl px-3 py-1 cursor-pointer text-red-600"
-                  >
-                    <FaFilePdf />
-                  </button>
-                </div>
-              </div>
+        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">
+          {/* Top Controls */}
+          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+            <div>
+              <label className="mr-2 text-md">Show</label>
+              <select
+                value={entriesPerPage}
+                onChange={(e) => {
+                  setEntriesPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+              <span className="ml-2 text-md">entries</span>
             </div>
-
-            {/* Table */}
-            <div className="overflow-x-auto min-h-[250px]">
-              <table className="w-full text-lg border-collapse">
-                <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                  <tr>
-                    <th className="p-2 font-semibold">SL.NO</th>
-                    <th className="p-2 font-semibold">User Name</th>
-                    <th className="p-2 font-semibold">Employee</th>
-                    <th className="p-2 font-semibold">Employee Email</th>
-                    <th className="p-2 font-semibold">Role</th>
-                    <th className="p-2 font-semibold">Active</th>
-                    <th className="p-2 font-semibold">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentUsers.length === 0 ? (
-                    <tr>
-                      <td colSpan="7" className="sm:text-center p-10">
-                        No Data Available
-                      </td>
-                    </tr>
-                  ) : (
-                    currentUsers.map((user, index) => (
-                      <tr
-                        key={user.id}
-                        className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)] "
-                      >
-                        <td className="p-2">{index + 1}</td>
-                        <td className="p-2">{user.userName}</td>
-                        <td className="p-2">{user.empname}</td>
-                        <td className="p-2">{user.enrollmentId}</td>
-                        <td className="p-2">{user.role}</td>
-                        <td className="p-2">{user.active ? "Y" : "N"}</td>
-                        <td className="p-2">
-                          <div className="flex flex-row space-x-3 justify-center ">
-                            {/* View */}
-                            <FaEye
-                              onClick={() => {
-                                setFormData(user);
-                                setMode("view");
-                                setOpenModal(true);
-                              }}
-                              className="inline text-blue-500 cursor-pointer text-lg"
-                            />
-
-                            {/* Edit */}
-                            <FaPen
-                              onClick={() => {
-                                setFormData(user);
-                                setEditId(user.id);
-                                setMode("edit");
-                                setOpenModal(true);
-                              }}
-                              className="inline text-green-500 cursor-pointer text-lg"
-                            />
-
-                            {/* Delete */}
-                            <MdDeleteForever
-                              onClick={() =>
-                                setUsers(users.filter((v) => v.id !== user.id))
-                              }
-                              className="inline text-red-500 cursor-pointer text-xl"
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination */}
-            <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-              <span>
-                Showing {filteredUsers.length === 0 ? "0" : startIndex + 1} to{" "}
-                {Math.min(endIndex, filteredUsers.length)} of{" "}
-                {filteredUsers.length} entries
-              </span>
-
-              <div className="flex flex-row space-x-1">
+            <div className="flex flex-wrap gap-2 items-center justify-center">
+              <input
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+              />
+              <div className="flex">
                 <button
-                  disabled={currentPage == 1}
-                  onClick={() => setCurrentPage(1)}
-                  className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                  onClick={handleCopy}
+                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
                 >
-                  First
+                  <GoCopy />
                 </button>
 
                 <button
-                  disabled={currentPage == 1}
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                  className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                  onClick={handleExcel}
+                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
                 >
-                  <GrPrevious />
-                </button>
-
-                <div className="p-3 px-4 shadow rounded-full">
-                  {currentPage}
-                </div>
-
-                <button
-                  disabled={currentPage == totalPages}
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                  className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
-                >
-                  <GrNext />
+                  <FaFileExcel />
                 </button>
 
                 <button
-                  disabled={currentPage == totalPages}
-                  onClick={() => setCurrentPage(totalPages)}
-                  className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                  onClick={handlePDF}
+                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
                 >
-                  Last
+                  <FaFilePdf />
                 </button>
               </div>
             </div>
           </div>
-        )}
+
+          {/* Table */}
+          <div className="overflow-x-auto min-h-[250px]">
+            <table className="w-full text-lg border-collapse">
+              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
+                <tr>
+                  <th className="p-2 font-semibold">SL.NO</th>
+                  <th className="p-2 font-semibold">User Name</th>
+                  <th className="p-2 font-semibold">Employee</th>
+                  <th className="p-2 font-semibold">Employee Email</th>
+                  <th className="p-2 font-semibold">Role</th>
+                  <th className="p-2 font-semibold">Active</th>
+                  <th className="p-2 font-semibold">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentUsers.length === 0 ? (
+                  <tr>
+                    <td colSpan="7" className="sm:text-center p-10">
+                      No Data Available
+                    </td>
+                  </tr>
+                ) : (
+                  currentUsers.map((user, index) => (
+                    <tr
+                      key={user.id}
+                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)] "
+                    >
+                      <td className="p-2">{index + 1}</td>
+                      <td className="p-2">{user.userName}</td>
+                      <td className="p-2">{user.empname}</td>
+                      <td className="p-2">{user.enrollmentId}</td>
+                      <td className="p-2">{user.role}</td>
+                      <td className="p-2">{user.active ? "Y" : "N"}</td>
+                      <td className="p-2">
+                        <div className="flex flex-row space-x-3 justify-center ">
+                          {/* View */}
+                          <FaEye
+                            onClick={() => {
+                              setFormData(user);
+                              setMode("view");
+                              setOpenModal(true);
+                            }}
+                            className="inline text-blue-500 cursor-pointer text-lg"
+                          />
+
+                          {/* Edit */}
+                          <FaPen
+                            onClick={() => {
+                              setFormData(user);
+                              setEditId(user.id);
+                              setMode("edit");
+                              setOpenModal(true);
+                            }}
+                            className="inline text-green-500 cursor-pointer text-lg"
+                          />
+
+                          {/* Delete */}
+                          <MdDeleteForever
+                            onClick={() =>
+                              setUsers(users.filter((v) => v.id !== user.id))
+                            }
+                            className="inline text-red-500 cursor-pointer text-xl"
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
+            <span>
+              Showing {filteredUsers.length === 0 ? "0" : startIndex + 1} to{" "}
+              {Math.min(endIndex, filteredUsers.length)} of{" "}
+              {filteredUsers.length} entries
+            </span>
+
+            <div className="flex flex-row space-x-1">
+              <button
+                disabled={currentPage == 1}
+                onClick={() => setCurrentPage(1)}
+                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+              >
+                First
+              </button>
+
+              <button
+                disabled={currentPage == 1}
+                onClick={() => setCurrentPage(currentPage - 1)}
+                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+              >
+                <GrPrevious />
+              </button>
+
+              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+
+              <button
+                disabled={currentPage == totalPages}
+                onClick={() => setCurrentPage(currentPage + 1)}
+                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+              >
+                <GrNext />
+              </button>
+
+              <button
+                disabled={currentPage == totalPages}
+                onClick={() => setCurrentPage(totalPages)}
+                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+              >
+                Last
+              </button>
+            </div>
+          </div>
+        </div>
 
         {openModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
