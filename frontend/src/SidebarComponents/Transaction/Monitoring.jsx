@@ -388,7 +388,7 @@ const Monitoring = () => {
       </div>
 
       <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)]  p-6">
-        <h1 className="border-b-2 mb-4 w-fit border-[oklch(0.8_0.001_106.424)] text-[oklch(0.6_0.246_16.439)]">
+        <h1 className="border-b-2 mb-4 text-xl w-fit border-[oklch(0.8_0.001_106.424)] text-[oklch(0.6_0.246_16.439)]">
           Attendance Monitoring
         </h1>
 
