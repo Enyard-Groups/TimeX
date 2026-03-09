@@ -132,6 +132,7 @@ const GeofencingMaster = () => {
       toast.error("Search failed");
     }
   };
+  
   const handleSubmit = () => {
     const { name, longitude, latitude } = formData;
 

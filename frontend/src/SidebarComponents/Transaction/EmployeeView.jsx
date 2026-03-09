@@ -172,6 +172,12 @@ const EmployeeView = () => {
               <th className="p-2 font-semibold">
                 <input
                   type="checkbox"
+                  checked={
+                    currentemployee.length > 0 &&
+                    currentemployee.every((emp) =>
+                      selectedEmployees.includes(emp.id),
+                    )
+                  }
                   onChange={(e) => {
                     if (e.target.checked) {
                       setSelectedEmployees(currentemployee.map((x) => x.id));
