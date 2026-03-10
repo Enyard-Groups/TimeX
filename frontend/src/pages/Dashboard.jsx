@@ -15,15 +15,14 @@ const Dashboard = () => {
 
   return (
     <div
-      className="min-h-screen"
+      className="min-h-screen bg-[oklch(0.95_0.001_106.424)]"
       style={{
-        backgroundColor: "oklch(0.97 0.001 106.424)",
         scrollbarWidth: "none",
       }}
     >
       <Navbar user={user} />
 
-      <main className="flex-1 md:ml-64 mt-16 mb-12 p-6 md:p-10">
+      <main className="md:ml-64 mt-16 mb-12 p-6 md:p-10">
         {isAdmin ? (
           <AdminDashboard user={user} />
         ) : (

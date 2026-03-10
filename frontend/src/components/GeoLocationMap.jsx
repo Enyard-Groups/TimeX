@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { MapContainer, TileLayer, CircleMarker, Tooltip } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Tooltip } from "react-leaflet";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import { userData } from "../assets/userData";
@@ -8,14 +9,19 @@ const GeoLocationMap = () => {
   const [geoData, setGeoData] = useState([]);
 
   useEffect(() => {
-    // city coordinates
     const cityCoordinates = {
       Gurgaon: [28.4595, 77.0266],
       Delhi: [28.6139, 77.209],
       Mumbai: [19.076, 72.8777],
+      Bangalore: [12.9716, 77.5946],
+      Hyderabad: [17.385, 78.4867],
+      Pune: [18.5204, 73.8567],
+      Chennai: [13.0827, 80.2707],
+      Kolkata: [22.5726, 88.3639],
+      Noida: [28.5355, 77.391],
+      Ahmedabad: [23.0225, 72.5714],
     };
 
-    // count users per city
     const cityCount = {};
 
     userData.forEach((user) => {
@@ -23,7 +29,6 @@ const GeoLocationMap = () => {
       cityCount[city] = (cityCount[city] || 0) + 1;
     });
 
-    // convert to map format
     const formattedData = Object.keys(cityCount).map((city) => ({
       name: city,
       value: cityCount[city],
@@ -34,27 +39,59 @@ const GeoLocationMap = () => {
     setGeoData(formattedData);
   }, []);
 
+  const createCircleIcon = (value) => {
+    const size = 20 + value * 2;
+
+    return L.divIcon({
+      className: "custom-circle-marker",
+      html: `
+      <div style="
+        width:${size}px;
+        height:${size}px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        border-radius:50%;
+        font-size:11px;
+        font-weight:600;
+        color:white;
+        background: radial-gradient(
+          circle at 30% 30%,
+          oklch(0.72 0.24 16.439 / 0.7),
+          oklch(0.645 0.246 16.439 / 0.85)
+        );
+        backdrop-filter:blur(3px);
+        box-shadow:
+          0 6px 12px rgba(0,0,0,0.25),
+          inset -2px -2px 4px rgba(0,0,0,0.25),
+          inset 2px 2px 4px rgba(255,255,255,0.2);
+      ">
+        ${value}
+      </div>
+    `,
+      iconSize: [size, size],
+      iconAnchor: [size / 2, size / 2],
+    });
+  };
+
   return (
     <div
       className="
-       h-[450px]
-       col-span-2
-       bg-white/50
-       backdrop-blur-xl
-       border border-white/60
-       rounded-3xl
-       p-6
-       shadow-[0_10px_40px_rgba(0,0,0,0.06)]
-"
+      h-[460px]
+      col-span-2
+      bg-white
+      border
+      border-gray-200
+      rounded-3xl
+      p-6
+      shadow-lg
+      "
     >
-      <h2
-        className="text-md text-center font-semibold mb-4"
-        style={{ color: "oklch(0.5 0.004 49.25)" }}
-      >
+      <h2 className="text-md text-center font-semibold mb-4 text-gray-600">
         Geographical Attendance Distribution
       </h2>
 
-      <div className="w-full h-[350px] rounded-3xl overflow-hidden shadow-lg">
+      <div className="w-full h-[350px] rounded-2xl overflow-hidden">
         <MapContainer
           center={[20.5937, 78.9629]}
           zoom={5}
@@ -63,28 +100,23 @@ const GeoLocationMap = () => {
         >
           <TileLayer
             attribution=""
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
           />
 
           {geoData.map((location, index) => (
-            <CircleMarker
+            <Marker
               key={index}
-              center={[location.lat, location.lng]}
-              radius={1 + location.value * 3}
-              pathOptions={{
-                color: "oklch(0.62 0.246 16.439)",
-                fillColor: "oklch(0.82 0.245 27.325)",
-                fillOpacity: 0.7,
-              }}
+              position={[location.lat, location.lng]}
+              icon={createCircleIcon(location.value)}
             >
               <Tooltip direction="top" offset={[0, -10]} opacity={1}>
-                <div className="text-md">
+                <div className="text-sm">
                   <strong>{location.name}</strong>
                   <br />
-                  Total Users: {location.value}
+                  Users: {location.value}
                 </div>
               </Tooltip>
-            </CircleMarker>
+            </Marker>
           ))}
         </MapContainer>
       </div>
