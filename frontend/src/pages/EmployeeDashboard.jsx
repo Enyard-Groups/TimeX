@@ -48,7 +48,7 @@ const EmployeeDashboard = ({ user }) => {
       <div className="p-8 bg-white rounded-3xl border shadow-sm">
         <h3 className="text-md mb-6">February Attendance History</h3>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto" style={{ scrollbarWidth: "none" }}>
           <table className="w-full text-md">
             <thead className="opacity-50 border-b">
               <tr>

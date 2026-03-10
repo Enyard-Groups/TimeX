@@ -22,7 +22,7 @@ const RecentActivity = () => {
         Recent Activity
       </h2>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto" style={{ scrollbarWidth: "none" }}>
         <table className="w-full text-md text-left border-collapse">
           <thead>
             <tr className="border-b border-gray-200 text-gray-600">
@@ -35,7 +35,7 @@ const RecentActivity = () => {
           </thead>
 
           <tbody>
-            {userData.slice(0,3).map((user) => (
+            {userData.slice(0, 3).map((user) => (
               <tr
                 key={user.enrollmentId}
                 className="border-b border-gray-100 hover:bg-gray-50 transition"

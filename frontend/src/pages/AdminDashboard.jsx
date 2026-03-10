@@ -79,7 +79,10 @@ const AdminDashboard = ({ user }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mt-6 items-start">
-        <div className="col-span-1 lg:col-span-2 bg-white rounded-3xl shadow-md p-4 sm:p-6 hover:scale-105 active:scale-95 overflow-x-auto sm:overflow-hidden transition-all duration-300">
+        <div
+          className="col-span-1 lg:col-span-2 bg-white rounded-3xl shadow-md p-4 sm:p-6 hover:scale-105 active:scale-95 overflow-x-auto sm:overflow-hidden transition-all duration-300"
+          style={{ scrollbarWidth: "none" }}
+        >
           <h4
             className="text-center mb-6 p-3 font-semibold "
             style={{ color: "oklch(0.5 0.004 49.25)" }}
@@ -89,7 +92,10 @@ const AdminDashboard = ({ user }) => {
           <EmployeeAttendance attendanceData={attendanceData} />
         </div>
 
-        <div className="col-span-1 lg:col-span-3 bg-white rounded-3xl shadow-md p-4 sm:p-6 overflow-x-auto hover:scale-105 active:scale-95 transition-all duration-300">
+        <div
+          className="col-span-1 lg:col-span-3 bg-white rounded-3xl shadow-md p-4 sm:p-6 overflow-x-auto hover:scale-105 active:scale-95 transition-all duration-300"
+          style={{ scrollbarWidth: "none" }}
+        >
           <h4
             className="text-center mb-6 p-3 font-semibold "
             style={{ color: "oklch(0.5 0.004 49.25)" }}
@@ -102,7 +108,10 @@ const AdminDashboard = ({ user }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6 items-start">
         <GeoLocationMap />
-        <div className="col-span-1 text-center bg-white rounded-3xl shadow-md p-4 sm:p-6 overflow-x-auto sm:overflow-hidden hover:scale-105 active:scale-95 transition-all duration-300">
+        <div
+          className="col-span-1 text-center bg-white rounded-3xl shadow-md p-4 sm:p-6 overflow-x-auto sm:overflow-hidden hover:scale-105 active:scale-95 transition-all duration-300"
+          style={{ scrollbarWidth: "none" }}
+        >
           <h4
             className="mb-6 p-3 font-semibold "
             style={{ color: "oklch(0.5 0.004 49.25)" }}

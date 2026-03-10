@@ -91,7 +91,10 @@ const GeoLocationMap = () => {
         Geographical Attendance Distribution
       </h2>
 
-      <div className="w-full h-[350px] rounded-2xl overflow-hidden">
+      <div
+        className="w-full h-[350px] rounded-2xl overflow-hidden"
+        style={{ scrollbarWidth: "none" }}
+      >
         <MapContainer
           center={[20.5937, 78.9629]}
           zoom={5}

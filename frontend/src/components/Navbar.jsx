@@ -113,12 +113,18 @@ export default function Navbar() {
               </button>
 
               {notificationsDropdownOpen && (
-                <div className="absolute right-0 mt-3 w-60 sm:w-88 h-80 rounded-2xl shadow-xl border bg-[oklch(1_0_0)] border-[oklch(0.923_0.003_48.717)] overflow-hidden z-50">
+                <div
+                  className="absolute right-0 mt-3 w-60 sm:w-88 h-80 rounded-2xl shadow-xl border bg-[oklch(1_0_0)] border-[oklch(0.923_0.003_48.717)] overflow-hidden z-50"
+                  style={{ scrollbarWidth: "none" }}
+                >
                   <div className="p-4 border-b border-[oklch(0.923_0.003_48.717)] font-semibold text-[oklch(0.147_0.004_49.25)]">
                     Notifications
                   </div>
 
-                  <div className="overflow-y-auto h-[calc(100%-56px)] p-3">
+                  <div
+                    className="overflow-y-auto h-[calc(100%-56px)] p-3"
+                    style={{ scrollbarWidth: "none" }}
+                  >
                     {notifications.length === 0 ? (
                       <div className="flex items-center justify-center h-full text-md opacity-60 text-[oklch(0.147_0.004_49.25)]">
                         No Notifications
