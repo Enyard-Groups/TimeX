@@ -24,10 +24,7 @@ const VisitorBooking = () => {
   const [showCicpaExpiryPicker, setShowCicpaExpiryPicker] = useState(false);
   const [showIdExpiryPicker, setShowIdExpiryPicker] = useState(false);
   const now = new Date();
-  const today = now
-    .toLocaleDateString("en-GB")
-    .split("/")
-    .join("/");
+  const today = now.toLocaleDateString("en-GB").split("/").join("/");
   const currentTime = now.toTimeString().slice(0, 8);
 
   const [formData, setFormData] = useState({
@@ -359,7 +356,10 @@ const VisitorBooking = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto min-h-[300px]">
+          <div
+            className="overflow-x-auto min-h-[300px]"
+            style={{ scrollbarWidth: "none" }}
+          >
             <table className="w-full text-lg border-collapse">
               <thead className="text-md bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)] ">
                 <tr>

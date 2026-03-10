@@ -330,7 +330,10 @@ const DeviceCommunication = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto min-h-[300px]">
+        <div
+          className="overflow-x-auto min-h-[300px]"
+          style={{ scrollbarWidth: "none" }}
+        >
           <table className="w-full text-lg border-collapse">
             <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
               <tr>
