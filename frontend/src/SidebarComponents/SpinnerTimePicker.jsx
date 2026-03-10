@@ -49,10 +49,10 @@ export default function SpinnerTimePicker({ value, onChange, onClose }) {
   };
 
   const commonInputClasses =
-    "w-16 text-center py-2 rounded-lg border border-[oklch(0.86_0.001_106.424)] text-2xl tracking-widest";
+    "w-10 sm:w-12 text-center py-2 rounded-lg border border-[oklch(0.86_0.001_106.424)] text-2xl tracking-widest";
 
   return (
-    <div className="absolute z-50 mt-2 bg-white shadow-2xl rounded-2xl px-6 py-5 w-fit">
+    <div className="absolute z-50 bg-white shadow-2xl rounded-2xl px-4 sm:px-6 py-5 w-fit">
       <div className="mb-4 text-xs font-semibold tracking-[.25em] text-gray-500">
         ENTER TIME
       </div>
@@ -122,4 +122,3 @@ export default function SpinnerTimePicker({ value, onChange, onClose }) {
     </div>
   );
 }
-

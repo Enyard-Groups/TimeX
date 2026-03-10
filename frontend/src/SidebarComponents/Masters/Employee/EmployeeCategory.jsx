@@ -464,7 +464,7 @@ const EmployeeCategory = () => {
               <div className="flex justify-end mt-10">
                 <button
                   onClick={handleSubmit}
-                  className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+                  className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md mb-6"
                 >
                   Save
                 </button>

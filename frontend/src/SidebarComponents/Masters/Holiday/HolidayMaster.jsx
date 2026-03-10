@@ -532,7 +532,7 @@ const HolidayMaster = () => {
               </div>
 
               {/* Active */}
-              <div className="flex items-center gap-2 mt-6">
+              <div className="flex items-center gap-2 mt-6 sm:mb-18">
                 <label className={labelStyle}>Active</label>
                 <input
                   type="checkbox"

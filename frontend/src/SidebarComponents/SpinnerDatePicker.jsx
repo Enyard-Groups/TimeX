@@ -136,14 +136,14 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
   /* ---------- UI ---------- */
 
   return (
-    <div className="absolute z-50 mt-2 bg-white shadow-2xl rounded-2xl px-6 py-5 w-[280px]">
-      <div className="text-sky-500 text-lg font-medium text-center mb-3">
+    <div className="absolute z-50 mt-2 bg-white shadow-2xl rounded-2xl px-4 sm:px-6 py-5 w-fit">
+      <div className="text-[oklch(0.645_0.246_16.439)] text-lg font-medium text-center mb-3">
         {headerLabel}
       </div>
 
       <div className="h-px bg-[oklch(0.9_0.001_106.424)] mb-4" />
 
-      <div className="flex items-center justify-center gap-4">
+      <div className="flex items-center justify-center gap-2 sm:gap-4">
         {/* DAY */}
         <div className="flex flex-col items-center" onWheel={handleWheelDay}>
           <button
@@ -159,7 +159,7 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
               let v = e.target.value.replace(/\D/g, "");
               if (v.length <= 2) setTempDay(v);
             }}
-            className="w-12 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-sky-400 focus:outline-none"
+            className="w-10 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-[oklch(0.645_0.246_16.439)] focus:outline-none"
           />
 
           <button
@@ -184,15 +184,20 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
           <input
             value={tempMonth}
             onChange={(e) => {
-              let v = e.target.value.slice(0, 3);
-
-              const match = months.find((m) =>
-                m.toLowerCase().startsWith(v.toLowerCase()),
-              );
-
-              if (match) setTempMonth(match);
+              const v = e.target.value.slice(0, 3);
+              setTempMonth(v);
             }}
-            className="w-14 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-sky-400 focus:outline-none"
+            onBlur={() => {
+              const match = months.find(
+                (m) => m.toLowerCase() === tempMonth.toLowerCase(),
+              );
+              if (!match) {
+                setTempMonth(month);
+              } else {
+                setTempMonth(match);
+              }
+            }}
+            className="w-12 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-[oklch(0.645_0.246_16.439)] focus:outline-none"
           />
 
           <button
@@ -220,7 +225,7 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
               let v = e.target.value.replace(/\D/g, "");
               if (v.length <= 4) setTempYear(v);
             }}
-            className="w-16 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-sky-400 focus:outline-none"
+            className="w-12 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-[oklch(0.645_0.246_16.439)] focus:outline-none"
           />
 
           <button
@@ -244,7 +249,7 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
 
         <button
           onClick={handleOk}
-          className="px-4 py-1 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+          className="px-5 py-1 rounded-lg bg-[oklch(0.645_0.246_16.439)]  text-white hover:opacity-90"
         >
           OK
         </button>
