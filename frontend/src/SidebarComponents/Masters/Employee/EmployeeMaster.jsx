@@ -12,6 +12,7 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import SearchDropdown from "../../SearchDropdown";
 
 const EmployeeMaster = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -531,143 +532,129 @@ const EmployeeMaster = () => {
 
               {/* Company */}
               <div>
-                <label className={labelStyle}>Company</label>
-                <select
+                <SearchDropdown
+                  label="Company"
                   name="company"
                   value={formData.company}
-                  onChange={handleChange}
+                  options={["Company 1", "Company 2"]}
+                  formData={formData}
+                  setFormData={setFormData}
                   disabled={mode === "view"}
-                  className={inputStyle}
-                >
-                  <option>-Select-</option>
-                  <option>Company 1</option>
-                </select>
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                />
               </div>
 
               {/* Location */}
               <div>
-                <label className={labelStyle}>Location</label>
-                <select
+                <SearchDropdown
+                  label="Location"
                   name="location"
                   value={formData.location}
-                  onChange={handleChange}
+                  options={[
+                    "Location1",
+                    "Location2",
+                    "Location3",
+                    "Location4",
+                    "Location5",
+                    "Location6",
+                  ]}
+                  formData={formData}
+                  setFormData={setFormData}
                   disabled={mode === "view"}
-                  className={inputStyle}
-                >
-                  <option>-Select-</option>
-                  <option>Location1</option>
-                  <option>Location2</option>
-                  <option>Location3</option>
-                  <option>Location4</option>
-                  <option>Location5</option>
-                  <option>Location6</option>
-                </select>
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                />
               </div>
 
               {/* Designation */}
               <div>
-                <label className={labelStyle}>Designation</label>
-                <select
+                <SearchDropdown
+                  label="Designation"
                   name="designation"
                   value={formData.designation}
-                  onChange={handleChange}
+                  options={[
+                    "Banking Officer",
+                    "Service Sales manager",
+                    "Finance Assistant",
+                    "Trade Finance Specialist",
+                    "Sales Support Officer",
+                    "General",
+                    "HR manager",
+                    "HR Supervisor",
+                    "HR Specialist",
+                    "Facilities Manager",
+                    "Project Manager",
+                    "Team Lead – Operations",
+                    "Driver",
+                  ]}
+                  formData={formData}
+                  setFormData={setFormData}
                   disabled={mode === "view"}
-                  className={inputStyle}
-                >
-                  <option>-Select-</option>
-                  <option>Banking Officer</option>
-                  <option>Service Sales manager</option>
-                  <option>Finance Assistant</option>
-                  <option>Trade Finance Specialist</option>
-                  <option>Sales Support Officer</option>
-                  <option>General</option>
-                  <option>HR manager</option>
-                  <option>HR Supervisor</option>
-                  <option>HR Specialist</option>
-                  <option>Facilities Manager</option>
-                  <option>Acting Chief Human Resource Manager</option>
-                  <option>Senior Technical Support Officer</option>
-                  <option>Project Manager</option>
-                  <option>Team Lead – Operations</option>
-                  <option>Regional Sales Support Manager</option>
-                  <option>Operations Support Officer</option>
-                  <option>
-                    Human Resources Transformation Projects Specialist
-                  </option>
-                  <option>
-                    Head of Government Relations and HR Operations
-                  </option>
-                  <option>Client Service Executive</option>
-                  <option>Talent Acquisition Specialist</option>
-                  <option>Driver</option>
-                </select>
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                />
               </div>
 
               {/* Shift */}
               <div>
-                <label className={labelStyle}>Shift</label>
-                <select
+                <SearchDropdown
+                  label="Shift"
                   name="shift"
                   value={formData.shift}
-                  onChange={handleChange}
+                  options={["Morning", "Evening", "Night", "General"]}
+                  formData={formData}
+                  setFormData={setFormData}
                   disabled={mode === "view"}
-                  className={inputStyle}
-                >
-                  <option>-Select-</option>
-                  <option>Morning</option>
-                  <option>Evening</option>
-                  <option>Night</option>
-                  <option>General</option>
-                </select>
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                />
               </div>
 
               {/* Leave Plan */}
               <div>
-                <label className={labelStyle}>Leave Plan</label>
-                <select
+                <SearchDropdown
+                  label="Leave Plan"
                   name="leavePlan"
                   value={formData.leavePlan}
-                  onChange={handleChange}
+                  options={["Working Days", "Calendar Days"]}
+                  formData={formData}
+                  setFormData={setFormData}
                   disabled={mode === "view"}
-                  className={inputStyle}
-                >
-                  <option>-Select-</option>
-                  <option>Working Days</option>
-                  <option>Calendar Days</option>
-                </select>
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                />
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 border-t pt-4">
               {/* First Approver */}
               <div>
-                <label className={labelStyle}>First Approver</label>
-                <select
+                <SearchDropdown
+                  label="First Approver"
                   name="firstApprover"
                   value={formData.firstApprover}
-                  onChange={handleChange}
+                  options={["Name 1", "Name 2"]}
+                  formData={formData}
+                  setFormData={setFormData}
                   disabled={mode === "view"}
-                  className={inputStyle}
-                >
-                  <option>-Select-</option>
-                  <option>Name 1</option>
-                  <option>Name 2</option>
-                </select>
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                />
               </div>
 
               {/* Second Approver */}
               <div>
-                <label className={labelStyle}>Second Approver</label>
-                <select
+                <SearchDropdown
+                  label="Second Approver"
                   name="secondApprover"
                   value={formData.secondApprover}
-                  onChange={handleChange}
+                  options={["Name 1", "Name 2"]}
+                  formData={formData}
+                  setFormData={setFormData}
                   disabled={mode === "view"}
-                  className={inputStyle}
-                >
-                  <option>-Select-</option>
-                  <option>Name 1</option>
-                  <option>Name 2</option>
-                </select>
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                />
               </div>
 
               {/* Manager */}

@@ -95,7 +95,7 @@ const DonutChart = ({ attendanceData }) => {
               className="w-3 h-3 rounded-full"
               style={{ background: "oklch(0.35 0.18 160)" }}
             />
-            <span className="text-[oklch(0.147_0.004_49.25)]">
+            <span className="text-[oklch(0.147_0.004_49.25)] whitespace-nowrap">
               Early In ({earlyin})
             </span>
           </div>
@@ -105,7 +105,7 @@ const DonutChart = ({ attendanceData }) => {
               className="w-3 h-3 rounded-full"
               style={{ background: "oklch(0.645 0.246 16.439)" }}
             />
-            <span className="text-[oklch(0.147_0.004_49.25)]">
+            <span className="text-[oklch(0.147_0.004_49.25)] whitespace-nowrap">
               Late In ({latein})
             </span>
           </div>

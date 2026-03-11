@@ -4,7 +4,7 @@ import Navbar from "../../components/Navbar";
 import ManualEntryApproval from "./MannualEntryApproval";
 import LeaveRequestApproval from "./LeaveRequestApproval";
 import BusinessTravelApproval from "./BusinessTravelApproval";
-import WftApproval from "./WftApproval";
+import WfhApproval from "./WfhApproval";
 import ClaimApproval from "./ClaimApproval";
 
 const ApprovalRoute = ({ user }) => {
@@ -22,7 +22,7 @@ const ApprovalRoute = ({ user }) => {
             path="bussiness-travel-approval"
             element={<BusinessTravelApproval />}
           />
-          <Route path="wft-approval" element={<WftApproval />} />
+          <Route path="wfh-approval" element={<WfhApproval />} />
           <Route path="claim-approval" element={<ClaimApproval />} />
         </Routes>
       </div>

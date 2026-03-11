@@ -10,50 +10,22 @@ import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
-const LeaveSummary = () => {
+const WfhSummary = () => {
   const [employeeFilter, setEmployeeFilter] = useState("");
-
   const [openEmployeeModal, setopenEmployeeModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState("");
+
   const [leave] = useState([
     {
       employee: "Employee 1",
       leaves: [
         {
           id: 1,
-          leaveType: "Sick Leave",
           year: new Date().getFullYear(),
-          maximumLeaves: "30",
-          totalCarryForward: 0,
-          cfRemaining: 0,
-          totalComboOff: 0,
-          coRemaining: 0,
+          typeName: "WFH",
+          maximumWfhs: "10",
           availed: 0,
-          balance: "30",
-        },
-        {
-          id: 2,
-          leaveType: "Annual Leave",
-          year: new Date().getFullYear(),
-          maximumLeaves: 30,
-          totalCarryForward: 0,
-          cfRemaining: 0,
-          totalComboOff: 0,
-          coRemaining: 0,
-          availed: 5,
-          balance: 25,
-        },
-        {
-          id: 3,
-          leaveType: "Paternity Leave",
-          year: new Date().getFullYear(),
-          maximumLeaves: 5,
-          totalCarryForward: 0,
-          cfRemaining: 0,
-          totalComboOff: 0,
-          coRemaining: 0,
-          availed: 1,
-          balance: 4,
+          balance: "10",
         },
       ],
     },
@@ -61,40 +33,12 @@ const LeaveSummary = () => {
       employee: "Employee 2",
       leaves: [
         {
-          id: 4,
-          leaveType: "Sick Leave",
+          id: 1,
           year: new Date().getFullYear(),
-          maximumLeaves: 20,
-          totalCarryForward: 0,
-          cfRemaining: 0,
-          totalComboOff: 0,
-          coRemaining: 0,
-          availed: 2,
-          balance: 18,
-        },
-        {
-          id: 5,
-          leaveType: "Annual Leave",
-          year: new Date().getFullYear(),
-          maximumLeaves: 25,
-          totalCarryForward: 0,
-          cfRemaining: 0,
-          totalComboOff: 0,
-          coRemaining: 0,
-          availed: 3,
-          balance: 22,
-        },
-        {
-          id: 6,
-          leaveType: "Paternity Leave",
-          year: new Date().getFullYear(),
-          maximumLeaves: 5,
-          totalCarryForward: 0,
-          cfRemaining: 0,
-          totalComboOff: 0,
-          coRemaining: 0,
+          typeName: "WFH",
+          maximumWfhs: "10",
           availed: 0,
-          balance: 5,
+          balance: "10",
         },
       ],
     },
@@ -104,7 +48,7 @@ const LeaveSummary = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const filteredLeave = leave.filter((x) => {
+  const filteredWfh = leave.filter((x) => {
     if (!employeeFilter) return false;
 
     const matchSearch = x.employee
@@ -120,17 +64,17 @@ const LeaveSummary = () => {
 
   const startIndex = endIndex - entriesPerPage;
 
-  const currentLeave = filteredLeave.slice(startIndex, endIndex);
+  const currentWfh = filteredWfh.slice(startIndex, endIndex);
 
   const totalPages = Math.max(
     1,
-    Math.ceil(filteredLeave.length / entriesPerPage),
+    Math.ceil(filteredWfh.length / entriesPerPage),
   );
 
   const handleCopy = () => {
     const header = [
       "Employee",
-      "Leave Type",
+      "Wfh Type",
       "From Date",
       "To Date",
       "Resume On",
@@ -138,11 +82,11 @@ const LeaveSummary = () => {
       "Created Date",
     ].join("\t");
 
-    const rows = filteredLeave
+    const rows = filteredWfh
       .map((item) => {
         return [
           item.employee,
-          item.leaveType,
+          item.typeName,
           item.fromDate,
           item.toDate,
           item.resumeOn,
@@ -159,9 +103,9 @@ const LeaveSummary = () => {
   };
 
   const handleExcel = () => {
-    const excelData = filteredLeave.map((item) => ({
+    const excelData = filteredWfh.map((item) => ({
       Employee: item.employee,
-      LeaveType: item.leaveType,
+      WfhType: item.typeName,
       FromDate: item.fromDate,
       ToDate: item.toDate,
       ResumeOn: item.resumeOn,
@@ -172,9 +116,9 @@ const LeaveSummary = () => {
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     const workbook = XLSX.utils.book_new();
 
-    XLSX.utils.book_append_sheet(workbook, worksheet, "LeaveRequest");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "WfhRequest");
 
-    XLSX.writeFile(workbook, "LeaveRequestData.xlsx");
+    XLSX.writeFile(workbook, "WfhRequestData.xlsx");
   };
 
   const handlePDF = () => {
@@ -182,7 +126,7 @@ const LeaveSummary = () => {
 
     const tableColumn = [
       "Employee",
-      "Leave Type",
+      "Wfh Type",
       "From Date",
       "To Date",
       "Resume On",
@@ -192,10 +136,10 @@ const LeaveSummary = () => {
 
     const tableRows = [];
 
-    filteredLeave.forEach((item) => {
+    filteredWfh.forEach((item) => {
       const row = [
         item.employee,
-        item.leaveType,
+        item.typeName,
         item.fromDate,
         item.toDate,
         item.resumeOn,
@@ -211,7 +155,7 @@ const LeaveSummary = () => {
       body: tableRows,
     });
 
-    doc.save("LeaveRequestData.pdf");
+    doc.save("WfhRequestData.pdf");
   };
 
   return (
@@ -223,10 +167,10 @@ const LeaveSummary = () => {
             <FaAngleRight />
             Requests
             <FaAngleRight />
-            Leave Summary
+            Wfh Summary
           </h1>
         </div>
-
+        
         <div className="mt-6 bg-white flex justify-between items-center shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6 sm:px-20">
           <h1 className="font-medium">Employee</h1>
 
@@ -360,42 +304,33 @@ const LeaveSummary = () => {
                 <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                   <tr>
                     <th className="py-2 px-6 font-semibold">Employee</th>
-                    <th className="py-2 px-6 font-semibold">Leave Type</th>
                     <th className="py-2 px-6 font-semibold">Year</th>
-                    <th className="py-2 px-6 font-semibold">Maximum Leaves</th>
-                    <th className="py-2 px-6 font-semibold">Carry Forward</th>
-                    <th className="py-2 px-6 font-semibold">CF Remaining</th>
-                    <th className="py-2 px-6 font-semibold">Comp Off</th>
-                    <th className="py-2 px-6 font-semibold">CO Remaining</th>
+                    <th className="py-2 px-6 font-semibold">Type Name</th>
+                    <th className="py-2 px-6 font-semibold">Maximum Wfhs</th>
                     <th className="py-2 px-6 font-semibold">Availed</th>
                     <th className="py-2 px-6 font-semibold">Balance</th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  {currentLeave.length === 0 ? (
+                  {currentWfh.length === 0 ? (
                     <tr>
                       <td colSpan="10" className="text-center p-10">
                         No Data Available
                       </td>
                     </tr>
                   ) : (
-                    currentLeave.map((emp) =>
+                    currentWfh.map((emp) =>
                       emp.leaves.map((item) => (
                         <tr
                           key={item.id}
                           className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                         >
                           <td className="py-2 px-6">{emp.employee}</td>
-                          <td className="py-2 px-6">{item.leaveType}</td>
+
                           <td className="py-2 px-6">{item.year}</td>
-                          <td className="py-2 px-6">{item.maximumLeaves}</td>
-                          <td className="py-2 px-6">
-                            {item.totalCarryForward}
-                          </td>
-                          <td className="py-2 px-6">{item.cfRemaining}</td>
-                          <td className="py-2 px-6">{item.totalComboOff}</td>
-                          <td className="py-2 px-6">{item.coRemaining}</td>
+                          <td className="py-2 px-6">{item.typeName}</td>
+                          <td className="py-2 px-6">{item.maximumWfhs}</td>
                           <td className="py-2 px-6">{item.availed}</td>
                           <td className="py-2 px-6">{item.balance}</td>
                         </tr>
@@ -409,9 +344,9 @@ const LeaveSummary = () => {
             {/* Pagination */}
             <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
               <span>
-                Showing {filteredLeave.length === 0 ? "0" : startIndex + 1} to{" "}
-                {Math.min(endIndex, filteredLeave.length)} of{" "}
-                {filteredLeave.length} entries
+                Showing {filteredWfh.length === 0 ? "0" : startIndex + 1} to{" "}
+                {Math.min(endIndex, filteredWfh.length)} of {filteredWfh.length}{" "}
+                entries
               </span>
 
               <div className="flex flex-row space-x-1">
@@ -459,4 +394,4 @@ const LeaveSummary = () => {
   );
 };
 
-export default LeaveSummary;
+export default WfhSummary;

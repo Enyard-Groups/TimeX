@@ -69,14 +69,14 @@ const Approvals = ({ user }) => {
               </NavLink>
 
               <NavLink
-                to="/approvals/wft-approval"
+                to="/approvals/wfh-approval"
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
                     : "hover:text-[oklch(0.645_0.246_16.439)]"
                 }
               >
-                WFT Approval
+                WFH Approval
               </NavLink>
 
               <NavLink

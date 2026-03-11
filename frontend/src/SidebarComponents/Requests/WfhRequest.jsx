@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -12,21 +12,19 @@ import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import SpinnerDatePicker from "../SpinnerDatePicker";
-import SearchDropdown from "../SearchDropdown";
 
-const ClaimRequest = () => {
+const WfhRequest = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
-  const [dateSpinner, setDateSpinner] = useState(false);
-  const [claimRequest, setClaimRequest] = useState([
+  const [fromDateSpinner, setFromDateSpinner] = useState(false);
+  const [toDateSpinner, setToDateSpinner] = useState(false);
+  const [wfh, setWfh] = useState([
     {
       id: 1,
       employee: "Employee",
-      claimCategory: "Food",
-      date: "23/01/2026",
-      purpose: "",
-      amount: "500",
-      remarks: "Nothing",
+      fromDate: "23/01/2026",
+      toDate: "24/01/2026",
+      reason: "fever",
       fa: "✔",
       faname: "Manager",
       sa: "✔",
@@ -40,49 +38,15 @@ const ClaimRequest = () => {
   const [editId, setEditId] = useState(null);
   const [formData, setFormData] = useState({
     employee: "",
-    claimCategory: "",
-    date: "",
-    amount: "",
-    purpose: "",
-    remarks: "",
+    fromDate: "",
+    toDate: "",
+    numberOfDays: "",
+    pendingDays: "",
+    wfhBalance: "",
+    contact: "",
+    email: "",
+    reason: "",
   });
-  const [files, setFiles] = useState([]);
-  const fileInputRef = useRef();
-
-  const MAX_SIZE = 5 * 1024 * 1024; // 5MB
-
-  const handleFiles = (selectedFiles) => {
-    const validFiles = [];
-
-    Array.from(selectedFiles).forEach((file) => {
-      if (file.size > MAX_SIZE) {
-        alert(`${file.name} exceeds 5MB`);
-        return;
-      }
-
-      validFiles.push({
-        file,
-        preview: URL.createObjectURL(file),
-      });
-    });
-
-    setFiles((prev) => [...prev, ...validFiles]);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    handleFiles(e.dataTransfer.files);
-  };
-
-  const formatSize = (size) => {
-    return (size / 1024 / 1024).toFixed(2) + " MB";
-  };
-
-  const removeFile = (index) => {
-    const updated = [...files];
-    updated.splice(index, 1);
-    setFiles(updated);
-  };
 
   const inputStyle =
     "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -90,7 +54,7 @@ const ClaimRequest = () => {
   const labelStyle =
     "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
-  const filteredClaimRequest = claimRequest.filter((x) =>
+  const filteredWfh = wfh.filter((x) =>
     x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
@@ -98,27 +62,45 @@ const ClaimRequest = () => {
 
   const startIndex = endIndex - entriesPerPage;
 
-  const currentClaimRequest = filteredClaimRequest.slice(startIndex, endIndex);
+  const currentWfh = filteredWfh.slice(startIndex, endIndex);
 
   const totalPages = Math.max(
     1,
-    Math.ceil(filteredClaimRequest.length / entriesPerPage),
+    Math.ceil(filteredWfh.length / entriesPerPage),
   );
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    setFormData((prev) => {
+      const updated = {
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      };
+
+      if (updated.fromDate && updated.toDate) {
+        const parseDate = (dateStr) => {
+          const [day, month, year] = dateStr.split("/");
+          return new Date(year, month - 1, day);
+        };
+
+        const from = parseDate(updated.fromDate);
+        const to = parseDate(updated.toDate);
+
+        const diffTime = to - from;
+        const diffDays = diffTime / (1000 * 60 * 60 * 24) + 1;
+
+        updated.numberOfDays = diffDays > 0 ? diffDays : "";
+      }
+
+      return updated;
+    });
   };
 
   const handleSubmit = () => {
-    const { employee, claimCategory, date, purpose, amount, remarks } =
-      formData;
+    const { employee, fromDate, toDate, reason, contact, email } = formData;
 
-    if (!employee || !claimCategory || !date || !amount || !purpose) {
+    if (!employee || !fromDate || !toDate || !contact || !email || !reason) {
       toast.error("Please fill required fields");
       return;
     }
@@ -131,31 +113,35 @@ const ClaimRequest = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const claimdate = parseDate(date);
+    const from = parseDate(fromDate);
+    const to = parseDate(toDate);
 
-    if (claimdate < today) {
+    if (from < today) {
       toast.error("First Date cannot be in the past");
       return;
     }
 
-    const newClaimRequest = {
+    if (to < from) {
+      toast.error("Last Date must be after First Date");
+      return;
+    }
+
+    const newWfh = {
       id: Date.now(),
       employee,
-      claimCategory,
-      date,
-      amount,
-      purpose,
-      remarks,
+      fromDate,
+      toDate,
+      reason,
     };
 
     if (editId) {
-      setClaimRequest((prev) =>
-        prev.map((x) => (x.id === editId ? { ...x, ...newClaimRequest } : x)),
+      setWfh((prev) =>
+        prev.map((x) => (x.id === editId ? { ...x, ...newWfh } : x)),
       );
-      toast.success("ClaimRequest updated");
+      toast.success("Wfh updated");
     } else {
-      setClaimRequest((prev) => [...prev, newClaimRequest]);
-      toast.success("ClaimRequest added");
+      setWfh((prev) => [...prev, newWfh]);
+      toast.success("Wfh added");
     }
 
     setOpenModal(false);
@@ -163,31 +149,27 @@ const ClaimRequest = () => {
 
     setFormData({
       employee: "",
-      claimCategory: "",
-      date: "",
-      amount: "",
-      purpose: "",
-      remarks: "",
+      fromDate: "",
+      toDate: "",
+      numberOfDays: "",
+      pendingDays: "",
+      wfhBalance: "",
+      contact: "",
+      email: "",
+      reason: "",
     });
   };
 
   const handleCopy = () => {
-    const header = [
-      "Employee",
-      "Claim Category",
-      "Date",
-      "Purpose",
-      "Amount",
-    ].join("\t");
+    const header = ["Employee", "From Date", "To Date", "Reason"].join("\t");
 
-    const rows = filteredClaimRequest
+    const rows = filteredWfh
       .map((item) => {
         return [
           item.employee,
-          item.claimCategory,
-          item.date,
-          item.purpose || "NIL",
-          item.amount,
+          item.fromDate,
+          item.toDate,
+          item.reason || "NIL",
         ].join("\t");
       })
       .join("\n");
@@ -199,42 +181,34 @@ const ClaimRequest = () => {
   };
 
   const handleExcel = () => {
-    const excelData = filteredClaimRequest.map((item) => ({
+    const excelData = filteredWfh.map((item) => ({
       Employee: item.employee,
-      ClaimCategory: item.claimCategory,
-      Date: item.date,
-      Purpose: item.purpose || "NIL",
-      Amount: item.amount,
+      FromDate: item.fromDate,
+      ToDate: item.toDate,
+      Reason: item.reason || "NIL",
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     const workbook = XLSX.utils.book_new();
 
-    XLSX.utils.book_append_sheet(workbook, worksheet, "ClaimRequest");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "WfhRequest");
 
-    XLSX.writeFile(workbook, "ClaimRequestData.xlsx");
+    XLSX.writeFile(workbook, "WfhRequestData.xlsx");
   };
 
   const handlePDF = () => {
     const doc = new jsPDF("landscape");
 
-    const tableColumn = [
-      "Employee",
-      "Claim Category",
-      "Date",
-      "Purpose",
-      "Amount",
-    ];
+    const tableColumn = ["Employee", "From Date", "To Date", "Reason"];
 
     const tableRows = [];
 
-    filteredClaimRequest.forEach((item) => {
+    filteredWfh.forEach((item) => {
       const row = [
         item.employee,
-        item.claimCategory,
-        item.date,
-        item.purpose || "NIL",
-        item.amount,
+        item.fromDate,
+        item.toDate,
+        item.reason || "NIL",
       ];
 
       tableRows.push(row);
@@ -245,7 +219,7 @@ const ClaimRequest = () => {
       body: tableRows,
     });
 
-    doc.save("ClaimRequestData.pdf");
+    doc.save("WfhRequestData.pdf");
   };
 
   return (
@@ -258,7 +232,7 @@ const ClaimRequest = () => {
             Requests
             <FaAngleRight />
             <div onClick={() => setOpenModal(false)} className="cursor-pointer">
-              Claim Request
+              WFT Request
             </div>
           </h1>
           {!openModal && (
@@ -335,10 +309,10 @@ const ClaimRequest = () => {
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
                   <th className="py-2 px-6 px-6 font-semibold">Employee</th>
-                  <th className="py-2 px-6 font-semibold">Claim Category</th>
-                  <th className="py-2 px-6 font-semibold">Date</th>
-                  <th className="py-2 px-6 font-semibold">Purpose</th>
-                  <th className="py-2 px-6 font-semibold">Amount</th>
+                  <th className="py-2 px-6 font-semibold">From</th>
+                  <th className="py-2 px-6 font-semibold">To</th>
+                  <th className="py-2 px-6 font-semibold">Wfh Reason</th>
+
                   <th className="py-2 px-6 font-semibold">FA</th>
                   <th className="py-2 px-6 font-semibold">FA Name</th>
 
@@ -355,31 +329,27 @@ const ClaimRequest = () => {
               </thead>
 
               <tbody>
-                {currentClaimRequest.length === 0 ? (
+                {currentWfh.length === 0 ? (
                   <tr>
                     <td colSpan="14" className="text-center p-10">
                       No Data Available
                     </td>
                   </tr>
                 ) : (
-                  currentClaimRequest.map((item) => (
+                  currentWfh.map((item) => (
                     <tr
                       key={item.id}
                       className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                     >
                       <td className="py-2 px-6">{item.employee}</td>
 
-                      <td className="py-2 px-6 whitespace-nowraps">
-                        {item.claimCategory}
-                      </td>
+                      <td className="py-2 px-6">{item.fromDate}</td>
 
-                      <td className="py-2 px-6">{item.date}</td>
+                      <td className="py-2 px-6">{item.toDate}</td>
 
                       <td className="py-2 px-6 whitespace-nowrap">
-                        {item.purpose ? item.purpose : "NIL"}
+                        {item.reason}
                       </td>
-
-                      <td className="py-2 px-6">{item.amount}</td>
 
                       {/* FA Status */}
                       <td className="py-2 px-6 text-xl text-green-600">
@@ -434,9 +404,7 @@ const ClaimRequest = () => {
                           {/* Delete */}{" "}
                           <MdDeleteForever
                             onClick={() =>
-                              setClaimRequest(
-                                claimRequest.filter((v) => v.id !== item.id),
-                              )
+                              setWfh(wfh.filter((v) => v.id !== item.id))
                             }
                             className="inline text-red-500 cursor-pointer text-xl"
                           />{" "}
@@ -452,9 +420,9 @@ const ClaimRequest = () => {
           {/* Pagination */}
           <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
             <span>
-              Showing {filteredClaimRequest.length === 0 ? "0" : startIndex + 1}{" "}
-              to {Math.min(endIndex, filteredClaimRequest.length)} of{" "}
-              {filteredClaimRequest.length} entries
+              Showing {filteredWfh.length === 0 ? "0" : startIndex + 1} to{" "}
+              {Math.min(endIndex, filteredWfh.length)} of {filteredWfh.length}{" "}
+              entries
             </span>
 
             <div className="flex flex-row space-x-1">
@@ -509,210 +477,174 @@ const ClaimRequest = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Employee */}
                 <div>
-                  <SearchDropdown
-                    label={
-                      <>
-                        Employee <span className="text-red-500">*</span>
-                      </>
-                    }
+                  <label className={labelStyle}>
+                    Employee
+                    <span className="text-[oklch(0.577_0.245_27.325)]"> *</span>
+                  </label>
+
+                  <select
                     name="employee"
                     value={formData.employee}
-                    options={["Employee 1", "Employee 2", "Employee 3"]}
-                    formData={formData}
-                    setFormData={setFormData}
+                    onChange={handleChange}
+                    className={inputStyle}
                     disabled={mode === "view"}
-                    inputStyle={inputStyle}
-                    labelStyle={labelStyle}
-                  />
+                  >
+                    <option>Select</option>
+                    <option>Employee 1</option>
+                    <option>Employee 2</option>
+                    <option>Employee 3</option>
+                  </select>
                 </div>
 
-                {/* Claim Category */}
-                <div>
-                  <SearchDropdown
-                    label={
-                      <>
-                        Claim Category <span className="text-red-500">*</span>
-                      </>
-                    }
-                    name="claimCategory"
-                    value={formData.claimCategory}
-                    options={["Food", "Travel", "Trip"]}
-                    formData={formData}
-                    setFormData={setFormData}
-                    disabled={mode === "view"}
-                    inputStyle={inputStyle}
-                    labelStyle={labelStyle}
-                  />
-                </div>
-
-                {/* Date */}
+                {/* From Date */}
                 <div>
                   <label className={labelStyle}>
-                    Date
+                    First Date of Absence
                     <span className="text-[oklch(0.577_0.245_27.325)]"> *</span>
                   </label>
 
                   <input
-                    name="date"
-                    value={formData.date}
+                    name="fromDate"
+                    value={formData.fromDate}
                     onChange={handleChange}
-                    onClick={() => setDateSpinner(true)}
+                    onClick={() => setFromDateSpinner(true)}
                     disabled={mode === "view"}
                     placeholder="dd/mm/yyyy"
                     className={inputStyle}
                   />
 
-                  {dateSpinner && (
+                  {fromDateSpinner && (
                     <SpinnerDatePicker
-                      value={formData.date}
+                      value={formData.fromDate}
                       onChange={(date) =>
-                        setFormData({ ...formData, date: date })
+                        setFormData({ ...formData, fromDate: date })
                       }
-                      onClose={() => setDateSpinner(false)}
+                      onClose={() => setFromDateSpinner(false)}
                     />
                   )}
                 </div>
 
-                {/* Purpose */}
-                <div className="md:col-span-2">
+                {/* To Date */}
+                <div>
                   <label className={labelStyle}>
-                    Purpose
+                    Last Date of Absence
                     <span className="text-[oklch(0.577_0.245_27.325)]"> *</span>
                   </label>
 
                   <input
-                    name="purpose"
-                    value={formData.purpose}
+                    name="toDate"
+                    value={formData.toDate}
                     onChange={handleChange}
-                    placeholder="Purpose of the claim"
+                    onClick={() => setToDateSpinner(true)}
+                    disabled={mode === "view"}
+                    placeholder="dd/mm/yyyy"
                     className={inputStyle}
+                  />
+
+                  {toDateSpinner && (
+                    <SpinnerDatePicker
+                      value={formData.toDate}
+                      onChange={(date) =>
+                        setFormData({ ...formData, toDate: date })
+                      }
+                      onClose={() => setToDateSpinner(false)}
+                    />
+                  )}
+                </div>
+
+                <div>
+                  <label className={labelStyle}>
+                    Number of Days
+                    <span className="text-[oklch(0.577_0.245_27.325)]"> *</span>
+                  </label>
+
+                  <input
+                    name="numberOfDays"
+                    value={formData.numberOfDays}
+                    onChange={handleChange}
+                    className={inputStyle}
+                    placeholder="Number of Days"
+                    disabled
+                  />
+                </div>
+
+                <div>
+                  <label className={labelStyle}>
+                    Wfh Pending of Approvals (No of Days)
+                  </label>
+
+                  <input
+                    name="pendingDays"
+                    value={formData.pendingDays}
+                    onChange={handleChange}
+                    className={inputStyle}
+                    placeholder="Wfh Pending of Approvals (No of Days)"
+                    disabled={mode === "view"}
+                  />
+                </div>
+
+                <div>
+                  <label className={labelStyle}>Wfh Balance</label>
+
+                  <input
+                    name="wfhBalance"
+                    value={formData.wfhBalance}
+                    onChange={handleChange}
+                    className={inputStyle}
+                    placeholder="Wfh Balance"
                     disabled={mode === "view"}
                   />
                 </div>
 
                 <div>
                   <label className={labelStyle}>
-                    Amount
+                    Contact{" "}
                     <span className="text-[oklch(0.577_0.245_27.325)]"> *</span>
                   </label>
 
                   <input
-                    name="amount"
-                    value={formData.amount}
+                    name="contact"
+                    value={formData.contact}
                     onChange={handleChange}
                     className={inputStyle}
-                    placeholder="Amount"
+                    placeholder="Contact"
                     disabled={mode === "view"}
                   />
                 </div>
 
-                {/* Remarks */}
-                <div className="md:col-span-3">
-                  <label className={labelStyle}>Remarks</label>
+                <div>
+                  <label className={labelStyle}>
+                    Email{" "}
+                    <span className="text-[oklch(0.577_0.245_27.325)]"> *</span>
+                  </label>
 
                   <input
-                    name="remarks"
-                    value={formData.remarks}
+                    type="email"
+                    name="email"
+                    value={formData.email}
                     onChange={handleChange}
-                    placeholder="Additional Remarks"
+                    className={inputStyle}
+                    placeholder="Email"
+                    disabled={mode === "view"}
+                  />
+                </div>
+
+                {/* Wfh Reason */}
+                <div className="lg:col-span-2">
+                  <label className={labelStyle}>
+                    Wfh Reason{" "}
+                    <span className="text-[oklch(0.577_0.245_27.325)]"> *</span>
+                  </label>
+
+                  <input
+                    name="reason"
+                    value={formData.reason}
+                    onChange={handleChange}
+                    placeholder="Reason for Wfh"
                     className={inputStyle}
                     disabled={mode === "view"}
                   />
                 </div>
-              </div>
-              <h1 className={`${labelStyle} mt-4`}>Add Attachment</h1>
-              <div className="p-4 shadow-xl rounded-lg bg-white">
-                {/* Info Bar */}
-
-                <div className="bg-[oklch(0.9_0.03_16.439)] text-sm text-[oklch(0.645_0.246_16.439)] p-2 rounded mb-4">
-                  Upload clear images (JPG, PNG) or PDFs of receipts. Max file
-                  size: 5MB.
-                </div>
-
-                {/* Drag Drop Area */}
-                <div
-                  className="border-2 border-gray-300 border-dashed p-6 text-center rounded cursor-pointer hover:bg-gray-50"
-                  onDrop={handleDrop}
-                  onDragOver={(e) => e.preventDefault()}
-                  onClick={() => fileInputRef.current.click()}
-                >
-                  Drag and drop files here or click to select
-                </div>
-
-                <input
-                  type="file"
-                  multiple
-                  accept=".jpg,.jpeg,.png,.pdf"
-                  className="hidden"
-                  ref={fileInputRef}
-                  onChange={(e) => handleFiles(e.target.files)}
-                />
-
-                {/* Button */}
-                <button
-                  onClick={() => fileInputRef.current.click()}
-                  className="mt-3 px-4 py-1 bg-[oklch(0.645_0.246_16.439)] text-white rounded"
-                >
-                  Add Attachment
-                </button>
-
-                {/* File List */}
-                {files.length > 0 && (
-                  <div className="mt-4 space-y-3">
-                    {files.map((item, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between border border-gray-400 p-2 rounded"
-                      >
-                        <div className="flex items-center gap-3">
-                          {/* Preview */}
-                          {item.file.type.startsWith("image") ? (
-                            <img
-                              src={item.preview}
-                              alt="preview"
-                              className="w-12 h-12 object-cover rounded"
-                            />
-                          ) : (
-                            <div className="w-12 h-12 flex items-center justify-center bg-gray-200 rounded text-sm">
-                              PDF
-                            </div>
-                          )}
-
-                          {/* File Details */}
-                          <div>
-                            <div className="text-sm font-medium">
-                              {item.file.name}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              {formatSize(item.file.size)}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Actions */}
-                        <div className="flex gap-3">
-                          {item.file.type === "application/pdf" && (
-                            <a
-                              href={item.preview}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-blue-600 text-sm"
-                            >
-                              Preview
-                            </a>
-                          )}
-
-                          <button
-                            onClick={() => removeFile(index)}
-                            className="text-red-500 text-sm"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
 
               {/* Save Button */}
@@ -734,4 +666,4 @@ const ClaimRequest = () => {
   );
 };
 
-export default ClaimRequest;
+export default WfhRequest;

@@ -261,7 +261,10 @@ const ClaimCategory = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto min-h-[250px]"style={{ scrollbarWidth: "none" }}>
+          <div
+            className="overflow-x-auto min-h-[250px]"
+            style={{ scrollbarWidth: "none" }}
+          >
             <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
@@ -411,24 +414,21 @@ const ClaimCategory = () => {
                 </div>
 
                 <div>
-                  <label className={labelStyle}>
-                    Company
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <select
+                  <SearchDropdown
+                    label={
+                      <>
+                        Company <span className="text-red-500">*</span>
+                      </>
+                    }
                     name="company"
                     value={formData.company}
-                    onChange={handleChange}
+                    options={["Company 1", "Company 2", "Company 3"]}
+                    formData={formData}
+                    setFormData={setFormData}
                     disabled={mode === "view"}
-                    className={inputStyle}
-                    required
-                  >
-                    <option>Select</option>
-                    <option> Company 1</option>
-                  </select>
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
                 </div>
 
                 <div>

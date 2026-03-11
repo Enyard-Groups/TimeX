@@ -91,25 +91,25 @@ const Requests = ({ user }) => {
               </NavLink>
 
               <NavLink
-                to="/requests/wft-req"
+                to="/requests/wfh-req"
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
                     : "hover:text-[oklch(0.645_0.246_16.439)]"
                 }
               >
-                WFT Request
+                WFH Request
               </NavLink>
 
               <NavLink
-                to="/requests/wft-summary"
+                to="/requests/wfh-summary"
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
                     : "hover:text-[oklch(0.645_0.246_16.439)]"
                 }
               >
-                WFT Summary
+                WFH Summary
               </NavLink>
             </div>
           )}

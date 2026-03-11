@@ -11,6 +11,7 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import SearchDropdown from "../SearchDropdown";
 
 const Leave = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -260,7 +261,10 @@ const Leave = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto min-h-[250px]"style={{ scrollbarWidth: "none" }}>
+          <div
+            className="overflow-x-auto min-h-[250px]"
+            style={{ scrollbarWidth: "none" }}
+          >
             <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
@@ -420,18 +424,17 @@ const Leave = () => {
                 </div>
 
                 <div>
-                  <label className={labelStyle}>Company</label>
-                  <select
+                  <SearchDropdown
+                    label="Company"
                     name="company"
                     value={formData.company}
-                    onChange={handleChange}
+                    options={["Company 1", "Company 2", "Company 3"]}
+                    formData={formData}
+                    setFormData={setFormData}
                     disabled={mode === "view"}
-                    className={inputStyle}
-                    required
-                  >
-                    <option>Select</option>
-                    <option> Company 1</option>
-                  </select>
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
                 </div>
 
                 <div>

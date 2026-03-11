@@ -12,6 +12,7 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import SearchDropdown from "../SearchDropdown";
 
 const VisitorBooking = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -642,29 +643,16 @@ const VisitorBooking = () => {
                 </div>
 
                 <div>
-                  <label className={labelStyle}>
-                    F1 Point of Contact
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <select
+                  <SearchDropdown
+                    label=" F1 Point of Contact"
                     name="contactPerson"
                     value={formData.contactPerson}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                    className={inputStyle}
-                    required
-                  >
-                    <option>Select</option>
-                    <option>Name1</option>
-                    <option>name2</option>
-                    <option>Name3</option>
-                    <option>Name4</option>
-                    <option>Name5</option>
-                    <option>Name6</option>
-                  </select>
+                    options={["Name 1", "Name 2", "Name 3"]}
+                    formData={formData}
+                    setFormData={setFormData}
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
                 </div>
 
                 <div>
@@ -742,19 +730,16 @@ const VisitorBooking = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div>
-                  <label className={labelStyle}>Id Type</label>
-                  <select
+                  <SearchDropdown
+                    label="IdType"
                     name="idType"
                     value={formData.idType}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                    className={inputStyle}
-                    required
-                  >
-                    <option>EID</option>
-                    <option>Passport</option>
-                    <option>Driving License</option>
-                  </select>
+                    options={["EID", "Passport", "Driving License"]}
+                    formData={formData}
+                    setFormData={setFormData}
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
                 </div>
 
                 <div>
@@ -813,25 +798,20 @@ const VisitorBooking = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div>
-                  <label className={labelStyle}>
-                    Access Card
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <select
+                  <SearchDropdown
+                    label={
+                      <>
+                        Access card <span className="text-red-500">*</span>
+                      </>
+                    }
                     name="accessCard"
                     value={formData.accessCard}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                    className={inputStyle}
-                    required
-                  >
-                    <option>Select</option>
-                    <option>Card 1</option>
-                    <option>Card 2</option>
-                  </select>
+                    options={["Card 1", "Card 2"]}
+                    formData={formData}
+                    setFormData={setFormData}
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
                 </div>
 
                 <div className="flex items-center gap-2 mt-6">

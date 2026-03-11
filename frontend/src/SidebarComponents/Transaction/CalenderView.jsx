@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import * as XLSX from "xlsx";
 import SpinnerDatePicker from "../SpinnerDatePicker";
+import SearchDropdown from "../SearchDropdown";
 
 const CalenderView = () => {
   const [openCalenderGrid, setOpenCalenderGrid] = useState(false);
@@ -211,38 +212,37 @@ const CalenderView = () => {
         </div>
 
         <div>
-          <label className={labelStyle}>
-            Location
-            <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-          </label>
-          <select
-            name="location"
+          <SearchDropdown
+            label={
+              <>
+                Location <span className="text-red-500">*</span>
+              </>
+            }
+            name="employee"
             value={formData.location}
-            onChange={handleChange}
-            className={inputStyle}
-            required
-          >
-            <option>Select</option>
-            <option> Head Office</option>
-          </select>
+            options={["Head Office"]}
+            formData={formData}
+            setFormData={setFormData}
+            inputStyle={inputStyle}
+            labelStyle={labelStyle}
+          />
         </div>
 
         <div>
-          <label className={labelStyle}>
-            Employee
-            <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-          </label>
-          <select
+          <SearchDropdown
+            label={
+              <>
+                Employee <span className="text-red-500">*</span>
+              </>
+            }
             name="employee"
             value={formData.employee}
-            onChange={handleChange}
-            className={inputStyle}
-            required
-          >
-            <option>Select</option>
-            <option> 000971001 </option>
-            <option> 000971004 </option>
-          </select>
+            options={["Employee 1", "Employee 2", "Employee 3"]}
+            formData={formData}
+            setFormData={setFormData}
+            inputStyle={inputStyle}
+            labelStyle={labelStyle}
+          />
         </div>
 
         <div className="flex items-end">

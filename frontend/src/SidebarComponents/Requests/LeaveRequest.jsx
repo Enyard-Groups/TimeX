@@ -12,6 +12,7 @@ import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import SpinnerDatePicker from "../SpinnerDatePicker";
+import SearchDropdown from "../SearchDropdown";
 
 const LeaveRequest = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -24,9 +25,9 @@ const LeaveRequest = () => {
       id: 1,
       employee: "Employee",
       leaveType: "Sick Leave",
-      fromDate: "2026-01-23",
-      toDate: "2026-01-24",
-      resumeOn: "2026-01-25",
+      fromDate: "23/01/2026",
+      toDate: "24/01/2026",
+      resumeOn: "25/01/2026",
       reason: "Sick Leave - fever",
       createdDate: new Date(),
       requestedBy: "Drishti",
@@ -345,7 +346,10 @@ const LeaveRequest = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto min-h-[250px]"style={{ scrollbarWidth: "none" }}>
+          <div
+            className="overflow-x-auto min-h-[250px]"
+            style={{ scrollbarWidth: "none" }}
+          >
             <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
@@ -404,26 +408,28 @@ const LeaveRequest = () => {
 
                       {/* FA Status */}
                       <td className="py-2 px-6 text-xl text-green-600">
-                        {item.fa}
+                        {item.fa || "-"}
                       </td>
 
-                      <td className="py-2 px-6">{item.faname}</td>
+                      <td className="py-2 px-6">{item.faname || "-"}</td>
 
                       {/* SA Status */}
                       <td className="py-2 px-6 text-xl text-green-600">
-                        {item.sa}
+                        {item.sa || "-"}
                       </td>
 
-                      <td className="py-2 px-6">{item.saname}</td>
-
-                      <td className="py-2 px-6">{item.rejectedreason}</td>
+                      <td className="py-2 px-6">{item.saname || "-"}</td>
 
                       <td className="py-2 px-6">
-                        {item.fa === "✔" ? "Y" : "N"}
+                        {item.rejectedreason || "-"}
                       </td>
 
                       <td className="py-2 px-6">
-                        {item.fa === "✔" ? "Y" : "N"}
+                        {item.fa ? (item.fa === "✔" ? "Y" : "N") : "-"}
+                      </td>
+
+                      <td className="py-2 px-6">
+                        {item.sa ? (item.sa === "✔" ? "Y" : "N") : "-"}
                       </td>
 
                       {/* Actions */}
@@ -526,44 +532,40 @@ const LeaveRequest = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Employee */}
                 <div>
-                  <label className={labelStyle}>
-                    Employee
-                    <span className="text-[oklch(0.577_0.245_27.325)]"> *</span>
-                  </label>
-
-                  <select
+                  <SearchDropdown
+                    label={
+                      <>
+                        Employee <span className="text-red-500">*</span>
+                      </>
+                    }
                     name="employee"
                     value={formData.employee}
-                    onChange={handleChange}
-                    className={inputStyle}
+                    options={["Employee 1", "Employee 2", "Employee 3"]}
+                    formData={formData}
+                    setFormData={setFormData}
                     disabled={mode === "view"}
-                  >
-                    <option>Select</option>
-                    <option>Employee 1</option>
-                    <option>Employee 2</option>
-                    <option>Employee 3</option>
-                  </select>
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
                 </div>
 
                 {/* Leave Type */}
                 <div>
-                  <label className={labelStyle}>
-                    Leave Type
-                    <span className="text-[oklch(0.577_0.245_27.325)]"> *</span>
-                  </label>
-
-                  <select
+                  <SearchDropdown
+                    label={
+                      <>
+                        Leave Type <span className="text-red-500">*</span>
+                      </>
+                    }
                     name="leaveType"
                     value={formData.leaveType}
-                    onChange={handleChange}
-                    className={inputStyle}
+                    options={["Sick Leave", "Casual leave", "Annual leave "]}
+                    formData={formData}
+                    setFormData={setFormData}
                     disabled={mode === "view"}
-                  >
-                    <option>Select</option>
-                    <option>Sick Leave</option>
-                    <option>Annual Leave</option>
-                    <option>Casual Leave</option>
-                  </select>
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
                 </div>
 
                 {/* From Date */}

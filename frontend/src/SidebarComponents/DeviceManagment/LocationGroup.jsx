@@ -3,7 +3,6 @@ import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
 import { FaEye, FaPen } from "react-icons/fa";
-import { MdDeleteForever } from "react-icons/md";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -11,6 +10,7 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import SearchDropdown from "../SearchDropdown";
 
 const LocationGroup = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -449,41 +449,31 @@ const LocationGroup = () => {
               </div>
 
               <div>
-                <label className={labelStyle}>
-                  Site Manager Name
-                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-                </label>
-                <select
+                <SearchDropdown
+                  label="Site Manager Name"
                   name="sitemanagername"
                   value={formData.sitemanagername}
-                  onChange={handleChange}
+                  options={["Name 1", "Name 2", "Name 3"]}
+                  formData={formData}
+                  setFormData={setFormData}
                   disabled={mode === "view"}
-                  className={inputStyle}
-                  required
-                >
-                  <option>Select</option>
-                  <option>Name 1</option>
-                  <option>Name 2</option>
-                </select>
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                />
               </div>
 
               <div>
-                <label className={labelStyle}>
-                  Time Keeper Name
-                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-                </label>
-                <select
+                <SearchDropdown
+                  label="Time Keeper name"
                   name="timekeepername"
                   value={formData.timekeepername}
-                  onChange={handleChange}
+                  options={["Name 1", "Name 2", "Name 3"]}
+                  formData={formData}
+                  setFormData={setFormData}
                   disabled={mode === "view"}
-                  className={inputStyle}
-                  required
-                >
-                  <option>Select</option>
-                  <option>Name 1</option>
-                  <option>Name 2</option>
-                </select>
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                />
               </div>
             </div>
 

@@ -12,6 +12,7 @@ import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import SpinnerDatePicker from "../../SpinnerDatePicker";
+import SearchDropdown from "../../SearchDropdown";
 
 const HolidayMaster = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -449,17 +450,17 @@ const HolidayMaster = () => {
 
               {/* Company */}
               <div>
-                <label className={labelStyle}>Company</label>
-                <select
+                <SearchDropdown
+                  label="Company"
                   name="company"
                   value={formData.company}
-                  onChange={handleChange}
+                  options={["Company 1", "Company 2", "Company 3"]}
+                  formData={formData}
+                  setFormData={setFormData}
                   disabled={mode === "view"}
-                  className={inputStyle}
-                >
-                  <option>-Select-</option>
-                  <option>Company 1</option>
-                </select>
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                />
               </div>
 
               {/* Holiday Start */}
@@ -516,22 +517,28 @@ const HolidayMaster = () => {
 
               {/* Location */}
               <div>
-                <label className={labelStyle}>Location</label>
-                <select
+                <SearchDropdown
+                  label={
+                    <>
+                      Location <span className="text-red-500">*</span>
+                    </>
+                  }
                   name="location"
                   value={formData.location}
-                  onChange={handleChange}
+                  options={[
+                    "Location1",
+                    "Location2",
+                    "Location3",
+                    "Location4",
+                    "Location5",
+                    "Location6",
+                  ]}
+                  formData={formData}
+                  setFormData={setFormData}
                   disabled={mode === "view"}
-                  className={inputStyle}
-                >
-                  <option>-Select-</option>
-                  <option>Location1</option>
-                  <option>Location2</option>
-                  <option>Location3</option>
-                  <option>Location4</option>
-                  <option>Location5</option>
-                  <option>Location6</option>
-                </select>
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                />
               </div>
 
               {/* Active */}

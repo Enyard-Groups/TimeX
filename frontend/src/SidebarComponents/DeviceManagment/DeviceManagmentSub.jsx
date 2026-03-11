@@ -11,6 +11,7 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import SearchDropdown from "../SearchDropdown";
 
 const DeviceManagementSub = () => {
   const [devicemanagement, setDevicemanagement] = useState([]);
@@ -21,6 +22,7 @@ const DeviceManagementSub = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
   const [formData, setFormData] = useState({
+    devicemodel: "",
     name: "",
     company: "",
     deviceip: "",
@@ -125,6 +127,7 @@ const DeviceManagementSub = () => {
       deviceserialno: "",
       longitude: "",
       latitude: "",
+      devicemodel: "",
       isFace: false,
       isFingerprint: false,
       isCardNo: false,
@@ -472,22 +475,17 @@ const DeviceManagementSub = () => {
               </div>
 
               <div>
-                <label className={labelStyle}>
-                  Device Model
-                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-                </label>
-                <select
+                <SearchDropdown
+                  label="Device Model"
                   name="devicemodel"
                   value={formData.devicemodel}
-                  onChange={handleChange}
+                  options={["Model 1", "Model 2", "Model 3"]}
+                  formData={formData}
+                  setFormData={setFormData}
                   disabled={mode === "view"}
-                  className={inputStyle}
-                  required
-                >
-                  <option>Select</option>
-                  <option> 1</option>
-                  <option> 2</option>
-                </select>
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                />
               </div>
 
               <div>

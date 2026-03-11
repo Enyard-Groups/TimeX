@@ -3,7 +3,6 @@ import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
 import { FaEye, FaPen } from "react-icons/fa";
-import { MdDeleteForever } from "react-icons/md";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -11,6 +10,8 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import SearchDropdown from "../SearchDropdown";
+import { MdDeleteForever } from "react-icons/md";
 
 const Department = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -258,7 +259,10 @@ const Department = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto min-h-[250px]"style={{ scrollbarWidth: "none" }}>
+          <div
+            className="overflow-x-auto min-h-[250px]"
+            style={{ scrollbarWidth: "none" }}
+          >
             <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
@@ -426,24 +430,21 @@ const Department = () => {
                 </div>
 
                 <div>
-                  <label className={labelStyle}>
-                    Company
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <select
+                  <SearchDropdown
+                    label={
+                      <>
+                        Company <span className="text-red-500">*</span>
+                      </>
+                    }
                     name="company"
                     value={formData.company}
-                    onChange={handleChange}
+                    options={["Company 1", "Company 2"]}
+                    formData={formData}
+                    setFormData={setFormData}
                     disabled={mode === "view"}
-                    className={inputStyle}
-                    required
-                  >
-                    <option>Select</option>
-                    <option> Company 1</option>
-                  </select>
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
                 </div>
 
                 <div>

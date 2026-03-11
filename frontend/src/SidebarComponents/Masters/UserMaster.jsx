@@ -11,6 +11,7 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import SearchDropdown from "../SearchDropdown";
 
 const UserMaster = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -429,7 +430,10 @@ const UserMaster = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto min-h-[250px]"style={{ scrollbarWidth: "none" }}>
+          <div
+            className="overflow-x-auto min-h-[250px]"
+            style={{ scrollbarWidth: "none" }}
+          >
             <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
@@ -641,23 +645,21 @@ const UserMaster = () => {
                   </div>
 
                   <div>
-                    <label className={labelStyle}>
-                      Company{" "}
-                      <span className="text-[oklch(0.577_0.245_27.325)]">
-                        {" "}
-                        *{" "}
-                      </span>
-                    </label>
-                    <select
+                    <SearchDropdown
+                      label={
+                        <>
+                          Company <span className="text-red-500">*</span>
+                        </>
+                      }
                       name="company"
                       value={formData.company}
-                      onChange={handleChange}
+                      options={["Company 1", "Company 2"]}
+                      formData={formData}
+                      setFormData={setFormData}
                       disabled={mode === "view"}
-                      className={inputStyle}
-                    >
-                      <option value="">Select</option>
-                      <option>Company</option>
-                    </select>
+                      inputStyle={inputStyle}
+                      labelStyle={labelStyle}
+                    />
                   </div>
 
                   <div>
@@ -687,18 +689,21 @@ const UserMaster = () => {
 
               {activeTab === "roles" && (
                 <div>
-                  <label className={labelStyle}>User Role</label>
-                  <select
+                  <SearchDropdown
+                    label={
+                      <>
+                        User Role <span className="text-red-500">*</span>
+                      </>
+                    }
                     name="role"
                     value={formData.role}
-                    onChange={handleChange}
+                    options={["Company Admin", "Manager / Approver", "User"]}
+                    formData={formData}
+                    setFormData={setFormData}
                     disabled={mode === "view"}
-                    className={inputStyle}
-                  >
-                    <option>Company Admin</option>
-                    <option>Manager / Approver</option>
-                    <option>User</option>
-                  </select>
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
                 </div>
               )}
 

@@ -12,6 +12,7 @@ import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import SpinnerTimePicker from "../SpinnerTimePicker";
+import SearchDropdown from "../SearchDropdown";
 
 const MannualEntryRequest = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -331,7 +332,10 @@ const MannualEntryRequest = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto min-h-[250px]"style={{ scrollbarWidth: "none" }}>
+          <div
+            className="overflow-x-auto min-h-[250px]"
+            style={{ scrollbarWidth: "none" }}
+          >
             <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
@@ -479,47 +483,39 @@ const MannualEntryRequest = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div>
-                  <label className={labelStyle}>
-                    Employee
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <select
+                  <SearchDropdown
+                    label={
+                      <>
+                        Employee <span className="text-red-500">*</span>
+                      </>
+                    }
                     name="employee"
                     value={formData.employee}
-                    onChange={handleChange}
-                    className={inputStyle}
+                    options={["Employee 1", "Employee 2", "Employee 3"]}
+                    formData={formData}
+                    setFormData={setFormData}
                     disabled={mode === "view"}
-                    required
-                  >
-                    <option>Select</option>
-                    <option> Employee 1</option>
-                    <option> Employee 2</option>
-                    <option> Employee 3</option>
-                  </select>
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
                 </div>
 
                 <div>
-                  <label className={labelStyle}>
-                    Location
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <select
+                  <SearchDropdown
+                    label={
+                      <>
+                        Location <span className="text-red-500">*</span>
+                      </>
+                    }
                     name="location"
                     value={formData.location}
-                    onChange={handleChange}
-                    className={inputStyle}
+                    options={["Head Office"]}
+                    formData={formData}
+                    setFormData={setFormData}
                     disabled={mode === "view"}
-                    required
-                  >
-                    <option>Select</option>
-                    <option> Head Office</option>
-                  </select>
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
                 </div>
 
                 <div>

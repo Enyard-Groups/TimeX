@@ -4,7 +4,6 @@ import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
 import SpinnerTimePicker from "../../SpinnerTimePicker";
 import { FaEye, FaPen } from "react-icons/fa";
-import { MdDeleteForever } from "react-icons/md";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -12,6 +11,8 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import SearchDropdown from "../../SearchDropdown";
+import { MdDeleteForever } from "react-icons/md";
 
 const EmployeeCategory = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -385,7 +386,10 @@ const EmployeeCategory = () => {
 
       {openModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6">
+          <div
+            className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+            style={{ scrollbarWidth: "none" }}
+          >
             {/* Close */}
             <div className="flex justify-end">
               <RxCross2
@@ -412,18 +416,17 @@ const EmployeeCategory = () => {
               </div>
 
               <div>
-                <label className={labelStyle}>Company</label>
-                <select
+                <SearchDropdown
+                  label="Company"
                   name="company"
                   value={formData.company}
-                  onChange={handleChange}
+                  options={["Company 1", "Company 2"]}
+                  formData={formData}
+                  setFormData={setFormData}
                   disabled={mode === "view"}
-                  className={inputStyle}
-                  required
-                >
-                  <option>Select</option>
-                  <option> Company 1</option>
-                </select>
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                />
               </div>
 
               <div className="relative">

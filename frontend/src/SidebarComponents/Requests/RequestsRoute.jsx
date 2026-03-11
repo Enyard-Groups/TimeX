@@ -6,8 +6,8 @@ import LeaveRequest from "./LeaveRequest";
 import ClaimRequest from "./ClaimRequest";
 import BusinessTravelRequest from "./BusinessTravelRequest";
 import LeaveSummary from "./LeaveSummary";
-import WftRequest from "./WftRequest";
-import WftSummary from "./WftSummary";
+import WfhRequest from "./WfhRequest";
+import WfhSummary from "./WfhSummary";
 
 const RequestsRoute = ({ user }) => {
   return (
@@ -20,8 +20,8 @@ const RequestsRoute = ({ user }) => {
           <Route path="claim-req" element={<ClaimRequest/>} />
           <Route path="business-travel-req" element={<BusinessTravelRequest/>} />
           <Route path="leave-summary" element={<LeaveSummary/>} />
-          <Route path="wft-req" element={<WftRequest/>} />
-          <Route path="wft-summary" element={<WftSummary/>} />
+          <Route path="wfh-req" element={<WfhRequest/>} />
+          <Route path="wfh-summary" element={<WfhSummary/>} />
         </Routes>
       </div>
     </div>
