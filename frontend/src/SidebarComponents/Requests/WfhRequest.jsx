@@ -12,6 +12,7 @@ import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import SpinnerDatePicker from "../SpinnerDatePicker";
+import SearchDropdown from "../SearchDropdown";
 
 const WfhRequest = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -45,9 +46,9 @@ const WfhRequest = () => {
     ];
   });
 
-   useEffect(() => {
-      localStorage.setItem("wfhRequests", JSON.stringify(wfh));
-    }, [wfh]);
+  useEffect(() => {
+    localStorage.setItem("wfhRequests", JSON.stringify(wfh));
+  }, [wfh]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
@@ -285,7 +286,7 @@ const WfhRequest = () => {
             Requests
             <FaAngleRight />
             <div onClick={() => setOpenModal(false)} className="cursor-pointer">
-              WFT Request
+              WFH Request
             </div>
           </h1>
           {!openModal && (
@@ -364,15 +365,23 @@ const WfhRequest = () => {
                   <th className="py-2 px-6 px-6 font-semibold">Employee</th>
                   <th className="py-2 px-6 font-semibold">From</th>
                   <th className="py-2 px-6 font-semibold">To</th>
-                  <th className="py-2 px-6 font-semibold">Wfh Reason</th>
+                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    Wfh Reason
+                  </th>
 
                   <th className="py-2 px-6 font-semibold">FA</th>
-                  <th className="py-2 px-6 font-semibold">FA Name</th>
+                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    FA Name
+                  </th>
 
                   <th className="py-2 px-6 font-semibold">SA</th>
-                  <th className="py-2 px-6 font-semibold">SA Name</th>
+                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    SA Name
+                  </th>
 
-                  <th className="py-2 px-6 font-semibold">Rejected Reason</th>
+                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    Rejected Reason
+                  </th>
 
                   <th className="py-2 px-6 font-semibold">FA</th>
                   <th className="py-2 px-6 font-semibold">SA</th>
@@ -396,9 +405,13 @@ const WfhRequest = () => {
                     >
                       <td className="py-2 px-6">{item.employee}</td>
 
-                      <td className="py-2 px-6">{item.fromDate}</td>
+                      <td className="py-2 px-6 whitespace-nowrap">
+                        {item.fromDate}
+                      </td>
 
-                      <td className="py-2 px-6">{item.toDate}</td>
+                      <td className="py-2 px-6 whitespace-nowrap">
+                        {item.toDate}
+                      </td>
 
                       <td className="py-2 px-6 whitespace-nowrap">
                         {item.reason}
@@ -523,8 +536,14 @@ const WfhRequest = () => {
         </div>
 
         {openModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6">
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
+            <div
+              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+              style={{ scrollbarWidth: "none" }}
+            >
               {/* Close */}
               <div className="flex justify-end">
                 <RxCross2
@@ -536,23 +555,21 @@ const WfhRequest = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Employee */}
                 <div>
-                  <label className={labelStyle}>
-                    Employee
-                    <span className="text-[oklch(0.577_0.245_27.325)]"> *</span>
-                  </label>
-
-                  <select
+                  <SearchDropdown
+                    label={
+                      <>
+                        Employee <span className="text-red-500">*</span>
+                      </>
+                    }
                     name="employee"
                     value={formData.employee}
-                    onChange={handleChange}
-                    className={inputStyle}
+                    options={["Employee 1", "Employee 2", "Employee 3"]}
+                    formData={formData}
+                    setFormData={setFormData}
                     disabled={mode === "view"}
-                  >
-                    <option>Select</option>
-                    <option>Employee 1</option>
-                    <option>Employee 2</option>
-                    <option>Employee 3</option>
-                  </select>
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
                 </div>
 
                 {/* From Date */}

@@ -189,7 +189,7 @@ const EmployeeView = () => {
               </th>
               <th className="p-2 font-semibold">SL.NO</th>
               <th className="p-2 font-semibold">Name</th>
-              <th className="p-2 font-semibold">Enrollment Id</th>
+              <th className="p-2 font-semibold whitespace-nowrap">Enrollment Id</th>
               <th className="p-2 font-semibold">Designation</th>
             </tr>
           </thead>

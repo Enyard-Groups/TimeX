@@ -551,8 +551,14 @@ const UserMaster = () => {
         </div>
 
         {openModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6">
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
+            <div
+              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+              style={{ scrollbarWidth: "none" }}
+            >
               <div className="flex justify-between items-center border-b pb-3 mb-6">
                 <div className="flex gap-6">
                   <button
@@ -715,18 +721,21 @@ const UserMaster = () => {
                   </div>
 
                   {/* Table */}
-                  <div className="overflow-auto max-h-[600px]">
+                  <div
+                    className="overflow-auto max-h-[600px]"
+                    style={{ scrollbarWidth: "none" }}
+                  >
                     <table className="w-full text-sm border-collapse">
                       <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                         <tr>
                           <th className="border border-[oklch(0.8_0.001_106.424)] p-2 w-10"></th>
-                          <th className="border border-[oklch(0.8_0.001_106.424)]  p-2">
+                          <th className="border border-[oklch(0.8_0.001_106.424)]  p-2 whitespace-nowrap">
                             ParentMenu ID
                           </th>
-                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2">
+                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2 whitespace-nowrap">
                             Menu ID
                           </th>
-                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2 text-left">
+                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2 text-left whitespace-nowrap">
                             Menu Name
                           </th>
                           <th className="border border-[oklch(0.8_0.001_106.424)] p-2 text-left">

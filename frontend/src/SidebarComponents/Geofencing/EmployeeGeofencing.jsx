@@ -320,11 +320,11 @@ const EmployeeGeofencing = () => {
                   />
                 </th>
 
-                <th className="p-2 font-semibold">EnrollmentID</th>
-                <th className="p-2 font-semibold">Employee Name</th>
-                <th className="p-2 font-semibold">Department Name</th>
-                <th className="p-2 font-semibold">Designation Name</th>
-                <th className="p-2 font-semibold">Assigned Location</th>
+                <th className="p-2 font-semibold whitespace-nowrap">Enrollment ID</th>
+                <th className="p-2 font-semibold whitespace-nowrap">Employee Name</th>
+                <th className="p-2 font-semibold whitespace-nowrap">Department Name</th>
+                <th className="p-2 font-semibold whitespace-nowrap">Designation Name</th>
+                <th className="p-2 font-semibold whitespace-nowrap">Assigned Location</th>
               </tr>
             </thead>
 
@@ -350,10 +350,10 @@ const EmployeeGeofencing = () => {
                     </td>
 
                     <td className="p-2">{item.id}</td>
-                    <td className="p-2">{item.name}</td>
-                    <td className="p-2">{item.department}</td>
-                    <td className="p-2">{item.designation}</td>
-                    <td className="p-2">{item.location}</td>
+                    <td className="p-2 whitespace-nowrap">{item.name}</td>
+                    <td className="p-2 whitespace-nowrap">{item.department}</td>
+                    <td className="p-2 whitespace-nowrap">{item.designation}</td>
+                    <td className="p-2 whitespace-nowrap">{item.location}</td>
                   </tr>
                 ))
               )}

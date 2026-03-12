@@ -338,15 +338,15 @@ const DeviceCommunication = () => {
             <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
               <tr>
                 <th className="py-2 px-6 font-semibold">Status</th>
-                <th className="py-2 px-6 font-semibold">Serial No</th>
-                <th className="py-2 px-6 font-semibold">Device Name</th>
-                <th className="py-2 px-6 font-semibold">Transfer Time</th>
+                <th className="py-2 px-6 font-semibold whitespace-nowrap">Serial No</th>
+                <th className="py-2 px-6 font-semibold whitespace-nowrap">Device Name</th>
+                <th className="py-2 px-6 font-semibold whitespace-nowrap">Transfer Time</th>
                 <th className="py-2 px-6 font-semibold">Interval</th>
-                <th className="py-2 px-6 font-semibold">LastActivity</th>
-                <th className="py-2 px-6 font-semibold">FW Version</th>
-                <th className="py-2 px-6 font-semibold">User Count</th>
-                <th className="py-2 px-6 font-semibold">FP Count</th>
-                <th className="py-2 px-6 font-semibold">Transaction Count</th>
+                <th className="py-2 px-6 font-semibold whitespace-nowrap">Last Activity</th>
+                <th className="py-2 px-6 font-semibold whitespace-nowrap">FW Version</th>
+                <th className="py-2 px-6 font-semibold whitespace-nowrap">User Count</th>
+                <th className="py-2 px-6 font-semibold whitespace-nowrap">FP Count</th>
+                <th className="py-2 px-6 font-semibold whitespace-nowrap">Transaction Count</th>
               </tr>
             </thead>
             <tbody>
@@ -373,15 +373,15 @@ const DeviceCommunication = () => {
                         {item.status}
                       </span>
                     </td>
-                    <td className="py-2 px-6">{item.serialno}</td>
-                    <td className="py-2 px-6">{item.devicename}</td>
-                    <td className="py-2 px-6">{item.transfername}</td>
-                    <td className="py-2 px-6">{item.interval}</td>
-                    <td className="py-2 px-6">{item.lastactivity}</td>
-                    <td className="py-2 px-6">{item.fwversion}</td>
-                    <td className="py-2 px-6">{item.usercount}</td>
-                    <td className="py-2 px-6">{item.fpcount}</td>
-                    <td className="py-2 px-6">{item.transactioncount}</td>
+                    <td className="py-2 px-6 whitespace-nowrap">{item.serialno}</td>
+                    <td className="py-2 px-6 whitespace-nowrap">{item.devicename}</td>
+                    <td className="py-2 px-6 whitespace-nowrap">{item.transfername}</td>
+                    <td className="py-2 px-6 whitespace-nowrap">{item.interval}</td>
+                    <td className="py-2 px-6 whitespace-nowrap">{item.lastactivity}</td>
+                    <td className="py-2 px-6 whitespace-nowrap">{item.fwversion}</td>
+                    <td className="py-2 px-6 whitespace-nowrap">{item.usercount}</td>
+                    <td className="py-2 px-6 whitespace-nowrap">{item.fpcount}</td>
+                    <td className="py-2 px-6 whitespace-nowrap">{item.transactioncount}</td>
                   </tr>
                 ))
               )}

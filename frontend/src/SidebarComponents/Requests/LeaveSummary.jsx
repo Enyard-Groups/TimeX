@@ -258,7 +258,8 @@ const LeaveSummary = () => {
                   className="w-full px-3 py-2 border-b outline-none"
                 />
 
-                <div className="max-h-30 overflow-y-auto">
+                <div className="max-h-30 overflow-y-auto"
+                style={{ scrollbarWidth: "none" }}>
                   {["Employee 1", "Employee 2", "Employee 3", "Employee 4"]
                     .filter((emp) =>
                       emp
@@ -360,13 +361,13 @@ const LeaveSummary = () => {
                 <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                   <tr>
                     <th className="py-2 px-6 font-semibold">Employee</th>
-                    <th className="py-2 px-6 font-semibold">Leave Type</th>
+                    <th className="py-2 px-6 font-semibold whitespace-nowrap">Leave Type</th>
                     <th className="py-2 px-6 font-semibold">Year</th>
-                    <th className="py-2 px-6 font-semibold">Maximum Leaves</th>
-                    <th className="py-2 px-6 font-semibold">Carry Forward</th>
-                    <th className="py-2 px-6 font-semibold">CF Remaining</th>
-                    <th className="py-2 px-6 font-semibold">Comp Off</th>
-                    <th className="py-2 px-6 font-semibold">CO Remaining</th>
+                    <th className="py-2 px-6 font-semibold whitespace-nowrap">Maximum Leaves</th>
+                    <th className="py-2 px-6 font-semibold whitespace-nowrap">Carry Forward</th>
+                    <th className="py-2 px-6 font-semibold whitespace-nowrap">CF Remaining</th>
+                    <th className="py-2 px-6 font-semibold whitespace-nowrap">Comp Off</th>
+                    <th className="py-2 px-6 font-semibold whitespace-nowrap">CO Remaining</th>
                     <th className="py-2 px-6 font-semibold">Availed</th>
                     <th className="py-2 px-6 font-semibold">Balance</th>
                   </tr>
@@ -387,7 +388,7 @@ const LeaveSummary = () => {
                           className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                         >
                           <td className="py-2 px-6">{emp.employee}</td>
-                          <td className="py-2 px-6">{item.leaveType}</td>
+                          <td className="py-2 px-6 whitespace-nowrap">{item.leaveType}</td>
                           <td className="py-2 px-6">{item.year}</td>
                           <td className="py-2 px-6">{item.maximumLeaves}</td>
                           <td className="py-2 px-6">

@@ -298,10 +298,10 @@ const EmployeeMaster = () => {
             <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
               <tr>
                 <th className="p-2 font-semibold">SL.NO</th>
-                <th className="p-2 font-semibold">Device ID</th>
-                <th className="p-2 font-semibold">Company ID</th>
+                <th className="p-2 font-semibold whitespace-nowrap">Device ID</th>
+                <th className="p-2 font-semibold whitespace-nowrap">Company ID</th>
                 <th className="p-2 font-semibold">Location</th>
-                <th className="p-2 font-semibold">Full Name</th>
+                <th className="p-2 font-semibold whitespace-nowrap">Full Name</th>
                 <th className="p-2 font-semibold">Shift</th>
                 <th className="p-2 font-semibold">Designation</th>
                 <th className="p-2 font-semibold">Action</th>
@@ -321,12 +321,12 @@ const EmployeeMaster = () => {
                     className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                   >
                     <td className="p-2">{index + 1}</td>
-                    <td className="p-2">{item.deviceEnrollmentId}</td>
-                    <td className="p-2">{item.companyEnrollmentId}</td>
-                    <td className="p-2">{item.location}</td>
-                    <td className="p-2">{item.fullName}</td>
-                    <td className="p-2">{item.shift}</td>
-                    <td className="p-2">{item.designation}</td>
+                    <td className="p-2 whitespace-nowrap">{item.deviceEnrollmentId}</td>
+                    <td className="p-2 whitespace-nowrap">{item.companyEnrollmentId}</td>
+                    <td className="p-2 whitespace-nowrap">{item.location}</td>
+                    <td className="p-2 whitespace-nowrap">{item.fullName}</td>
+                    <td className="p-2 whitespace-nowrap">{item.shift}</td>
+                    <td className="p-2 whitespace-nowrap">{item.designation}</td>
 
                     <td className="p-2">
                       <div className="flex flex-row space-x-3 justify-center ">
@@ -416,8 +416,10 @@ const EmployeeMaster = () => {
       </div>
 
       {openModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+        style={{ scrollbarWidth: "none" }}>
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+          style={{ scrollbarWidth: "none" }}>
             {/* Close */}
             <div className="flex justify-end">
               <RxCross2

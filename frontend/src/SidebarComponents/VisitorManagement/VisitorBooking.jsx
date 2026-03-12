@@ -369,9 +369,13 @@ const VisitorBooking = () => {
                   <th className="py-2 px-6 font-semibold">Visitor Name</th>
                   <th className="py-2 px-6 font-semibold">Visitor Phone</th>
                   <th className="py-2 px-6 font-semibold">Card Reference</th>
-                  <th className="py-2 px-6 font-semibold">Visitor Date&Time</th>
+                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    Visitor Date&Time
+                  </th>
                   <th className="py-2 px-6 font-semibold">Organization</th>
-                  <th className="py-2 px-6 font-semibold">Meeting Person</th>
+                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    Meeting Person
+                  </th>
                   <th className="py-2 px-6 font-semibold">Action</th>
                 </tr>
               </thead>
@@ -393,9 +397,13 @@ const VisitorBooking = () => {
                       <td className="py-2 px-6">{item.visitorName}</td>
                       <td className="py-2 px-6">{item.phone}</td>
                       <td className="py-2 px-6">{item.cardReference}</td>
-                      <td className="py-2 px-6">{item.vDateTime}</td>
+                      <td className="py-2 px-6 whitespace-nowrap">
+                        {item.vDateTime}
+                      </td>
                       <td className="py-2 px-6">{item.organization}</td>
-                      <td className="py-2 px-6">{item.meetingPerson}</td>
+                      <td className="py-2 px-6 whitespace-nowrap">
+                        {item.meetingPerson}
+                      </td>
                       <td className="py-2 px-6">
                         <div className="flex flex-row space-x-3 justify-center ">
                           {/* View */}
@@ -484,8 +492,14 @@ const VisitorBooking = () => {
         </div>
 
         {openModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6">
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
+            <div
+              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+              style={{ scrollbarWidth: "none" }}
+            >
               {/* Close */}
               <div className="flex justify-end">
                 <RxCross2
@@ -554,29 +568,27 @@ const VisitorBooking = () => {
                 </div>
 
                 <div>
-                  <label className={labelStyle}>
-                    Purpose Of Visit
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <select
+                  <SearchDropdown
+                    label={
+                      <>
+                        Purpose of Visit <span className="text-red-500">*</span>
+                      </>
+                    }
                     name="purpose"
                     value={formData.purpose}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                    className={inputStyle}
-                    required
-                  >
-                    <option>Select</option>
-                    <option>Business</option>
-                    <option>Meeting</option>
-                    <option>Interview</option>
-                    <option>Contractor</option>
-                    <option>Personal</option>
-                    <option>Delivery</option>
-                  </select>
+                    options={[
+                      "Business",
+                      "Meeting",
+                      "Interview",
+                      "Contractor",
+                      "Personal",
+                      "Delivery",
+                    ]}
+                    formData={formData}
+                    setFormData={setFormData}
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
                 </div>
 
                 <div className="grid grid-cols-2">

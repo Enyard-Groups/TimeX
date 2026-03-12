@@ -348,33 +348,21 @@ const Performance = () => {
             <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
-                  <th className="py-2 px-6 font-semibold">SerialSerial No</th>
-                  <th className="py-2 px-6 font-semibold">SerialFirst Name</th>
-                  <th className="py-2 px-6 font-semibold">SerialDaily Hours</th>
+                  <th className="py-2 px-6 font-semibold">Serial No</th>
+                  <th className="py-2 px-6 font-semibold"> First Name</th>
+                  <th className="py-2 px-6 font-semibold"> Daily Hours</th>
+                  <th className="py-2 px-6 font-semibold">Daily Target</th>
+                  <th className="py-2 px-6 font-semibold">Daily Status</th>
                   <th className="py-2 px-6 font-semibold">
-                    SerialDaily Target
+                    Total Weekly Hours{" "}
                   </th>
+                  <th className="py-2 px-6 font-semibold">Target Weekly</th>
+                  <th className="py-2 px-6 font-semibold">Weekly Status</th>
                   <th className="py-2 px-6 font-semibold">
-                    SerialDaily Status
+                    Total Monthly Hours
                   </th>
-                  <th className="py-2 px-6 font-semibold">
-                    SerialTotal Weekly Hours{" "}
-                  </th>
-                  <th className="py-2 px-6 font-semibold">
-                    SerialTarget Weekly
-                  </th>
-                  <th className="py-2 px-6 font-semibold">
-                    SerialWeekly Status
-                  </th>
-                  <th className="py-2 px-6 font-semibold">
-                    SerialTotal Monthly Hours
-                  </th>
-                  <th className="py-2 px-6 font-semibold">
-                    SerialTarget Monthly
-                  </th>
-                  <th className="py-2 px-6 font-semibold">
-                    SerialMonthly Status
-                  </th>
+                  <th className="py-2 px-6 font-semibold">Target Monthly</th>
+                  <th className="py-2 px-6 font-semibold">Monthly Status</th>
                 </tr>
               </thead>
               <tbody>

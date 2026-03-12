@@ -412,7 +412,7 @@ const Monitoring = () => {
             <span className="ml-2 text-md">entries</span>
           </div>
           <div className="flex flex-wrap gap-2 items-center justify-center">
-            <input                       
+            <input
               placeholder="Search"
               value={searchTerm}
               onChange={(e) => {
@@ -447,7 +447,10 @@ const Monitoring = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto min-h-[300px]">
+        <div
+          className="overflow-x-auto min-h-[300px]"
+          style={{ scrollbarWidth: "none" }}
+        >
           <table className="w-full text-lg border-collapse">
             <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
               <tr>
@@ -457,7 +460,9 @@ const Monitoring = () => {
                 <th className="py-2 px-6 font-semibold">Day</th>
                 <th className="py-2 px-6 font-semibold">Login</th>
                 <th className="py-2 px-6 font-semibold">Logout</th>
-                <th className="py-2 px-6 font-semibold">Working Hours</th>
+                <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                  Working Hours
+                </th>
                 <th className="py-2 px-6 font-semibold">Location</th>
               </tr>
             </thead>
@@ -487,11 +492,11 @@ const Monitoring = () => {
 
                     <td className="py-2 px-6">{item.employee}</td>
 
-                    <td className="py-2 px-6">
+                    <td className="py-2 px-6 whitespace-nowrap">
                       {item.date.toLocaleDateString()}
                     </td>
 
-                    <td className="py-2 px-6">
+                    <td className="py-2 px-6 whitespace-nowrap">
                       {item.date.toLocaleDateString("en-US", {
                         weekday: "long",
                       })}
@@ -505,7 +510,9 @@ const Monitoring = () => {
                       {calculateWH(item.login, item.logout)}
                     </td>
 
-                    <td className="py-2 px-6">{item.location}</td>
+                    <td className="py-2 px-6 whitespace-nowrap">
+                      {item.location}
+                    </td>
                   </tr>
                 ))
               )}

@@ -265,9 +265,9 @@ const EmployeeCategory = () => {
             <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
               <tr>
                 <th className="p-2 font-semibold">SL.NO</th>
-                <th className="p-2 font-semibold">Category Name</th>
+                <th className="p-2 font-semibold whitespace-nowrap">Category Name</th>
                 <th className="p-2 font-semibold">Company</th>
-                <th className="p-2 font-semibold">WorkHours</th>
+                <th className="p-2 font-semibold whitespace-nowrap">Work Hours</th>
                 <th className="p-2 font-semibold">Active</th>
                 <th className="p-2 font-semibold">Action</th>
               </tr>
@@ -385,7 +385,8 @@ const EmployeeCategory = () => {
       </div>
 
       {openModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+        style={{ scrollbarWidth: "none" }}>
           <div
             className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
             style={{ scrollbarWidth: "none" }}

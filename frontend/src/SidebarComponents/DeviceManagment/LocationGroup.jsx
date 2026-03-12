@@ -268,12 +268,12 @@ const LocationGroup = () => {
             <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
               <tr>
                 <th className="p-2 font-semibold">SL.NO</th>
-                <th className="p-2 font-semibold">Location Group Name</th>
-                <th className="p-2 font-semibold">
+                <th className="p-2 font-semibold whitespace-nowrap">Location Group Name</th>
+                <th className="p-2 font-semibold whitespace-nowrap">
                   Location Group Discription
                 </th>
-                <th className="p-2 font-semibold">Time Keeper Name</th>
-                <th className="p-2 font-semibold">Site Manager Name</th>
+                <th className="p-2 font-semibold whitespace-nowrap">Time Keeper Name</th>
+                <th className="p-2 font-semibold whitespace-nowrap">Site Manager Name</th>
                 <th className="p-2 font-semibold">Company</th>
                 <th className="p-2 font-semibold">Action</th>
               </tr>
@@ -292,13 +292,13 @@ const LocationGroup = () => {
                     className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                   >
                     <td className="py-2 px-6">{index + 1}</td>
-                    <td className="py-2 px-6">{item.locationgroupname}</td>
-                    <td className="py-2 px-6">
+                    <td className="py-2 px-6 whitespace-nowrap">{item.locationgroupname}</td>
+                    <td className="py-2 px-6 whitespace-nowrap">
                       {item.locationgroupdescription}
                     </td>
-                    <td className="py-2 px-6">{item.timekeepername}</td>
-                    <td className="py-2 px-6">{item.sitemanagername}</td>
-                    <td className="py-2 px-6">{item.organization}</td>
+                    <td className="py-2 px-6 whitespace-nowrap">{item.timekeepername}</td>
+                    <td className="py-2 px-6 whitespace-nowrap">{item.sitemanagername}</td>
+                    <td className="py-2 px-6 whitespace-nowrap">{item.organization}</td>
                     <td className="py-2 px-6">
                       <div className="flex flex-row space-x-3 justify-center ">
                         {/* View */}
@@ -387,8 +387,10 @@ const LocationGroup = () => {
       </div>
 
       {openModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+        style={{ scrollbarWidth: "none" }}>
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+          style={{ scrollbarWidth: "none" }}>
             {/* Close */}
             <div className="flex justify-end">
               <RxCross2

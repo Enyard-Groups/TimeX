@@ -540,8 +540,14 @@ const MannualEntryRequest = () => {
         </div>
 
         {openModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6">
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
+            <div
+              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+              style={{ scrollbarWidth: "none" }}
+            >
               {/* Close */}
               <div className="flex justify-end">
                 <RxCross2
@@ -680,7 +686,10 @@ const MannualEntryRequest = () => {
               )}
 
               {formData.employee && (
-                <div className="mt-6 rounded-md overflow-hidden">
+                <div
+                  className="mt-6 rounded-md overflow-hidden"
+                  style={{ scrollbarWidth: "none" }}
+                >
                   <div className="flex justify-between items-center bg-red-100 px-4 py-2">
                     <span className="font-medium">
                       Last 14 Transactions of the selected User:
@@ -696,14 +705,21 @@ const MannualEntryRequest = () => {
                     )}
                   </div>
 
-                  <div className="max-h-48 overflow-y-auto">
+                  <div
+                    className="max-h-48 overflow-y-auto"
+                    style={{ scrollbarWidth: "none" }}
+                  >
                     <table className="w-full text-sm">
                       <thead className="bg-gray-100">
                         <tr>
                           <th className="p-2 font-medium">Employee</th>
                           <th className="p-2 font-medium">Date</th>
-                          <th className="p-2 font-medium">In Time</th>
-                          <th className="p-2 font-medium">Out Time</th>
+                          <th className="p-2 font-medium whitespace-nowrap">
+                            In Time
+                          </th>
+                          <th className="p-2 font-medium whitespace-nowrap">
+                            Out Time
+                          </th>
                           <th className="p-2 font-medium">Location</th>
                         </tr>
                       </thead>

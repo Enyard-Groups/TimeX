@@ -256,7 +256,10 @@ const CalenderView = () => {
       </div>
 
       {openCalenderGrid && (
-        <div className="mt-6 overflow-x-auto">
+        <div
+          className="mt-6 overflow-x-auto"
+          style={{ scrollbarWidth: "none" }}
+        >
           <div className="m-10 flex justify-center items-center">
             <button
               className="px-6 py-2 rounded-lg bg-[oklch(0.87_0.001_106.424)]"

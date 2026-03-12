@@ -387,17 +387,17 @@ const ClaimRequest = () => {
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
                   <th className="py-2 px-6 px-6 font-semibold">Employee</th>
-                  <th className="py-2 px-6 font-semibold">Claim Category</th>
+                  <th className="py-2 px-6 font-semibold whitespace-nowrap">Claim Category</th>
                   <th className="py-2 px-6 font-semibold">Date</th>
                   <th className="py-2 px-6 font-semibold">Purpose</th>
                   <th className="py-2 px-6 font-semibold">Amount</th>
                   <th className="py-2 px-6 font-semibold">FA</th>
-                  <th className="py-2 px-6 font-semibold">FA Name</th>
+                  <th className="py-2 px-6 font-semibold whitespace-nowrap">FA Name</th>
 
                   <th className="py-2 px-6 font-semibold">SA</th>
-                  <th className="py-2 px-6 font-semibold">SA Name</th>
+                  <th className="py-2 px-6 font-semibold whitespace-nowrap">SA Name</th>
 
-                  <th className="py-2 px-6 font-semibold">Rejected Reason</th>
+                  <th className="py-2 px-6 font-semibold whitespace-nowrap">Rejected Reason</th>
 
                   <th className="py-2 px-6 font-semibold">FA</th>
                   <th className="py-2 px-6 font-semibold">SA</th>
@@ -425,7 +425,7 @@ const ClaimRequest = () => {
                         {item.claimCategory}
                       </td>
 
-                      <td className="py-2 px-6">{item.date}</td>
+                      <td className="py-2 px-6 whitespace-nowrap">{item.date}</td>
 
                       <td className="py-2 px-6 whitespace-nowrap">
                         {item.purpose ? item.purpose : "NIL"}
@@ -553,8 +553,10 @@ const ClaimRequest = () => {
         </div>
 
         {openModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+          style={{ scrollbarWidth: "none" }}>
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+            style={{ scrollbarWidth: "none" }}>
               {/* Close */}
               <div className="flex justify-end">
                 <RxCross2

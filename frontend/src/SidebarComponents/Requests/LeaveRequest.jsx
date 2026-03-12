@@ -408,19 +408,31 @@ const LeaveRequest = () => {
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
                   <th className="py-2 px-6 px-6 font-semibold">Employee</th>
-                  <th className="py-2 px-6 font-semibold">Leave Type</th>
+                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    Leave Type
+                  </th>
                   <th className="py-2 px-6 font-semibold">From</th>
                   <th className="py-2 px-6 font-semibold">To</th>
-                  <th className="py-2 px-6 font-semibold">Resume On</th>
-                  <th className="py-2 px-6 font-semibold">Leave Reason</th>
+                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    Resume On
+                  </th>
+                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    Leave Reason
+                  </th>
 
                   <th className="py-2 px-6 font-semibold">FA</th>
-                  <th className="py-2 px-6 font-semibold">FA Name</th>
+                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    FA Name
+                  </th>
 
                   <th className="py-2 px-6 font-semibold">SA</th>
-                  <th className="py-2 px-6 font-semibold">SA Name</th>
+                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    SA Name
+                  </th>
 
-                  <th className="py-2 px-6 font-semibold">Rejected Reason</th>
+                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    Rejected Reason
+                  </th>
 
                   <th className="py-2 px-6 font-semibold">FA</th>
                   <th className="py-2 px-6 font-semibold">SA</th>
@@ -448,11 +460,17 @@ const LeaveRequest = () => {
                         {item.leaveType}
                       </td>
 
-                      <td className="py-2 px-6">{item.fromDate}</td>
+                      <td className="py-2 px-6 whitespace-nowrap">
+                        {item.fromDate}
+                      </td>
 
-                      <td className="py-2 px-6">{item.toDate}</td>
+                      <td className="py-2 px-6 whitespace-nowrap">
+                        {item.toDate}
+                      </td>
 
-                      <td className="py-2 px-6">{item.resumeOn}</td>
+                      <td className="py-2 px-6 whitespace-nowrap">
+                        {item.resumeOn}
+                      </td>
 
                       <td className="py-2 px-6 whitespace-nowrap">
                         {item.reason
@@ -579,8 +597,10 @@ const LeaveRequest = () => {
         </div>
 
         {openModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+          style={{ scrollbarWidth: "none" }}>
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+            style={{ scrollbarWidth: "none" }}>
               {/* Close */}
               <div className="flex justify-end">
                 <RxCross2
