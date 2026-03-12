@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -18,22 +18,38 @@ const ClaimRequest = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [dateSpinner, setDateSpinner] = useState(false);
-  const [claimRequest, setClaimRequest] = useState([
-    {
-      id: 1,
-      employee: "Employee",
-      claimCategory: "Food",
-      date: "23/01/2026",
-      purpose: "",
-      amount: "500",
-      remarks: "Nothing",
-      fa: "✔",
-      faname: "Manager",
-      sa: "✔",
-      saname: "Admin",
-      rejectedreason: "-",
-    },
-  ]);
+  const [claimRequest, setClaimRequest] = useState(() => {
+    const stored = localStorage.getItem("claimRequests");
+
+    if (stored) {
+      return JSON.parse(stored).map((item) => ({
+        ...item,
+      }));
+    }
+
+    return [
+      {
+        id: 1,
+        employee: "Employee",
+        claimCategory: "Food",
+        date: "23/01/2026",
+        purpose: "",
+        amount: "500",
+        remarks: "Nothing",
+        fa: "",
+        faname: "",
+        sa: "",
+        saname: "",
+        rejectedreason: "",
+        status: "Pending",
+      },
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("claimRequests", JSON.stringify(claimRequest));
+  }, [claimRequest]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -114,6 +130,7 @@ const ClaimRequest = () => {
     }));
   };
 
+  // handle Submit
   const handleSubmit = () => {
     const { employee, claimCategory, date, purpose, amount, remarks } =
       formData;
@@ -138,6 +155,8 @@ const ClaimRequest = () => {
       return;
     }
 
+    const stored = JSON.parse(localStorage.getItem("claimRequests")) || [];
+
     const newClaimRequest = {
       id: Date.now(),
       employee,
@@ -146,16 +165,32 @@ const ClaimRequest = () => {
       amount,
       purpose,
       remarks,
+      fa: "",
+      faname: "",
+      sa: "",
+      saname: "",
+      rejectedreason: "",
+      status: "Pending",
     };
 
     if (editId) {
-      setClaimRequest((prev) =>
-        prev.map((x) => (x.id === editId ? { ...x, ...newClaimRequest } : x)),
+      const updated = stored.map((item) =>
+        item.id === editId ? { ...item, ...newClaimRequest } : item,
       );
-      toast.success("ClaimRequest updated");
+
+      localStorage.setItem("claimRequests", JSON.stringify(updated));
+
+      setClaimRequest(updated);
+
+      toast.success(" Updated");
     } else {
-      setClaimRequest((prev) => [...prev, newClaimRequest]);
-      toast.success("ClaimRequest added");
+      const updated = [...stored, newClaimRequest];
+
+      localStorage.setItem("claimRequests", JSON.stringify(updated));
+
+      setClaimRequest(updated);
+
+      toast.success(" Submitted");
     }
 
     setOpenModal(false);
@@ -169,6 +204,23 @@ const ClaimRequest = () => {
       purpose: "",
       remarks: "",
     });
+  };
+
+  // Handle delete
+  const handleDelete = (id) => {
+    const stored = JSON.parse(localStorage.getItem("claimRequests")) || [];
+
+    const updated = stored.filter((v) => v.id !== id);
+
+    localStorage.setItem("claimRequests", JSON.stringify(updated));
+
+    setClaimRequest(
+      updated.map((item) => ({
+        ...item,
+      })),
+    );
+
+    toast.success("Deleted Successfully");
   };
 
   const handleCopy = () => {
@@ -382,65 +434,70 @@ const ClaimRequest = () => {
                       <td className="py-2 px-6">{item.amount}</td>
 
                       {/* FA Status */}
-                      <td className="py-2 px-6 text-xl text-green-600">
-                        {item.fa || "-"}
+                      {/* FA Status */}
+                      <td
+                        className={`py-2 px-6 text-xl  ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
+                      >
+                        {item.fa || "⏳"}
                       </td>
 
-                      <td className="py-2 px-6">{item.faname || "-"}</td>
+                      <td className="py-2 px-6">{item.faname || "⏳"}</td>
 
                       {/* SA Status */}
-                      <td className="py-2 px-6 text-xl text-green-600">
-                        {item.sa || "-"}
+                      <td
+                        className={`py-2 px-6 text-xl  ${item.sa ? (item.sa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
+                      >
+                        {item.sa || "⏳"}
                       </td>
 
-                      <td className="py-2 px-6">{item.saname || "-"}</td>
+                      <td className="py-2 px-6">{item.saname || "⏳"}</td>
 
-                      <td className="py-2 px-6">
+                      <td className="py-2 px-6  whitespace-nowrap">
                         {item.rejectedreason || "-"}
                       </td>
 
                       <td className="py-2 px-6">
-                        {item.fa ? (item.fa === "✔" ? "Y" : "N") : "-"}
+                        {item.fa ? (item.fa === "✔" ? "Y" : "N") : "⏳"}
                       </td>
 
                       <td className="py-2 px-6">
-                        {item.sa ? (item.sa === "✔" ? "Y" : "N") : "-"}
+                        {item.sa ? (item.sa === "✔" ? "Y" : "N") : "⏳"}
                       </td>
 
                       {/* Actions */}
                       <td className="py-2 px-6">
                         {" "}
-                        <div className="flex flex-row space-x-3 justify-center ">
-                          {" "}
-                          {/* View */}{" "}
-                          <FaEye
-                            onClick={() => {
-                              setFormData(item);
-                              setMode("view");
-                              setOpenModal(true);
-                            }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />{" "}
-                          {/* Edit */}{" "}
-                          <FaPen
-                            onClick={() => {
-                              setFormData(item);
-                              setEditId(item.id);
-                              setMode("edit");
-                              setOpenModal(true);
-                            }}
-                            className="inline text-green-500 cursor-pointer text-lg"
-                          />{" "}
-                          {/* Delete */}{" "}
-                          <MdDeleteForever
-                            onClick={() =>
-                              setClaimRequest(
-                                claimRequest.filter((v) => v.id !== item.id),
-                              )
-                            }
-                            className="inline text-red-500 cursor-pointer text-xl"
-                          />{" "}
-                        </div>{" "}
+                        {item.status === "Pending" ? (
+                          <div className="flex flex-row space-x-3 justify-center ">
+                            {" "}
+                            {/* View */}{" "}
+                            <FaEye
+                              onClick={() => {
+                                setFormData(item);
+                                setMode("view");
+                                setOpenModal(true);
+                              }}
+                              className="inline text-blue-500 cursor-pointer text-lg"
+                            />{" "}
+                            {/* Edit */}{" "}
+                            <FaPen
+                              onClick={() => {
+                                setFormData(item);
+                                setEditId(item.id);
+                                setMode("edit");
+                                setOpenModal(true);
+                              }}
+                              className="inline text-green-500 cursor-pointer text-lg"
+                            />{" "}
+                            {/* Delete */}{" "}
+                            <MdDeleteForever
+                              onClick={() => handleDelete(item.id)}
+                              className="inline text-red-500 cursor-pointer text-xl"
+                            />{" "}
+                          </div>
+                        ) : (
+                          "No Action"
+                        )}
                       </td>
                     </tr>
                   ))

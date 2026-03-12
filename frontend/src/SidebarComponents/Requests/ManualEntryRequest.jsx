@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -17,41 +17,61 @@ import SearchDropdown from "../SearchDropdown";
 const MannualEntryRequest = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
-  const [mannualEntry, setMannualEntry] = useState([
-    {
-      id: 1,
-      employee: "Employee 1",
-      location: "Head Office",
-      intime: new Date("2026-03-01T09:00:00"),
-      outtime: new Date("2026-03-01T18:00:00"),
-      createdDate: new Date("2026-03-01"),
-      remarks: "Normal shift",
-    },
-    {
-      id: 2,
-      employee: "Employee 1",
-      location: "Head Office",
-      intime: new Date("2026-03-02T09:10:00"),
-      outtime: new Date("2026-03-02T18:05:00"),
-      createdDate: new Date("2026-03-02"),
-      remarks: "Late entry",
-    },
-    {
-      id: 3,
-      employee: "Employee 2",
-      location: "Head Office",
-      intime: new Date("2026-03-02T08:50:00"),
-      outtime: new Date("2026-03-02T17:30:00"),
-      createdDate: new Date("2026-03-02"),
-      remarks: "Early shift",
-    },
-  ]);
+  const [mannualEntry, setMannualEntry] = useState(() => {
+    const storedData = localStorage.getItem("mannualEntryRequests");
+
+    if (storedData) {
+      return JSON.parse(storedData).map((item) => ({
+        ...item,
+        intime: item.intime ? new Date(item.intime) : null,
+        outtime: item.outtime ? new Date(item.outtime) : null,
+        createdDate: new Date(item.createdDate),
+      }));
+    }
+
+    return [
+      {
+        id: 1,
+        employee: "Employee 1",
+        location: "Head Office",
+        intime: new Date("2026-03-01T09:00:00"),
+        outtime: new Date("2026-03-01T18:00:00"),
+        createdDate: new Date("2026-03-01"),
+        remarks: "Normal shift",
+        status: "Pending",
+      },
+      {
+        id: 2,
+        employee: "Employee 1",
+        location: "Head Office",
+        intime: new Date("2026-03-02T09:10:00"),
+        outtime: new Date("2026-03-02T18:05:00"),
+        createdDate: new Date("2026-03-02"),
+        remarks: "Late entry",
+        status: "Pending",
+      },
+      {
+        id: 3,
+        employee: "Employee 1",
+        location: "Head Office",
+        intime: new Date("2026-03-02T09:10:00"),
+        outtime: new Date("2026-03-02T18:05:00"),
+        createdDate: new Date("2026-03-02"),
+        remarks: "Late entry",
+        status: "Approved",
+      },
+    ];
+  });
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
   const [showInTimePicker, setShowInTimePicker] = useState(false);
   const [showOutTimePicker, setShowOutTimePicker] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem("mannualEntryRequests", JSON.stringify(mannualEntry));
+  }, [mannualEntry]);
 
   const [formData, setFormData] = useState({
     employee: "",
@@ -99,12 +119,13 @@ const MannualEntryRequest = () => {
     }));
   };
 
+  // Handle submit
   const handleSubmit = () => {
     const { employee, location, intime, outtime, remarks } = formData;
 
     if (!employee || !location || !intime || !outtime) {
       toast.error("Please fill all required fields");
-      return; // stop execution
+      return;
     }
 
     if (new Date(outtime) <= new Date(intime)) {
@@ -112,26 +133,44 @@ const MannualEntryRequest = () => {
       return;
     }
 
-    const newmannualEntry = {
-      id: Date.now(),
+    const stored =
+      JSON.parse(localStorage.getItem("mannualEntryRequests")) || [];
+
+    const newEntry = {
+      id: editId ? editId : Date.now(),
       employee,
       location,
-      intime,
-      outtime,
+      intime: intime ? new Date(intime).toISOString() : null,
+      outtime: outtime ? new Date(outtime).toISOString() : null,
       remarks,
-      createdDate: new Date(),
+      createdDate: new Date().toISOString(),
+      status: "Pending",
     };
 
     if (editId) {
-      setMannualEntry((prev) =>
-        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
+      const updated = stored.map((item) =>
+        item.id === editId ? { ...item, ...newEntry } : item,
       );
 
-      toast.success("Data updated");
-    } else {
-      setMannualEntry((prev) => [...prev, newmannualEntry]);
+      localStorage.setItem("mannualEntryRequests", JSON.stringify(updated));
 
-      toast.success("Data Added");
+      setMannualEntry(updated);
+
+      // Backend version
+      // await axios.put(`/api/manual-entry/${editId}`, newEntry)
+
+      toast.success("Request Updated");
+    } else {
+      const updated = [...stored, newEntry];
+
+      localStorage.setItem("mannualEntryRequests", JSON.stringify(updated));
+
+      setMannualEntry(updated);
+
+      // Backend version
+      // await axios.post("/api/manual-entry-request", newEntry)
+
+      toast.success("Request Submitted");
     }
 
     setOpenModal(false);
@@ -145,6 +184,24 @@ const MannualEntryRequest = () => {
       createdDate: new Date(),
       remarks: "",
     });
+  };
+
+  // Handle delete
+  const handleDelete = (id) => {
+    const stored =
+      JSON.parse(localStorage.getItem("mannualEntryRequests")) || [];
+
+    const updated = stored.filter((v) => v.id !== id);
+
+    localStorage.setItem("mannualEntryRequests", JSON.stringify(updated));
+
+    setMannualEntry(
+      updated.map((item) => ({
+        ...item,
+      })),
+    );
+
+    toast.success("Deleted Successfully");
   };
 
   const handleCopy = () => {
@@ -163,12 +220,12 @@ const MannualEntryRequest = () => {
           item.employee,
           item.location,
           item.intime
-            ? item.intime.toLocaleTimeString([], {
+            ? new Date(item.intime).toLocaleTimeString([], {
                 hour12: false,
               })
             : "",
           item.outtime
-            ? item.outtime.toLocaleTimeString([], {
+            ? new Date(item.outtime).toLocaleTimeString([], {
                 hour12: false,
               })
             : "",
@@ -189,12 +246,12 @@ const MannualEntryRequest = () => {
       Employee: item.employee,
       Location: item.location,
       InTime: item.intime
-        ? item.intime.toLocaleTimeString([], {
+        ? new Date(item.intime).toLocaleTimeString([], {
             hour12: false,
           })
         : "",
       OutTime: item.outtime
-        ? item.outtime.toLocaleTimeString([], {
+        ? new Date(item.outtime).toLocaleTimeString([], {
             hour12: false,
           })
         : "",
@@ -229,12 +286,12 @@ const MannualEntryRequest = () => {
         item.employee,
         item.location,
         item.intime
-          ? item.intime.toLocaleTimeString([], {
+          ? new Date(item.intime).toLocaleTimeString([], {
               hour12: false,
             })
           : "",
         item.outtime
-          ? item.outtime.toLocaleTimeString([], {
+          ? new Date(item.outtime).toLocaleTimeString([], {
               hour12: false,
             })
           : "",
@@ -346,6 +403,7 @@ const MannualEntryRequest = () => {
                   <th className="p-2 font-semibold">Created On</th>
                   <th className="p-2 font-semibold">Requested By</th>
                   <th className="p-2 font-semibold">Remarks</th>
+                  <th className="p-2 font-semibold">Status</th>
                   <th className="p-2 font-semibold">Action</th>
                 </tr>
               </thead>
@@ -366,14 +424,14 @@ const MannualEntryRequest = () => {
                       <td className="p-2">{item.location}</td>
                       <td className="p-2">
                         {item.intime
-                          ? item.intime.toLocaleTimeString([], {
+                          ? new Date(item.intime).toLocaleTimeString([], {
                               hour12: false,
                             })
                           : ""}
                       </td>
                       <td className="p-2">
                         {item.outtime
-                          ? item.outtime.toLocaleTimeString([], {
+                          ? new Date(item.outtime).toLocaleTimeString([], {
                               hour12: false,
                             })
                           : ""}
@@ -384,38 +442,49 @@ const MannualEntryRequest = () => {
                       <td className="p-2">{item.employee}</td>
                       <td className="p-2">{item.remarks}</td>
                       <td className="p-2">
-                        <div className="flex flex-row space-x-3 justify-center ">
-                          {/* View */}
-                          <FaEye
-                            onClick={() => {
-                              setFormData(item);
-                              setMode("view");
-                              setOpenModal(true);
-                            }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />
+                        <span
+                          className={`px-2 py-1 rounded text-sm
+      ${item.status === "Approved" && "bg-green-100 text-green-700"}
+      ${item.status === "Rejected" && "bg-red-100 text-red-700"}
+      ${item.status === "Pending" && "bg-yellow-100 text-yellow-700"}
+    `}
+                        >
+                          {item.status}
+                        </span>
+                      </td>
+                      <td className="p-2">
+                        {item.status === "Pending" ? (
+                          <div className="flex flex-row space-x-3 justify-center ">
+                            {/* View */}
+                            <FaEye
+                              onClick={() => {
+                                setFormData(item);
+                                setMode("view");
+                                setOpenModal(true);
+                              }}
+                              className="inline text-blue-500 cursor-pointer text-lg"
+                            />
 
-                          {/* Edit */}
-                          <FaPen
-                            onClick={() => {
-                              setFormData(item);
-                              setEditId(item.id);
-                              setMode("edit");
-                              setOpenModal(true);
-                            }}
-                            className="inline text-green-500 cursor-pointer text-lg"
-                          />
+                            {/* Edit */}
+                            <FaPen
+                              onClick={() => {
+                                setFormData(item);
+                                setEditId(item.id);
+                                setMode("edit");
+                                setOpenModal(true);
+                              }}
+                              className="inline text-green-500 cursor-pointer text-lg"
+                            />
 
-                          {/* Delete */}
-                          <MdDeleteForever
-                            onClick={() =>
-                              setMannualEntry(
-                                mannualEntry.filter((v) => v.id !== item.id),
-                              )
-                            }
-                            className="inline text-red-500 cursor-pointer text-xl"
-                          />
-                        </div>
+                            {/* Delete */}
+                            <MdDeleteForever
+                              onClick={() => handleDelete(item.id)}
+                              className="inline text-red-500 cursor-pointer text-xl"
+                            />
+                          </div>
+                        ) : (
+                          "No Action"
+                        )}
                       </td>
                     </tr>
                   ))
@@ -535,7 +604,7 @@ const MannualEntryRequest = () => {
                     }}
                   >
                     {formData.intime
-                      ? formData.intime.toLocaleTimeString([], {
+                      ? new Date(formData.intime).toLocaleTimeString([], {
                           hour12: false,
                         })
                       : "HH:MM:SS"}
@@ -568,7 +637,7 @@ const MannualEntryRequest = () => {
                     }}
                   >
                     {formData.outtime
-                      ? formData.outtime.toLocaleTimeString([], {
+                      ? new Date(formData.outtime).toLocaleTimeString([], {
                           hour12: false,
                         })
                       : "HH:MM:SS"}
@@ -657,15 +726,18 @@ const MannualEntryRequest = () => {
                               </td>
 
                               <td className="p-2">
-                                {item.intime?.toLocaleTimeString([], {
+                                {new Date(item.intime)?.toLocaleTimeString([], {
                                   hour12: false,
                                 })}
                               </td>
 
                               <td className="p-2">
-                                {item.outtime?.toLocaleTimeString([], {
-                                  hour12: false,
-                                })}
+                                {new Date(item.outtime)?.toLocaleTimeString(
+                                  [],
+                                  {
+                                    hour12: false,
+                                  },
+                                )}
                               </td>
 
                               <td className="p-2">{item.location}</td>

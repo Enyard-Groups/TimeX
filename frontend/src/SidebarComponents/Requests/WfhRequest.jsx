@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -18,20 +18,37 @@ const WfhRequest = () => {
   const [openModal, setOpenModal] = useState(false);
   const [fromDateSpinner, setFromDateSpinner] = useState(false);
   const [toDateSpinner, setToDateSpinner] = useState(false);
-  const [wfh, setWfh] = useState([
-    {
-      id: 1,
-      employee: "Employee",
-      fromDate: "23/01/2026",
-      toDate: "24/01/2026",
-      reason: "fever",
-      fa: "✔",
-      faname: "Manager",
-      sa: "✔",
-      saname: "Admin",
-      rejectedreason: "-",
-    },
-  ]);
+  const [wfh, setWfh] = useState(() => {
+    const stored = localStorage.getItem("wfhRequests");
+
+    if (stored) {
+      return JSON.parse(stored).map((item) => ({
+        ...item,
+        createdDate: new Date(item.createdDate),
+      }));
+    }
+
+    return [
+      {
+        id: 1,
+        employee: "Employee",
+        fromDate: "23/01/2026",
+        toDate: "24/01/2026",
+        reason: "fever",
+        fa: "",
+        faname: "",
+        sa: "",
+        saname: "",
+        rejectedreason: "",
+        status: "Pending",
+      },
+    ];
+  });
+
+   useEffect(() => {
+      localStorage.setItem("wfhRequests", JSON.stringify(wfh));
+    }, [wfh]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -97,6 +114,7 @@ const WfhRequest = () => {
     });
   };
 
+  // Handle Submit
   const handleSubmit = () => {
     const { employee, fromDate, toDate, reason, contact, email } = formData;
 
@@ -126,22 +144,40 @@ const WfhRequest = () => {
       return;
     }
 
+    const stored = JSON.parse(localStorage.getItem("wfhRequests")) || [];
+
     const newWfh = {
       id: Date.now(),
       employee,
       fromDate,
       toDate,
       reason,
+      fa: "",
+      faname: "",
+      sa: "",
+      saname: "",
+      rejectedreason: "",
+      status: "Pending",
     };
 
     if (editId) {
-      setWfh((prev) =>
-        prev.map((x) => (x.id === editId ? { ...x, ...newWfh } : x)),
+      const updated = stored.map((item) =>
+        item.id === editId ? { ...item, ...newWfh } : item,
       );
-      toast.success("Wfh updated");
+
+      localStorage.setItem("wfhRequests", JSON.stringify(updated));
+
+      setWfh(updated);
+
+      toast.success(" Updated");
     } else {
-      setWfh((prev) => [...prev, newWfh]);
-      toast.success("Wfh added");
+      const updated = [...stored, newWfh];
+
+      localStorage.setItem("wfhRequests", JSON.stringify(updated));
+
+      setWfh(updated);
+
+      toast.success(" Submitted");
     }
 
     setOpenModal(false);
@@ -158,6 +194,23 @@ const WfhRequest = () => {
       email: "",
       reason: "",
     });
+  };
+
+  // Handle delete
+  const handleDelete = (id) => {
+    const stored = JSON.parse(localStorage.getItem("wfhRequests")) || [];
+
+    const updated = stored.filter((v) => v.id !== id);
+
+    localStorage.setItem("wfhRequests", JSON.stringify(updated));
+
+    setWfh(
+      updated.map((item) => ({
+        ...item,
+      })),
+    );
+
+    toast.success("Deleted Successfully");
   };
 
   const handleCopy = () => {
@@ -352,63 +405,69 @@ const WfhRequest = () => {
                       </td>
 
                       {/* FA Status */}
-                      <td className="py-2 px-6 text-xl text-green-600">
-                        {item.fa || "-"}
+                      <td
+                        className={`py-2 px-6 text-xl  ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
+                      >
+                        {item.fa || "⏳"}
                       </td>
 
-                      <td className="py-2 px-6">{item.faname || "-"}</td>
+                      <td className="py-2 px-6">{item.faname || "⏳"}</td>
 
                       {/* SA Status */}
-                      <td className="py-2 px-6 text-xl text-green-600">
-                        {item.sa || "-"}
+                      <td
+                        className={`py-2 px-6 text-xl  ${item.sa ? (item.sa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
+                      >
+                        {item.sa || "⏳"}
                       </td>
 
-                      <td className="py-2 px-6">{item.saname || "-"}</td>
+                      <td className="py-2 px-6">{item.saname || "⏳"}</td>
 
-                      <td className="py-2 px-6">
+                      <td className="py-2 px-6 whitespace-nowrap">
                         {item.rejectedreason || "-"}
                       </td>
 
                       <td className="py-2 px-6">
-                        {item.fa ? (item.fa === "✔" ? "Y" : "N") : "-"}
+                        {item.fa ? (item.fa === "✔" ? "Y" : "N") : "⏳"}
                       </td>
 
                       <td className="py-2 px-6">
-                        {item.sa ? (item.sa === "✔" ? "Y" : "N") : "-"}
+                        {item.sa ? (item.sa === "✔" ? "Y" : "N") : "⏳"}
                       </td>
 
                       {/* Actions */}
                       <td className="py-2 px-6">
                         {" "}
-                        <div className="flex flex-row space-x-3 justify-center ">
-                          {" "}
-                          {/* View */}{" "}
-                          <FaEye
-                            onClick={() => {
-                              setFormData(item);
-                              setMode("view");
-                              setOpenModal(true);
-                            }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />{" "}
-                          {/* Edit */}{" "}
-                          <FaPen
-                            onClick={() => {
-                              setFormData(item);
-                              setEditId(item.id);
-                              setMode("edit");
-                              setOpenModal(true);
-                            }}
-                            className="inline text-green-500 cursor-pointer text-lg"
-                          />{" "}
-                          {/* Delete */}{" "}
-                          <MdDeleteForever
-                            onClick={() =>
-                              setWfh(wfh.filter((v) => v.id !== item.id))
-                            }
-                            className="inline text-red-500 cursor-pointer text-xl"
-                          />{" "}
-                        </div>{" "}
+                        {item.status === "Pending" ? (
+                          <div className="flex flex-row space-x-3 justify-center ">
+                            {" "}
+                            {/* View */}{" "}
+                            <FaEye
+                              onClick={() => {
+                                setFormData(item);
+                                setMode("view");
+                                setOpenModal(true);
+                              }}
+                              className="inline text-blue-500 cursor-pointer text-lg"
+                            />{" "}
+                            {/* Edit */}{" "}
+                            <FaPen
+                              onClick={() => {
+                                setFormData(item);
+                                setEditId(item.id);
+                                setMode("edit");
+                                setOpenModal(true);
+                              }}
+                              className="inline text-green-500 cursor-pointer text-lg"
+                            />{" "}
+                            {/* Delete */}{" "}
+                            <MdDeleteForever
+                              onClick={() => handleDelete(item.id)}
+                              className="inline text-red-500 cursor-pointer text-xl"
+                            />{" "}
+                          </div>
+                        ) : (
+                          "No Action"
+                        )}
                       </td>
                     </tr>
                   ))

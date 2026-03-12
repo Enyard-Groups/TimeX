@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -20,24 +20,43 @@ const BusinessTravelRequest = () => {
   const [fromDateSpinner, setFromDateSpinner] = useState(false);
   const [toDateSpinner, setToDateSpinner] = useState(false);
   const [showResumeSpinner, setShowResumeSpinner] = useState(false);
-  const [leave, setBusinessTravel] = useState([
-    {
-      id: 1,
-      employee: "Employee",
-      travelType: "Meeting",
-      fromDate: "23/01/2026",
-      toDate: "24/01/2026",
-      resumeOn: "25/01/2026",
-      reason: "Meeting - Business",
-      isHalfDayfirst: "Yes",
-      isHalfDaylast: "No",
-      fa: "✔",
-      faname: "Manager",
-      sa: "✔",
-      saname: "Admin",
-      rejectedreason: "-",
-    },
-  ]);
+  const [businessTravel, setBusinessTravel] = useState(() => {
+    const stored = localStorage.getItem("businessTravelRequests");
+
+    if (stored) {
+      return JSON.parse(stored).map((item) => ({
+        ...item,
+      }));
+    }
+
+    return [
+      {
+        id: 1,
+        employee: "Employee",
+        travelType: "Meeting",
+        fromDate: "23/01/2026",
+        toDate: "24/01/2026",
+        resumeOn: "25/01/2026",
+        reason: "Business",
+        isHalfDayfirst: "Yes",
+        isHalfDaylast: "No",
+        fa: "",
+        faname: "",
+        sa: "",
+        saname: "",
+        rejectedreason: "",
+        status: "Pending",
+      },
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem(
+      "businessTravelRequests",
+      JSON.stringify(businessTravel),
+    );
+  }, [businessTravel]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -60,7 +79,7 @@ const BusinessTravelRequest = () => {
   const labelStyle =
     "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
-  const filteredBusinessTravel = leave.filter((x) =>
+  const filteredBusinessTravel = businessTravel.filter((x) =>
     x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
@@ -87,6 +106,7 @@ const BusinessTravelRequest = () => {
     }));
   };
 
+  // Handle Submit
   const handleSubmit = () => {
     const {
       employee,
@@ -130,6 +150,9 @@ const BusinessTravelRequest = () => {
       return;
     }
 
+    const stored =
+      JSON.parse(localStorage.getItem("businessTravelRequests")) || [];
+
     const newBusinessTravel = {
       id: Date.now(),
       employee,
@@ -140,16 +163,32 @@ const BusinessTravelRequest = () => {
       reason,
       isHalfDayfirst,
       isHalfDaylast,
+      fa: "",
+      faname: "",
+      sa: "",
+      saname: "",
+      rejectedreason: "",
+      status: "Pending",
     };
 
     if (editId) {
-      setBusinessTravel((prev) =>
-        prev.map((x) => (x.id === editId ? { ...x, ...newBusinessTravel } : x)),
+      const updated = stored.map((item) =>
+        item.id === editId ? { ...item, ...newBusinessTravel } : item,
       );
-      toast.success("BusinessTravel updated");
+
+      localStorage.setItem("businessTravelRequests", JSON.stringify(updated));
+
+      setBusinessTravel(updated);
+
+      toast.success(" Updated");
     } else {
-      setBusinessTravel((prev) => [...prev, newBusinessTravel]);
-      toast.success("BusinessTravel added");
+      const updated = [...stored, newBusinessTravel];
+
+      localStorage.setItem("businessTravelRequests", JSON.stringify(updated));
+
+      setBusinessTravel(updated);
+
+      toast.success(" Submitted");
     }
 
     setOpenModal(false);
@@ -166,6 +205,24 @@ const BusinessTravelRequest = () => {
       isHalfDayfirst: false,
       isHalfDaylast: false,
     });
+  };
+
+  // Handle delete
+  const handleDelete = (id) => {
+    const stored =
+      JSON.parse(localStorage.getItem("businessTravelRequests")) || [];
+
+    const updated = stored.filter((v) => v.id !== id);
+
+    localStorage.setItem("businessTravelRequests", JSON.stringify(updated));
+
+    setBusinessTravel(
+      updated.map((item) => ({
+        ...item,
+      })),
+    );
+
+    toast.success("Deleted Successfully");
   };
 
   const handleCopy = () => {
@@ -413,65 +470,69 @@ const BusinessTravelRequest = () => {
                       </td>
 
                       {/* FA Status */}
-                      <td className="py-2 px-6 text-xl text-green-600">
-                        {item.fa || "-"}
+                      <td
+                        className={`py-2 px-6 text-xl  ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
+                      >
+                        {item.fa || "⏳"}
                       </td>
 
-                      <td className="py-2 px-6">{item.faname || "-"}</td>
+                      <td className="py-2 px-6">{item.faname || "⏳"}</td>
 
                       {/* SA Status */}
-                      <td className="py-2 px-6 text-xl text-green-600">
-                        {item.sa || "-"}
+                      <td
+                        className={`py-2 px-6 text-xl  ${item.sa ? (item.sa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
+                      >
+                        {item.sa || "⏳"}
                       </td>
 
-                      <td className="py-2 px-6">{item.saname || "-"}</td>
+                      <td className="py-2 px-6">{item.saname || "⏳"}</td>
 
-                      <td className="py-2 px-6">
+                      <td className="py-2 px-6 whitespace-nowrap">
                         {item.rejectedreason || "-"}
                       </td>
 
                       <td className="py-2 px-6">
-                        {item.fa ? (item.fa === "✔" ? "Y" : "N") : "-"}
+                        {item.fa ? (item.fa === "✔" ? "Y" : "N") : "⏳"}
                       </td>
 
                       <td className="py-2 px-6">
-                        {item.sa ? (item.sa === "✔" ? "Y" : "N") : "-"}
+                        {item.sa ? (item.sa === "✔" ? "Y" : "N") : "⏳"}
                       </td>
 
                       {/* Actions */}
                       <td className="py-2 px-6">
                         {" "}
-                        <div className="flex flex-row space-x-3 justify-center ">
-                          {" "}
-                          {/* View */}{" "}
-                          <FaEye
-                            onClick={() => {
-                              setFormData(item);
-                              setMode("view");
-                              setOpenModal(true);
-                            }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />{" "}
-                          {/* Edit */}{" "}
-                          <FaPen
-                            onClick={() => {
-                              setFormData(item);
-                              setEditId(item.id);
-                              setMode("edit");
-                              setOpenModal(true);
-                            }}
-                            className="inline text-green-500 cursor-pointer text-lg"
-                          />{" "}
-                          {/* Delete */}{" "}
-                          <MdDeleteForever
-                            onClick={() =>
-                              setBusinessTravel(
-                                leave.filter((v) => v.id !== item.id),
-                              )
-                            }
-                            className="inline text-red-500 cursor-pointer text-xl"
-                          />{" "}
-                        </div>{" "}
+                        {item.status === "Pending" ? (
+                          <div className="flex flex-row space-x-3 justify-center ">
+                            {" "}
+                            {/* View */}{" "}
+                            <FaEye
+                              onClick={() => {
+                                setFormData(item);
+                                setMode("view");
+                                setOpenModal(true);
+                              }}
+                              className="inline text-blue-500 cursor-pointer text-lg"
+                            />{" "}
+                            {/* Edit */}{" "}
+                            <FaPen
+                              onClick={() => {
+                                setFormData(item);
+                                setEditId(item.id);
+                                setMode("edit");
+                                setOpenModal(true);
+                              }}
+                              className="inline text-green-500 cursor-pointer text-lg"
+                            />{" "}
+                            {/* Delete */}{" "}
+                            <MdDeleteForever
+                              onClick={() => handleDelete(item.id)}
+                              className="inline text-red-500 cursor-pointer text-xl"
+                            />{" "}
+                          </div>
+                        ) : (
+                          "No Action"
+                        )}
                       </td>
                     </tr>
                   ))

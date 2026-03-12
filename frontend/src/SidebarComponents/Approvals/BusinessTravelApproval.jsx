@@ -1,93 +1,68 @@
-import React, { useState } from "react";
+/* eslint-disable react-hooks/set-state-in-effect */
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { FaAngleRight, FaFileExcel } from "react-icons/fa";
-import { GrPrevious, GrNext } from "react-icons/gr";
+import { FaAngleRight } from "react-icons/fa6";
 
 const BusinessTravelApproval = () => {
-  const [employee] = useState([
-    {
-      id: "000971001",
-      name: "Sharma",
-      from: "Delhi",
-      to: "Mumbai",
-      fromDate: "12-03-2026",
-      toDate: "14-03-2026",
-      purpose: "Client Meeting",
-      status: "Pending",
-    },
-    {
-      id: "000971004",
-      name: "Drishti",
-      from: "Kolkata",
-      to: "Bangalore",
-      fromDate: "15-03-2026",
-      toDate: "17-03-2026",
-      purpose: "Project Discussion",
-      status: "Pending",
-    },
-  ]);
+  const [requests, setRequests] = useState([]);
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [entriesPerPage, setEntriesPerPage] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedEmployees, setSelectedEmployees] = useState([]);
+  useEffect(() => {
+    const stored =
+      JSON.parse(localStorage.getItem("businessTravelRequests")) || [];
+    setRequests(stored);
+  }, []);
 
-  const filteredemployee = employee.filter(
-    (x) =>
-      x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.role.toLowerCase().startsWith(searchTerm.toLowerCase()),
-  );
+  const approverName =
+    JSON.parse(localStorage.getItem("user")).role.charAt(0).toUpperCase() +
+    JSON.parse(localStorage.getItem("user")).role.slice(1).toLowerCase();
 
-  const handleSelect = (id) => {
-    setSelectedEmployees((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
+  const updateStatus = (id, value) => {
+    const updated = requests.map((item) => {
+      if (item.id === id) {
+        if (value === "Approved") {
+          return {
+            ...item,
+            status: "Approved",
+            fa: "✔",
+            sa: "✔",
+            faname: approverName,
+            saname: approverName,
+            rejectedreason: "",
+          };
+        }
+
+        if (value === "Rejected") {
+          return {
+            ...item,
+            status: "Rejected",
+            fa: "✘",
+            sa: "✘",
+            faname: approverName,
+            saname: approverName,
+            rejectedreason: item.rejectedreason || "",
+          };
+        }
+      }
+
+      return item;
+    });
+
+    setRequests(updated);
+
+    localStorage.setItem("businessTravelRequests", JSON.stringify(updated));
+
+    toast.success(`Request ${value}`);
   };
 
-  const endIndex = currentPage * entriesPerPage;
-
-  const startIndex = endIndex - entriesPerPage;
-
-  const currentemployee = filteredemployee.slice(startIndex, endIndex);
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredemployee.length / entriesPerPage),
-  );
-
-  const handleApprove = () => {
-    if (selectedEmployees.length === 0) {
-      toast.error("Please select employees");
-      return;
-    }
-
-    const selectedData = employee.filter((emp) =>
-      selectedEmployees.includes(emp.id),
+  const handleRejectedReason = (id, text) => {
+    const updated = requests.map((item) =>
+      item.id === id ? { ...item, rejectedreason: text } : item,
     );
 
-    console.log("Approval Approved:", selectedData);
-
-    toast.success(
-      `${selectedEmployees.length} employees selected for approval`,
-    );
+    setRequests(updated);
   };
 
-  const handleReject = () => {
-    if (selectedEmployees.length === 0) {
-      toast.error("Please select employees");
-      return;
-    }
-
-    const selectedData = employee.filter((emp) =>
-      selectedEmployees.includes(emp.id),
-    );
-
-    console.log("Approval Rejected:", selectedData);
-
-    toast.success(
-      `${selectedEmployees.length} employees selected for rejection`,
-    );
-  };
+  const pending = requests.filter((r) => r.status === "Pending");
 
   return (
     <div className="mb-16">
@@ -101,39 +76,7 @@ const BusinessTravelApproval = () => {
         </h1>
       </div>
 
-      <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">
-        {/* Top Controls */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-          <div>
-            <label className="mr-2 text-md">Show</label>
-            <select
-              value={entriesPerPage}
-              onChange={(e) => {
-                setEntriesPerPage(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-              className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
-            >
-              <option value={10}>10</option>
-              <option value={25}>25</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-            </select>
-            <span className="ml-2 text-md">entries</span>
-          </div>
-          <div className="flex flex-wrap gap-2 items-center justify-center">
-            <input
-              placeholder="Search"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-            />
-          </div>
-        </div>
-
+      <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6">
         <div
           className="overflow-x-auto min-h-[250px]"
           style={{ scrollbarWidth: "none" }}
@@ -141,140 +84,95 @@ const BusinessTravelApproval = () => {
           <table className="w-full text-lg border-collapse">
             <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
               <tr>
-                <th className="py-2 px-5 font-semibold">
-                  <input
-                    type="checkbox"
-                    checked={
-                      currentemployee.length > 0 &&
-                      currentemployee.every((emp) =>
-                        selectedEmployees.includes(emp.id),
-                      )
-                    }
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectedEmployees(currentemployee.map((x) => x.id));
-                      } else {
-                        setSelectedEmployees([]);
-                      }
-                    }}
-                  />
-                </th>
-
-                <th className="py-2 px-5 font-semibold">SL.NO</th>
-                <th className="py-2 px-5 font-semibold">Employee Name</th>
-                <th className="py-2 px-5 font-semibold">Employee ID</th>
-                <th className="py-2 px-5 font-semibold">Travel From</th>
-                <th className="py-2 px-5 font-semibold">Travel To</th>
-                <th className="py-2 px-5 font-semibold">From Date</th>
-                <th className="py-2 px-5 font-semibold">To Date</th>
-                <th className="py-2 px-5 font-semibold">Purpose</th>
-                <th className="py-2 px-5 font-semibold">Status</th>
+                <th className="py-2 px-6 font-semibold">Employee</th>
+                <th className="py-2 px-6 font-semibold">Travel Type</th>
+                <th className="py-2 px-6 font-semibold">From</th>
+                <th className="py-2 px-6 font-semibold">To</th>
+                <th className="py-2 px-6 font-semibold">Resume On</th>
+                <th className="py-2 px-6 font-semibold">Reason</th>
+                <th className="py-2 px-6 font-semibold">Half Day (First)</th>
+                <th className="py-2 px-6 font-semibold">Half Day (Last)</th>
+                <th className="py-2 px-6 font-semibold">FA</th>
+                <th className="py-2 px-6 font-semibold">SA</th>
+                <th className="py-2 px-6 font-semibold">Rejected Reason</th>
+                <th className="py-2 px-6 font-semibold">Approve / Reject</th>
               </tr>
             </thead>
+
             <tbody>
-              {currentemployee.length === 0 ? (
+              {pending.length === 0 ? (
                 <tr>
-                  <td colSpan="14" className="lg:text-center p-10 ">
-                    No Data Available
+                  <td colSpan="12" className="text-center p-10">
+                    No Pending Requests
                   </td>
                 </tr>
               ) : (
-                currentemployee.map((item, index) => (
+                pending.map((item) => (
                   <tr
                     key={item.id}
-                    className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                    className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)]"
                   >
-                    <td className="py-2 px-5">
+                    <td className="py-2 px-6">{item.employee}</td>
+
+                    <td className="py-2 px-6">{item.travelType}</td>
+
+                    <td className="py-2 px-6">{item.fromDate}</td>
+
+                    <td className="py-2 px-6">{item.toDate}</td>
+
+                    <td className="py-2 px-6">{item.resumeOn}</td>
+
+                    <td className="py-2 px-6 whitespace-nowrap">
+                      {item.reason
+                        ? `${item.travelType} - ${item.reason}`
+                        : `${item.travelType} - NIL`}
+                    </td>
+
+                    <td className="py-2 px-6">
+                      {item.isHalfDayfirst ? "Yes" : "No"}
+                    </td>
+
+                    <td className="py-2 px-6">
+                      {item.isHalfDaylast ? "Yes" : "No"}
+                    </td>
+
+                    <td className="py-2 px-6">{item.fa || "⏳"}</td>
+
+                    <td className="py-2 px-6">{item.sa || "⏳"}</td>
+
+                    <td className="py-2 px-6">
                       <input
-                        type="checkbox"
-                        checked={selectedEmployees.includes(item.id)}
-                        onChange={() => handleSelect(item.id)}
+                        placeholder="Rejected Reason"
+                        className="border border-gray-200 rounded px-2 py-1 text-sm w-40"
+                        value={item.rejectedreason || ""}
+                        onChange={(e) =>
+                          handleRejectedReason(item.id, e.target.value)
+                        }
                       />
                     </td>
 
-                    <td className="py-2 px-5">{index + 1}</td>
-                    <td className="py-2 px-5">{item.name}</td>
-                    <td className="py-2 px-5">{item.id}</td>
-                    <td className="py-2 px-5 whitespace-nowrap">{item.from}</td>
-                    <td className="py-2 px-5 whitespace-nowrap">{item.to}</td>
-                    <td className="py-2 px-5 whitespace-nowrap">
-                      {item.fromDate}
-                    </td>
-                    <td className="py-2 px-5 whitespace-nowrap">
-                      {item.toDate}
-                    </td>
-                    <td className="py-2 px-5 whitespace-nowrap">
-                      {item.purpose}
-                    </td>
-                    <td className="py-2 px-5">
-                      <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded">
-                        {item.status}
-                      </span>
+                    <td className="p-2">
+                      <div className="flex gap-2 justify-center">
+                        <button
+                          onClick={() => updateStatus(item.id, "Approved")}
+                          className="bg-green-100 text-green-700 px-3 py-1 rounded"
+                        >
+                          Approve
+                        </button>
+
+                        <button
+                          onClick={() => updateStatus(item.id, "Rejected")}
+                          className="bg-red-100 text-red-700 px-3 py-1 rounded"
+                        >
+                          Reject
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
               )}
             </tbody>
           </table>
-        </div>
-
-        <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-          <span>
-            Showing {filteredemployee.length === 0 ? "0" : startIndex + 1} to{" "}
-            {Math.min(endIndex, filteredemployee.length)} of{" "}
-            {filteredemployee.length} entries
-          </span>
-
-          <div className="flex flex-row space-x-1">
-            <button
-              disabled={currentPage == 1}
-              onClick={() => setCurrentPage(1)}
-              className="py-2 px-5 bg-gray-200 rounded-full disabled:opacity-50"
-            >
-              First
-            </button>
-
-            <button
-              disabled={currentPage == 1}
-              onClick={() => setCurrentPage(currentPage - 1)}
-              className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
-            >
-              <GrPrevious />
-            </button>
-
-            <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
-
-            <button
-              disabled={currentPage == totalPages}
-              onClick={() => setCurrentPage(currentPage + 1)}
-              className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
-            >
-              <GrNext />
-            </button>
-
-            <button
-              disabled={currentPage == totalPages}
-              onClick={() => setCurrentPage(totalPages)}
-              className="py-2 px-5 bg-gray-200 rounded-full disabled:opacity-50"
-            >
-              Last
-            </button>
-          </div>
-        </div>
-
-        <div className="flex justify-center mt-8 gap-4">
-          <button
-            className="px-6 py-2 rounded-lg text-white bg-green-500"
-            onClick={handleApprove}
-          >
-            Approve
-          </button>
-          <button
-            className="px-6 py-2 rounded-lg text-white bg-[oklch(0.58_0.246_16.439)]"
-            onClick={handleReject}
-          >
-            Reject
-          </button>
         </div>
       </div>
     </div>
