@@ -38,6 +38,9 @@ const MannualEntryRequest = () => {
         outtime: new Date("2026-03-01T18:00:00"),
         createdDate: new Date("2026-03-01"),
         remarks: "Normal shift",
+        designation: "Sales Manager",
+        company: "Company 1",
+        employeeCategory: "Permanent",
         status: "Pending",
       },
       {
@@ -48,6 +51,9 @@ const MannualEntryRequest = () => {
         outtime: new Date("2026-03-02T18:05:00"),
         createdDate: new Date("2026-03-02"),
         remarks: "Late entry",
+        designation: "Sales Manager",
+        company: "Company 2",
+        employeeCategory: "Freelence",
         status: "Pending",
       },
       {
@@ -58,7 +64,23 @@ const MannualEntryRequest = () => {
         outtime: new Date("2026-03-02T18:05:00"),
         createdDate: new Date("2026-03-02"),
         remarks: "Late entry",
+        designation: "Project Manager",
+        company: "Company 2",
+        employeeCategory: "Contaract",
         status: "Approved",
+      },
+      {
+        id: 3,
+        employee: "Employee 1",
+        location: "Head Office",
+        intime: new Date("2026-03-02T09:10:00"),
+        outtime: "",
+        createdDate: new Date("2026-03-02"),
+        remarks: "Late entry",
+        designation: "Project Manager",
+        company: "Company 2",
+        employeeCategory: "Full Time Equivalent",
+        status: "Pending",
       },
     ];
   });
@@ -78,6 +100,9 @@ const MannualEntryRequest = () => {
     location: "",
     intime: null,
     outtime: null,
+    designation: "",
+    company: "",
+    employeeCategory: "",
     createdDate: new Date(),
     remarks: "",
   });
@@ -121,7 +146,16 @@ const MannualEntryRequest = () => {
 
   // Handle submit
   const handleSubmit = () => {
-    const { employee, location, intime, outtime, remarks } = formData;
+    const {
+      company,
+      designation,
+      employeeCategory,
+      employee,
+      location,
+      intime,
+      outtime,
+      remarks,
+    } = formData;
 
     if (!employee || !location || !intime || !outtime) {
       toast.error("Please fill all required fields");
@@ -143,6 +177,9 @@ const MannualEntryRequest = () => {
       intime: intime ? new Date(intime).toISOString() : null,
       outtime: outtime ? new Date(outtime).toISOString() : null,
       remarks,
+      company,
+      designation,
+      employeeCategory,
       createdDate: new Date().toISOString(),
       status: "Pending",
     };
@@ -183,6 +220,9 @@ const MannualEntryRequest = () => {
       outtime: null,
       createdDate: new Date(),
       remarks: "",
+      company: "",
+      designation: "",
+      employeeCategory: "",
     });
   };
 
@@ -396,12 +436,22 @@ const MannualEntryRequest = () => {
             <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
-                  <th className="p-2 font-semibold">Emp Name</th>
+                  <th className="p-2 font-semibold whitespace-nowrap">
+                    Emp Name
+                  </th>
                   <th className="p-2 font-semibold">Location</th>
-                  <th className="p-2 font-semibold">In Time</th>
-                  <th className="p-2 font-semibold">Out Time</th>
-                  <th className="p-2 font-semibold">Created On</th>
-                  <th className="p-2 font-semibold">Requested By</th>
+                  <th className="p-2 font-semibold whitespace-nowrap">
+                    In Time
+                  </th>
+                  <th className="p-2 font-semibold whitespace-nowrap">
+                    Out Time
+                  </th>
+                  <th className="p-2 font-semibold whitespace-nowrap">
+                    Created On
+                  </th>
+                  <th className="p-2 font-semibold whitespace-nowrap">
+                    Requested By
+                  </th>
                   <th className="p-2 font-semibold">Remarks</th>
                   <th className="p-2 font-semibold">Status</th>
                   <th className="p-2 font-semibold">Action</th>
@@ -420,8 +470,8 @@ const MannualEntryRequest = () => {
                       key={item.id}
                       className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                     >
-                      <td className="p-2">{item.employee}</td>
-                      <td className="p-2">{item.location}</td>
+                      <td className="p-2 whitespace-nowrap">{item.employee}</td>
+                      <td className="p-2 whitespace-nowrap">{item.location}</td>
                       <td className="p-2">
                         {item.intime
                           ? new Date(item.intime).toLocaleTimeString([], {
@@ -429,18 +479,18 @@ const MannualEntryRequest = () => {
                             })
                           : ""}
                       </td>
-                      <td className="p-2">
+                      <td className="p-2 whitespace-nowrap">
                         {item.outtime
                           ? new Date(item.outtime).toLocaleTimeString([], {
                               hour12: false,
                             })
-                          : ""}
+                          : "No Checkout"}
                       </td>
                       <td className="p-2">
                         {new Date(item.createdDate).toLocaleDateString()}
                       </td>
                       <td className="p-2">{item.employee}</td>
-                      <td className="p-2">{item.remarks}</td>
+                      <td className="p-2 whitespace-nowrap">{item.remarks}</td>
                       <td className="p-2">
                         <span
                           className={`px-2 py-1 rounded text-sm
@@ -588,6 +638,75 @@ const MannualEntryRequest = () => {
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
+                </div>
+
+                <div>
+                  <SearchDropdown
+                    label="Company"
+                    name="company"
+                    value={formData.company}
+                    options={["Company 1", "Company 2"]}
+                    formData={formData}
+                    setFormData={setFormData}
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
+                </div>
+
+                <div>
+                  <SearchDropdown
+                    label="Employee Category"
+                    name="employeeCategory"
+                    value={formData.employeeCategory}
+                    options={[
+                      "All Category",
+                      "Full Time Equivalent",
+                      "Contingent",
+                      "Freelence",
+                      "Contract",
+                      "Permanent",
+                    ]}
+                    formData={formData}
+                    setFormData={setFormData}
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
+                </div>
+
+                <div>
+                  <SearchDropdown
+                    label="Designation"
+                    name="department"
+                    value={formData.department}
+                    options={[
+                      "Regional Sales Support Manager",
+                      "Operations Support Officer",
+                      "Finance Assistant",
+                      "Trade Finance Specialist",
+                      "Banking Operations Officer",
+                      "Sales Support Officer",
+                      "Banking Operations Officer",
+                      "Project Manager",
+                      "Administrative Assistant",
+                      "Sales Officer",
+                      "Banking Officer",
+                      "Sales Manager",
+                      "Senior Banking Officer",
+                      "Client Service Manager",
+                      "Senior Director – Banking Operations",
+                      "Relationship Officer",
+                      "Accountant",
+                      "Director – Sales Excellence",
+                      "Service Sales Support Officer",
+                      "HR Manager",
+                      "Sales & Logistics Officer",
+                      "Operation Officer",
+                    ]}
+                    formData={formData}
+                    setFormData={setFormData}
                     inputStyle={inputStyle}
                     labelStyle={labelStyle}
                   />

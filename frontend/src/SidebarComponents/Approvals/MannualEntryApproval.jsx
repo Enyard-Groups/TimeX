@@ -191,7 +191,7 @@ const MannualEntryApproval = () => {
                       }}
                     />
                   </th>
-                  <th className="p-2">Emp Name</th>
+                  <th className="p-2 whitespace-nowrap">Emp Name</th>
                   <th className="p-2">Location</th>
                   <th className="p-2 whitespace-nowrap">In Time</th>
                   <th className="p-2 whitespace-nowrap">Out Time</th>
@@ -221,9 +221,9 @@ const MannualEntryApproval = () => {
                           onChange={() => handleSelect(item.id)}
                         />
                       </td>
-                      <td className="p-2">{item.employee}</td>
+                      <td className="p-2 whitespace-nowrap">{item.employee}</td>
 
-                      <td className="p-2">{item.location}</td>
+                      <td className="p-2 whitespace-nowrap">{item.location}</td>
 
                       <td className="p-2">
                         {item.intime
@@ -233,19 +233,19 @@ const MannualEntryApproval = () => {
                           : ""}
                       </td>
 
-                      <td className="p-2">
+                      <td className="p-2 whitespace-nowrap">
                         {item.outtime
                           ? new Date(item.outtime).toLocaleTimeString([], {
                               hour12: false,
                             })
-                          : ""}
+                          : "No Checkout"}
                       </td>
 
                       <td className="p-2">
                         {new Date(item.createdDate).toLocaleDateString()}
                       </td>
 
-                      <td className="p-2">{item.remarks}</td>
+                      <td className="p-2 whitespace-nowrap">{item.remarks}</td>
 
                       <td className="p-2">
                         <div className="flex gap-2 justify-center">

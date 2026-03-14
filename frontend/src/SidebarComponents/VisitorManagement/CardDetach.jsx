@@ -380,13 +380,6 @@ const CardDetach = () => {
                   <th className="py-2 px-6 font-semibold">Visitor Name</th>
                   <th className="py-2 px-6 font-semibold">Visitor Company</th>
                   <th className="py-2 px-6 font-semibold">Visitor Phone</th>
-                  <th className="py-2 px-6 font-semibold">Visitor Email</th>
-                  <th className="py-2 px-6 font-semibold">CICPA Card No</th>
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
-                    Company Code
-                  </th>
-                  <th className="py-2 px-6 font-semibold">EID No</th>
-                  <th className="py-2 px-6 font-semibold">Card Reference</th>
                   <th className="py-2 px-6 font-semibold whitespace-nowrap">
                     Meeting Person
                   </th>
@@ -411,11 +404,6 @@ const CardDetach = () => {
                       <td className="py-2 px-6">{item.visitorName}</td>
                       <td className="py-2 px-6">{item.organization}</td>
                       <td className="py-2 px-6">{item.phone}</td>
-                      <td className="py-2 px-6">{item.email}</td>
-                      <td className="py-2 px-6">{item.cicpaCard}</td>
-                      <td className="py-2 px-6">{item.companyCode}</td>
-                      <td className="py-2 px-6">{item.idNumber}</td>
-                      <td className="py-2 px-6">{item.cardReference}</td>
                       <td className="py-2 px-6">{item.meetingPerson}</td>
                       <td className="py-2 px-6">
                         <div className="flex flex-row space-x-3 justify-center ">

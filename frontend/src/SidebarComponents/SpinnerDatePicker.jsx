@@ -18,7 +18,7 @@ const months = [
 const currentYear = new Date().getFullYear();
 
 const years = Array.from(
-  { length: currentYear + 15 - 1950 + 1 },
+  { length: currentYear + 150 - 1950 + 1 },
   (_, i) => 1950 + i,
 );
 

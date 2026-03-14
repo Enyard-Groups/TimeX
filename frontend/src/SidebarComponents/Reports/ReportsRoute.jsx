@@ -14,6 +14,13 @@ import AbsenceSummaryReport from "./AbsenceReports/AbsenceSummaryReport";
 import EarlyOutReport from "./EarlyOutReport/EarlyOutReport";
 import LeaveMonthlySummary from "./LeaveReports/LeaveMonthlySummary";
 import LeaveSummaryDatewise from "./LeaveReports/LeaveSummaryDatewise";
+import EmployeeReport from "./EmployeeReport";
+import AllTransactionReport from "./AllTransactionReport";
+import ExceptionReports from "./ExceptionReports";
+import InOutReport from "./InOutReport";
+import WfhReport from "./WfhReport";
+import ClaimSummaryDatewise from "./ClaimSummaryDatewise";
+import ClaimsReport from "./ClaimsReport";
 
 const ReportsRoute = ({ user }) => {
   return (
@@ -21,7 +28,7 @@ const ReportsRoute = ({ user }) => {
       <Navbar user={user} />
       <div className="md:ml-50 mt-16 p-6 md:p-10 min-h-screen">
         <Routes>
-          <Route path="employee-report" element={<div>EmployeeReport</div>} />
+          <Route path="employee-report" element={<EmployeeReport />} />
           <Route path="mannual-entry-status" element={<MannualEntryStatus />} />
           <Route path="mannual-entry-report" element={<MannualEntryReport />} />
           <Route
@@ -30,7 +37,7 @@ const ReportsRoute = ({ user }) => {
           />
           <Route
             path="all-transaction-report"
-            element={<div>AllTransactionReport</div>}
+            element={<AllTransactionReport />}
           />
           <Route
             path="attendance-by-employee"
@@ -50,38 +57,32 @@ const ReportsRoute = ({ user }) => {
             element={<EmployeeWeeklyReport />}
           />
 
-          <Route path="exception-reports" element={<div>ExceptionReports</div>} />
+          <Route path="exception-reports" element={<ExceptionReports />} />
 
-          <Route
-            path="absence-report"
-            element={<AbsenceReport />}
-          />
+          <Route path="absence-report" element={<AbsenceReport />} />
           <Route
             path="absence-summary-report"
             element={<AbsenceSummaryReport />}
           />
 
-          <Route path="in-out-report" element={<div>InOutReport</div>} />
+          <Route path="in-out-report" element={<InOutReport />} />
 
-          <Route
-            path="early-out-report"
-            element={<EarlyOutReport />}
-          />
+          <Route path="early-out-report" element={<EarlyOutReport />} />
           <Route
             path="leave-montly-summary"
             element={<LeaveMonthlySummary />}
           />
-          <Route path="leave-summary-datewise" element={<LeaveSummaryDatewise />} />
+          <Route
+            path="leave-summary-datewise"
+            element={<LeaveSummaryDatewise />}
+          />
 
-          <Route path="wft-report" element={<div>WftReport</div>} />
+          <Route path="wft-report" element={<WfhReport />} />
           <Route
             path="claim-summary-datewise"
-            element={<div>ClaimSummaryDatewise</div>}
+            element={<ClaimSummaryDatewise />}
           />
-          <Route
-            path="claims-report"
-            element={<div>ClaimsReport</div>}
-          />
+          <Route path="claims-report" element={<ClaimsReport />} />
         </Routes>
       </div>
     </div>

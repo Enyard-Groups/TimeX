@@ -322,7 +322,7 @@ const Reports = ({ user }) => {
                     : "hover:text-[oklch(0.645_0.246_16.439)]"
                 }
               >
-                WFT Report
+                WFH Report
               </NavLink>
 
               <NavLink
