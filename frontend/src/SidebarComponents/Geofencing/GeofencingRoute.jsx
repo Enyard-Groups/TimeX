@@ -8,7 +8,7 @@ const GeofencingRoute = ({ user }) => {
   return (
     <div>
       <Navbar user={user} />
-      <div className="md:ml-50 mt-16 p-6 md:p-10 min-h-screen">
+      <div className="lg:ml-50 mt-16 p-6 md:p-10 min-h-screen">
         <Routes>
           <Route path="geofencing-master" element={<GeofencingMaster />} />
           <Route path="employee-geofencing" element={<EmployeeGeofencing />} />

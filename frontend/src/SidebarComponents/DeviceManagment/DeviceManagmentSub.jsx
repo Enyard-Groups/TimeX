@@ -81,6 +81,9 @@ const DeviceManagementSub = () => {
       company,
       deviceip,
       deviceserialno,
+      devicemodel,
+      longitude,
+      latitude,
       isFace,
       isFingerprint,
       isCardNo,
@@ -98,8 +101,11 @@ const DeviceManagementSub = () => {
       name,
       deviceip,
       company,
+      devicemodel,
       deviceserialno,
       isFace,
+      longitude,
+      latitude,
       isFingerprint,
       isCardNo,
       isPinNo,
@@ -302,16 +308,44 @@ const DeviceManagementSub = () => {
           <table className="w-full text-lg border-collapse">
             <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
               <tr>
-                <th className="py-2 px-6 font-semibold">SL.NO</th>
-                <th className="py-2 px-6 font-semibold whitespace-nowrap">Device Serial No</th>
+                <th className="py-2 px-6 font-semibold hidden sm:table-cell">
+                  SL.NO
+                </th>
+
+                <th className="py-2 px-6 font-semibold hidden md:table-cell">
+                  Device Serial No
+                </th>
+
                 <th className="py-2 px-6 font-semibold">Name</th>
-                <th className="py-2 px-6 font-semibold whitespace-nowrap">Device IP</th>
-                <th className="py-2 px-6 font-semibold">Face</th>
-                <th className="py-2 px-6 font-semibold">FingerPrint</th>
-                <th className="py-2 px-6 font-semibold whitespace-nowrap">Card No</th>
-                <th className="py-2 px-6 font-semibold whitespace-nowrap">Pin No</th>
-                <th className="py-2 px-6 font-semibold">Company</th>
-                <th className="py-2 px-6 font-semibold">Active</th>
+
+                <th className="py-2 px-6 font-semibold hidden md:table-cell">
+                  Device IP
+                </th>
+
+                <th className="py-2 px-6 font-semibold hidden lg:table-cell">
+                  Face
+                </th>
+
+                <th className="py-2 px-6 font-semibold hidden lg:table-cell">
+                  FingerPrint
+                </th>
+
+                <th className="py-2 px-6 font-semibold hidden xl:table-cell">
+                  Card No
+                </th>
+
+                <th className="py-2 px-6 font-semibold hidden xl:table-cell">
+                  Pin No
+                </th>
+
+                <th className="py-2 px-6 font-semibold hidden xl:table-cell">
+                  Company
+                </th>
+
+                <th className="py-2 px-6 font-semibold hidden xl:table-cell">
+                  Active
+                </th>
+
                 <th className="py-2 px-6 font-semibold">Action</th>
               </tr>
             </thead>
@@ -328,18 +362,43 @@ const DeviceManagementSub = () => {
                     key={item.id}
                     className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                   >
-                    <td className="py-2 px-6">{index + 1}</td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.deviceserialno}</td>
+                    <td className="py-2 px-6 hidden sm:table-cell">
+                      {index + 1}
+                    </td>
+
+                    <td className="py-2 px-6 hidden md:table-cell">
+                      {item.deviceserialno}
+                    </td>
+
                     <td className="py-2 px-6 whitespace-nowrap">{item.name}</td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.deviceip}</td>
-                    <td className="py-2 px-6">{item.isFace ? "Y" : "N"}</td>
-                    <td className="py-2 px-6">
+
+                    <td className="py-2 px-6 hidden md:table-cell">
+                      {item.deviceip}
+                    </td>
+
+                    <td className="py-2 px-6 hidden lg:table-cell">
+                      {item.isFace ? "Y" : "N"}
+                    </td>
+
+                    <td className="py-2 px-6 hidden lg:table-cell">
                       {item.isFingerprint ? "Y" : "N"}
                     </td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.isCardNo ? "Y" : "N"}</td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.isPinNo ? "Y" : "N"}</td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.company}</td>
-                    <td className="py-2 px-6">{item.isActive ? "Y" : "N"}</td>
+
+                    <td className="py-2 px-6 hidden xl:table-cell">
+                      {item.isCardNo ? "Y" : "N"}
+                    </td>
+
+                    <td className="py-2 px-6 hidden xl:table-cell">
+                      {item.isPinNo ? "Y" : "N"}
+                    </td>
+
+                    <td className="py-2 px-6 hidden xl:table-cell">
+                      {item.company}
+                    </td>
+
+                    <td className="py-2 px-6 hidden xl:table-cell">
+                      {item.isActive ? "Y" : "N"}
+                    </td>
                     <td className="py-2 px-6">
                       <div className="flex flex-row space-x-3 justify-center ">
                         {/* View */}
@@ -429,14 +488,34 @@ const DeviceManagementSub = () => {
       </div>
 
       {openModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
-        style={{ scrollbarWidth: "none" }}>
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
-          style={{ scrollbarWidth: "none" }}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+          style={{ scrollbarWidth: "none" }}
+        >
+          <div
+            className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+            style={{ scrollbarWidth: "none" }}
+          >
             {/* Close */}
             <div className="flex justify-end">
               <RxCross2
-                onClick={() => setOpenModal(false)}
+                onClick={() => {
+                  (setOpenModal(false),
+                    setFormData({
+                      company: "",
+                      name: "",
+                      deviceip: "",
+                      deviceserialno: "",
+                      longitude: "",
+                      latitude: "",
+                      devicemodel: "",
+                      isFace: false,
+                      isFingerprint: false,
+                      isCardNo: false,
+                      isPinNo: false,
+                      isActive: false,
+                    }));
+                }}
                 className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
               />
             </div>

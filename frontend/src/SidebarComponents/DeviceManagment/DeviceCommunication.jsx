@@ -18,7 +18,7 @@ const DeviceCommunication = () => {
       devicename: "ZKTeco F18",
       transfername: "10:30 AM",
       interval: "5 min",
-      lastactivity: "2026-03-07 10:25 AM",
+      lastactivity: "2026/03/07 10:25 AM",
       fwversion: "v6.2.1",
       usercount: 120,
       fpcount: 95,
@@ -31,7 +31,7 @@ const DeviceCommunication = () => {
       devicename: "ZKTeco K40",
       transfername: "09:45 AM",
       interval: "10 min",
-      lastactivity: "2026-03-07 09:40 AM",
+      lastactivity: "2026/03/07 09:40 AM",
       fwversion: "v5.9.0",
       usercount: 80,
       fpcount: 60,
@@ -44,7 +44,7 @@ const DeviceCommunication = () => {
       devicename: "ZKTeco MB20",
       transfername: "11:00 AM",
       interval: "5 min",
-      lastactivity: "2026-03-07 10:55 AM",
+      lastactivity: "2026/03/07 10:55 AM",
       fwversion: "v6.0.3",
       usercount: 150,
       fpcount: 110,
@@ -57,7 +57,7 @@ const DeviceCommunication = () => {
       devicename: "ZKTeco X990",
       transfername: "08:20 AM",
       interval: "15 min",
-      lastactivity: "2026-03-07 08:10 AM",
+      lastactivity: "2026/03/07 08:10 AM",
       fwversion: "v5.8.7",
       usercount: 60,
       fpcount: 40,
@@ -70,7 +70,7 @@ const DeviceCommunication = () => {
       devicename: "ZKTeco F22",
       transfername: "10:10 AM",
       interval: "5 min",
-      lastactivity: "2026-03-07 10:05 AM",
+      lastactivity: "2026/03/07 10:05 AM",
       fwversion: "v6.1.0",
       usercount: 140,
       fpcount: 100,
@@ -83,7 +83,7 @@ const DeviceCommunication = () => {
       devicename: "ZKTeco iFace302",
       transfername: "10:50 AM",
       interval: "5 min",
-      lastactivity: "2026-03-07 10:45 AM",
+      lastactivity: "2026/03/07 10:45 AM",
       fwversion: "v7.0.2",
       usercount: 200,
       fpcount: 150,
@@ -96,7 +96,7 @@ const DeviceCommunication = () => {
       devicename: "ZKTeco K14",
       transfername: "09:00 AM",
       interval: "10 min",
-      lastactivity: "2026-03-07 08:55 AM",
+      lastactivity: "2026/03/07 08:55 AM",
       fwversion: "v5.7.5",
       usercount: 70,
       fpcount: 50,
@@ -109,7 +109,7 @@ const DeviceCommunication = () => {
       devicename: "ZKTeco F19",
       transfername: "11:15 AM",
       interval: "5 min",
-      lastactivity: "2026-03-07 11:10 AM",
+      lastactivity: "2026/03/07 11:10 AM",
       fwversion: "v6.3.0",
       usercount: 160,
       fpcount: 120,
@@ -122,7 +122,7 @@ const DeviceCommunication = () => {
       devicename: "ZKTeco U160",
       transfername: "10:05 AM",
       interval: "5 min",
-      lastactivity: "2026-03-07 10:00 AM",
+      lastactivity: "2026/03/07 10:00 AM",
       fwversion: "v6.1.5",
       usercount: 130,
       fpcount: 90,
@@ -135,7 +135,7 @@ const DeviceCommunication = () => {
       devicename: "ZKTeco F17",
       transfername: "08:45 AM",
       interval: "15 min",
-      lastactivity: "2026-03-07 08:30 AM",
+      lastactivity: "2026/03/07 08:30 AM",
       fwversion: "v5.9.8",
       usercount: 95,
       fpcount: 70,
@@ -338,53 +338,96 @@ const DeviceCommunication = () => {
             <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
               <tr>
                 <th className="py-2 px-6 font-semibold">Status</th>
-                <th className="py-2 px-6 font-semibold whitespace-nowrap">Serial No</th>
-                <th className="py-2 px-6 font-semibold whitespace-nowrap">Device Name</th>
-                <th className="py-2 px-6 font-semibold whitespace-nowrap">Transfer Time</th>
-                <th className="py-2 px-6 font-semibold">Interval</th>
-                <th className="py-2 px-6 font-semibold whitespace-nowrap">Last Activity</th>
-                <th className="py-2 px-6 font-semibold whitespace-nowrap">FW Version</th>
-                <th className="py-2 px-6 font-semibold whitespace-nowrap">User Count</th>
-                <th className="py-2 px-6 font-semibold whitespace-nowrap">FP Count</th>
-                <th className="py-2 px-6 font-semibold whitespace-nowrap">Transaction Count</th>
+
+                <th className="py-2 px-6 font-semibold hidden sm:table-cell">
+                  Serial No
+                </th>
+
+                <th className="py-2 px-6 font-semibold">Device Name</th>
+
+                <th className="py-2 px-6 font-semibold hidden xl:table-cell">
+                  Transfer Time
+                </th>
+
+                <th className="py-2 px-6 font-semibold hidden xl:table-cell">
+                  Interval
+                </th>
+
+                <th className="py-2 px-6 font-semibold hidden lg:table-cell">
+                  Last Activity
+                </th>
+
+                <th className="py-2 px-6 font-semibold hidden xl:table-cell">
+                  FW Version
+                </th>
+
+                <th className="py-2 px-6 font-semibold hidden xl:table-cell">
+                  User Count
+                </th>
+
+                <th className="py-2 px-6 font-semibold hidden xl:table-cell">
+                  FP Count
+                </th>
+
+                <th className="py-2 px-6 font-semibold hidden lg:table-cell">
+                  Transaction Count
+                </th>
               </tr>
             </thead>
+
             <tbody>
-              {currentdevicecommunication.length === 0 ? (
-                <tr>
-                  <td colSpan="11" className="sm:text-center p-10">
-                    No Data Available
+              {currentdevicecommunication.map((item) => (
+                <tr
+                  key={item.id}
+                  className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                >
+                  <td className="py-2 px-6">
+                    <span
+                      className={
+                        item.status === "Online"
+                          ? "bg-green-100 text-green-700 rounded-xl px-2 py-1"
+                          : "bg-red-100 text-red-700 rounded-xl px-2 py-1"
+                      }
+                    >
+                      {item.status}
+                    </span>
+                  </td>
+
+                  <td className="py-2 px-6 hidden sm:table-cell">
+                    {item.serialno}
+                  </td>
+
+                  <td className="py-2 px-6 ">{item.devicename}</td>
+
+                  <td className="py-2 px-6 hidden xl:table-cell">
+                    {item.transfername}
+                  </td>
+
+                  <td className="py-2 px-6 hidden xl:table-cell">
+                    {item.interval}
+                  </td>
+
+                  <td className="py-2 px-6  hidden lg:table-cell ">
+                    {item.lastactivity}
+                  </td>
+
+                  <td className="py-2 px-6 hidden xl:table-cell">
+                    {item.fwversion}
+                  </td>
+
+                  <td className="py-2 px-6 hidden xl:table-cell">
+                    {item.usercount}
+                  </td>
+
+                  <td className="py-2 px-6 hidden xl:table-cell">
+                    {item.fpcount}
+                  </td>
+
+                  <td className="py-2 px-6 hidden lg:table-cell">
+                    {item.transactioncount}
                   </td>
                 </tr>
-              ) : (
-                currentdevicecommunication.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
-                  >
-                    <td className="py-2 px-6">
-                      <span
-                        className={
-                          item.status === "Online"
-                            ? "bg-green-100 text-green-700 rounded-xl px-2 py-1"
-                            : "bg-red-100 text-red-700 rounded-xl px-2 py-1"
-                        }
-                      >
-                        {item.status}
-                      </span>
-                    </td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.serialno}</td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.devicename}</td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.transfername}</td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.interval}</td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.lastactivity}</td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.fwversion}</td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.usercount}</td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.fpcount}</td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.transactioncount}</td>
-                  </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
         </div>

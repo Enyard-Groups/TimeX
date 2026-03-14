@@ -455,67 +455,76 @@ const Monitoring = () => {
             <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
               <tr>
                 <th className="py-2 px-6 font-semibold">Status</th>
+
                 <th className="py-2 px-6 font-semibold">Employee</th>
-                <th className="py-2 px-6 font-semibold">Date</th>
-                <th className="py-2 px-6 font-semibold">Day</th>
-                <th className="py-2 px-6 font-semibold">Login</th>
-                <th className="py-2 px-6 font-semibold">Logout</th>
-                <th className="py-2 px-6 font-semibold whitespace-nowrap">
+
+                <th className="py-2 px-6 font-semibold  hidden sm:table-cell">Date</th>
+
+                <th className="py-2 px-6 font-semibold hidden lg:table-cell">
+                  Day
+                </th>
+
+                <th className="py-2 px-6 font-semibold hidden lg:table-cell">Login</th>
+
+                <th className="py-2 px-6 font-semibold hidden lg:table-cell">
+                  Logout
+                </th>
+
+                <th className="py-2 px-6 font-semibold whitespace-nowrap  hidden sm:table-cell">
                   Working Hours
                 </th>
-                <th className="py-2 px-6 font-semibold">Location</th>
+
+                <th className="py-2 px-6 font-semibold hidden lg:table-cell">
+                  Location
+                </th>
               </tr>
             </thead>
 
             <tbody>
-              {currentmonitoring.length === 0 ? (
-                <tr>
-                  <td colSpan="8" className="sm:text-center p-10">
-                    No Data Available
+              {currentmonitoring.map((item) => (
+                <tr
+                  key={item.id}
+                  className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                >
+                  <td className="text-center">
+                    <div
+                      className={`w-3 h-3 rounded-full mx-auto ${
+                        item.status === "Online" ? "bg-green-700" : "bg-red-700"
+                      }`}
+                    ></div>
+                  </td>
+
+                  <td className="py-2 px-6 whitespace-nowrap">
+                    {item.employee}
+                  </td>
+
+                  <td className="py-2 px-6 whitespace-nowrap  hidden sm:table-cell">
+                    {item.date.toLocaleDateString()}
+                  </td>
+
+                  <td className="py-2 px-6 whitespace-nowrap hidden lg:table-cell">
+                    {item.date.toLocaleDateString("en-US", {
+                      weekday: "long",
+                    })}
+                  </td>
+
+                  <td className="py-2 px-6 hidden lg:table-cell">
+                    {item.login}
+                  </td>
+
+                  <td className="py-2 px-6 hidden lg:table-cell">
+                    {item.logout}
+                  </td>
+
+                  <td className="py-2 px-6  hidden sm:table-cell">
+                    {calculateWH(item.login, item.logout)}
+                  </td>
+
+                  <td className="py-2 px-6 whitespace-nowrap hidden lg:table-cell">
+                    {item.location}
                   </td>
                 </tr>
-              ) : (
-                currentmonitoring.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
-                  >
-                    <td className="text-center">
-                      <div
-                        className={`w-3 h-3 rounded-full mx-auto ${
-                          item.status === "Online"
-                            ? "bg-green-700"
-                            : "bg-red-700"
-                        }`}
-                      ></div>
-                    </td>
-
-                    <td className="py-2 px-6">{item.employee}</td>
-
-                    <td className="py-2 px-6 whitespace-nowrap">
-                      {item.date.toLocaleDateString()}
-                    </td>
-
-                    <td className="py-2 px-6 whitespace-nowrap">
-                      {item.date.toLocaleDateString("en-US", {
-                        weekday: "long",
-                      })}
-                    </td>
-
-                    <td className="py-2 px-6">{item.login}</td>
-
-                    <td className="py-2 px-6">{item.logout}</td>
-
-                    <td className="py-2 px-6">
-                      {calculateWH(item.login, item.logout)}
-                    </td>
-
-                    <td className="py-2 px-6 whitespace-nowrap">
-                      {item.location}
-                    </td>
-                  </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
         </div>

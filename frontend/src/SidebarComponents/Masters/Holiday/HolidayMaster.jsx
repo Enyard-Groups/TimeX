@@ -70,10 +70,31 @@ const HolidayMaster = () => {
   };
 
   const handleSubmit = () => {
-    const { name, code } = formData;
+    const { name, code, holidaystart, holidayend } = formData;
 
-    if (!name || !code) {
+    if (!name || !code || !holidaystart || !holidayend) {
       toast.error("Please fill required fields");
+      return;
+    }
+
+    const parseDate = (dateStr) => {
+      const [day, month, year] = dateStr.split("/");
+      return new Date(year, month - 1, day);
+    };
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const from = parseDate(holidaystart);
+    const to = parseDate(holidayend);
+
+    if (from < today) {
+      toast.error("First Date cannot be in the past");
+      return;
+    }
+
+    if (to < from) {
+      toast.error("Last Date must be after First Date");
       return;
     }
 
@@ -279,14 +300,36 @@ const HolidayMaster = () => {
           <table className="w-full text-lg border-collapse">
             <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
               <tr>
-                <th className="p-2 font-semibold">SL.NO</th>
-                <th className="p-2 font-semibold whitespace-nowrap">Holiday Code</th>
-                <th className="p-2 font-semibold whitespace-nowrap">Holiday Name</th>
-                <th className="p-2 font-semibold whitespace-nowrap">Holiday Start</th>
-                <th className="p-2 font-semibold whitespace-nowrap">Holiday End</th>
-                <th className="p-2 font-semibold">Company</th>
-                <th className="p-2 font-semibold">Location</th>
-                <th className="p-2 font-semibold">Active</th>
+                <th className="p-2 font-semibold hidden sm:table-cell">
+                  SL.NO
+                </th>
+
+                <th className="p-2 font-semibold hidden sm:table-cell">
+                  Holiday Code
+                </th>
+
+                <th className="p-2 font-semibold">Holiday Name</th>
+
+                <th className="p-2 font-semibold hidden md:table-cell">
+                  Holiday Start
+                </th>
+
+                <th className="p-2 font-semibold hidden md:table-cell">
+                  Holiday End
+                </th>
+
+                <th className="p-2 font-semibold hidden lg:table-cell">
+                  Company
+                </th>
+
+                <th className="p-2 font-semibold hidden xl:table-cell">
+                  Location
+                </th>
+
+                <th className="p-2 font-semibold hidden lg:table-cell">
+                  Active
+                </th>
+
                 <th className="p-2 font-semibold">Action</th>
               </tr>
             </thead>
@@ -303,23 +346,29 @@ const HolidayMaster = () => {
                     key={item.id}
                     className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                   >
-                    <td className="p-2">{index + 1}</td>
-                    <td className="p-2 whitespace-nowrap">{item.code}</td>
-                    <td className="p-2 whitespace-nowrap">{item.name}</td>
-                    <td className="p-2 whitespace-nowrap">
-                      {item.holidaystart
-                        ? new Date(item.holidaystart).toLocaleDateString()
-                        : ""}
+                    <td className="p-2 hidden sm:table-cell">{index + 1}</td>
+
+                    <td className="p-2 hidden sm:table-cell">{item.code}</td>
+
+                    <td className="p-2 ">{item.name}</td>
+
+                    <td className="p-2 hidden md:table-cell">
+                      {item.holidaystart ? item.holidaystart : ""}
                     </td>
 
-                    <td className="p-2 whitespace-nowrap">
-                      {item.holidayend
-                        ? new Date(item.holidayend).toLocaleDateString()
-                        : ""}
+                    <td className="p-2  hidden md:table-cell">
+                      {item.holidayend ? item.holidayend : ""}
                     </td>
-                    <td className="p-2 whitespace-nowrap">{item.company}</td>
-                    <td className="p-2 whitespace-nowrap">{item.location}</td>
-                    <td className="p-2">{item.isActive ? "Y" : "N"}</td>
+
+                    <td className="p-2 hidden lg:table-cell">{item.company}</td>
+
+                    <td className="p-2 hidden xl:table-cell">
+                      {item.location}
+                    </td>
+
+                    <td className="p-2 hidden lg:table-cell">
+                      {item.isActive ? "Y" : "N"}
+                    </td>
                     <td className="p-2">
                       <div className="flex flex-row space-x-3 justify-center ">
                         {/* View */}
@@ -408,14 +457,29 @@ const HolidayMaster = () => {
       </div>
 
       {openModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
-        style={{ scrollbarWidth: "none" }}>
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
-          style={{ scrollbarWidth: "none" }}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+          style={{ scrollbarWidth: "none" }}
+        >
+          <div
+            className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+            style={{ scrollbarWidth: "none" }}
+          >
             {/* Close */}
             <div className="flex justify-end">
               <RxCross2
-                onClick={() => setOpenModal(false)}
+                onClick={() => (
+                  setOpenModal(false),
+                  setFormData({
+                    name: "",
+                    code: "",
+                    holidaystart: null,
+                    holidayend: null,
+                    company: "",
+                    location: "",
+                    isActive: false,
+                  })
+                )}
                 className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
               />
             </div>
@@ -423,7 +487,10 @@ const HolidayMaster = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Code */}
               <div>
-                <label className={labelStyle}>Holiday Code</label>
+                <label className={labelStyle}>
+                  Holiday Code
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
                 <input
                   name="code"
                   value={formData.code}
@@ -467,7 +534,10 @@ const HolidayMaster = () => {
 
               {/* Holiday Start */}
               <div>
-                <label className={labelStyle}>Holiday Start</label>
+                <label className={labelStyle}>
+                  Holiday Start
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
                 <input
                   name="holidaystart"
                   value={formData.holidaystart}
@@ -493,7 +563,10 @@ const HolidayMaster = () => {
 
               {/* Holiday End */}
               <div>
-                <label className={labelStyle}>Holiday End</label>
+                <label className={labelStyle}>
+                  Holiday End
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+                </label>
                 <input
                   name="holidayend"
                   value={formData.holidayend}
@@ -520,11 +593,7 @@ const HolidayMaster = () => {
               {/* Location */}
               <div>
                 <SearchDropdown
-                  label={
-                    <>
-                      Location <span className="text-red-500">*</span>
-                    </>
-                  }
+                  label="Location"
                   name="location"
                   value={formData.location}
                   options={[

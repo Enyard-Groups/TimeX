@@ -17,6 +17,7 @@ import SearchDropdown from "../SearchDropdown";
 const MannualEntryRequest = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
+  const [selectedId, setSelectedID] = useState(null);
   const [mannualEntry, setMannualEntry] = useState(() => {
     const storedData = localStorage.getItem("mannualEntryRequests");
 
@@ -436,24 +437,36 @@ const MannualEntryRequest = () => {
             <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
-                  <th className="p-2 font-semibold whitespace-nowrap">
-                    Emp Name
+                  <th className="p-2 font-semibold">Emp Name</th>
+
+                  <th className="p-2 font-semibold hidden md:table-cell">
+                    Location
                   </th>
-                  <th className="p-2 font-semibold">Location</th>
-                  <th className="p-2 font-semibold whitespace-nowrap">
+
+                  <th className="p-2 font-semibold hidden lg:table-cell">
                     In Time
                   </th>
-                  <th className="p-2 font-semibold whitespace-nowrap">
+
+                  <th className="p-2 font-semibold hidden lg:table-cell">
                     Out Time
                   </th>
-                  <th className="p-2 font-semibold whitespace-nowrap">
+
+                  <th className="p-2 font-semibold hidden md:table-cell">
                     Created On
                   </th>
-                  <th className="p-2 font-semibold whitespace-nowrap">
+
+                  <th className="p-2 font-semibold hidden lg:table-cell">
                     Requested By
                   </th>
-                  <th className="p-2 font-semibold">Remarks</th>
-                  <th className="p-2 font-semibold">Status</th>
+
+                  <th className="p-2 font-semibold hidden xl:table-cell">
+                    Remarks
+                  </th>
+
+                  <th className="p-2 font-semibold  hidden md:table-cell">
+                    Status
+                  </th>
+
                   <th className="p-2 font-semibold">Action</th>
                 </tr>
               </thead>
@@ -471,50 +484,64 @@ const MannualEntryRequest = () => {
                       className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                     >
                       <td className="p-2 whitespace-nowrap">{item.employee}</td>
-                      <td className="p-2 whitespace-nowrap">{item.location}</td>
-                      <td className="p-2">
+
+                      <td className="p-2 hidden md:table-cell">
+                        {item.location}
+                      </td>
+
+                      <td className="p-2 hidden lg:table-cell">
                         {item.intime
                           ? new Date(item.intime).toLocaleTimeString([], {
                               hour12: false,
                             })
                           : ""}
                       </td>
-                      <td className="p-2 whitespace-nowrap">
+
+                      <td className="p-2 hidden lg:table-cell">
                         {item.outtime
                           ? new Date(item.outtime).toLocaleTimeString([], {
                               hour12: false,
                             })
                           : "No Checkout"}
                       </td>
-                      <td className="p-2">
+
+                      <td className="p-2 hidden md:table-cell">
                         {new Date(item.createdDate).toLocaleDateString()}
                       </td>
-                      <td className="p-2">{item.employee}</td>
-                      <td className="p-2 whitespace-nowrap">{item.remarks}</td>
-                      <td className="p-2">
+
+                      <td className="p-2 hidden lg:table-cell">
+                        {item.employee}
+                      </td>
+
+                      <td className="p-2 hidden xl:table-cell">
+                        {item.remarks}
+                      </td>
+
+                      <td className="p-2 hidden md:table-cell">
                         <span
                           className={`px-2 py-1 rounded text-sm
-      ${item.status === "Approved" && "bg-green-100 text-green-700"}
-      ${item.status === "Rejected" && "bg-red-100 text-red-700"}
-      ${item.status === "Pending" && "bg-yellow-100 text-yellow-700"}
-    `}
+${item.status === "Approved" && "bg-green-100 text-green-700"}
+${item.status === "Rejected" && "bg-red-100 text-red-700"}
+${item.status === "Pending" && "bg-yellow-100 text-yellow-700"}
+`}
                         >
                           {item.status}
                         </span>
                       </td>
-                      <td className="p-2">
+                      <td className="p-2 flex flex-row space-x-3 justify-center whitespace-nowrap">
+                        {" "}
+                        {/* View */}{" "}
+                        <FaEye
+                          onClick={() => {
+                            setSelectedID(item.id);
+                            setFormData(item);
+                            setMode("view");
+                            setOpenModal(true);
+                          }}
+                          className="inline text-blue-500 cursor-pointer text-lg mt-1"
+                        />{" "}
                         {item.status === "Pending" ? (
-                          <div className="flex flex-row space-x-3 justify-center ">
-                            {/* View */}
-                            <FaEye
-                              onClick={() => {
-                                setFormData(item);
-                                setMode("view");
-                                setOpenModal(true);
-                              }}
-                              className="inline text-blue-500 cursor-pointer text-lg"
-                            />
-
+                          <div className="flex flex-row space-x-3 justify-center mt-1">
                             {/* Edit */}
                             <FaPen
                               onClick={() => {
@@ -533,7 +560,7 @@ const MannualEntryRequest = () => {
                             />
                           </div>
                         ) : (
-                          "No Action"
+                          <div></div>
                         )}
                       </td>
                     </tr>
@@ -601,7 +628,20 @@ const MannualEntryRequest = () => {
               {/* Close */}
               <div className="flex justify-end">
                 <RxCross2
-                  onClick={() => setOpenModal(false)}
+                  onClick={() => (
+                    setOpenModal(false),
+                    setFormData({
+                      employee: "",
+                      location: "",
+                      intime: null,
+                      outtime: null,
+                      createdDate: new Date(),
+                      remarks: "",
+                      company: "",
+                      designation: "",
+                      employeeCategory: "",
+                    })
+                  )}
                   className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
                 />
               </div>
@@ -651,6 +691,7 @@ const MannualEntryRequest = () => {
                     options={["Company 1", "Company 2"]}
                     formData={formData}
                     setFormData={setFormData}
+                    disabled={mode === "view"}
                     inputStyle={inputStyle}
                     labelStyle={labelStyle}
                   />
@@ -672,6 +713,7 @@ const MannualEntryRequest = () => {
                     formData={formData}
                     setFormData={setFormData}
                     inputStyle={inputStyle}
+                    disabled={mode === "view"}
                     labelStyle={labelStyle}
                   />
                 </div>
@@ -708,6 +750,7 @@ const MannualEntryRequest = () => {
                     formData={formData}
                     setFormData={setFormData}
                     inputStyle={inputStyle}
+                    disabled={mode === "view"}
                     labelStyle={labelStyle}
                   />
                 </div>
@@ -804,6 +847,21 @@ const MannualEntryRequest = () => {
                 </div>
               )}
 
+              {mode === "view" &&
+                selectedId &&
+                (() => {
+                  const item = currentmannualEntry.find(
+                    (entry) => entry.id === selectedId,
+                  );
+
+                  return item ? (
+                    <div className="mt-4">
+                      <h1 className={labelStyle}>Status</h1>
+                      <p className={inputStyle}>{item.status}</p>
+                    </div>
+                  ) : null;
+                })()}
+
               {formData.employee && (
                 <div
                   className="mt-6 rounded-md overflow-hidden"
@@ -833,12 +891,8 @@ const MannualEntryRequest = () => {
                         <tr>
                           <th className="p-2 font-medium">Employee</th>
                           <th className="p-2 font-medium">Date</th>
-                          <th className="p-2 font-medium whitespace-nowrap">
-                            In Time
-                          </th>
-                          <th className="p-2 font-medium whitespace-nowrap">
-                            Out Time
-                          </th>
+                          <th className="p-2 font-medium ">In Time</th>
+                          <th className="p-2 font-medium ">Out Time</th>
                           <th className="p-2 font-medium">Location</th>
                         </tr>
                       </thead>

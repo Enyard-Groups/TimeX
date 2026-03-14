@@ -17,6 +17,7 @@ import SearchDropdown from "../SearchDropdown";
 const ClaimRequest = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
+  const [selectedId, setSelectedID] = useState(null);
   const [dateSpinner, setDateSpinner] = useState(false);
   const [claimRequest, setClaimRequest] = useState(() => {
     const stored = localStorage.getItem("claimRequests");
@@ -386,21 +387,19 @@ const ClaimRequest = () => {
             <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
-                  <th className="py-2 px-6 px-6 font-semibold">Employee</th>
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">Claim Category</th>
-                  <th className="py-2 px-6 font-semibold">Date</th>
-                  <th className="py-2 px-6 font-semibold">Purpose</th>
-                  <th className="py-2 px-6 font-semibold">Amount</th>
-                  <th className="py-2 px-6 font-semibold">FA</th>
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">FA Name</th>
-
-                  <th className="py-2 px-6 font-semibold">SA</th>
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">SA Name</th>
-
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">Rejected Reason</th>
-
-                  <th className="py-2 px-6 font-semibold">FA</th>
-                  <th className="py-2 px-6 font-semibold">SA</th>
+                  <th className="py-2 px-6 font-semibold">Employee</th>
+                  <th className="py-2 px-6 hidden sm:table-cell font-semibold whitespace-nowrap">
+                    Claim Category
+                  </th>
+                  <th className="py-2 px-6 hidden lg:table-cell font-semibold">
+                    Date
+                  </th>
+                  <th className="py-2 px-6 hidden lg:table-cell font-semibold">
+                    Purpose
+                  </th>
+                  <th className="py-2 px-6 hidden md:table-cell font-semibold">
+                    Amount
+                  </th>
 
                   <th className="py-2 px-6 font-semibold">Action</th>
                 </tr>
@@ -421,64 +420,38 @@ const ClaimRequest = () => {
                     >
                       <td className="py-2 px-6">{item.employee}</td>
 
-                      <td className="py-2 px-6 whitespace-nowraps">
+                      <td className="py-2 px-6 hidden sm:table-cell whitespace-nowraps">
                         {item.claimCategory}
                       </td>
 
-                      <td className="py-2 px-6 whitespace-nowrap">{item.date}</td>
+                      <td className="py-2 px-6 hidden lg:table-cell whitespace-nowrap">
+                        {item.date}
+                      </td>
 
-                      <td className="py-2 px-6 whitespace-nowrap">
+                      <td className="py-2 px-6 hidden lg:table-cell whitespace-nowrap">
                         {item.purpose ? item.purpose : "NIL"}
                       </td>
 
-                      <td className="py-2 px-6">{item.amount}</td>
-
-                      {/* FA Status */}
-                      {/* FA Status */}
-                      <td
-                        className={`py-2 px-6 text-xl  ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
-                      >
-                        {item.fa || "⏳"}
-                      </td>
-
-                      <td className="py-2 px-6">{item.faname || "⏳"}</td>
-
-                      {/* SA Status */}
-                      <td
-                        className={`py-2 px-6 text-xl  ${item.sa ? (item.sa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
-                      >
-                        {item.sa || "⏳"}
-                      </td>
-
-                      <td className="py-2 px-6">{item.saname || "⏳"}</td>
-
-                      <td className="py-2 px-6  whitespace-nowrap">
-                        {item.rejectedreason || "-"}
-                      </td>
-
-                      <td className="py-2 px-6">
-                        {item.fa ? (item.fa === "✔" ? "Y" : "N") : "⏳"}
-                      </td>
-
-                      <td className="py-2 px-6">
-                        {item.sa ? (item.sa === "✔" ? "Y" : "N") : "⏳"}
+                      <td className="py-2 px-6 hidden md:table-cell">
+                        {item.amount}
                       </td>
 
                       {/* Actions */}
-                      <td className="py-2 px-6">
+                      <td className="py-2 px-6 flex flex-row space-x-3 justify-center whitespace-nowrap">
                         {" "}
+                        {/* View */}{" "}
+                        <FaEye
+                          onClick={() => {
+                            setSelectedID(item.id);
+                            setFormData(item);
+                            setMode("view");
+                            setOpenModal(true);
+                          }}
+                          className="inline text-blue-500 cursor-pointer text-lg mt-1"
+                        />{" "}
                         {item.status === "Pending" ? (
-                          <div className="flex flex-row space-x-3 justify-center ">
+                          <div className="flex flex-row space-x-3 justify-center mt-1">
                             {" "}
-                            {/* View */}{" "}
-                            <FaEye
-                              onClick={() => {
-                                setFormData(item);
-                                setMode("view");
-                                setOpenModal(true);
-                              }}
-                              className="inline text-blue-500 cursor-pointer text-lg"
-                            />{" "}
                             {/* Edit */}{" "}
                             <FaPen
                               onClick={() => {
@@ -496,7 +469,7 @@ const ClaimRequest = () => {
                             />{" "}
                           </div>
                         ) : (
-                          "No Action"
+                          <div></div>
                         )}
                       </td>
                     </tr>
@@ -553,14 +526,28 @@ const ClaimRequest = () => {
         </div>
 
         {openModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
-          style={{ scrollbarWidth: "none" }}>
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
-            style={{ scrollbarWidth: "none" }}>
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
+            <div
+              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+              style={{ scrollbarWidth: "none" }}
+            >
               {/* Close */}
               <div className="flex justify-end">
                 <RxCross2
-                  onClick={() => setOpenModal(false)}
+                  onClick={() => (
+                    setOpenModal(false),
+                    setFormData({
+                      employee: "",
+                      claimCategory: "",
+                      date: "",
+                      amount: "",
+                      purpose: "",
+                      remarks: "",
+                    })
+                  )}
                   className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
                 />
               </div>
@@ -785,6 +772,53 @@ const ClaimRequest = () => {
                   </button>
                 </div>
               )}
+
+              {mode === "view" &&
+                selectedId &&
+                (() => {
+                  const item = currentClaimRequest.find(
+                    (entry) => entry.id === selectedId,
+                  );
+
+                  return item ? (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+                    <div>
+                      <h1 className={labelStyle}>FA</h1>
+                      <p
+                        className={`${inputStyle} ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
+                      >
+                        {item.fa || "⏳"}
+                      </p>
+                    </div>
+                    <div>
+                      <h1 className={labelStyle}>FA Name</h1>
+                      <p className={`${inputStyle}`}>{item.faname || "⏳"}</p>
+                    </div>
+
+                    <div>
+                      <h1 className={labelStyle}>SA</h1>
+                      <p
+                        className={`${inputStyle} ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
+                      >
+                        {item.sa || "⏳"}
+                      </p>
+                    </div>
+
+                    <div>
+                      <h1 className={labelStyle}>SA Name</h1>
+                      <p className={`${inputStyle}`}>{item.saname || "⏳"}</p>
+                    </div>
+
+                    <div className="lg:col-span-2">
+                      <h1 className={labelStyle}>Rejected Reason</h1>
+                      <p className={`${inputStyle}`}>
+                        {item.rejectedreason || "⏳"}
+                      </p>
+                    </div>
+                  </div>
+                  ) : null;
+                })()}
+
             </div>
           </div>
         )}

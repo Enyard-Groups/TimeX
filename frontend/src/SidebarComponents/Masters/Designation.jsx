@@ -275,12 +275,28 @@ const Designation = () => {
             <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
-                  <th className="p-2 font-semibold">SL.NO</th>
-                  <th className="p-2 font-semibold whitespace-nowrap">Designation Name</th>
-                  <th className="p-2 font-semibold whitespace-nowrap">Designation Code</th>
-                  <th className="p-2 font-semibold">Company</th>
-                  <th className="p-2 font-semibold whitespace-nowrap">Department Name</th>
-                  <th className="p-2 font-semibold">Active</th>
+                  <th className="p-2 font-semibold hidden sm:table-cell">
+                    SL.NO
+                  </th>
+
+                  <th className="p-2 font-semibold ">Designation Name</th>
+
+                  <th className="p-2 font-semibold  hidden md:table-cell">
+                    Designation Code
+                  </th>
+
+                  <th className="p-2 font-semibold hidden lg:table-cell">
+                    Company
+                  </th>
+
+                  <th className="p-2 font-semibold hidden md:table-cell">
+                    Department Name
+                  </th>
+
+                  <th className="p-2 font-semibold hidden lg:table-cell">
+                    Active
+                  </th>
+
                   <th className="p-2 font-semibold">Action</th>
                 </tr>
               </thead>
@@ -297,12 +313,24 @@ const Designation = () => {
                       key={item.id}
                       className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                     >
-                      <td className="p-2">{index + 1}</td>
+                      <td className="p-2 hidden sm:table-cell">{index + 1}</td>
+
                       <td className="p-2">{item.name}</td>
-                      <td className="p-2">{item.code}</td>
-                      <td className="p-2">{item.company}</td>
-                      <td className="p-2">{item.department}</td>
-                      <td className="p-2">{item.isActive ? "Y" : "N"}</td>
+
+                      <td className="p-2 hidden md:table-cell">{item.code}</td>
+
+                      <td className="p-2 hidden lg:table-cell">
+                        {item.company}
+                      </td>
+
+                      <td className="p-2 hidden md:table-cell">
+                        {item.department}
+                      </td>
+
+                      <td className="p-2 hidden lg:table-cell">
+                        {item.isActive ? "Y" : "N"}
+                      </td>
+
                       <td className="p-2">
                         <div className="flex flex-row space-x-3 justify-center ">
                           {/* View */}
@@ -391,8 +419,10 @@ const Designation = () => {
         </div>
 
         {openModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
-          style={{ scrollbarWidth: "none" }}>
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
             <div
               className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
               style={{ scrollbarWidth: "none" }}
@@ -400,7 +430,17 @@ const Designation = () => {
               {/* Close */}
               <div className="flex justify-end">
                 <RxCross2
-                  onClick={() => setOpenModal(false)}
+                  onClick={() => (
+                    setOpenModal(false),
+                    setFormData({
+                      company: "",
+                      name: "",
+                      code: "",
+                      department: "",
+                      description: "",
+                      isActive: false,
+                    })
+                  )}
                   className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
                 />
               </div>

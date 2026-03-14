@@ -348,50 +348,94 @@ const Performance = () => {
             <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
-                  <th className="py-2 px-6 font-semibold">Serial No</th>
-                  <th className="py-2 px-6 font-semibold"> First Name</th>
-                  <th className="py-2 px-6 font-semibold"> Daily Hours</th>
-                  <th className="py-2 px-6 font-semibold">Daily Target</th>
-                  <th className="py-2 px-6 font-semibold">Daily Status</th>
-                  <th className="py-2 px-6 font-semibold">
-                    Total Weekly Hours{" "}
+                  <th className="p-2 font-semibold hidden sm:table-cell">
+                    Serial No
                   </th>
-                  <th className="py-2 px-6 font-semibold">Target Weekly</th>
-                  <th className="py-2 px-6 font-semibold">Weekly Status</th>
-                  <th className="py-2 px-6 font-semibold">
+
+                  <th className="p-2 font-semibold">First Name</th>
+
+                  <th className="p-2 font-semibold">Daily Hours</th>
+
+                  <th className="p-2 font-semibold hidden xl:table-cell">
+                    Daily Target
+                  </th>
+
+                  <th className="p-2 font-semibold hidden md:table-cell">
+                    Daily Status
+                  </th>
+
+                  <th className="p-2 font-semibold hidden md:table-cell">
+                    Total Weekly Hours
+                  </th>
+
+                  <th className="p-2 font-semibold hidden xl:table-cell">
+                    Target Weekly
+                  </th>
+
+                  <th className="p-2 font-semibold hidden lg:table-cell">
+                    Weekly Status
+                  </th>
+
+                  <th className="p-2 font-semibold hidden lg:table-cell">
                     Total Monthly Hours
                   </th>
-                  <th className="py-2 px-6 font-semibold">Target Monthly</th>
-                  <th className="py-2 px-6 font-semibold">Monthly Status</th>
+
+                  <th className="p-2 font-semibold hidden xl:table-cell">
+                    Target Monthly
+                  </th>
+
+                  <th className="p-2 font-semibold hidden lg:table-cell">
+                    Monthly Status
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {currentperformance.length === 0 ? (
-                  <tr>
-                    <td colSpan="11" className="sm:text-center p-10">
-                      No Data Available
+                {currentperformance.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                  >
+                    <td className="p-2 hidden sm:table-cell">
+                      {item.serialno}
+                    </td>
+
+                    <td className="p-2 ">{item.firstname}</td>
+
+                    <td className="p-2">{item.dailyhours}</td>
+
+                    <td className="p-2 hidden xl:table-cell">
+                      {item.dailytarget}
+                    </td>
+
+                    <td className="p-2 hidden md:table-cell">
+                      {item.dailystatus}
+                    </td>
+
+                    <td className="p-2 hidden md:table-cell">
+                      {item.totalweeklyhours}
+                    </td>
+
+                    <td className="p-2 hidden xl:table-cell">
+                      {item.targetweekly}
+                    </td>
+
+                    <td className="p-2 hidden lg:table-cell">
+                      {item.weeklystatus}
+                    </td>
+
+                    <td className="p-2 hidden lg:table-cell">
+                      {item.totalmonthlyhours}
+                    </td>
+
+                    <td className="p-2 hidden xl:table-cell">
+                      {item.targetmonthly}
+                    </td>
+
+                    <td className="p-2 hidden lg:table-cell">
+                      {item.monthlystatus}
                     </td>
                   </tr>
-                ) : (
-                  currentperformance.map((item) => (
-                    <tr
-                      key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
-                    >
-                      <td className="py-2 px-6">{item.serialno}</td>
-                      <td className="py-2 px-6">{item.firstname}</td>
-                      <td className="py-2 px-6">{item.dailyhours}</td>
-                      <td className="py-2 px-6">{item.dailytarget}</td>
-                      <td className="py-2 px-6">{item.dailystatus}</td>
-                      <td className="py-2 px-6">{item.totalweeklyhours}</td>
-                      <td className="py-2 px-6">{item.targetweekly}</td>
-                      <td className="py-2 px-6">{item.weeklystatus}</td>
-                      <td className="py-2 px-6">{item.totalmonthlyhours}</td>
-                      <td className="py-2 px-6">{item.targetmonthly}</td>
-                      <td className="py-2 px-6">{item.monthlystatus}</td>
-                    </tr>
-                  ))
-                )}
+                ))}
               </tbody>
             </table>
           </div>

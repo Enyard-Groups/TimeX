@@ -437,12 +437,28 @@ const UserMaster = () => {
             <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
-                  <th className="p-2 font-semibold">SL.NO</th>
+                  <th className="p-2 font-semibold hidden sm:table-cell">
+                    SL.NO
+                  </th>
+
                   <th className="p-2 font-semibold">User Name</th>
-                  <th className="p-2 font-semibold">Employee</th>
-                  <th className="p-2 font-semibold">Employee Email</th>
-                  <th className="p-2 font-semibold">Role</th>
-                  <th className="p-2 font-semibold">Active</th>
+
+                  <th className="p-2 font-semibold hidden md:table-cell">
+                    Employee
+                  </th>
+
+                  <th className="p-2 font-semibold hidden lg:table-cell">
+                    Employee Email
+                  </th>
+
+                  <th className="p-2 font-semibold hidden md:table-cell">
+                    Role
+                  </th>
+
+                  <th className="p-2 font-semibold hidden lg:table-cell">
+                    Active
+                  </th>
+
                   <th className="p-2 font-semibold">Action</th>
                 </tr>
               </thead>
@@ -459,12 +475,23 @@ const UserMaster = () => {
                       key={user.id}
                       className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)] "
                     >
-                      <td className="p-2">{index + 1}</td>
-                      <td className="p-2">{user.userName}</td>
-                      <td className="p-2">{user.empname}</td>
-                      <td className="p-2">{user.enrollmentId}</td>
-                      <td className="p-2">{user.role}</td>
-                      <td className="p-2">{user.active ? "Y" : "N"}</td>
+                      <td className="p-2 hidden sm:table-cell">{index + 1}</td>
+
+                      <td className="p-2 ">{user.userName}</td>
+
+                      <td className="p-2  hidden md:table-cell">
+                        {user.empname}
+                      </td>
+
+                      <td className="p-2  hidden lg:table-cell">
+                        {user.enrollmentId}
+                      </td>
+
+                      <td className="p-2  hidden md:table-cell">{user.role}</td>
+
+                      <td className="p-2 hidden lg:table-cell">
+                        {user.active ? "Y" : "N"}
+                      </td>
                       <td className="p-2">
                         <div className="flex flex-row space-x-3 justify-center ">
                           {/* View */}
@@ -596,7 +623,18 @@ const UserMaster = () => {
                 </div>
 
                 <RxCross2
-                  onClick={() => setOpenModal(false)}
+                  onClick={() => (
+                    setOpenModal(false),
+                    setFormData({
+                      userName: "",
+                      empname: "",
+                      enrollmentId: "",
+                      company: "",
+                      password: "",
+                      active: false,
+                      role: "User",
+                    })
+                  )}
                   className="cursor-pointer text-lg text-red-500"
                 />
               </div>
@@ -729,19 +767,24 @@ const UserMaster = () => {
                       <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                         <tr>
                           <th className="border border-[oklch(0.8_0.001_106.424)] p-2 w-10"></th>
-                          <th className="border border-[oklch(0.8_0.001_106.424)]  p-2 whitespace-nowrap">
+
+                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2 hidden md:table-cell">
                             ParentMenu ID
                           </th>
-                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2 whitespace-nowrap">
+
+                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2 hidden sm:table-cell">
                             Menu ID
                           </th>
-                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2 text-left whitespace-nowrap">
+
+                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2 text-left">
                             Menu Name
                           </th>
-                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2 text-left">
+
+                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2 text-left hidden md:table-cell">
                             URL
                           </th>
-                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2">
+
+                          <th className="border border-[oklch(0.8_0.001_106.424)] p-2 hidden sm:table-cell">
                             IsSelected
                           </th>
                         </tr>
@@ -754,27 +797,28 @@ const UserMaster = () => {
                               <input
                                 type="checkbox"
                                 checked={menu.isSelected}
+                                disabled={mode === "view"}
                                 onChange={() => handleCheckbox(menu.menuID)}
                               />
                             </td>
 
-                            <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
+                            <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center hidden md:table-cell">
                               {menu.parentMenuID}
                             </td>
 
-                            <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
+                            <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center hidden sm:table-cell">
                               {menu.menuID}
                             </td>
 
-                            <td className="border border-[oklch(0.8_0.001_106.424)] p-2 ">
+                            <td className="border border-[oklch(0.8_0.001_106.424)] p-2">
                               {menu.menuName}
                             </td>
 
-                            <td className="border border-[oklch(0.8_0.001_106.424)] p-2">
+                            <td className="border border-[oklch(0.8_0.001_106.424)] p-2 hidden md:table-cell">
                               {menu.url}
                             </td>
 
-                            <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center">
+                            <td className="border border-[oklch(0.8_0.001_106.424)] p-2 text-center hidden sm:table-cell">
                               {menu.isSelected ? "True" : "False"}
                             </td>
                           </tr>

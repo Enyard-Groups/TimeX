@@ -3,10 +3,14 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FaAngleRight } from "react-icons/fa6";
 import { GrNext, GrPrevious } from "react-icons/gr";
+import { FaEye } from "react-icons/fa";
+import { RxCross2 } from "react-icons/rx";
 
 const MannualEntryApproval = () => {
   const [requests, setRequests] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,6 +20,12 @@ const MannualEntryApproval = () => {
       JSON.parse(localStorage.getItem("mannualEntryRequests")) || [];
     setRequests(stored);
   }, []);
+
+  const inputStyle =
+    "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+
+  const labelStyle =
+    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   // Single Approve/ Reject
   const updateStatus = (id, value) => {
@@ -107,6 +117,8 @@ const MannualEntryApproval = () => {
     Math.ceil(filteredData.length / entriesPerPage),
   );
 
+  const selectedItem = requests.find((item) => item.id === selectedId);
+
   return (
     <div className="mb-16">
       <div className="flex items-center gap-2 text-lg font-semibold">
@@ -192,11 +204,17 @@ const MannualEntryApproval = () => {
                     />
                   </th>
                   <th className="p-2 whitespace-nowrap">Emp Name</th>
-                  <th className="p-2">Location</th>
-                  <th className="p-2 whitespace-nowrap">In Time</th>
-                  <th className="p-2 whitespace-nowrap">Out Time</th>
-                  <th className="p-2 whitespace-nowrap">Created On</th>
-                  <th className="p-2">Remarks</th>
+                  <th className="p-2 hidden xl:table-cell ">Location</th>
+                  <th className="p-2 hidden md:table-cell  whitespace-nowrap">
+                    In Time
+                  </th>
+                  <th className="p-2 hidden md:table-cell  whitespace-nowrap">
+                    Out Time
+                  </th>
+                  <th className="p-2 hidden sm:table-cell  whitespace-nowrap">
+                    Created On
+                  </th>
+                  <th className="p-2 hidden xl:table-cell ">Remarks</th>
                   <th className="p-2">Action</th>
                 </tr>
               </thead>
@@ -221,11 +239,15 @@ const MannualEntryApproval = () => {
                           onChange={() => handleSelect(item.id)}
                         />
                       </td>
-                      <td className="p-2 whitespace-nowrap">{item.employee}</td>
+                      <td className="p-2  whitespace-nowrap">
+                        {item.employee}
+                      </td>
 
-                      <td className="p-2 whitespace-nowrap">{item.location}</td>
+                      <td className="p-2 hidden xl:table-cell  whitespace-nowrap">
+                        {item.location}
+                      </td>
 
-                      <td className="p-2">
+                      <td className="p-2 hidden md:table-cell ">
                         {item.intime
                           ? new Date(item.intime).toLocaleTimeString([], {
                               hour12: false,
@@ -233,7 +255,7 @@ const MannualEntryApproval = () => {
                           : ""}
                       </td>
 
-                      <td className="p-2 whitespace-nowrap">
+                      <td className="p-2 hidden md:table-cell  whitespace-nowrap">
                         {item.outtime
                           ? new Date(item.outtime).toLocaleTimeString([], {
                               hour12: false,
@@ -241,24 +263,33 @@ const MannualEntryApproval = () => {
                           : "No Checkout"}
                       </td>
 
-                      <td className="p-2">
+                      <td className="p-2 hidden sm:table-cell ">
                         {new Date(item.createdDate).toLocaleDateString()}
                       </td>
 
-                      <td className="p-2 whitespace-nowrap">{item.remarks}</td>
+                      <td className="p-2 hidden xl:table-cell  whitespace-nowrap">
+                        {item.remarks}
+                      </td>
 
                       <td className="p-2">
                         <div className="flex gap-2 justify-center">
+                          <FaEye
+                            onClick={() => {
+                              setSelectedId(item.id);
+                              setOpenModal(true);
+                            }}
+                            className="text-blue-500 cursor-pointer text-lg mt-2 mr-2"
+                          />
                           <button
                             onClick={() => updateStatus(item.id, "Approved")}
-                            className="bg-green-100 text-green-700 px-3 py-1 rounded"
+                            className="hidden sm:table-cell bg-green-100 text-green-700 px-3 py-1 rounded"
                           >
                             Approve
                           </button>
 
                           <button
                             onClick={() => updateStatus(item.id, "Rejected")}
-                            className="bg-red-100 text-red-700 px-3 py-1 rounded"
+                            className="hidden sm:table-cell bg-red-100 text-red-700 px-3 py-1 rounded"
                           >
                             Reject
                           </button>
@@ -283,7 +314,7 @@ const MannualEntryApproval = () => {
               <button
                 disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="p-2 hidden lg:table-cell  bg-gray-200 rounded-full disabled:opacity-50"
               >
                 First
               </button>
@@ -309,7 +340,7 @@ const MannualEntryApproval = () => {
               <button
                 disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="p-2 hidden lg:table-cell  bg-gray-200 rounded-full disabled:opacity-50"
               >
                 Last
               </button>
@@ -317,6 +348,99 @@ const MannualEntryApproval = () => {
           </div>
         </div>
       </div>
+
+      {openModal && selectedItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold">Manual Entry Details</h2>
+
+              <RxCross2
+                onClick={() => setOpenModal(false)}
+                className="cursor-pointer text-xl text-red-500"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-lg">
+              <div>
+                <p className={labelStyle}>Employee</p>
+                <p className={inputStyle}>{selectedItem.employee}</p>
+              </div>
+
+              <div>
+                <p className={labelStyle}>Location</p>
+                <p className={inputStyle}>{selectedItem.location}</p>
+              </div>
+
+              <div>
+                <p className={labelStyle}>Company</p>
+                <p className={inputStyle}>{selectedItem.company || "N/A"}</p>
+              </div>
+
+              <div>
+                <p className={labelStyle}>Designation</p>
+                <p className={inputStyle}>
+                  {selectedItem.designation || "N/A"}
+                </p>
+              </div>
+
+              <div>
+                <p className={labelStyle}>Employee Category</p>
+                <p className={inputStyle}>
+                  {selectedItem.employeeCategory || "N/A"}
+                </p>
+              </div>
+
+              <div>
+                <p className={labelStyle}>In Time</p>
+                <p className={inputStyle}>
+                  {selectedItem.intime
+                    ? new Date(selectedItem.intime).toLocaleTimeString([], {
+                        hour12: false,
+                      })
+                    : ""}
+                </p>
+              </div>
+
+              <div>
+                <p className={labelStyle}>Out Time</p>
+                <p className={inputStyle}>
+                  {selectedItem.outtime
+                    ? new Date(selectedItem.outtime).toLocaleTimeString([], {
+                        hour12: false,
+                      })
+                    : "No Checkout"}
+                </p>
+              </div>
+
+              <div>
+                <p className={labelStyle}>Created Date</p>
+                <p className={inputStyle}>
+                  {new Date(selectedItem.createdDate).toLocaleDateString()}
+                </p>
+              </div>
+
+              <div>
+                <p className={labelStyle}>Remarks</p>
+                <p className={inputStyle}>{selectedItem.remarks}</p>
+              </div>
+
+              <div>
+                <p className={labelStyle}>Status</p>
+                <span
+                  className={`px-2 py-1 rounded text-sm
+            ${selectedItem.status === "Approved" && "bg-green-100 text-green-700"}
+            ${selectedItem.status === "Rejected" && "bg-red-100 text-red-700"}
+            ${selectedItem.status === "Pending" && "bg-yellow-100 text-yellow-700"}
+            `}
+                >
+                  {selectedItem.status}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

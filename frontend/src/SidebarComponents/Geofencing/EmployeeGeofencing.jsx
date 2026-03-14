@@ -320,11 +320,11 @@ const EmployeeGeofencing = () => {
                   />
                 </th>
 
-                <th className="p-2 font-semibold whitespace-nowrap">Enrollment ID</th>
-                <th className="p-2 font-semibold whitespace-nowrap">Employee Name</th>
-                <th className="p-2 font-semibold whitespace-nowrap">Department Name</th>
-                <th className="p-2 font-semibold whitespace-nowrap">Designation Name</th>
-                <th className="p-2 font-semibold whitespace-nowrap">Assigned Location</th>
+                <th className="p-2 font-semibold hidden sm:table-cell">Enrollment ID</th>
+                <th className="p-2 font-semibold ">Employee Name</th>
+                <th className="p-2 font-semibold  hidden lg:table-cell">Department Name</th>
+                <th className="p-2 font-semibold hidden md:table-cell ">Designation Name</th>
+                <th className="p-2 font-semibold  hidden lg:table-cell">Assigned Location</th>
               </tr>
             </thead>
 
@@ -349,11 +349,11 @@ const EmployeeGeofencing = () => {
                       />
                     </td>
 
-                    <td className="p-2">{item.id}</td>
-                    <td className="p-2 whitespace-nowrap">{item.name}</td>
-                    <td className="p-2 whitespace-nowrap">{item.department}</td>
-                    <td className="p-2 whitespace-nowrap">{item.designation}</td>
-                    <td className="p-2 whitespace-nowrap">{item.location}</td>
+                    <td className="p-2 hidden sm:table-cell hidden sm:table-cell">{item.id}</td>
+                    <td className="p-2 ">{item.name}</td>
+                    <td className="p-2 hidden lg:table-cell ">{item.department}</td>
+                    <td className="p-2 hidden md:table-cell">{item.designation}</td>
+                    <td className="p-2 hidden lg:table-cell ">{item.location}</td>
                   </tr>
                 ))
               )}

@@ -17,6 +17,7 @@ import SearchDropdown from "../SearchDropdown";
 const LeaveRequest = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
+  const [selectedId, setSelectedID] = useState(null);
   const [fromDateSpinner, setFromDateSpinner] = useState(false);
   const [toDateSpinner, setToDateSpinner] = useState(false);
   const [showResumeSpinner, setShowResumeSpinner] = useState(false);
@@ -407,37 +408,22 @@ const LeaveRequest = () => {
             <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
-                  <th className="py-2 px-6 px-6 font-semibold">Employee</th>
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                  <th className="p-2 font-semibold">Employee</th>
+                  <th className="p-2 hidden sm:table-cell font-semibold whitespace-nowrap">
                     Leave Type
                   </th>
-                  <th className="py-2 px-6 font-semibold">From</th>
-                  <th className="py-2 px-6 font-semibold">To</th>
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                  <th className="p-2 hidden lg:table-cell font-semibold">
+                    From
+                  </th>
+                  <th className="p-2 hidden lg:table-cell font-semibold">To</th>
+                  <th className="p-2 hidden sm:table-cell font-semibold whitespace-nowrap">
                     Resume On
                   </th>
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                  <th className="p-2 hidden md:table-cell font-semibold whitespace-nowrap">
                     Leave Reason
                   </th>
 
-                  <th className="py-2 px-6 font-semibold">FA</th>
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
-                    FA Name
-                  </th>
-
-                  <th className="py-2 px-6 font-semibold">SA</th>
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
-                    SA Name
-                  </th>
-
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
-                    Rejected Reason
-                  </th>
-
-                  <th className="py-2 px-6 font-semibold">FA</th>
-                  <th className="py-2 px-6 font-semibold">SA</th>
-
-                  <th className="py-2 px-6 font-semibold">Action</th>
+                  <th className="p-2 font-semibold">Action</th>
                 </tr>
               </thead>
 
@@ -454,75 +440,46 @@ const LeaveRequest = () => {
                       key={item.id}
                       className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                     >
-                      <td className="py-2 px-6">{item.employee}</td>
+                      <td className="p-2">{item.employee}</td>
 
-                      <td className="py-2 px-6 whitespace-nowraps">
+                      <td className="p-2 hidden sm:table-cell whitespace-nowraps">
                         {item.leaveType}
                       </td>
 
-                      <td className="py-2 px-6 whitespace-nowrap">
+                      <td className="p-2 hidden lg:table-cell whitespace-nowrap">
                         {item.fromDate}
                       </td>
 
-                      <td className="py-2 px-6 whitespace-nowrap">
+                      <td className="p-2 hidden lg:table-cell whitespace-nowrap">
                         {item.toDate}
                       </td>
 
-                      <td className="py-2 px-6 whitespace-nowrap">
+                      <td className="p-2 hidden sm:table-cell whitespace-nowrap">
                         {item.resumeOn}
                       </td>
 
-                      <td className="py-2 px-6 whitespace-nowrap">
+                      <td className="p-2 hidden md:table-cell whitespace-nowrap">
                         {item.reason
                           ? `${item.leaveType} - ${item.reason}`
                           : `${item.leaveType} - NIL`}
                       </td>
 
-                      {/* FA Status */}
-                      <td
-                        className={`py-2 px-6 text-xl  ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
-                      >
-                        {item.fa || "⏳"}
-                      </td>
-
-                      <td className="py-2 px-6">{item.faname || "⏳"}</td>
-
-                      {/* SA Status */}
-                      <td
-                        className={`py-2 px-6 text-xl  ${item.sa ? (item.sa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
-                      >
-                        {item.sa || "⏳"}
-                      </td>
-
-                      <td className="py-2 px-6">{item.saname || "⏳"}</td>
-
-                      <td className="py-2 px-6 whitespace-nowrap">
-                        {item.rejectedreason || "-"}
-                      </td>
-
-                      <td className="py-2 px-6">
-                        {item.fa ? (item.fa === "✔" ? "Y" : "N") : "⏳"}
-                      </td>
-
-                      <td className="py-2 px-6">
-                        {item.sa ? (item.sa === "✔" ? "Y" : "N") : "⏳"}
-                      </td>
-
                       {/* Actions */}
-                      <td className="py-2 px-6">
+                      <td className="p-2 flex flex-row space-x-3 justify-center  whitespace-nowrap">
                         {" "}
+                        {/* View */}{" "}
+                        <FaEye
+                          onClick={() => {
+                            setSelectedID(item.id);
+                            setFormData(item);
+                            setMode("view");
+                            setOpenModal(true);
+                          }}
+                          className="inline text-blue-500 cursor-pointer text-lg mt-1"
+                        />{" "}
                         {item.status === "Pending" ? (
-                          <div className="flex flex-row space-x-3 justify-center ">
+                          <div className="flex flex-row space-x-3 justify-center mt-1">
                             {" "}
-                            {/* View */}{" "}
-                            <FaEye
-                              onClick={() => {
-                                setFormData(item);
-                                setMode("view");
-                                setOpenModal(true);
-                              }}
-                              className="inline text-blue-500 cursor-pointer text-lg"
-                            />{" "}
                             {/* Edit */}{" "}
                             <FaPen
                               onClick={() => {
@@ -540,7 +497,7 @@ const LeaveRequest = () => {
                             />{" "}
                           </div>
                         ) : (
-                          "No Action"
+                          <div></div>
                         )}
                       </td>
                     </tr>
@@ -597,14 +554,34 @@ const LeaveRequest = () => {
         </div>
 
         {openModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
-          style={{ scrollbarWidth: "none" }}>
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
-            style={{ scrollbarWidth: "none" }}>
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
+            <div
+              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+              style={{ scrollbarWidth: "none" }}
+            >
               {/* Close */}
               <div className="flex justify-end">
                 <RxCross2
-                  onClick={() => setOpenModal(false)}
+                  onClick={() => (
+                    setOpenModal(false),
+                    setFormData({
+                      employee: "",
+                      leaveType: "",
+                      fromDate: "",
+                      toDate: "",
+                      resumeOn: "",
+                      numberOfDays: "",
+                      pendingDays: "",
+                      leaveBalance: "",
+                      contact: "",
+                      email: "",
+                      reason: "",
+                      isHalfDay: false,
+                    })
+                  )}
                   className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
                 />
               </div>
@@ -843,6 +820,53 @@ const LeaveRequest = () => {
                   </button>
                 </div>
               )}
+
+               {mode === "view" &&
+                selectedId &&
+                (() => {
+                  const item = currentLeave.find(
+                    (entry) => entry.id === selectedId,
+                  );
+
+                  return item ? (
+                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+                    <div>
+                      <h1 className={labelStyle}>FA</h1>
+                      <p
+                        className={`${inputStyle} ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
+                      >
+                        {item.fa || "⏳"}
+                      </p>
+                    </div>
+                    <div>
+                      <h1 className={labelStyle}>FA Name</h1>
+                      <p className={`${inputStyle}`}>{item.faname || "⏳"}</p>
+                    </div>
+
+                    <div>
+                      <h1 className={labelStyle}>SA</h1>
+                      <p
+                        className={`${inputStyle} ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
+                      >
+                        {item.sa || "⏳"}
+                      </p>
+                    </div>
+
+                    <div>
+                      <h1 className={labelStyle}>SA Name</h1>
+                      <p className={`${inputStyle}`}>{item.saname || "⏳"}</p>
+                    </div>
+
+                    <div className="lg:col-span-2">
+                      <h1 className={labelStyle}>Rejected Reason</h1>
+                      <p className={`${inputStyle}`}>
+                        {item.rejectedreason || "⏳"}
+                      </p>
+                    </div>
+                  </div>
+                  ) : null;
+                })()}
+
             </div>
           </div>
         )}

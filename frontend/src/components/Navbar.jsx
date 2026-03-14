@@ -74,7 +74,7 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             {/* Mobile Toggle */}
             <button
-              className="p-2 rounded-xl md:hidden transition-all bg-[oklch(0.97_0.001_106.424)] text-[oklch(0.147_0.004_49.25)]"
+              className="p-2 rounded-xl lg:hidden transition-all bg-[oklch(0.97_0.001_106.424)] text-[oklch(0.147_0.004_49.25)]"
               onClick={() => setSidebarOpen(!sidebarOpen)}
             >
               {sidebarOpen ? "✕" : "☰"}
@@ -208,7 +208,7 @@ export default function Navbar() {
           sidebarOpen
             ? "translate-x-0 w-56 backdrop-blur-xl"
             : "-translate-x-full "
-        } md:translate-x-0 md:w-56 z-40 bg-[oklch(1_0_0)] border-r border-[oklch(0.923_0.003_48.717)]`}
+        } lg:translate-x-0 lg:w-56 z-40 bg-[oklch(1_0_0)] border-r border-[oklch(0.923_0.003_48.717)]`}
       >
         <Sidebar user={user} />
       </aside>

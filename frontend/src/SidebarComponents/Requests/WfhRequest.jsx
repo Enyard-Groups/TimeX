@@ -17,6 +17,7 @@ import SearchDropdown from "../SearchDropdown";
 const WfhRequest = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
+  const [selectedId, setSelectedID] = useState(null);
   const [fromDateSpinner, setFromDateSpinner] = useState(false);
   const [toDateSpinner, setToDateSpinner] = useState(false);
   const [wfh, setWfh] = useState(() => {
@@ -362,31 +363,16 @@ const WfhRequest = () => {
             <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
-                  <th className="py-2 px-6 px-6 font-semibold">Employee</th>
-                  <th className="py-2 px-6 font-semibold">From</th>
-                  <th className="py-2 px-6 font-semibold">To</th>
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                  <th className="p-2 px-6 font-semibold">Employee</th>
+                  <th className="p-2 font-semibold hidden md:table-cell">
+                    From
+                  </th>
+                  <th className="p-2 font-semibold hidden md:table-cell">To</th>
+                  <th className="p-2 font-semibold whitespace-nowrap hidden sm:table-cell">
                     Wfh Reason
                   </th>
 
-                  <th className="py-2 px-6 font-semibold">FA</th>
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
-                    FA Name
-                  </th>
-
-                  <th className="py-2 px-6 font-semibold">SA</th>
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
-                    SA Name
-                  </th>
-
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
-                    Rejected Reason
-                  </th>
-
-                  <th className="py-2 px-6 font-semibold">FA</th>
-                  <th className="py-2 px-6 font-semibold">SA</th>
-
-                  <th className="py-2 px-6 font-semibold">Action</th>
+                  <th className="p-2 font-semibold">Action</th>
                 </tr>
               </thead>
 
@@ -403,65 +389,36 @@ const WfhRequest = () => {
                       key={item.id}
                       className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                     >
-                      <td className="py-2 px-6">{item.employee}</td>
+                      <td className="p-2">{item.employee}</td>
 
-                      <td className="py-2 px-6 whitespace-nowrap">
+                      <td className="p-2 whitespace-nowrap hidden md:table-cell">
                         {item.fromDate}
                       </td>
 
-                      <td className="py-2 px-6 whitespace-nowrap">
+                      <td className="p-2 whitespace-nowrap hidden md:table-cell">
                         {item.toDate}
                       </td>
 
-                      <td className="py-2 px-6 whitespace-nowrap">
+                      <td className="p-2 whitespace-nowrap hidden sm:table-cell">
                         {item.reason}
                       </td>
 
-                      {/* FA Status */}
-                      <td
-                        className={`py-2 px-6 text-xl  ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
-                      >
-                        {item.fa || "⏳"}
-                      </td>
-
-                      <td className="py-2 px-6">{item.faname || "⏳"}</td>
-
-                      {/* SA Status */}
-                      <td
-                        className={`py-2 px-6 text-xl  ${item.sa ? (item.sa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
-                      >
-                        {item.sa || "⏳"}
-                      </td>
-
-                      <td className="py-2 px-6">{item.saname || "⏳"}</td>
-
-                      <td className="py-2 px-6 whitespace-nowrap">
-                        {item.rejectedreason || "-"}
-                      </td>
-
-                      <td className="py-2 px-6">
-                        {item.fa ? (item.fa === "✔" ? "Y" : "N") : "⏳"}
-                      </td>
-
-                      <td className="py-2 px-6">
-                        {item.sa ? (item.sa === "✔" ? "Y" : "N") : "⏳"}
-                      </td>
-
                       {/* Actions */}
-                      <td className="py-2 px-6">
+                      <td className="p-2 flex flex-row space-x-3 justify-center whitespace-nowrap">
                         {" "}
+                        {/* View */}{" "}
+                        <FaEye
+                          onClick={() => {
+                            setSelectedID(item.id);
+                            setFormData(item);
+                            setMode("view");
+                            setOpenModal(true);
+                          }}
+                          className="inline text-blue-500 cursor-pointer text-lg mt-1"
+                        />{" "}
                         {item.status === "Pending" ? (
-                          <div className="flex flex-row space-x-3 justify-center ">
+                          <div className="flex flex-row space-x-3 justify-center mt-1">
                             {" "}
-                            {/* View */}{" "}
-                            <FaEye
-                              onClick={() => {
-                                setFormData(item);
-                                setMode("view");
-                                setOpenModal(true);
-                              }}
-                              className="inline text-blue-500 cursor-pointer text-lg"
-                            />{" "}
                             {/* Edit */}{" "}
                             <FaPen
                               onClick={() => {
@@ -479,7 +436,7 @@ const WfhRequest = () => {
                             />{" "}
                           </div>
                         ) : (
-                          "No Action"
+                          <div></div>
                         )}
                       </td>
                     </tr>
@@ -547,7 +504,20 @@ const WfhRequest = () => {
               {/* Close */}
               <div className="flex justify-end">
                 <RxCross2
-                  onClick={() => setOpenModal(false)}
+                  onClick={() => (
+                    setOpenModal(false),
+                    setFormData({
+                      employee: "",
+                      fromDate: "",
+                      toDate: "",
+                      numberOfDays: "",
+                      pendingDays: "",
+                      wfhBalance: "",
+                      contact: "",
+                      email: "",
+                      reason: "",
+                    })
+                  )}
                   className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
                 />
               </div>
@@ -734,6 +704,52 @@ const WfhRequest = () => {
                   </button>
                 </div>
               )}
+
+              {mode === "view" &&
+                selectedId &&
+                (() => {
+                  const item = currentWfh.find(
+                    (entry) => entry.id === selectedId,
+                  );
+
+                  return item ? (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+                      <div>
+                        <h1 className={labelStyle}>FA</h1>
+                        <p
+                          className={`${inputStyle} ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
+                        >
+                          {item.fa || "⏳"}
+                        </p>
+                      </div>
+                      <div>
+                        <h1 className={labelStyle}>FA Name</h1>
+                        <p className={`${inputStyle}`}>{item.faname || "⏳"}</p>
+                      </div>
+
+                      <div>
+                        <h1 className={labelStyle}>SA</h1>
+                        <p
+                          className={`${inputStyle} ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
+                        >
+                          {item.sa || "⏳"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <h1 className={labelStyle}>SA Name</h1>
+                        <p className={`${inputStyle}`}>{item.saname || "⏳"}</p>
+                      </div>
+
+                      <div className="lg:col-span-2">
+                        <h1 className={labelStyle}>Rejected Reason</h1>
+                        <p className={`${inputStyle}`}>
+                          {item.rejectedreason || "⏳"}
+                        </p>
+                      </div>
+                    </div>
+                  ) : null;
+                })()}
             </div>
           </div>
         )}

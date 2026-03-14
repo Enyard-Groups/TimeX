@@ -3,10 +3,14 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FaAngleRight } from "react-icons/fa6";
 import { GrNext, GrPrevious } from "react-icons/gr";
+import { FaEye } from "react-icons/fa";
+import { RxCross2 } from "react-icons/rx";
 
 const WfhApproval = () => {
   const [requests, setRequests] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,6 +20,11 @@ const WfhApproval = () => {
 
     setRequests(stored);
   }, []);
+  const inputStyle =
+    "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+
+  const labelStyle =
+    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const approverName =
     JSON.parse(localStorage.getItem("user")).role.charAt(0).toUpperCase() +
@@ -138,7 +147,7 @@ const WfhApproval = () => {
     1,
     Math.ceil(filteredData.length / entriesPerPage),
   );
-
+  const selectedItem = requests.find((item) => item.id === selectedId);
   return (
     <div className="mb-16">
       {/* Header */}
@@ -230,12 +239,10 @@ const WfhApproval = () => {
                     />
                   </th>
                   <th className="py-2 px-6 font-semibold">Employee</th>
-                  <th className="py-2 px-6 font-semibold">From</th>
-                  <th className="py-2 px-6 font-semibold">To</th>
-                  <th className="py-2 px-6 font-semibold">Reason</th>
-                  <th className="py-2 px-6 font-semibold">FA</th>
-                  <th className="py-2 px-6 font-semibold">SA</th>
-                  <th className="py-2 px-6 font-semibold">Rejected Reason</th>
+                  <th className="py-2 px-6 font-semibold hidden md:table-cell ">From</th>
+                  <th className="py-2 px-6 font-semibold hidden md:table-cell ">To</th>
+                  <th className="py-2 px-6 font-semibold hidden lg:table-cell ">Reason</th>
+                  <th className="py-2 px-6 font-semibold hidden xl:table-cell ">Rejected Reason</th>
                   <th className="py-2 px-6 font-semibold">Approve / Reject</th>
                 </tr>
               </thead>
@@ -262,22 +269,18 @@ const WfhApproval = () => {
                       </td>
                       <td className="py-2 px-6">{item.employee}</td>
 
-                      <td className="py-2 px-6">{item.fromDate}</td>
+                      <td className="py-2 px-6 hidden md:table-cell ">{item.fromDate}</td>
 
-                      <td className="py-2 px-6">{item.toDate}</td>
+                      <td className="py-2 px-6 hidden md:table-cell ">{item.toDate}</td>
 
-                      <td className="py-2 px-6 whitespace-nowrap">
+                      <td className="py-2 px-6 hidden lg:table-cell  ">
                         {item.reason || "NIL"}
                       </td>
 
-                      <td className="py-2 px-6">{item.fa || "⏳"}</td>
-
-                      <td className="py-2 px-6">{item.sa || "⏳"}</td>
-
-                      <td className="py-2 px-6">
+                      <td className="py-2 px-6 hidden xl:table-cell ">
                         <input
                           placeholder="Rejected Reason"
-                          className="border border-gray-200 rounded px-2 py-1 text-sm w-40"
+                          className="border border-gray-200 rounded px-2 py-1 text-sm w-40 "
                           value={item.rejectedreason || ""}
                           onChange={(e) =>
                             handleRejectedReason(item.id, e.target.value)
@@ -287,16 +290,23 @@ const WfhApproval = () => {
 
                       <td className="p-2">
                         <div className="flex gap-2 justify-center">
+                          <FaEye
+                            onClick={() => {
+                              setSelectedId(item.id);
+                              setOpenModal(true);
+                            }}
+                            className="text-blue-500 cursor-pointer text-lg mt-2 mr-2"
+                          />
                           <button
                             onClick={() => updateStatus(item.id, "Approved")}
-                            className="bg-green-100 text-green-700 px-3 py-1 rounded"
+                            className="hidden sm:table-cell bg-green-100 text-green-700 px-3 py-1 rounded"
                           >
                             Approve
                           </button>
 
                           <button
                             onClick={() => updateStatus(item.id, "Rejected")}
-                            className="bg-red-100 text-red-700 px-3 py-1 rounded"
+                            className="hidden sm:table-cell bg-red-100 text-red-700 px-3 py-1 rounded"
                           >
                             Reject
                           </button>
@@ -354,6 +364,93 @@ const WfhApproval = () => {
             </div>
           </div>
         </div>
+
+        {openModal && selectedItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
+            <div
+              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+              style={{ scrollbarWidth: "none" }}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold">Manual Entry Details</h2>
+
+                <RxCross2
+                  onClick={() => setOpenModal(false)}
+                  className="cursor-pointer text-xl text-red-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-lg">
+                <div>
+                  <p className={labelStyle}>Employee</p>
+                  <p className={inputStyle}>{selectedItem.employee}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>From</p>
+                  <p className={inputStyle}>{selectedItem.fromDate}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>To</p>
+                  <p className={inputStyle}>{selectedItem.toDate}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Reason</p>
+                  <p className={inputStyle}>{selectedItem.reason}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Rejected Reason</p>
+                  <input
+                    placeholder="Rejected Reason"
+                    className={inputStyle}
+                    value={selectedItem.rejectedreason || ""}
+                    onChange={(e) =>
+                      handleRejectedReason(selectedItem.id, e.target.value)
+                    }
+                  />
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Status</p>
+                  <p
+                    className={`px-2 py-1.5 rounded text-lg w-fit
+                   ${selectedItem.status === "Approved" && "bg-green-100 text-green-700"}
+                   ${selectedItem.status === "Rejected" && "bg-red-100 text-red-700"}
+                   ${selectedItem.status === "Pending" && "bg-yellow-100 text-yellow-700"}
+                   `}
+                  >
+                    {selectedItem.status}
+                  </p>
+                </div>
+
+                <div className="mt-6 space-x-4">
+                  <button
+                    onClick={() => (
+                      updateStatus(selectedItem.id, "Approved"),
+                      setOpenModal(false)
+                    )}
+                    className="bg-green-100 text-green-700 px-3 py-1 rounded"
+                  >
+                    Approve
+                  </button>
+
+                  <button
+                    onClick={() => (
+                      updateStatus(selectedItem.id, "Rejected"),
+                      setOpenModal(false)
+                    )}
+                    className="bg-red-100 text-red-700 px-3 py-1 rounded"
+                  >
+                    Reject
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

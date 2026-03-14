@@ -21,14 +21,17 @@ const SearchDropdown = ({
 
       <div
         onClick={() => !disabled && setOpen(!open)}
-        className={`${inputStyle} cursor-pointer flex items-center justify-between`}
+        className={`${inputStyle} ${
+          disabled ? "cursor-default" : "cursor-pointer"
+        } flex items-center justify-between`}
       >
         {value || "Select"}
-        {open ? (
-          <MdKeyboardArrowUp className="text-xl" />
-        ) : (
-          <MdKeyboardArrowDown className="text-xl" />
-        )}
+        {!disabled &&
+          (open ? (
+            <MdKeyboardArrowUp className="text-xl" />
+          ) : (
+            <MdKeyboardArrowDown className="text-xl" />
+          ))}
       </div>
 
       {open && (

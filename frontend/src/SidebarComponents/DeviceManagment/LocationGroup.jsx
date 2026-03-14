@@ -11,6 +11,7 @@ import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../SearchDropdown";
+import { MdDeleteForever } from "react-icons/md";
 
 const LocationGroup = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -267,15 +268,29 @@ const LocationGroup = () => {
           <table className="w-full text-lg border-collapse">
             <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
               <tr>
-                <th className="p-2 font-semibold">SL.NO</th>
-                <th className="p-2 font-semibold whitespace-nowrap">Location Group Name</th>
-                <th className="p-2 font-semibold whitespace-nowrap">
-                  Location Group Discription
+                <th className="p-2 font-semibold hidden sm:table-cell">
+                  SL.NO
                 </th>
-                <th className="p-2 font-semibold whitespace-nowrap">Time Keeper Name</th>
-                <th className="p-2 font-semibold whitespace-nowrap">Site Manager Name</th>
-                <th className="p-2 font-semibold">Company</th>
-                <th className="p-2 font-semibold">Action</th>
+
+                <th className="p-2 font-semibold ">Location Group Name</th>
+
+                <th className="p-2 font-semibold hidden lg:table-cell">
+                  Location Group Description
+                </th>
+
+                <th className="p-2 font-semibold hidden md:table-cell">
+                  Time Keeper Name
+                </th>
+
+                <th className="p-2 font-semibold hidden lg:table-cell">
+                  Site Manager Name
+                </th>
+
+                <th className="p-2 font-semibold hidden xl:table-cell">
+                  Company
+                </th>
+
+                <th className="py-2 px-6 font-semibold">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -291,14 +306,27 @@ const LocationGroup = () => {
                     key={item.id}
                     className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                   >
-                    <td className="py-2 px-6">{index + 1}</td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.locationgroupname}</td>
-                    <td className="py-2 px-6 whitespace-nowrap">
+                    <td className="py-2 px-6 hidden sm:table-cell">
+                      {index + 1}
+                    </td>
+
+                    <td className="py-2 px-6 ">{item.locationgroupname}</td>
+
+                    <td className="py-2 px-6 hidden lg:table-cell">
                       {item.locationgroupdescription}
                     </td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.timekeepername}</td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.sitemanagername}</td>
-                    <td className="py-2 px-6 whitespace-nowrap">{item.organization}</td>
+
+                    <td className="py-2 px-6 hidden md:table-cell">
+                      {item.timekeepername}
+                    </td>
+
+                    <td className="py-2 px-6 hidden lg:table-cell">
+                      {item.sitemanagername}
+                    </td>
+
+                    <td className="py-2 px-6 hidden xl:table-cell">
+                      {item.organization}
+                    </td>
                     <td className="py-2 px-6">
                       <div className="flex flex-row space-x-3 justify-center ">
                         {/* View */}
@@ -387,14 +415,27 @@ const LocationGroup = () => {
       </div>
 
       {openModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
-        style={{ scrollbarWidth: "none" }}>
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
-          style={{ scrollbarWidth: "none" }}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+          style={{ scrollbarWidth: "none" }}
+        >
+          <div
+            className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+            style={{ scrollbarWidth: "none" }}
+          >
             {/* Close */}
             <div className="flex justify-end">
               <RxCross2
-                onClick={() => setOpenModal(false)}
+                onClick={() => {
+                  (setOpenModal(false),
+                    setFormData({
+                      company: "",
+                      locationgroupname: "",
+                      discription: "",
+                      sitemanagername: "",
+                      timekeepername: "",
+                    }));
+                }}
                 className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
               />
             </div>

@@ -218,7 +218,7 @@ const CalenderView = () => {
                 Location <span className="text-red-500">*</span>
               </>
             }
-            name="employee"
+            name="location"
             value={formData.location}
             options={["Head Office"]}
             formData={formData}
