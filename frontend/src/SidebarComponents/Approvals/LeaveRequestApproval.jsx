@@ -441,7 +441,7 @@ const LeaveRequestApproval = () => {
               style={{ scrollbarWidth: "none" }}
             >
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold">Manual Entry Details</h2>
+                <h2 className="text-xl font-semibold">Leave Details</h2>
 
                 <RxCross2
                   onClick={() => setOpenModal(false)}

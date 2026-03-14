@@ -3,9 +3,12 @@ import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../SearchDropdown";
+import { FaEye } from "react-icons/fa";
 
 const EmployeeReport = () => {
   const [openModal, setOpenModal] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+  const [modalOpenSelectedItem, setModalOpenSelectedItem] = useState(false);
   const [employeeReport] = useState([
     {
       employeeID: "EMP001",
@@ -75,6 +78,10 @@ const EmployeeReport = () => {
   const totalPages = Math.max(
     1,
     Math.ceil(filteredemployeeReport.length / entriesPerPage),
+  );
+
+  const selectedItem = employeeReport.find(
+    (item) => item.employeeID === selectedId,
   );
 
   return (
@@ -261,20 +268,29 @@ const EmployeeReport = () => {
               <table className="w-full text-lg border-collapse">
                 <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                   <tr>
-                    <th className="p-2 font-semibold">SL.NO</th>
-                    <th className="p-2 font-semibold whitespace-nowrap">
+                    <th className="p-2 font-semibold hidden sm:table-cell">
+                      SL.NO
+                    </th>
+                    <th className="p-2 font-semibold hidden md:table-cell ">
                       Employee ID
                     </th>
                     <th className="p-2 font-semibold">Name</th>
-                    <th className="p-2 font-semibold">Company</th>
-                    <th className="p-2 font-semibold whitespace-nowrap">
+                    <th className="p-2 font-semibold hidden xl:table-cell">
+                      Company
+                    </th>
+                    <th className="p-2 font-semibold  hidden lg:table-cell">
                       Employee Category
                     </th>
-                    <th className="p-2 font-semibold whitespace-nowrap">
+                    <th className="p-2 font-semibold  hidden xl:table-cell">
                       Location
                     </th>
-                    <th className="p-2 font-semibold">Designation</th>
-                    <th className="p-2 font-semibold">Finger</th>
+                    <th className="p-2 font-semibold hidden md:table-cell">
+                      Designation
+                    </th>
+                    <th className="p-2 font-semibold hidden xl:table-cell">
+                      Finger
+                    </th>
+                    <th className="p-2 font-semibold">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -290,22 +306,39 @@ const EmployeeReport = () => {
                         key={item.id}
                         className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                       >
-                        <td className="p-2">{index + 1}</td>
-                        <td className="p-2">{item.employeeID}</td>
-                        <td className="p-2  whitespace-nowrap">{item.name}</td>
-                        <td className="p-2  whitespace-nowrap">
+                        <td className="p-2 hidden sm:table-cell">
+                          {index + 1}
+                        </td>
+                        <td className="p-2 hidden md:table-cell">
+                          {item.employeeID}
+                        </td>
+                        <td className="p-2">{item.name}</td>
+                        <td className="p-2 hidden xl:table-cell ">
                           {item.company}
                         </td>
-                        <td className="p-2  whitespace-nowrap">
+                        <td className="p-2  hidden lg:table-cell ">
                           {item.employeeCategory}
                         </td>
-                        <td className="p-2  whitespace-nowrap">
+                        <td className="p-2  hidden xl:table-cell ">
                           {item.location}
                         </td>
-                        <td className="p-2  whitespace-nowrap">
+                        <td className="p-2 hidden md:table-cell ">
                           {item.department}
                         </td>
-                        <td className="p-2">{item.finger}</td>
+                        <td className="p-2 hidden xl:table-cell">
+                          {item.finger}
+                        </td>
+                        <td className="p-2 ">
+                          <div className="flex gap-2 justify-center">
+                            <FaEye
+                              onClick={() => {
+                                setSelectedId(item.employeeID);
+                                setModalOpenSelectedItem(true);
+                              }}
+                              className="text-blue-500 cursor-pointer text-lg mt-2 mr-2"
+                            />
+                          </div>
+                        </td>
                       </tr>
                     ))
                   )}
@@ -358,6 +391,66 @@ const EmployeeReport = () => {
                 >
                   Last
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {modalOpenSelectedItem && selectedItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
+            <div
+              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+              style={{ scrollbarWidth: "none" }}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold">
+                  {selectedItem.name} Details
+                </h2>
+
+                <RxCross2
+                  onClick={() => (
+                    setModalOpenSelectedItem(false),
+                    setSelectedId(null)
+                  )}
+                  className="cursor-pointer text-xl text-red-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-lg">
+                <div>
+                  <p className={labelStyle}>Employee ID</p>
+                  <p className={inputStyle}>{selectedItem.employeeID}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Name</p>
+                  <p className={inputStyle}>{selectedItem.name}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Employee Category</p>
+                  <p className={inputStyle}>{selectedItem.employeeCategory}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Designation</p>
+                  <p className={inputStyle}>{selectedItem.department}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Company</p>
+                  <p className={inputStyle}>{selectedItem.company}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Location</p>
+                  <p className={inputStyle}>{selectedItem.location}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Finger</p>
+                  <p className={inputStyle}>{selectedItem.finger}</p>
+                </div>
               </div>
             </div>
           </div>

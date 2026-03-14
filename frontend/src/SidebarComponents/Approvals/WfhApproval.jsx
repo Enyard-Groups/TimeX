@@ -239,10 +239,18 @@ const WfhApproval = () => {
                     />
                   </th>
                   <th className="py-2 px-6 font-semibold">Employee</th>
-                  <th className="py-2 px-6 font-semibold hidden md:table-cell ">From</th>
-                  <th className="py-2 px-6 font-semibold hidden md:table-cell ">To</th>
-                  <th className="py-2 px-6 font-semibold hidden lg:table-cell ">Reason</th>
-                  <th className="py-2 px-6 font-semibold hidden xl:table-cell ">Rejected Reason</th>
+                  <th className="py-2 px-6 font-semibold hidden md:table-cell ">
+                    From
+                  </th>
+                  <th className="py-2 px-6 font-semibold hidden md:table-cell ">
+                    To
+                  </th>
+                  <th className="py-2 px-6 font-semibold hidden lg:table-cell ">
+                    Reason
+                  </th>
+                  <th className="py-2 px-6 font-semibold hidden xl:table-cell ">
+                    Rejected Reason
+                  </th>
                   <th className="py-2 px-6 font-semibold">Approve / Reject</th>
                 </tr>
               </thead>
@@ -269,9 +277,13 @@ const WfhApproval = () => {
                       </td>
                       <td className="py-2 px-6">{item.employee}</td>
 
-                      <td className="py-2 px-6 hidden md:table-cell ">{item.fromDate}</td>
+                      <td className="py-2 px-6 hidden md:table-cell ">
+                        {item.fromDate}
+                      </td>
 
-                      <td className="py-2 px-6 hidden md:table-cell ">{item.toDate}</td>
+                      <td className="py-2 px-6 hidden md:table-cell ">
+                        {item.toDate}
+                      </td>
 
                       <td className="py-2 px-6 hidden lg:table-cell  ">
                         {item.reason || "NIL"}
@@ -372,7 +384,9 @@ const WfhApproval = () => {
               style={{ scrollbarWidth: "none" }}
             >
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold">Manual Entry Details</h2>
+                <h2 className="text-xl font-semibold">
+                  Work From Home Details
+                </h2>
 
                 <RxCross2
                   onClick={() => setOpenModal(false)}

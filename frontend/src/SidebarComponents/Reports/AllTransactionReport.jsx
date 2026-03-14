@@ -5,10 +5,14 @@ import { RxCross2 } from "react-icons/rx";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../SearchDropdown";
 import SpinnerDatePicker from "../SpinnerDatePicker";
+import { FaEye } from "react-icons/fa";
 
 const AllTransactionReport = () => {
   const [openModal, setOpenModal] = useState(false);
   const [allTransactionReport, setAllTransactionReport] = useState([]);
+
+  const [selectedId, setSelectedId] = useState(null);
+  const [modalOpenSelectedItem, setModalOpenSelectedItem] = useState(false);
 
   useEffect(() => {
     const stored =
@@ -104,6 +108,10 @@ const AllTransactionReport = () => {
   const totalPages = Math.max(
     1,
     Math.ceil(filteredallTransactionReport.length / entriesPerPage),
+  );
+
+  const selectedItem = allTransactionReport.find(
+    (item) => item.id === selectedId,
   );
 
   return (
@@ -326,23 +334,32 @@ const AllTransactionReport = () => {
                 <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                   <tr>
                     <th className="p-2 font-semibold">Name</th>
-                    <th className="p-2 font-semibold">SL.NO</th>
-                    <th className="p-2 font-semibold">Employee Category</th>
-                    <th className="p-2 font-semibold">Designation</th>
+                    <th className="p-2 font-semibold  hidden sm:table-cell">
+                      SL.NO
+                    </th>
+                    <th className="p-2 font-semibold  hidden md:table-cell">
+                      Employee Category
+                    </th>
+                    <th className="p-2 font-semibold hidden xl:table-cell">
+                      Designation
+                    </th>
 
-                    <th className="p-2 font-semibold whitespace-nowrap">
+                    <th className="p-2 font-semibold whitespace-nowrap hidden md:table-cell">
                       Date
                     </th>
-                    <th className="p-2 font-semibold whitespace-nowrap">Day</th>
-                    <th className="p-2 font-semibold whitespace-nowrap">
+                    <th className="p-2 font-semibold whitespace-nowrap hidden xl:table-cell">
+                      Day
+                    </th>
+                    <th className="p-2 font-semibold whitespace-nowrap hidden xl:table-cell">
                       Check in
                     </th>
-                    <th className="p-2 font-semibold whitespace-nowrap">
+                    <th className="p-2 font-semibold whitespace-nowrap hidden xl:table-cell">
                       Check out
                     </th>
-                    <th className="p-2 font-semibold whitespace-nowrap">
+                    <th className="p-2 font-semibold whitespace-nowrap  hidden sm:table-cell">
                       Total Hours
                     </th>
+                    <th className="p-2 font-semibold">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -361,31 +378,37 @@ const AllTransactionReport = () => {
                         <td className="p-2  whitespace-nowrap">
                           {item.employee}
                         </td>
-                        <td className="p-2">{index + 1}</td>
-                        <td className="p-2">{item.employeeCategory}</td>
-                        <td className="p-2">{item.designation}</td>
+                        <td className="p-2  hidden sm:table-cell">
+                          {index + 1}
+                        </td>
+                        <td className="p-2 hidden md:table-cell">
+                          {item.employeeCategory}
+                        </td>
+                        <td className="p-2 hidden xl:table-cell">
+                          {item.designation}
+                        </td>
 
-                        <td className="p-2">
+                        <td className="p-2  hidden md:table-cell">
                           {new Date(item.intime).toLocaleDateString()}
                         </td>
-                        <td className="p-2">
+                        <td className="p-2  hidden xl:table-cell">
                           {" "}
                           {new Date(item.intime).toLocaleString("en-US", {
                             weekday: "long",
                           })}
                         </td>
 
-                        <td className="p-2 ">
+                        <td className="p-2 hidden xl:table-cell ">
                           {new Date(item.intime).toLocaleString()}
                         </td>
 
-                        <td className="p-2 ">
+                        <td className="p-2 hidden xl:table-cell ">
                           {item.outtime
                             ? new Date(item.outtime).toLocaleString()
                             : "No Checkout"}
                         </td>
 
-                        <td className="p-2">
+                        <td className="p-2  hidden sm:table-cell">
                           {item.outtime
                             ? (() => {
                                 const inT = new Date(
@@ -397,6 +420,17 @@ const AllTransactionReport = () => {
                                 return getTimeDiff(inT, outT);
                               })()
                             : "Missed Punch"}
+                        </td>
+                        <td className="p-2 ">
+                          <div className="flex gap-2 justify-center">
+                            <FaEye
+                              onClick={() => {
+                                setSelectedId(item.id);
+                                setModalOpenSelectedItem(true);
+                              }}
+                              className="text-blue-500 cursor-pointer text-lg mt-2 mr-2"
+                            />
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -452,6 +486,117 @@ const AllTransactionReport = () => {
                 >
                   Last
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {modalOpenSelectedItem && selectedItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
+            <div
+              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+              style={{ scrollbarWidth: "none" }}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold">
+                  {selectedItem.employee} Details
+                </h2>
+
+                <RxCross2
+                  onClick={() => (
+                    setModalOpenSelectedItem(false),
+                    setSelectedId(null)
+                  )}
+                  className="cursor-pointer text-xl text-red-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-lg">
+                <div>
+                  <p className={labelStyle}>Name</p>
+                  <p className={inputStyle}>{selectedItem.employee}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Employee Category</p>
+                  <p className={inputStyle}>{selectedItem.employeeCategory}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Designation</p>
+                  <p className={inputStyle}>{selectedItem.designation}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Punch Date</p>
+                  <p className={inputStyle}>
+                    {new Date(selectedItem.intime).toLocaleDateString()}
+                  </p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Punch Day</p>
+                  <p className={inputStyle}>
+                    {new Date(selectedItem.intime).toLocaleString("en-US", {
+                      weekday: "long",
+                    })}
+                  </p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Check in</p>
+                  <p className={inputStyle}>
+                    {new Date(selectedItem.intime).toLocaleString()}
+                  </p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Check out</p>
+                  <p className={inputStyle}>
+                    {selectedItem.outtime
+                      ? new Date(selectedItem.outtime).toLocaleString()
+                      : "No Checkout"}
+                  </p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Work Hours</p>
+                  <p className={inputStyle}>
+                    {selectedItem.outtime
+                      ? (() => {
+                          const inT = new Date(
+                            selectedItem.intime,
+                          ).toLocaleTimeString();
+                          const outT = new Date(
+                            selectedItem.outtime,
+                          ).toLocaleTimeString();
+                          return getTimeDiff(inT, outT);
+                        })()
+                      : "Missed Punch"}
+                  </p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Location</p>
+                  <p className={inputStyle}>{selectedItem.location}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Remarks</p>
+                  <p className={inputStyle}>{selectedItem.remarks}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Status</p>
+                  <p
+                    className={` py-1 px-3 w-fit rounded
+                                             ${selectedItem.status === "Approved" && "bg-green-100 text-green-700"}
+                              ${selectedItem.status === "Rejected" && "bg-red-100 text-red-700"}
+                              ${selectedItem.status === "Pending" && "bg-yellow-100 text-yellow-700"}`}
+                  >
+                    {selectedItem.status}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
