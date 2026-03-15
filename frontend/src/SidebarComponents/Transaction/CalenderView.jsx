@@ -237,7 +237,13 @@ const CalenderView = () => {
             }
             name="employee"
             value={formData.employee}
-            options={["Employee 1", "Employee 2", "Employee 3"]}
+            options={[
+              "Employee 1",
+              "Employee 2",
+              "Employee 3",
+              "Employee 4",
+              "Employee 5",
+            ]}
             formData={formData}
             setFormData={setFormData}
             inputStyle={inputStyle}

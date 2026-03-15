@@ -206,7 +206,13 @@ const WfhSummary = () => {
                   className="max-h-30 overflow-y-auto"
                   style={{ scrollbarWidth: "none" }}
                 >
-                  {["Employee 1", "Employee 2", "Employee 3", "Employee 4"]
+                  {[
+                    "Employee 1",
+                    "Employee 2",
+                    "Employee 3",
+                    "Employee 4",
+                    "Employee 5",
+                  ]
                     .filter((emp) =>
                       emp
                         .toLowerCase()

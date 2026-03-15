@@ -157,6 +157,7 @@ const AttendanceByEmployee = () => {
                     "Employee 2",
                     "Employee 3",
                     "Employee 4",
+                    "Employee 5",
                   ]}
                   formData={formData}
                   setFormData={setFormData}
