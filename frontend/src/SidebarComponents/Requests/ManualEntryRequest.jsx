@@ -101,6 +101,24 @@ const MannualEntryRequest = () => {
         employeeCategory: "Full Time Equivalent",
         status: "Pending",
       },
+      {
+        id: 6,
+        employeeId: "EMP006",
+        employee: "Employee 3",
+        location: "Head Office",
+        designation: "Project Manager",
+        employeeCategory: "Full Time Equivalent",
+        status: "Pending",
+      },
+      {
+        id: 7,
+        employeeId: "EMP007",
+        employee: "Employee 4",
+        location: "Head Office",
+        designation: "Project Manager",
+        employeeCategory: "Full Time Equivalent",
+        status: "Pending",
+      },
     ];
   });
   const [searchTerm, setSearchTerm] = useState("");
