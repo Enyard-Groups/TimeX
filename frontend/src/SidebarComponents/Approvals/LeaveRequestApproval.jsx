@@ -268,18 +268,14 @@ const LeaveRequestApproval = () => {
                     From
                   </th>
                   <th className="p-2 font-semibold hidden lg:table-cell">To</th>
-                  <th className="p-2 font-semibold whitespace-nowrap hidden lg:table-cell">
-                    Resume On
-                  </th>
+
                   <th className="p-2 font-semibold whitespace-nowrap  hidden sm:table-cell">
                     Leave Type
                   </th>
                   <th className="p-2 font-semibold whitespace-nowrap  hidden md:table-cell">
                     Total Day(s)
                   </th>
-                  <th className="p-2 font-semibold whitespace-nowrap hidden xl:table-cell">
-                    Leave Reason
-                  </th>
+
                   <th className="p-2 font-semibold  hidden xl:table-cell">
                     Remarks
                   </th>
@@ -322,16 +318,11 @@ const LeaveRequestApproval = () => {
                         <td className="p-2 hidden lg:table-cell">
                           {item.toDate}
                         </td>
-                        <td className="p-2 hidden lg:table-cell">
-                          {item.resumeOn}
-                        </td>
+
                         <td className="p-2 hidden sm:table-cell">
                           {item.leaveType}
                         </td>
                         <td className="p-2 hidden md:table-cell">{days}</td>
-                        <td className="p-2 hidden xl:table-cell">
-                          {item.reason}
-                        </td>
 
                         {/* Remarks */}
                         <td className="p-2 hidden xl:table-cell">

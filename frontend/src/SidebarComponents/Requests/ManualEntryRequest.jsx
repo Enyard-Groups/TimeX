@@ -33,6 +33,7 @@ const MannualEntryRequest = () => {
     return [
       {
         id: 1,
+        employeeId: "EMP001",
         employee: "Employee 1",
         location: "Head Office",
         intime: new Date("2026-03-01T09:00:00"),
@@ -46,7 +47,8 @@ const MannualEntryRequest = () => {
       },
       {
         id: 2,
-        employee: "Employee 1",
+        employeeId: "EMP002",
+        employee: "Employee 3",
         location: "Head Office",
         intime: new Date("2026-03-02T09:10:00"),
         outtime: new Date("2026-03-02T18:05:00"),
@@ -59,6 +61,7 @@ const MannualEntryRequest = () => {
       },
       {
         id: 3,
+        employeeId: "EMP003",
         employee: "Employee 1",
         location: "Head Office",
         intime: new Date("2026-03-02T09:10:00"),
@@ -67,16 +70,31 @@ const MannualEntryRequest = () => {
         remarks: "Late entry",
         designation: "Project Manager",
         company: "Company 2",
-        employeeCategory: "Contaract",
+        employeeCategory: "Contract",
         status: "Approved",
       },
       {
         id: 4,
-        employee: "Employee 1",
+        employeeId: "EMP004",
+        employee: "Employee 2",
         location: "Head Office",
         intime: new Date("2026-03-02T09:10:00"),
         outtime: "",
         createdDate: new Date("2026-03-02"),
+        remarks: "Late entry",
+        designation: "Project Manager",
+        company: "Company 2",
+        employeeCategory: "Full Time Equivalent",
+        status: "Pending",
+      },
+      {
+        id: 5,
+        employeeId: "EMP005",
+        employee: "Employee 2",
+        location: "Head Office",
+        intime: "",
+        outtime: new Date("2026-03-04T18:10:00"),
+        createdDate: new Date("2026-03-04"),
         remarks: "Late entry",
         designation: "Project Manager",
         company: "Company 2",
@@ -105,6 +123,7 @@ const MannualEntryRequest = () => {
     company: "",
     employeeCategory: "",
     createdDate: new Date(),
+    employeeId: "",
     remarks: "",
   });
 
@@ -148,6 +167,7 @@ const MannualEntryRequest = () => {
   // Handle submit
   const handleSubmit = () => {
     const {
+      employeeId,
       company,
       designation,
       employeeCategory,
@@ -158,7 +178,7 @@ const MannualEntryRequest = () => {
       remarks,
     } = formData;
 
-    if (!employee || !location || !intime || !outtime) {
+    if (!employeeId || !employee || !location || !intime || !outtime) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -180,6 +200,7 @@ const MannualEntryRequest = () => {
       remarks,
       company,
       designation,
+      employeeId,
       employeeCategory,
       createdDate: new Date().toISOString(),
       status: "Pending",
@@ -215,6 +236,7 @@ const MannualEntryRequest = () => {
     setEditId(null);
 
     setFormData({
+      employeeId: "",
       employee: "",
       location: "",
       intime: null,
@@ -366,7 +388,23 @@ const MannualEntryRequest = () => {
           </h1>
           {!openModal && (
             <button
-              onClick={() => setOpenModal(true)}
+              onClick={() => (
+                setMode(""),
+                setEditId(null),
+                setFormData({
+                  employeeId: "",
+                  employee: "",
+                  location: "",
+                  intime: null,
+                  outtime: null,
+                  createdDate: new Date(),
+                  remarks: "",
+                  company: "",
+                  designation: "",
+                  employeeCategory: "",
+                }),
+                setOpenModal(true)
+              )}
               className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md"
             >
               + Add New
@@ -494,7 +532,7 @@ const MannualEntryRequest = () => {
                           ? new Date(item.intime).toLocaleTimeString([], {
                               hour12: false,
                             })
-                          : ""}
+                          : "No Checkin"}
                       </td>
 
                       <td className="p-2 hidden lg:table-cell">
@@ -628,25 +666,27 @@ ${item.status === "Pending" && "bg-yellow-100 text-yellow-700"}
               {/* Close */}
               <div className="flex justify-end">
                 <RxCross2
-                  onClick={() => (
-                    setOpenModal(false),
-                    setFormData({
-                      employee: "",
-                      location: "",
-                      intime: null,
-                      outtime: null,
-                      createdDate: new Date(),
-                      remarks: "",
-                      company: "",
-                      designation: "",
-                      employeeCategory: "",
-                    })
-                  )}
+                  onClick={() => setOpenModal(false)}
                   className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div>
+                  <label className={labelStyle}>
+                    Employee ID <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    name="employeeId"
+                    value={formData.employeeId}
+                    onChange={handleChange}
+                    placeholder="Employee ID"
+                    className={inputStyle}
+                    disabled={mode === "view"}
+                    required
+                  />
+                </div>
+
                 <div>
                   <SearchDropdown
                     label={
@@ -722,7 +762,7 @@ ${item.status === "Pending" && "bg-yellow-100 text-yellow-700"}
                   <SearchDropdown
                     label="Designation"
                     name="department"
-                    value={formData.department}
+                    value={formData.designation}
                     options={[
                       "Regional Sales Support Manager",
                       "Operations Support Officer",
@@ -915,18 +955,25 @@ ${item.status === "Pending" && "bg-yellow-100 text-yellow-700"}
                               </td>
 
                               <td className="p-2">
-                                {new Date(item.intime)?.toLocaleTimeString([], {
-                                  hour12: false,
-                                })}
+                                {item.intime
+                                  ? new Date(item.intime)?.toLocaleTimeString(
+                                      [],
+                                      {
+                                        hour12: false,
+                                      },
+                                    )
+                                  : "No Checkin"}
                               </td>
 
                               <td className="p-2">
-                                {new Date(item.outtime)?.toLocaleTimeString(
-                                  [],
-                                  {
-                                    hour12: false,
-                                  },
-                                )}
+                                {item.outtime
+                                  ? new Date(item.outtime)?.toLocaleTimeString(
+                                      [],
+                                      {
+                                        hour12: false,
+                                      },
+                                    )
+                                  : "No Checkout"}
                               </td>
 
                               <td className="p-2">{item.location}</td>

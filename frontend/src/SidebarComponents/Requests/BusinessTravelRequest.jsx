@@ -17,7 +17,7 @@ import SearchDropdown from "../SearchDropdown";
 const BusinessTravelRequest = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
-   const [selectedId, setSelectedID] = useState(null);
+  const [selectedId, setSelectedID] = useState(null);
   const [fromDateSpinner, setFromDateSpinner] = useState(false);
   const [toDateSpinner, setToDateSpinner] = useState(false);
   const [showResumeSpinner, setShowResumeSpinner] = useState(false);
@@ -333,7 +333,22 @@ const BusinessTravelRequest = () => {
           </h1>
           {!openModal && (
             <button
-              onClick={() => setOpenModal(true)}
+              onClick={() => (
+                setMode(""),
+                setEditId(null),
+                setFormData({
+                  employee: "",
+                  travelType: "",
+                  fromDate: "",
+                  toDate: "",
+                  resumeOn: "",
+                  numberOfDays: "",
+                  reason: "",
+                  isHalfDayfirst: false,
+                  isHalfDaylast: false,
+                }),
+                setOpenModal(true)
+              )}
               className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md"
             >
               + Add New
@@ -575,20 +590,7 @@ const BusinessTravelRequest = () => {
               {/* Close */}
               <div className="flex justify-end">
                 <RxCross2
-                  onClick={() => (
-                    setOpenModal(false),
-                    setFormData({
-                      employee: "",
-                      travelType: "",
-                      fromDate: "",
-                      toDate: "",
-                      resumeOn: "",
-                      numberOfDays: "",
-                      reason: "",
-                      isHalfDayfirst: false,
-                      isHalfDaylast: false,
-                    })
-                  )}
+                  onClick={() => setOpenModal(false)}
                   className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
                 />
               </div>
@@ -791,43 +793,42 @@ const BusinessTravelRequest = () => {
 
                   return item ? (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
-                    <div>
-                      <h1 className={labelStyle}>FA</h1>
-                      <p
-                        className={`${inputStyle} ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
-                      >
-                        {item.fa || "⏳"}
-                      </p>
-                    </div>
-                    <div>
-                      <h1 className={labelStyle}>FA Name</h1>
-                      <p className={`${inputStyle}`}>{item.faname || "⏳"}</p>
-                    </div>
+                      <div>
+                        <h1 className={labelStyle}>FA</h1>
+                        <p
+                          className={`${inputStyle} ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
+                        >
+                          {item.fa || "⏳"}
+                        </p>
+                      </div>
+                      <div>
+                        <h1 className={labelStyle}>FA Name</h1>
+                        <p className={`${inputStyle}`}>{item.faname || "⏳"}</p>
+                      </div>
 
-                    <div>
-                      <h1 className={labelStyle}>SA</h1>
-                      <p
-                        className={`${inputStyle} ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
-                      >
-                        {item.sa || "⏳"}
-                      </p>
-                    </div>
+                      <div>
+                        <h1 className={labelStyle}>SA</h1>
+                        <p
+                          className={`${inputStyle} ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
+                        >
+                          {item.sa || "⏳"}
+                        </p>
+                      </div>
 
-                    <div>
-                      <h1 className={labelStyle}>SA Name</h1>
-                      <p className={`${inputStyle}`}>{item.saname || "⏳"}</p>
-                    </div>
+                      <div>
+                        <h1 className={labelStyle}>SA Name</h1>
+                        <p className={`${inputStyle}`}>{item.saname || "⏳"}</p>
+                      </div>
 
-                    <div className="lg:col-span-2">
-                      <h1 className={labelStyle}>Rejected Reason</h1>
-                      <p className={`${inputStyle}`}>
-                        {item.rejectedreason || "⏳"}
-                      </p>
+                      <div className="lg:col-span-2">
+                        <h1 className={labelStyle}>Rejected Reason</h1>
+                        <p className={`${inputStyle}`}>
+                          {item.rejectedreason || "⏳"}
+                        </p>
+                      </div>
                     </div>
-                  </div>
                   ) : null;
                 })()}
-
             </div>
           </div>
         )}

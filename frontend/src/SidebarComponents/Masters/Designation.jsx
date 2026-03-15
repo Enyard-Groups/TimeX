@@ -204,7 +204,19 @@ const Designation = () => {
           </h1>
           {!openModal && (
             <button
-              onClick={() => setOpenModal(true)}
+              onClick={() => (
+                setMode(""),
+                setEditId(null),
+                setFormData({
+                  company: "",
+                  name: "",
+                  code: "",
+                  department: "",
+                  description: "",
+                  isActive: false,
+                }),
+                setOpenModal(true)
+              )}
               className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md"
             >
               + Add New
@@ -430,17 +442,7 @@ const Designation = () => {
               {/* Close */}
               <div className="flex justify-end">
                 <RxCross2
-                  onClick={() => (
-                    setOpenModal(false),
-                    setFormData({
-                      company: "",
-                      name: "",
-                      code: "",
-                      department: "",
-                      description: "",
-                      isActive: false,
-                    })
-                  )}
+                  onClick={() => setOpenModal(false)}
                   className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
                 />
               </div>

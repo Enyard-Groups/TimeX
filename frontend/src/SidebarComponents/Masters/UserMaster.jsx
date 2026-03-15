@@ -366,7 +366,20 @@ const UserMaster = () => {
 
           {!openModal && (
             <button
-              onClick={() => setOpenModal(true)}
+              onClick={() => (
+                setMode(""),
+                setEditId(null),
+                setFormData({
+                  userName: "",
+                  empname: "",
+                  enrollmentId: "",
+                  company: "",
+                  password: "",
+                  active: false,
+                  role: "User",
+                }),
+                setOpenModal(true)
+              )}
               className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md"
             >
               + Add New
@@ -623,18 +636,7 @@ const UserMaster = () => {
                 </div>
 
                 <RxCross2
-                  onClick={() => (
-                    setOpenModal(false),
-                    setFormData({
-                      userName: "",
-                      empname: "",
-                      enrollmentId: "",
-                      company: "",
-                      password: "",
-                      active: false,
-                      role: "User",
-                    })
-                  )}
+                  onClick={() => setOpenModal(false)}
                   className="cursor-pointer text-lg text-red-500"
                 />
               </div>

@@ -241,7 +241,17 @@ const GeofencingMaster = () => {
           </h1>
           {!openModal && (
             <button
-              onClick={() => setOpenModal(true)}
+              onClick={() => (
+                setMode(""),
+                setEditId(null),
+                setFormData({
+                  name: "",
+                  latitude: "",
+                  longitude: "",
+                  searchradius: "",
+                }),
+                setOpenModal(true)
+              )}
               className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md"
             >
               + Add New
@@ -317,8 +327,12 @@ const GeofencingMaster = () => {
                     SL.NO
                   </th>
                   <th className="p-2 font-semibold ">Location Name</th>
-                  <th className="p-2 font-semibold hidden md:table-cell">Latitude</th>
-                  <th className="p-2 font-semibold hidden md:table-cell">Longitude</th>
+                  <th className="p-2 font-semibold hidden md:table-cell">
+                    Latitude
+                  </th>
+                  <th className="p-2 font-semibold hidden md:table-cell">
+                    Longitude
+                  </th>
                   <th className="p-2 font-semibold">Action</th>
                 </tr>
               </thead>
@@ -337,8 +351,12 @@ const GeofencingMaster = () => {
                     >
                       <td className="p-2 hidden sm:table-cell">{index + 1}</td>
                       <td className="p-2">{item.name}</td>
-                      <td className="p-2 hidden md:table-cell ">{item.latitude}</td>
-                      <td className="p-2 hidden md:table-cell">{item.longitude}</td>
+                      <td className="p-2 hidden md:table-cell ">
+                        {item.latitude}
+                      </td>
+                      <td className="p-2 hidden md:table-cell">
+                        {item.longitude}
+                      </td>
                       <td className="p-2">
                         <div className="flex flex-row space-x-3 justify-center ">
                           {/* View */}
@@ -455,15 +473,7 @@ const GeofencingMaster = () => {
               {/* Close */}
               <div className="flex justify-end">
                 <RxCross2
-                  onClick={() => (
-                    setOpenModal(false),
-                    setFormData({
-                      name: "",
-                      latitude: "",
-                      longitude: "",
-                      searchradius: "",
-                    })
-                  )}
+                  onClick={() => setOpenModal(false)}
                   className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
                 />
               </div>

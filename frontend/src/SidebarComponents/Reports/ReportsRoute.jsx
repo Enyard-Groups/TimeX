@@ -8,7 +8,6 @@ import AttendanceByEmployee from "./AttendanceReports/AttendanceByEmployee";
 import AttendanceByLocation from "./AttendanceReports/AttendanceByLocation";
 import AttendanceSummary from "./AttendanceReports/AttendanceSummary";
 import AttendanceSummaryLocation from "./AttendanceReports/AttendanceSummaryLocation";
-import EmployeeWeeklyReport from "./AttendanceReports/EmployeeWeeklyReport";
 import AbsenceReport from "./AbsenceReports/AbsenceReport";
 import AbsenceSummaryReport from "./AbsenceReports/AbsenceSummaryReport";
 import EarlyOutReport from "./EarlyOutReport/EarlyOutReport";
@@ -51,10 +50,6 @@ const ReportsRoute = ({ user }) => {
           <Route
             path="attendance-summary-location"
             element={<AttendanceSummaryLocation />}
-          />
-          <Route
-            path="employee-weekly-report"
-            element={<EmployeeWeeklyReport />}
           />
 
           <Route path="exception-reports" element={<ExceptionReports />} />

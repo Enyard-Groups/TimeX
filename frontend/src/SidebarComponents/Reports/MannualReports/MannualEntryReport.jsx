@@ -104,7 +104,7 @@ const MannualEntryReport = () => {
             <FaAngleRight />
             Mannual Reports
             <FaAngleRight />
-            Mannual Entry Status
+            Mannual Entry Report
           </h1>
         </div>
         {!openModal && (
@@ -358,7 +358,9 @@ const MannualEntryReport = () => {
                         </td>
 
                         <td className="p-2 hidden lg:table-cell">
-                          {new Date(item.intime).toLocaleString()}
+                          {item.intime
+                            ? new Date(item.intime).toLocaleString()
+                            : "No Checkin"}
                         </td>
 
                         <td className="p-2 hidden lg:table-cell">
@@ -483,7 +485,9 @@ const MannualEntryReport = () => {
                   <p className={labelStyle}>In Time</p>
                   <p className={inputStyle}>
                     {" "}
-                    {new Date(selectedItem.intime).toLocaleString()}
+                    {selectedItem.intime
+                      ? new Date(selectedItem.intime).toLocaleString()
+                      : "No Checkin"}
                   </p>
                 </div>
 

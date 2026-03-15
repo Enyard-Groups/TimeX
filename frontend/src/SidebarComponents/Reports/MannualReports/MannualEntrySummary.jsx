@@ -394,27 +394,31 @@ const MannualEntrySummary = () => {
                           {item.location}
                         </td>
                         <td className="p-2  hidden md:table-cell">
-                          {new Date(item.intime).toLocaleDateString()}
+                          {item.intime ? new Date(item.intime).toLocaleDateString():new Date(item.outtime).toLocaleDateString()}
                         </td>
                         <td className="p-2 hidden md:table-cell">
                           {" "}
-                          {new Date(item.intime).toLocaleString("en-US", {
+                          {item.intime ? new Date(item.intime).toLocaleString("en-US", {
+                            weekday: "long",
+                          }):new Date(item.outtime).toLocaleString("en-US", {
                             weekday: "long",
                           })}
                         </td>
 
                         <td className="p-2 hidden xl:table-cell ">
-                          {new Date(item.intime).toLocaleString()}
+                          {item.intime
+                            ? new Date(item.intime).toLocaleTimeString()
+                            : "No Checkin"}
                         </td>
 
                         <td className="p-2 hidden xl:table-cell">
                           {item.outtime
-                            ? new Date(item.outtime).toLocaleString()
+                            ? new Date(item.outtime).toLocaleTimeString()
                             : "No Checkout"}
                         </td>
 
                         <td className="p-2 hidden sm:table-cell">
-                          {item.outtime
+                          {item.outtime && item.intime
                             ? (() => {
                                 const inT = new Date(
                                   item.intime,
@@ -525,7 +529,7 @@ const MannualEntrySummary = () => {
                 <div>
                   <p className={labelStyle}>Punch Date</p>
                   <p className={inputStyle}>
-                    {new Date(selectedItem.intime).toLocaleDateString()}
+                    {selectedItem.intime ? new Date(selectedItem.intime).toLocaleDateString():new Date(selectedItem.outtime).toLocaleDateString()}
                   </p>
                 </div>
 
@@ -541,7 +545,9 @@ const MannualEntrySummary = () => {
                 <div>
                   <p className={labelStyle}>Check in</p>
                   <p className={inputStyle}>
-                    {new Date(selectedItem.intime).toLocaleString()}
+                    {selectedItem.intime
+                      ? new Date(selectedItem.intime).toLocaleString()
+                      : "No Checkin"}
                   </p>
                 </div>
 
@@ -557,7 +563,7 @@ const MannualEntrySummary = () => {
                 <div>
                   <p className={labelStyle}>Work Hours</p>
                   <p className={inputStyle}>
-                    {selectedItem.outtime
+                    {selectedItem.outtime && selectedItem.intime
                       ? (() => {
                           const inT = new Date(
                             selectedItem.intime,

@@ -173,16 +173,6 @@ const Reports = ({ user }) => {
                       Attendance Summary Location
                     </NavLink>
 
-                    <NavLink
-                      to="/reports/employee-weekly-report"
-                      className={({ isActive }) =>
-                        isActive
-                          ? activeClass
-                          : "hover:text-[oklch(0.645_0.246_16.439)]"
-                      }
-                    >
-                      Employee Weekly Report
-                    </NavLink>
                   </div>
                 )}
               </div>

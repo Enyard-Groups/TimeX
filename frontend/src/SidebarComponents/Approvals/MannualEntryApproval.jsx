@@ -252,7 +252,7 @@ const MannualEntryApproval = () => {
                           ? new Date(item.intime).toLocaleTimeString([], {
                               hour12: false,
                             })
-                          : ""}
+                          : "No Checkin"}
                       </td>
 
                       <td className="p-2 hidden md:table-cell  whitespace-nowrap">
@@ -398,7 +398,7 @@ const MannualEntryApproval = () => {
                     ? new Date(selectedItem.intime).toLocaleTimeString([], {
                         hour12: false,
                       })
-                    : ""}
+                    : "No Checkin"}
                 </p>
               </div>
 

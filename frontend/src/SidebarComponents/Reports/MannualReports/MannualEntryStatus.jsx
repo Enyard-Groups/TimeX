@@ -375,7 +375,9 @@ const MannualEntryStatus = () => {
                         </td>
 
                         <td className="p-2 hidden lg:table-cell">
-                          {new Date(item.intime).toLocaleString()}
+                          {item.intime
+                            ? new Date(item.intime).toLocaleString()
+                            : "No Checkin"}
                         </td>
 
                         <td className="p-2 hidden lg:table-cell">
@@ -500,7 +502,9 @@ const MannualEntryStatus = () => {
                   <p className={labelStyle}>In Time</p>
                   <p className={inputStyle}>
                     {" "}
-                    {new Date(selectedItem.intime).toLocaleString()}
+                    {selectedItem.intime
+                      ? new Date(selectedItem.intime).toLocaleString()
+                      : "No Checkin"}
                   </p>
                 </div>
 
