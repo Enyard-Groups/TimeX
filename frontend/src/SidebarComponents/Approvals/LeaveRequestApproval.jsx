@@ -55,7 +55,7 @@ const LeaveRequestApproval = () => {
             sa: "✔",
             faname: approverName,
             saname: approverName,
-            remarks: item.remarks || "",
+            remarks: item.remarks || "-",
             rejectedreason: "-",
           };
         }
@@ -68,8 +68,8 @@ const LeaveRequestApproval = () => {
             sa: "✘",
             faname: approverName,
             saname: approverName,
-            remarks: item.remarks || "",
-            rejectedreason: item.rejectedreason || "",
+            remarks: item.remarks || "-",
+            rejectedreason: item.rejectedreason || "-",
           };
         }
       }
@@ -125,7 +125,7 @@ const LeaveRequestApproval = () => {
             sa: "✔",
             faname: approverName,
             saname: approverName,
-            remarks: item.remarks || "",
+            remarks: item.remarks || "-",
             rejectedreason: "-",
           };
         }
@@ -138,8 +138,8 @@ const LeaveRequestApproval = () => {
             sa: "✘",
             faname: approverName,
             saname: approverName,
-            remarks: item.remarks || "",
-            rejectedreason: item.rejectedreason || "",
+            remarks: item.remarks || "-",
+            rejectedreason: item.rejectedreason || "-",
           };
         }
       }
@@ -329,7 +329,7 @@ const LeaveRequestApproval = () => {
                           <input
                             placeholder="Remarks"
                             className="border border-gray-200 rounded px-2 py-1 text-sm w-40"
-                            value={item.remarks || ""}
+                            value={item.remarks || "-"}
                             onChange={(e) =>
                               handleRemarks(item.id, e.target.value)
                             }
@@ -483,7 +483,7 @@ const LeaveRequestApproval = () => {
                   <input
                     placeholder="Remarks"
                     className={inputStyle}
-                    value={selectedItem.remarks || ""}
+                    value={selectedItem.remarks || "-"}
                     onChange={(e) =>
                       handleRemarks(selectedItem.id, e.target.value)
                     }

@@ -40,6 +40,11 @@ const LeaveRequest = () => {
         toDate: "24/01/2026",
         resumeOn: "25/01/2026",
         reason: "Fever",
+        numberOfDays: "2",
+        pendingDays: "0",
+        leaveBalance: "10",
+        contact: "1234567890",
+        email: "employee@gmail.com",
         createdDate: new Date(),
         fa: "",
         faname: "",
@@ -116,6 +121,9 @@ const LeaveRequest = () => {
       contact,
       email,
       isHalfDay,
+      numberOfDays,
+      pendingDays,
+      leaveBalance,
     } = formData;
 
     if (
@@ -168,6 +176,9 @@ const LeaveRequest = () => {
       resumeOn,
       reason,
       contact,
+      numberOfDays,
+      pendingDays,
+      leaveBalance,
       email,
       isHalfDay,
       createdDate: new Date(),

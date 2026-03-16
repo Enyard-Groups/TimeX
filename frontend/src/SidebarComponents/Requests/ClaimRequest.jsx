@@ -34,7 +34,7 @@ const ClaimRequest = () => {
         employee: "Employee",
         claimCategory: "Food",
         date: "23/01/2026",
-        purpose: "",
+        purpose: "NIL",
         amount: "500",
         remarks: "Nothing",
         fa: "",

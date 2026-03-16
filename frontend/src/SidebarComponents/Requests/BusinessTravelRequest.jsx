@@ -39,6 +39,7 @@ const BusinessTravelRequest = () => {
         toDate: "24/01/2026",
         resumeOn: "25/01/2026",
         reason: "Business",
+        numberOfDays: "2",
         isHalfDayfirst: "Yes",
         isHalfDaylast: "No",
         fa: "",
@@ -118,6 +119,7 @@ const BusinessTravelRequest = () => {
       reason,
       isHalfDayfirst,
       isHalfDaylast,
+      numberOfDays,
     } = formData;
 
     if (!employee || !travelType || !fromDate || !toDate || !resumeOn) {
@@ -162,6 +164,7 @@ const BusinessTravelRequest = () => {
       toDate,
       resumeOn,
       reason,
+      numberOfDays,
       isHalfDayfirst,
       isHalfDaylast,
       fa: "",

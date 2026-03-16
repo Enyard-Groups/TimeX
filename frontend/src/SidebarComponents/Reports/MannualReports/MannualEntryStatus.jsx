@@ -404,7 +404,7 @@ const MannualEntryStatus = () => {
                           </span>
                         </td>
                         <td className="p-2 whitespace-nowrap hidden xl:table-cell">
-                          {item.remarks}
+                          {item.remarks ? item.remarks : "-"}
                         </td>
                         <td className="p-2 ">
                           <div className="flex gap-2 justify-center">
@@ -531,7 +531,9 @@ const MannualEntryStatus = () => {
 
                 <div>
                   <p className={labelStyle}>Remarks</p>
-                  <p className={inputStyle}>{selectedItem.remarks}</p>
+                  <p className={inputStyle}>
+                    {selectedItem.remarks ? selectedItem.remarks : "-"}
+                  </p>
                 </div>
 
                 <div>

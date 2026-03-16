@@ -67,7 +67,7 @@ const AttendanceByEmployee = () => {
     "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const filteredReport = attendanceByEmployee.filter((emp) => {
-    const punchDate = new Date(emp.intime);
+    const punchDate = new Date(emp.createdDate);
     const fromDate = parseDate(formData.fromPunchDate);
     const toDate = parseDate(formData.toPunchDate);
 
@@ -327,19 +327,13 @@ const AttendanceByEmployee = () => {
                           {item.employee}
                         </td>
                         <td className="p-2  hidden md:table-cell">
-                          {item.intime
-                            ? new Date(item.intime).toLocaleDateString()
-                            : new Date(item.outtime).toLocaleDateString()}
+                          {new Date(item.createdDate).toLocaleDateString()}
                         </td>
                         <td className="p-2  hidden xl:table-cell">
                           {" "}
-                          {item.intime
-                            ? new Date(item.intime).toLocaleString("en-US", {
-                                weekday: "long",
-                              })
-                            : new Date(item.outtime).toLocaleString("en-US", {
-                                weekday: "long",
-                              })}
+                          {new Date(item.createdDate).toLocaleString("en-US", {
+                            weekday: "long",
+                          })}
                         </td>
 
                         <td className="p-2 hidden xl:table-cell ">
@@ -349,7 +343,7 @@ const AttendanceByEmployee = () => {
                         </td>
 
                         <td className="p-2  whitespace-nowrap hidden xl:table-cell ">
-                          {item.location}
+                          {item.intime ? item.location : "-"}
                         </td>
 
                         <td className="p-2 hidden xl:table-cell ">
@@ -359,7 +353,7 @@ const AttendanceByEmployee = () => {
                         </td>
 
                         <td className="p-2  whitespace-nowrap hidden xl:table-cell ">
-                          {item.location}
+                          {item.outtime ? item.location : "-"}
                         </td>
 
                         <td className="p-2  hidden sm:table-cell">
@@ -496,9 +490,7 @@ const AttendanceByEmployee = () => {
                 <div>
                   <p className={labelStyle}>Punch Date</p>
                   <p className={inputStyle}>
-                    {selectedItem.intime
-                      ? new Date(selectedItem.intime).toLocaleDateString()
-                      : new Date(selectedItem.outtime).toLocaleDateString()}
+                    {new Date(selectedItem.createdDate).toLocaleDateString()}
                   </p>
                 </div>
 
@@ -513,7 +505,9 @@ const AttendanceByEmployee = () => {
 
                 <div>
                   <p className={labelStyle}>In Location</p>
-                  <p className={inputStyle}>{selectedItem.location}</p>
+                  <p className={inputStyle}>
+                    {selectedItem.intime ? selectedItem.location : "-"}
+                  </p>
                 </div>
 
                 <div>
@@ -527,7 +521,9 @@ const AttendanceByEmployee = () => {
 
                 <div>
                   <p className={labelStyle}>Out Location</p>
-                  <p className={inputStyle}>{selectedItem.location}</p>
+                  <p className={inputStyle}>
+                    {selectedItem.outtime ? selectedItem.location : "-"}
+                  </p>
                 </div>
 
                 <div>
@@ -549,7 +545,9 @@ const AttendanceByEmployee = () => {
 
                 <div>
                   <p className={labelStyle}>Remarks</p>
-                  <p className={inputStyle}>{selectedItem.remarks}</p>
+                  <p className={inputStyle}>
+                    {selectedItem.remarks ? selectedItem.remarks : "-"}
+                  </p>
                 </div>
 
                 <div>

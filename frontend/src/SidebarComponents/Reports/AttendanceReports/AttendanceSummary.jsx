@@ -66,7 +66,7 @@ const AttendanceSummary = () => {
     "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const filteredReport = attendanceSummary.filter((emp) => {
-    const punchDate = new Date(emp.intime);
+    const punchDate = new Date(emp.createdDate);
     const fromDate = parseDate(formData.fromPunchDate);
     const toDate = parseDate(formData.toPunchDate);
 

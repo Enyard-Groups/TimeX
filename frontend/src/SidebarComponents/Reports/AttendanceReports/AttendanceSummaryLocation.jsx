@@ -57,7 +57,7 @@ const AttendanceSummaryLocation = () => {
     "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const filteredReport = attendanceSummaryLocation.filter((emp) => {
-    const punchDate = new Date(emp.intime || emp.outtime);
+    const punchDate = new Date(emp.createdDate);
 
     const punchMonth = punchDate.getMonth() + 1;
     const punchYear = punchDate.getFullYear();
@@ -350,19 +350,13 @@ const AttendanceSummaryLocation = () => {
                         </td>
 
                         <td className="p-2  hidden md:table-cell">
-                          {item.intime
-                            ? new Date(item.intime).toLocaleDateString()
-                            : new Date(item.outtime).toLocaleDateString()}
+                          {new Date(item.createdDate).toLocaleDateString()}
                         </td>
                         <td className="p-2  hidden xl:table-cell">
                           {" "}
-                          {item.intime
-                            ? new Date(item.intime).toLocaleString("en-US", {
-                                weekday: "long",
-                              })
-                            : new Date(item.outtime).toLocaleString("en-US", {
-                                weekday: "long",
-                              })}
+                          {new Date(item.createdDate).toLocaleString("en-US", {
+                            weekday: "long",
+                          })}
                         </td>
 
                         <td className="p-2 hidden xl:table-cell ">
@@ -371,7 +365,7 @@ const AttendanceSummaryLocation = () => {
                             : "No Checkin"}
                         </td>
                         <td className="p-2  whitespace-nowrap hidden xl:table-cell">
-                          {item.location}
+                          {item.intime ? item.location : "-"}
                         </td>
 
                         <td className="p-2 hidden xl:table-cell ">
@@ -381,7 +375,7 @@ const AttendanceSummaryLocation = () => {
                         </td>
 
                         <td className="p-2  whitespace-nowrap hidden xl:table-cell">
-                          {item.location ? item.location : "No Location"}
+                          {item.outtime ? item.location : "-"}
                         </td>
 
                         <td className="p-2  hidden sm:table-cell">
@@ -511,22 +505,19 @@ const AttendanceSummaryLocation = () => {
                 <div>
                   <p className={labelStyle}>Punch Date</p>
                   <p className={inputStyle}>
-                    {selectedItem.intime
-                      ? new Date(selectedItem.intime).toLocaleDateString()
-                      : new Date(selectedItem.outtime).toLocaleDateString()}
+                    {new Date(selectedItem.createdDate).toLocaleDateString()}
                   </p>
                 </div>
 
                 <div>
                   <p className={labelStyle}>Punch Day</p>
                   <p className={inputStyle}>
-                    {selectedItem.intime
-                      ? new Date(selectedItem.intime).toLocaleString("en-US", {
-                          weekday: "long",
-                        })
-                      : new Date(selectedItem.outtime).toLocaleString("en-US", {
-                          weekday: "long",
-                        })}
+                    {new Date(selectedItem.createdDate).toLocaleString(
+                      "en-US",
+                      {
+                        weekday: "long",
+                      },
+                    )}
                   </p>
                 </div>
 
@@ -541,7 +532,9 @@ const AttendanceSummaryLocation = () => {
 
                 <div>
                   <p className={labelStyle}>In Location</p>
-                  <p className={inputStyle}>{selectedItem.location}</p>
+                  <p className={inputStyle}>
+                    {selectedItem.intime ? selectedItem.location : "-"}
+                  </p>
                 </div>
 
                 <div>
@@ -555,7 +548,9 @@ const AttendanceSummaryLocation = () => {
 
                 <div>
                   <p className={labelStyle}>Out Location</p>
-                  <p className={inputStyle}>{selectedItem.location}</p>
+                  <p className={inputStyle}>
+                    {selectedItem.outtime ? selectedItem.location : "-"}
+                  </p>
                 </div>
 
                 <div>
@@ -577,7 +572,9 @@ const AttendanceSummaryLocation = () => {
 
                 <div>
                   <p className={labelStyle}>Remarks</p>
-                  <p className={inputStyle}>{selectedItem.remarks}</p>
+                  <p className={inputStyle}>
+                    {selectedItem.remarks ? selectedItem.remarks : "-"}
+                  </p>
                 </div>
 
                 <div>

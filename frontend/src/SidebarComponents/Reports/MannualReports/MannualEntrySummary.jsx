@@ -65,7 +65,7 @@ const MannualEntrySummary = () => {
     "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const filteredReport = mannualEntrySummary.filter((emp) => {
-    const punchDate = new Date(emp.intime);
+    const punchDate = new Date(emp.createdDate);
     const fromDate = parseDate(formData.fromPunchDate);
     const toDate = parseDate(formData.toPunchDate);
 
@@ -224,7 +224,13 @@ const MannualEntrySummary = () => {
                     label="Employee"
                     name="employee"
                     value={formData.employee}
-                    options={["Employee 1", "Employee 2", "Employee 3","Employee 4","Employee 5"]}
+                    options={[
+                      "Employee 1",
+                      "Employee 2",
+                      "Employee 3",
+                      "Employee 4",
+                      "Employee 5",
+                    ]}
                     formData={formData}
                     setFormData={setFormData}
                     inputStyle={inputStyle}
@@ -394,15 +400,17 @@ const MannualEntrySummary = () => {
                           {item.location}
                         </td>
                         <td className="p-2  hidden md:table-cell">
-                          {item.intime ? new Date(item.intime).toLocaleDateString():new Date(item.outtime).toLocaleDateString()}
+                          {new Date(item.createdDate).toLocaleDateString()}
                         </td>
                         <td className="p-2 hidden md:table-cell">
                           {" "}
-                          {item.intime ? new Date(item.intime).toLocaleString("en-US", {
-                            weekday: "long",
-                          }):new Date(item.outtime).toLocaleString("en-US", {
-                            weekday: "long",
-                          })}
+                          {item.intime
+                            ? new Date(item.intime).toLocaleString("en-US", {
+                                weekday: "long",
+                              })
+                            : new Date(item.outtime).toLocaleString("en-US", {
+                                weekday: "long",
+                              })}
                         </td>
 
                         <td className="p-2 hidden xl:table-cell ">
@@ -529,7 +537,7 @@ const MannualEntrySummary = () => {
                 <div>
                   <p className={labelStyle}>Punch Date</p>
                   <p className={inputStyle}>
-                    {selectedItem.intime ? new Date(selectedItem.intime).toLocaleDateString():new Date(selectedItem.outtime).toLocaleDateString()}
+                    {new Date(selectedItem.createdDate).toLocaleDateString()}
                   </p>
                 </div>
 
@@ -584,7 +592,9 @@ const MannualEntrySummary = () => {
 
                 <div>
                   <p className={labelStyle}>Remarks</p>
-                  <p className={inputStyle}>{selectedItem.remarks}</p>
+                  <p className={inputStyle}>
+                    {selectedItem.remarks ? selectedItem.remarks : "-"}
+                  </p>
                 </div>
 
                 <div>

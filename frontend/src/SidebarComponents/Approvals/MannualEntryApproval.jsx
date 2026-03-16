@@ -270,7 +270,7 @@ const MannualEntryApproval = () => {
                       </td>
 
                       <td className="p-2 hidden xl:table-cell  whitespace-nowrap">
-                        {item.remarks}
+                        {item.remarks ? item.remarks : "-"}
                       </td>
 
                       <td className="p-2">
@@ -426,7 +426,9 @@ const MannualEntryApproval = () => {
 
               <div>
                 <p className={labelStyle}>Remarks</p>
-                <p className={inputStyle}>{selectedItem.remarks}</p>
+                <p className={inputStyle}>
+                  {selectedItem.remarks ? selectedItem.remarks : "-"}
+                </p>
               </div>
 
               <div>

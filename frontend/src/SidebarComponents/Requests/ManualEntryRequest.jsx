@@ -596,7 +596,7 @@ const MannualEntryRequest = () => {
                       </td>
 
                       <td className="p-2 hidden xl:table-cell">
-                        {item.remarks}
+                        {item.remarks?item.remarks:"-"}
                       </td>
 
                       <td className="p-2 hidden md:table-cell">
@@ -999,7 +999,7 @@ ${item.status === "Pending" && "bg-yellow-100 text-yellow-700"}
                             <tr key={item.id} className="text-center border-b">
                               <td className="p-2">{item.employee}</td>
                               <td className="p-2">
-                                {item.CreatedDate
+                                {item.createdDate
                                   ? new Date(
                                       item.createdDate,
                                     ).toLocaleDateString()

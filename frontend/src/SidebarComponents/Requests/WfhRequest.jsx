@@ -37,6 +37,11 @@ const WfhRequest = () => {
         fromDate: "23/01/2026",
         toDate: "24/01/2026",
         reason: "fever",
+        numberOfDays: "2",
+        pendingDays: "0",
+        wfhBalance: "9",
+        contact: "1234567890",
+        email: "employee@gmail.com",
         fa: "",
         faname: "",
         sa: "",
@@ -118,7 +123,17 @@ const WfhRequest = () => {
 
   // Handle Submit
   const handleSubmit = () => {
-    const { employee, fromDate, toDate, reason, contact, email } = formData;
+    const {
+      employee,
+      fromDate,
+      toDate,
+      reason,
+      contact,
+      email,
+      numberOfDays,
+      pendingDays,
+      wfhBalance,
+    } = formData;
 
     if (!employee || !fromDate || !toDate || !contact || !email || !reason) {
       toast.error("Please fill required fields");
@@ -154,6 +169,11 @@ const WfhRequest = () => {
       fromDate,
       toDate,
       reason,
+      numberOfDays,
+      pendingDays,
+      wfhBalance,
+      contact,
+      email,
       fa: "",
       faname: "",
       sa: "",

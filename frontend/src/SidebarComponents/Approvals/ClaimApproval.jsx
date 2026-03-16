@@ -421,7 +421,7 @@ const ClaimApproval = () => {
 
                 <div>
                   <p className={labelStyle}>Remarks</p>
-                  <p className={inputStyle}>{selectedItem.remarks}</p>
+                  <p className={inputStyle}>{selectedItem.remarks?selectedItem.remarks:"-"}</p>
                 </div>
 
                 <div>

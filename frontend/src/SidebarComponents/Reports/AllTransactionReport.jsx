@@ -66,7 +66,7 @@ const AllTransactionReport = () => {
     "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const filteredReport = allTransactionReport.filter((emp) => {
-    const punchDate = new Date(emp.intime);
+    const punchDate = new Date(emp.createdDate);
     const fromDate = parseDate(formData.fromPunchDate);
     const toDate = parseDate(formData.toPunchDate);
 
@@ -387,9 +387,7 @@ const AllTransactionReport = () => {
                         </td>
 
                         <td className="p-2  hidden md:table-cell">
-                          {item.intime
-                            ? new Date(item.intime).toLocaleDateString()
-                            : new Date(item.outtime).toLocaleDateString()}
+                          {new Date(item.createdDate).toLocaleDateString()}
                         </td>
                         <td className="p-2  hidden xl:table-cell">
                           {" "}
@@ -536,9 +534,7 @@ const AllTransactionReport = () => {
                 <div>
                   <p className={labelStyle}>Punch Date</p>
                   <p className={inputStyle}>
-                    {selectedItem.intime
-                      ? new Date(selectedItem.intime).toLocaleDateString()
-                      : new Date(selectedItem.outtime).toLocaleDateString()}
+                    {new Date(selectedItem.createdDate).toLocaleDateString()}
                   </p>
                 </div>
 
