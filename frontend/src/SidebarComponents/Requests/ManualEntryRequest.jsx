@@ -106,6 +106,11 @@ const MannualEntryRequest = () => {
         employeeId: "EMP006",
         employee: "Employee 3",
         location: "Head Office",
+        intime: "",
+        outtime: "",
+        createdDate: new Date(),
+        company: "Company",
+        remarks: "",
         designation: "Project Manager",
         employeeCategory: "Full Time Equivalent",
         status: "Pending",
@@ -115,6 +120,25 @@ const MannualEntryRequest = () => {
         employeeId: "EMP007",
         employee: "Employee 4",
         location: "Head Office",
+        intime: "",
+        outtime: "",
+        createdDate: new Date(),
+        company: "Company",
+        remarks: "",
+        designation: "Project Manager",
+        employeeCategory: "Full Time Equivalent",
+        status: "Pending",
+      },
+      {
+        id: 8,
+        employeeId: "EMP007",
+        employee: "Employee 4",
+        location: "Head Office",
+        intime: "",
+        outtime: "",
+        createdDate: new Date("2026-03-17"),
+        company: "Company",
+        remarks: "",
         designation: "Project Manager",
         employeeCategory: "Full Time Equivalent",
         status: "Pending",
@@ -213,8 +237,8 @@ const MannualEntryRequest = () => {
       id: editId ? editId : Date.now(),
       employee,
       location,
-      intime: intime ? new Date(intime).toISOString() : null,
-      outtime: outtime ? new Date(outtime).toISOString() : null,
+      intime: intime ? new Date(intime).toISOString() : "",
+      outtime: outtime ? new Date(outtime).toISOString() : "",
       remarks,
       company,
       designation,
@@ -562,7 +586,9 @@ const MannualEntryRequest = () => {
                       </td>
 
                       <td className="p-2 hidden md:table-cell">
-                        {new Date(item.createdDate).toLocaleDateString()}
+                        {item.createdDate
+                          ? new Date(item.createdDate).toLocaleDateString()
+                          : "Missed Entry"}
                       </td>
 
                       <td className="p-2 hidden lg:table-cell">
@@ -973,9 +999,11 @@ ${item.status === "Pending" && "bg-yellow-100 text-yellow-700"}
                             <tr key={item.id} className="text-center border-b">
                               <td className="p-2">{item.employee}</td>
                               <td className="p-2">
-                                {new Date(
-                                  item.createdDate,
-                                ).toLocaleDateString()}
+                                {item.CreatedDate
+                                  ? new Date(
+                                      item.createdDate,
+                                    ).toLocaleDateString()
+                                  : "Missed Entry"}
                               </td>
 
                               <td className="p-2">

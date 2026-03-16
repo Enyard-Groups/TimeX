@@ -387,7 +387,9 @@ const MannualEntryStatus = () => {
                         </td>
 
                         <td className="p-2 whitespace-nowrap hidden xl:table-cell">
-                          {new Date(item.createdDate).toLocaleDateString()}
+                          {item.createdDate
+                            ? new Date(item.createdDate).toLocaleDateString()
+                            : "Missed Entry"}
                         </td>
 
                         <td className="p-2 hidden md:table-cell">
@@ -521,7 +523,9 @@ const MannualEntryStatus = () => {
                 <div>
                   <p className={labelStyle}>Created Date</p>
                   <p className={inputStyle}>
-                    {new Date(selectedItem.createdDate).toLocaleDateString()}
+                    {selectedItem.createdDate
+                      ? new Date(selectedItem.createdDate).toLocaleDateString()
+                      : "Missed Entry"}
                   </p>
                 </div>
 

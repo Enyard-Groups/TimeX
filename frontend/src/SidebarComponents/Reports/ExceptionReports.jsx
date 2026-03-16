@@ -376,16 +376,20 @@ const ExceptionReports = () => {
                           {item.designation}
                         </td>
                         <td className="p-2 whitespace-nowrap hidden lg:table-cell">
-                          {new Date(item.createdDate).toLocaleDateString()}
+                          {item.createdDate
+                            ? new Date(item.createdDate).toLocaleDateString()
+                            : "Missed Entry"}
                         </td>
 
                         <td className="p-2 whitespace-nowrap hidden lg:table-cell">
-                          {new Date(item.createdDate).toLocaleDateString(
-                            "en-US",
-                            {
-                              weekday: "long",
-                            },
-                          )}
+                          {item.createdDate
+                            ? new Date(item.createdDate).toLocaleDateString(
+                                "en-US",
+                                {
+                                  weekday: "long",
+                                },
+                              )
+                            : "Missed Entry"}
                         </td>
 
                         <td className="p-2 hidden lg:table-cell">
@@ -502,17 +506,21 @@ const ExceptionReports = () => {
                 <div>
                   <p className={labelStyle}> Date</p>
                   <p className={inputStyle}>
-                    {new Date(selectedItem.createdDate).toLocaleDateString()}
+                    {selectedItem.createdDate
+                      ? new Date(selectedItem.createdDate).toLocaleDateString()
+                      : "Missed Entry"}
                   </p>
                 </div>
 
                 <div>
                   <p className={labelStyle}> Day</p>
                   <p className={inputStyle}>
-                    {new Date(selectedItem.createdDate).toLocaleDateString(
-                      "en-US",
-                      { weekday: "long" },
-                    )}
+                    {selectedItem.createdDate
+                      ? new Date(selectedItem.createdDate).toLocaleDateString(
+                          "en-US",
+                          { weekday: "long" },
+                        )
+                      : "Missed Entry"}
                   </p>
                 </div>
 

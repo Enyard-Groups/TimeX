@@ -264,7 +264,9 @@ const MannualEntryApproval = () => {
                       </td>
 
                       <td className="p-2 hidden sm:table-cell ">
-                        {new Date(item.createdDate).toLocaleDateString()}
+                        {item.createdDate
+                          ? new Date(item.createdDate).toLocaleDateString()
+                          : "Missed Entry"}
                       </td>
 
                       <td className="p-2 hidden xl:table-cell  whitespace-nowrap">
@@ -416,7 +418,9 @@ const MannualEntryApproval = () => {
               <div>
                 <p className={labelStyle}>Created Date</p>
                 <p className={inputStyle}>
-                  {new Date(selectedItem.createdDate).toLocaleDateString()}
+                  {selectedItem.createdDate
+                    ? new Date(selectedItem.createdDate).toLocaleDateString()
+                    : "Missed Entry"}
                 </p>
               </div>
 
