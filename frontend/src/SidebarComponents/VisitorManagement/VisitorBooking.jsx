@@ -145,6 +145,16 @@ const VisitorBooking = () => {
       accessCard,
       visitDate,
       visitTime,
+      idType,
+      isPermanent,
+      idNumber,
+      nationality,
+      idExpiry,
+      email,
+      cicpaCard,
+      companyCode,
+      cicpaExpiry,
+      searchValue,
     } = formData;
 
     if (
@@ -168,6 +178,21 @@ const VisitorBooking = () => {
       vDateTime: visitDate + " (" + visitTime + ")",
       organization: company,
       meetingPerson: contactPerson,
+      searchValue,
+      purpose,
+      company,
+      mobile,
+      contactPerson,
+      email,
+      cicpaCard,
+      companyCode,
+      cicpaExpiry,
+      idType,
+      idNumber,
+      nationality,
+      idExpiry,
+      accessCard,
+      isPermanent,
     };
 
     if (editId) {
@@ -364,16 +389,23 @@ const VisitorBooking = () => {
             <table className="w-full text-lg border-collapse">
               <thead className="text-md bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)] ">
                 <tr>
-                  <th className="py-2 px-6 font-semibold">SL.NO</th>
-                  <th className="py-2 px-6 font-semibold">Visitor Code</th>
-                  <th className="py-2 px-6 font-semibold">Visitor Name</th>
-                  <th className="py-2 px-6 font-semibold">Visitor Phone</th>
-                  <th className="py-2 px-6 font-semibold">Card Reference</th>
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                  <th className="py-2 px-6 hidden sm:table-cell  font-semibold">
+                    SL.NO
+                  </th>
+                  <th className="py-2 px-6 hidden md:table-cell  font-semibold">
+                    Visitor Code
+                  </th>
+                  <th className="py-2 px-6  font-semibold">Visitor Name</th>
+                  <th className="py-2 px-6 hidden md:table-cell  font-semibold">
+                    Visitor Phone
+                  </th>
+                  <th className="py-2 px-6 hidden xl:table-cell  font-semibold whitespace-nowrap">
                     Visitor Date&Time
                   </th>
-                  <th className="py-2 px-6 font-semibold">Organization</th>
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                  <th className="py-2 px-6 hidden xl:table-cell  font-semibold">
+                    Organization
+                  </th>
+                  <th className="py-2 px-6 hidden lg:table-cell  font-semibold whitespace-nowrap">
                     Meeting Person
                   </th>
                   <th className="py-2 px-6 font-semibold">Action</th>
@@ -392,16 +424,23 @@ const VisitorBooking = () => {
                       key={item.id}
                       className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)] "
                     >
-                      <td className="py-2 px-6">{index + 1}</td>
-                      <td className="py-2 px-6">{item.visitorCode}</td>
+                      <td className="py-2 px-6 hidden sm:table-cell ">
+                        {index + 1}
+                      </td>
+                      <td className="py-2 px-6 hidden md:table-cell ">
+                        {item.visitorCode}
+                      </td>
                       <td className="py-2 px-6">{item.visitorName}</td>
-                      <td className="py-2 px-6">{item.phone}</td>
-                      <td className="py-2 px-6">{item.cardReference}</td>
-                      <td className="py-2 px-6 whitespace-nowrap">
+                      <td className="py-2 px-6 hidden md:table-cell ">
+                        {item.phone}
+                      </td>
+                      <td className="py-2 px-6 hidden xl:table-cell ">
                         {item.vDateTime}
                       </td>
-                      <td className="py-2 px-6">{item.organization}</td>
-                      <td className="py-2 px-6 whitespace-nowrap">
+                      <td className="py-2 px-6 hidden xl:table-cell ">
+                        {item.organization}
+                      </td>
+                      <td className="py-2 px-6 hidden lg:table-cell  whitespace-nowrap">
                         {item.meetingPerson}
                       </td>
                       <td className="py-2 px-6">

@@ -456,7 +456,10 @@ const MannualEntryReport = () => {
         )}
 
         {modalOpenSelectedItem && selectedItem && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
             <div
               className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
               style={{ scrollbarWidth: "none" }}

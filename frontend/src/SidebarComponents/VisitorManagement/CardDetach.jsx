@@ -141,6 +141,9 @@ const CardDetach = () => {
       nationality,
       idExpiry,
       accessCard,
+      searchType,
+      idType,
+      isPermanent,
     } = formData;
 
     if (
@@ -173,6 +176,16 @@ const CardDetach = () => {
       cardReference: accessCard,
       organization: company,
       meetingPerson: contactPerson,
+      searchType,
+      company,
+      mobile,
+      contactPerson,
+      cicpaExpiry,
+      idType,
+      nationality,
+      idExpiry,
+      accessCard,
+      isPermanent,
     };
 
     if (editId) {
@@ -375,12 +388,20 @@ const CardDetach = () => {
             <table className="w-full text-lg border-collapse">
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
-                  <th className="py-2 px-6 font-semibold">SL.NO</th>
-                  <th className="py-2 px-6 font-semibold">Visitor Code</th>
+                  <th className="py-2 px-6 font-semibold hidden sm:table-cell">
+                    SL.NO
+                  </th>
+                  <th className="py-2 px-6 font-semibold hidden md:table-cell">
+                    Visitor Code
+                  </th>
                   <th className="py-2 px-6 font-semibold">Visitor Name</th>
-                  <th className="py-2 px-6 font-semibold">Visitor Company</th>
-                  <th className="py-2 px-6 font-semibold">Visitor Phone</th>
-                  <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                  <th className="py-2 px-6 font-semibold hidden xl:table-cell">
+                    Visitor Company
+                  </th>
+                  <th className="py-2 px-6 font-semibold hidden md:table-cell">
+                    Visitor Phone
+                  </th>
+                  <th className="py-2 px-6 font-semibold hidden lg:table-cell whitespace-nowrap">
                     Meeting Person
                   </th>
                   <th className="py-2 px-6 font-semibold">Action</th>
@@ -399,12 +420,22 @@ const CardDetach = () => {
                       key={item.id}
                       className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)] "
                     >
-                      <td className="py-2 px-6">{index + 1}</td>
-                      <td className="py-2 px-6">{item.visitorCode}</td>
-                      <td className="py-2 px-6">{item.visitorName}</td>
-                      <td className="py-2 px-6">{item.organization}</td>
-                      <td className="py-2 px-6">{item.phone}</td>
-                      <td className="py-2 px-6">{item.meetingPerson}</td>
+                      <td className="py-2 px-6 hidden sm:table-cell">
+                        {index + 1}
+                      </td>
+                      <td className="py-2 px-6 hidden md:table-cell">
+                        {item.visitorCode}
+                      </td>
+                      <td className="py-2 px-6 ">{item.visitorName}</td>
+                      <td className="py-2 px-6 hidden xl:table-cell">
+                        {item.organization}
+                      </td>
+                      <td className="py-2 px-6 hidden md:table-cell">
+                        {item.phone}
+                      </td>
+                      <td className="py-2 px-6 hidden lg:table-cell">
+                        {item.meetingPerson}
+                      </td>
                       <td className="py-2 px-6">
                         <div className="flex flex-row space-x-3 justify-center ">
                           {/* View */}
