@@ -119,7 +119,7 @@ const MannualEntryRequest = () => {
         id: 7,
         employeeId: "EMP007",
         employee: "Employee 4",
-        location: "Head Office",
+        location: "UAE",
         intime: "",
         outtime: "",
         createdDate: new Date(),
@@ -596,7 +596,7 @@ const MannualEntryRequest = () => {
                       </td>
 
                       <td className="p-2 hidden xl:table-cell">
-                        {item.remarks?item.remarks:"-"}
+                        {item.remarks ? item.remarks : "-"}
                       </td>
 
                       <td className="p-2 hidden md:table-cell">

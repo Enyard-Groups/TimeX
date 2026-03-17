@@ -48,13 +48,13 @@ const AbsenceReport = () => {
     "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const absentences = absenceReport.filter(
-    (x) => x.intime === "" && x.outtime === "",
+    (x) =>
+      (x.intime === "" || x.intime === null) &&
+      (x.outtime === "" || x.outtime === null),
   );
 
-  console.log(absentences);
-
   const filteredReport = absentences.filter((emp) => {
-    const punchDate = parseDate(emp.intime);
+    const punchDate = parseDate(emp.createdDate);
     const fromDate = parseDate(formData.fromPunchDate);
     const toDate = parseDate(formData.toPunchDate);
 
@@ -327,6 +327,9 @@ const AbsenceReport = () => {
               className="overflow-x-auto min-h-[250px]"
               style={{ scrollbarWidth: "none" }}
             >
+              <h1 className="text-[oklch(0.577_0.245_27.325)] text-xl mb-4 text-center">
+                Absence Report
+              </h1>
               <table className="w-full text-lg border-collapse">
                 <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                   <tr>
@@ -519,6 +522,21 @@ const AbsenceReport = () => {
                 </div>
 
                 <div>
+                  <p className={labelStyle}>Employee ID</p>
+                  <p className={inputStyle}>{selectedItem.employeeId}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Designation </p>
+                  <p className={inputStyle}>{selectedItem.designation}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Location </p>
+                  <p className={inputStyle}>{selectedItem.location}</p>
+                </div>
+
+                <div>
                   <p className={labelStyle}>Created Date</p>
                   <p className={inputStyle}>
                     {selectedItem.createdDate
@@ -528,11 +546,25 @@ const AbsenceReport = () => {
                 </div>
 
                 <div>
-                  <p className={labelStyle}>Remarks</p>
+                  <p className={labelStyle}>Created Date</p>
                   <p className={inputStyle}>
-                    {selectedItem.remarks ? selectedItem.remarks : "-"}
+                    {selectedItem.createdDate
+                      ? new Date(selectedItem.createdDate).toLocaleDateString(
+                          "en-US",
+                          {
+                            weekday: "long",
+                          },
+                        )
+                      : "Missed Entry"}
                   </p>
                 </div>
+
+                <div>
+                  <p className={labelStyle}>Status</p>
+                  <p className={inputStyle}>{"Absent"}</p>
+                </div>
+
+               
               </div>
             </div>
           </div>

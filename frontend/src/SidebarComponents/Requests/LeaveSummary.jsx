@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { FaAngleRight } from "react-icons/fa6";
+import { FaAngleRight, FaEye } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
+import { RxCross2 } from "react-icons/rx";
 import autoTable from "jspdf-autotable";
 import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
@@ -14,6 +15,8 @@ const LeaveSummary = () => {
   const [employeeFilter, setEmployeeFilter] = useState("");
 
   const [openEmployeeModal, setopenEmployeeModal] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+  const [modalOpenSelectedItem, setModalOpenSelectedItem] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [leave] = useState([
     {
@@ -103,6 +106,12 @@ const LeaveSummary = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const inputStyle =
+    "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-lg py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+
+  const labelStyle =
+    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const filteredLeave = leave.filter((x) => {
     if (!employeeFilter) return false;
@@ -213,6 +222,8 @@ const LeaveSummary = () => {
 
     doc.save("LeaveRequestData.pdf");
   };
+
+  const selectedItem = selectedId;
 
   return (
     <>
@@ -369,27 +380,28 @@ const LeaveSummary = () => {
                 <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                   <tr>
                     <th className="py-2 px-6 font-semibold">Employee</th>
-                    <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    <th className="py-2 px-6 font-semibold hidden sm:table-cell">
                       Leave Type
                     </th>
-                    <th className="py-2 px-6 font-semibold">Year</th>
-                    <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    <th className="py-2 px-6 font-semibold hidden xl:table-cell">
+                      Year
+                    </th>
+                    <th className="py-2 px-6 font-semibold hidden md:table-cell">
                       Maximum Leaves
                     </th>
-                    <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    <th className="py-2 px-6 font-semibold hidden xl:table-cell">
                       Carry Forward
                     </th>
-                    <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    <th className="py-2 px-6 font-semibold hidden xl:table-cell">
                       CF Remaining
                     </th>
-                    <th className="py-2 px-6 font-semibold whitespace-nowrap">
-                      Comp Off
+                    <th className="py-2 px-6 font-semibold hidden md:table-cell">
+                      Availed
                     </th>
-                    <th className="py-2 px-6 font-semibold whitespace-nowrap">
-                      CO Remaining
+                    <th className="py-2 px-6 font-semibold hidden md:table-cell">
+                      Balance
                     </th>
-                    <th className="py-2 px-6 font-semibold">Availed</th>
-                    <th className="py-2 px-6 font-semibold">Balance</th>
+                    <th className="py-2 px-6 font-semibold">Action</th>
                   </tr>
                 </thead>
 
@@ -408,19 +420,41 @@ const LeaveSummary = () => {
                           className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                         >
                           <td className="py-2 px-6">{emp.employee}</td>
-                          <td className="py-2 px-6 whitespace-nowrap">
+                          <td className="py-2 px-6 hidden sm:table-cell">
                             {item.leaveType}
                           </td>
-                          <td className="py-2 px-6">{item.year}</td>
-                          <td className="py-2 px-6">{item.maximumLeaves}</td>
-                          <td className="py-2 px-6">
+                          <td className="py-2 px-6 hidden xl:table-cell">
+                            {item.year}
+                          </td>
+                          <td className="py-2 px-6 hidden md:table-cell">
+                            {item.maximumLeaves}
+                          </td>
+                          <td className="py-2 px-6 hidden xl:table-cell">
                             {item.totalCarryForward}
                           </td>
-                          <td className="py-2 px-6">{item.cfRemaining}</td>
-                          <td className="py-2 px-6">{item.totalComboOff}</td>
-                          <td className="py-2 px-6">{item.coRemaining}</td>
-                          <td className="py-2 px-6">{item.availed}</td>
-                          <td className="py-2 px-6">{item.balance}</td>
+                          <td className="py-2 px-6 hidden xl:table-cell">
+                            {item.cfRemaining}
+                          </td>
+                          <td className="py-2 px-6 hidden md:table-cell">
+                            {item.availed}
+                          </td>
+                          <td className="py-2 px-6 hidden md:table-cell">
+                            {item.balance}
+                          </td>
+                          <td className="p-2 ">
+                            <div className="flex gap-2 justify-center">
+                              <FaEye
+                                onClick={() => {
+                                  setSelectedId({
+                                    ...item,
+                                    employee: emp.employee,
+                                  });
+                                  setModalOpenSelectedItem(true);
+                                }}
+                                className="text-blue-500 cursor-pointer text-lg mt-2 mr-2"
+                              />
+                            </div>
+                          </td>
                         </tr>
                       )),
                     )
@@ -473,6 +507,81 @@ const LeaveSummary = () => {
                 >
                   Last
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {modalOpenSelectedItem && selectedItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
+            <div
+              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+              style={{ scrollbarWidth: "none" }}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold">
+                  {selectedItem.employee} Details
+                </h2>
+
+                <RxCross2
+                  onClick={() => (
+                    setModalOpenSelectedItem(false),
+                    setSelectedId(null)
+                  )}
+                  className="cursor-pointer text-xl text-red-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-lg">
+                <div>
+                  <p className={labelStyle}>Employee</p>
+                  <p className={inputStyle}>{selectedItem.employee}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Leave Type</p>
+                  <p className={inputStyle}>{selectedItem.leaveType}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Year</p>
+                  <p className={inputStyle}>{selectedItem.year}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Maximum Leaves</p>
+                  <p className={inputStyle}>{selectedItem.maximumLeaves}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Carry Forward</p>
+                  <p className={inputStyle}>{selectedItem.totalCarryForward}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>CF Remaining</p>
+                  <p className={inputStyle}>{selectedItem.cfRemaining}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Comp Off</p>
+                  <p className={inputStyle}>{selectedItem.totalComboOff}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>CO Remaining</p>
+                  <p className={inputStyle}>{selectedItem.coRemaining}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Availed</p>
+                  <p className={inputStyle}>{selectedItem.availed}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Balance</p>
+                  <p className={inputStyle}>{selectedItem.balance}</p>
+                </div>
               </div>
             </div>
           </div>

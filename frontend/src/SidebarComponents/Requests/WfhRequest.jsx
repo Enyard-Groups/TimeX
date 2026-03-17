@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
@@ -94,46 +95,47 @@ const WfhRequest = () => {
   );
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
 
-    setFormData((prev) => {
-      const updated = {
-        ...prev,
-        [name]: type === "checkbox" ? checked : value,
-      };
-
-      if (updated.fromDate && updated.toDate) {
-        const parseDate = (dateStr) => {
-          const [day, month, year] = dateStr.split("/");
-          return new Date(year, month - 1, day);
-        };
-
-        const from = parseDate(updated.fromDate);
-        const to = parseDate(updated.toDate);
-
-        const diffTime = to - from;
-        const diffDays = diffTime / (1000 * 60 * 60 * 24) + 1;
-
-        updated.numberOfDays = diffDays > 0 ? diffDays : "";
-      }
-
-      return updated;
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
+  useEffect(() => {
+    if (!formData.fromDate || !formData.toDate) return;
+
+    const parseDate = (dateStr) => {
+      const [day, month, year] = dateStr.split("/");
+      return new Date(year, month - 1, day);
+    };
+
+    const from = parseDate(formData.fromDate);
+    const to = parseDate(formData.toDate);
+
+    if (to < from) {
+      setFormData((prev) => ({
+        ...prev,
+        numberOfDays: "",
+      }));
+      return;
+    }
+
+    const diffTime = to.getTime() - from.getTime();
+    let days = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+    if (days < 0) days = 0;
+
+    setFormData((prev) => ({
+      ...prev,
+      numberOfDays: days.toString(),
+    }));
+  }, [formData.fromDate, formData.toDate]);
+
   // Handle Submit
-  const handleSubmit = () => {
-    const {
-      employee,
-      fromDate,
-      toDate,
-      reason,
-      contact,
-      email,
-      numberOfDays,
-      pendingDays,
-      wfhBalance,
-    } = formData;
+   const handleSubmit = () => {
+    const { employee, fromDate, toDate, reason, contact, email } = formData;
 
     if (!employee || !fromDate || !toDate || !contact || !email || !reason) {
       toast.error("Please fill required fields");
@@ -165,15 +167,7 @@ const WfhRequest = () => {
 
     const newWfh = {
       id: Date.now(),
-      employee,
-      fromDate,
-      toDate,
-      reason,
-      numberOfDays,
-      pendingDays,
-      wfhBalance,
-      contact,
-      email,
+      ...formData,
       fa: "",
       faname: "",
       sa: "",
@@ -186,20 +180,14 @@ const WfhRequest = () => {
       const updated = stored.map((item) =>
         item.id === editId ? { ...item, ...newWfh } : item,
       );
-
-      localStorage.setItem("wfhRequests", JSON.stringify(updated));
-
       setWfh(updated);
-
-      toast.success(" Updated");
+      localStorage.setItem("wfhRequests", JSON.stringify(updated));
+      toast.success("Updated");
     } else {
       const updated = [...stored, newWfh];
-
-      localStorage.setItem("wfhRequests", JSON.stringify(updated));
-
       setWfh(updated);
-
-      toast.success(" Submitted");
+      localStorage.setItem("wfhRequests", JSON.stringify(updated));
+      toast.success("Submitted");
     }
 
     setOpenModal(false);
@@ -217,6 +205,7 @@ const WfhRequest = () => {
       reason: "",
     });
   };
+
 
   // Handle delete
   const handleDelete = (id) => {

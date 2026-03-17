@@ -7,15 +7,15 @@ import SearchDropdown from "../SearchDropdown";
 import SpinnerDatePicker from "../SpinnerDatePicker";
 import { FaEye } from "react-icons/fa";
 
-const WfhReport = () => {
+const ClaimReport = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [wfhReport, setWfhReport] = useState([]);
+  const [claimReport, setClaimReport] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [modalOpenSelectedItem, setModalOpenSelectedItem] = useState(false);
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("wfhRequests")) || [];
-    setWfhReport(stored);
+    const stored = JSON.parse(localStorage.getItem("claimRequests")) || [];
+    setClaimReport(stored);
   }, []);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -43,7 +43,7 @@ const WfhReport = () => {
   const labelStyle =
     "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
-  const filteredReport = wfhReport.filter((emp) => {
+  const filteredReport = claimReport.filter((emp) => {
     const fromDate = parseDate(emp.fromDate);
     const toDate = parseDate(emp.toDate);
     const fromDateinform = parseDate(formData.fromdateinform);
@@ -60,7 +60,7 @@ const WfhReport = () => {
     );
   });
 
-  const filteredwfhReport = filteredReport.filter((x) =>
+  const filteredclaimReport = filteredReport.filter((x) =>
     x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
@@ -68,14 +68,14 @@ const WfhReport = () => {
 
   const startIndex = endIndex - entriesPerPage;
 
-  const currentwfhReport = filteredwfhReport.slice(startIndex, endIndex);
+  const currentclaimReport = filteredclaimReport.slice(startIndex, endIndex);
 
   const totalPages = Math.max(
     1,
-    Math.ceil(filteredwfhReport.length / entriesPerPage),
+    Math.ceil(filteredclaimReport.length / entriesPerPage),
   );
 
-  const selectedItem = wfhReport.find((item) => item.id === selectedId);
+  const selectedItem = claimReport.find((item) => item.id === selectedId);
 
   return (
     <>
@@ -86,7 +86,7 @@ const WfhReport = () => {
             <FaAngleRight />
             Reports
             <FaAngleRight />
-            WFH Report
+            Claim Report
           </h1>
         </div>
 
@@ -229,7 +229,7 @@ const WfhReport = () => {
               style={{ scrollbarWidth: "none" }}
             >
               <h1 className="text-[oklch(0.577_0.245_27.325)] text-xl mb-4 text-center">
-                WFH Report
+                Claim Report
               </h1>
               <table className="w-full text-lg border-collapse">
                 <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
@@ -237,33 +237,33 @@ const WfhReport = () => {
                     <th className="p-2 font-semibold">Name</th>
 
                     <th className="p-2 font-semibold whitespace-nowrap hidden md:table-cell">
-                      From Date
+                      Claim Date
                     </th>
 
                     <th className="p-2 font-semibold whitespace-nowrap hidden md:table-cell">
-                      To Date
+                      Category{" "}
+                    </th>
+
+                    <th className="p-2 font-semibold whitespace-nowrap hidden md:table-cell">
+                      Amount
                     </th>
 
                     <th className="p-2 font-semibold whitespace-nowrap hidden lg:table-cell">
-                      Reason
-                    </th>
-
-                    <th className="p-2 font-semibold whitespace-nowrap hidden md:table-cell">
-                      Number Of date
+                      Purpose
                     </th>
 
                     <th className="p-2 font-semibold">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {currentwfhReport.length === 0 ? (
+                  {currentclaimReport.length === 0 ? (
                     <tr>
                       <td colSpan="6" className="sm:text-center p-10">
                         No Data Available
                       </td>
                     </tr>
                   ) : (
-                    currentwfhReport.map((item) => (
+                    currentclaimReport.map((item) => (
                       <tr
                         key={item.id}
                         className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
@@ -273,19 +273,19 @@ const WfhReport = () => {
                         </td>
 
                         <td className="p-2 hidden md:table-cell">
-                          {item.fromDate}
+                          {item.date}
                         </td>
 
                         <td className="p-2 hidden md:table-cell">
-                          {item.toDate}
+                          {item.claimCategory}
+                        </td>
+
+                        <td className="p-2 hidden md:table-cell">
+                          {item.amount}
                         </td>
 
                         <td className="p-2 hidden lg:table-cell">
-                          {item.reason}
-                        </td>
-
-                        <td className="p-2 hidden md:table-cell">
-                          {item.numberOfDays}
+                          {item.purpose}
                         </td>
 
                         <td className="p-2 ">
@@ -309,9 +309,10 @@ const WfhReport = () => {
             {/* Pagination */}
             <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
               <span>
-                Showing {filteredwfhReport.length === 0 ? "0" : startIndex + 1}{" "}
-                to {Math.min(endIndex, filteredwfhReport.length)} of{" "}
-                {filteredwfhReport.length} entries
+                Showing{" "}
+                {filteredclaimReport.length === 0 ? "0" : startIndex + 1} to{" "}
+                {Math.min(endIndex, filteredclaimReport.length)} of{" "}
+                {filteredclaimReport.length} entries
               </span>
 
               <div className="flex flex-row space-x-1">
@@ -385,18 +386,23 @@ const WfhReport = () => {
                 </div>
 
                 <div>
-                  <p className={labelStyle}>From Date</p>
-                  <p className={inputStyle}> {selectedItem.fromDate}</p>
+                  <p className={labelStyle}>Claim Date</p>
+                  <p className={inputStyle}> {selectedItem.date}</p>
                 </div>
 
                 <div>
-                  <p className={labelStyle}>To Date</p>
-                  <p className={inputStyle}> {selectedItem.toDate}</p>
+                  <p className={labelStyle}>Claim Category</p>
+                  <p className={inputStyle}> {selectedItem.claimCategory}</p>
                 </div>
 
                 <div>
-                  <p className={labelStyle}>Number of Days</p>
-                  <p className={inputStyle}>{selectedItem.numberOfDays}</p>
+                  <p className={labelStyle}>Amount</p>
+                  <p className={inputStyle}>{selectedItem.amount}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Purpose</p>
+                  <p className={inputStyle}>{selectedItem.purpose}</p>
                 </div>
               </div>
             </div>
@@ -407,4 +413,4 @@ const WfhReport = () => {
   );
 };
 
-export default WfhReport;
+export default ClaimReport;

@@ -18,8 +18,7 @@ import AllTransactionReport from "./AllTransactionReport";
 import ExceptionReports from "./ExceptionReports";
 import InOutReport from "./InOutReport";
 import WfhReport from "./WfhReport";
-import ClaimSummaryDatewise from "./ClaimSummaryDatewise";
-import ClaimsReport from "./ClaimsReport";
+import ClaimReport from "./ClaimReport";
 
 const ReportsRoute = ({ user }) => {
   return (
@@ -73,11 +72,8 @@ const ReportsRoute = ({ user }) => {
           />
 
           <Route path="wft-report" element={<WfhReport />} />
-          <Route
-            path="claim-summary-datewise"
-            element={<ClaimSummaryDatewise />}
-          />
-          <Route path="claims-report" element={<ClaimsReport />} />
+
+          <Route path="claims-report" element={<ClaimReport />} />
         </Routes>
       </div>
     </div>

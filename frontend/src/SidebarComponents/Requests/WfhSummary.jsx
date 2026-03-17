@@ -8,13 +8,16 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import { FaEye } from "react-icons/fa";
+import { RxCross2 } from "react-icons/rx";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 const WfhSummary = () => {
   const [employeeFilter, setEmployeeFilter] = useState("");
   const [openEmployeeModal, setopenEmployeeModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState("");
-
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [modalOpenSelectedItem, setModalOpenSelectedItem] = useState(false);
   const [leave] = useState([
     {
       employee: "Employee 1",
@@ -47,6 +50,12 @@ const WfhSummary = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const inputStyle =
+    "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-lg py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+
+  const labelStyle =
+    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const filteredWfh = leave.filter((x) => {
     if (!employeeFilter) return false;
@@ -313,15 +322,22 @@ const WfhSummary = () => {
                 <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                   <tr>
                     <th className="py-2 px-6 font-semibold">Employee</th>
-                    <th className="py-2 px-6 font-semibold">Year</th>
-                    <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    <th className="py-2 px-6 font-semibold hidden lg:table-cell">
+                      Year
+                    </th>
+                    <th className="py-2 px-6 font-semibold hidden sm:table-cell">
                       Type Name
                     </th>
-                    <th className="py-2 px-6 font-semibold whitespace-nowrap">
+                    <th className="py-2 px-6 font-semibold hidden lg:table-cell">
                       Maximum Wfhs
                     </th>
-                    <th className="py-2 px-6 font-semibold">Availed</th>
-                    <th className="py-2 px-6 font-semibold">Balance</th>
+                    <th className="py-2 px-6 font-semibold hidden md:table-cell">
+                      Availed
+                    </th>
+                    <th className="py-2 px-6 font-semibold hidden md:table-cell">
+                      Balance
+                    </th>
+                    <th className="py-2 px-6 font-semibold">Action</th>
                   </tr>
                 </thead>
 
@@ -341,13 +357,35 @@ const WfhSummary = () => {
                         >
                           <td className="py-2 px-6">{emp.employee}</td>
 
-                          <td className="py-2 px-6">{item.year}</td>
-                          <td className="py-2 px-6 whitespace-nowrap">
+                          <td className="py-2 px-6 hidden lg:table-cell">
+                            {item.year}
+                          </td>
+                          <td className="py-2 px-6  hidden sm:table-cell">
                             {item.typeName}
                           </td>
-                          <td className="py-2 px-6">{item.maximumWfhs}</td>
-                          <td className="py-2 px-6">{item.availed}</td>
-                          <td className="py-2 px-6">{item.balance}</td>
+                          <td className="py-2 px-6 hidden lg:table-cell">
+                            {item.maximumWfhs}
+                          </td>
+                          <td className="py-2 px-6 hidden md:table-cell">
+                            {item.availed}
+                          </td>
+                          <td className="py-2 px-6 hidden md:table-cell">
+                            {item.balance}
+                          </td>
+                          <td className="p-2">
+                            <div className="flex justify-center">
+                              <FaEye
+                                onClick={() => {
+                                  setSelectedItem({
+                                    ...item,
+                                    employee: emp.employee,
+                                  });
+                                  setModalOpenSelectedItem(true);
+                                }}
+                                className="text-blue-500 cursor-pointer text-lg"
+                              />
+                            </div>
+                          </td>
                         </tr>
                       )),
                     )
@@ -400,6 +438,60 @@ const WfhSummary = () => {
                 >
                   Last
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {modalOpenSelectedItem && selectedItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl p-6">
+              {/* Header */}
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold">
+                  {selectedItem.employee} WFH Details
+                </h2>
+
+                <RxCross2
+                  onClick={() => {
+                    setModalOpenSelectedItem(false);
+                    setSelectedItem(null);
+                  }}
+                  className="cursor-pointer text-xl text-red-500"
+                />
+              </div>
+
+              {/* Content */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-lg">
+                <div>
+                  <p className={labelStyle}>Employee</p>
+                  <p className={inputStyle}>{selectedItem.employee}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Year</p>
+                  <p className={inputStyle}>{selectedItem.year}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Type</p>
+                  <p className={inputStyle}>{selectedItem.typeName}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Maximum WFH</p>
+                  <p className={inputStyle}>{selectedItem.maximumWfhs}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Availed</p>
+                  <p className={inputStyle}>{selectedItem.availed}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Balance</p>
+                  <p className={inputStyle}>{selectedItem.balance}</p>
+                </div>
               </div>
             </div>
           </div>

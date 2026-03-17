@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
@@ -75,6 +76,12 @@ const BusinessTravelRequest = () => {
     isHalfDaylast: false,
   });
 
+  const parseDate = (dateStr) => {
+    if (!dateStr) return null;
+    const [day, month, year] = dateStr.split("/");
+    return new Date(year, month - 1, day);
+  };
+
   const inputStyle =
     "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
 
@@ -108,6 +115,43 @@ const BusinessTravelRequest = () => {
     }));
   };
 
+  useEffect(() => {
+    const from = parseDate(formData.fromDate);
+    const to = parseDate(formData.toDate);
+
+    if (from && to && to >= from) {
+      const diffTime = to.getTime() - from.getTime();
+      let days = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+      if (formData.isHalfDayfirst) {
+        days -= 0.5;
+      }
+
+      if (formData.isHalfDaylast) {
+        days -= 0.5;
+      }
+
+      if (days < 0) {
+        days = 0;
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        numberOfDays: days.toString(),
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        numberOfDays: "",
+      }));
+    }
+  }, [
+    formData.fromDate,
+    formData.toDate,
+    formData.isHalfDayfirst,
+    formData.isHalfDaylast,
+  ]);
+
   // Handle Submit
   const handleSubmit = () => {
     const {
@@ -126,11 +170,6 @@ const BusinessTravelRequest = () => {
       toast.error("Please fill required fields");
       return;
     }
-
-    const parseDate = (dateStr) => {
-      const [day, month, year] = dateStr.split("/");
-      return new Date(year, month - 1, day);
-    };
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -733,10 +772,9 @@ const BusinessTravelRequest = () => {
                   <input
                     name="numberOfDays"
                     value={formData.numberOfDays}
-                    onChange={handleChange}
                     className={inputStyle}
                     placeholder="Number of Days"
-                    disabled={mode === "view"}
+                    disabled
                   />
                 </div>
 

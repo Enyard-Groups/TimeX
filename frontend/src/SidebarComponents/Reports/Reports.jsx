@@ -315,17 +315,7 @@ const Reports = ({ user }) => {
                 WFH Report
               </NavLink>
 
-              <NavLink
-                to="/reports/claim-summary-datewise"
-                className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
-                }
-              >
-                Claim Summary Datewise
-              </NavLink>
-
+            
               <NavLink
                 to="/reports/claims-report"
                 className={({ isActive }) =>

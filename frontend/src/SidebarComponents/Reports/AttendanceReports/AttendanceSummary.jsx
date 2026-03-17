@@ -330,6 +330,9 @@ const AttendanceSummary = () => {
               className="overflow-x-auto min-h-[250px]"
               style={{ scrollbarWidth: "none" }}
             >
+               <h1 className="text-[oklch(0.577_0.245_27.325)] text-xl mb-4 text-center">
+                  Attendance Summary
+                </h1>
               <table className="w-full text-lg border-collapse">
                 <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                   <tr>
