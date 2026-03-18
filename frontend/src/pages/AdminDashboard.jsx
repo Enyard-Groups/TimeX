@@ -2,65 +2,60 @@
 import DonutChart from "../components/DonutChart";
 import GeoLocationMap from "../components/GeoLocationMap";
 import { useEffect, useState } from "react";
+import axios from "axios";
 import RecentActivity from "../components/RecentActivity";
 import EmployeeAttendance from "../components/EmployeeAttendance";
 import AttendanceCapsuleChart from "../components/AttendanceLineChart";
 
 const AdminDashboard = ({ user }) => {
-  const [attendanceData, setAttendanceData] = useState([]);
+  const [attendanceData, setAttendanceData] = useState([
+    {
+      day: "Today",
+      total: 0,
+      leave: 0,
+      absent: 0,
+      latein: 0,
+      earlyin: 0,
+    },
+  ]);
 
   useEffect(() => {
-    const data = [
-      {
-        day: "Monday",
-        total: 100,
-        leave: 15,
-        absent: 30,
-        latein: 8,
-        earlyin: 12,
-      },
-      {
-        day: "Tuesday",
-        total: 100,
-        leave: 13,
-        absent: 12,
-        latein: 10,
-        earlyin: 15,
-      },
-      {
-        day: "Wednesday",
-        total: 100,
-        leave: 4,
-        absent: 38,
-        latein: 19,
-        earlyin: 10,
-      },
-      {
-        day: "Thursday",
-        total: 100,
-        leave: 6,
-        absent: 4,
-        latein: 11,
-        earlyin: 9,
-      },
-      {
-        day: "Friday",
-        total: 100,
-        leave: 7,
-        absent: 20,
-        latein: 2,
-        earlyin: 11,
-      },
-      {
-        day: "Saturday",
-        total: 100,
-        leave: 8,
-        absent: 15,
-        latein: 7,
-        earlyin: 6,
-      },
-    ];
-    setAttendanceData(data);
+    const fetchDashboardStats = async () => {
+      try {
+        const API_BASE = "http://localhost:3000/api";
+        const token = localStorage.getItem("token");
+        const headers = {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        };
+
+        const res = await axios.get(`${API_BASE}/attendence/stats`, {
+          headers,
+        });
+
+        const { totalEmployees, presentToday } = res.data;
+        console.log(res.data)
+
+        const total = Number(totalEmployees) || 0;
+        const present = Number(presentToday) || 0;
+        const absent = Math.max(0, total - present);
+
+        setAttendanceData([
+          {
+            day: "Today",
+            total,
+            leave: 0,
+            absent,
+            latein: 0,
+            earlyin: 0,
+          },
+        ]);
+      } catch (error) {
+        console.error("Failed to load dashboard stats:", error);
+      }
+    };
+
+    fetchDashboardStats();
   }, []);
 
   const formattedName =

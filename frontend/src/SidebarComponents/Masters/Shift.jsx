@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -15,6 +16,8 @@ import SearchDropdown from "../SearchDropdown";
 import { MdDeleteForever } from "react-icons/md";
 
 const Shift = () => {
+  const API_BASE = "http://localhost:3000/api";
+
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [shift, setShift] = useState([]);
@@ -32,6 +35,67 @@ const Shift = () => {
     outtime: null,
     isActive: false,
   });
+
+  const formatTime = (value) => {
+    if (!value) return null;
+    if (value instanceof Date) {
+      const h = String(value.getHours()).padStart(2, "0");
+      const m = String(value.getMinutes()).padStart(2, "0");
+      const s = String(value.getSeconds()).padStart(2, "0");
+      return `${h}:${m}:${s}`;
+    }
+    // handle strings like "HH:mm" or "HH:mm:ss"
+    const [h, m, s] = value.split(":");
+    if (!h || !m) return null;
+    return `${h.padStart(2, "0")}:${m.padStart(2, "0")}:${(s || "00").padStart(2, "0")}`;
+  };
+
+  const parseTime = (value) => {
+    if (!value) return null;
+    if (value instanceof Date) return value;
+    const parts = String(value).split(":").map((v) => Number(v));
+    if (parts.length < 2) return null;
+    const [h, m, s = 0] = parts;
+    const d = new Date();
+    d.setHours(h || 0, m || 0, s || 0, 0);
+    return d;
+  };
+
+  const fetchShifts = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
+      const res = await axios.get(`${API_BASE}/master/shifts`, { headers });
+      const data = Array.isArray(res.data) ? res.data : [];
+
+      setShift(
+        data.map((d) => ({
+          id: d.id,
+          name: d.shift_name || "",
+          code: d.shift_code || "",
+          company: d.company || "",
+          intime: parseTime(d.start_time),
+          outtime: parseTime(d.end_time),
+          isActive:
+            d.is_active === true ||
+            d.is_active === "true" ||
+            d.is_active === 1 ||
+            d.isActive === true,
+        })),
+      );
+    } catch (error) {
+      console.error("Failed to fetch shifts", error);
+      toast.error("Unable to load shifts");
+    }
+  };
+
+  useEffect(() => {
+    fetchShifts();
+  }, []);
 
   const inputStyle =
     "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -66,7 +130,7 @@ const Shift = () => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const { name, company, code, intime, outtime, isActive } = formData;
 
     if (!name || !code || !intime || !outtime) {
@@ -79,39 +143,104 @@ const Shift = () => {
       return;
     }
 
-    const newshift = {
-      id: Date.now(),
-      name,
-      code,
-      company,
-      intime,
-      outtime,
-      isActive,
+    const payload = {
+      shift_name: name,
+      shift_code: code,
+      start_time: formatTime(intime),
+      end_time: formatTime(outtime),
+      grace_period: 0,
+      is_active: isActive,
     };
 
-    if (editId) {
-      setShift((prev) =>
-        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
-      );
+    const token = localStorage.getItem("token");
+    const headers = {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
 
-      toast.success("Data updated");
-    } else {
-      setShift((prev) => [...prev, newshift]);
+    try {
+      if (editId) {
+        const res = await axios.put(
+          `${API_BASE}/master/shifts/${editId}`,
+          payload,
+          { headers },
+        );
 
-      toast.success("Data Added");
+        const updated = {
+          id: res.data.id,
+          name: res.data.shift_name || "",
+          code: res.data.shift_code || "",
+          company: res.data.company || "",
+          intime: parseTime(res.data.start_time),
+          outtime: parseTime(res.data.end_time),
+          isActive:
+            res.data.is_active === true ||
+            res.data.is_active === "true" ||
+            res.data.is_active === 1 ||
+            res.data.isActive === true,
+        };
+
+        setShift((prev) =>
+          prev.map((emp) => (emp.id === editId ? updated : emp)),
+        );
+
+        toast.success("Data updated");
+      } else {
+        const res = await axios.post(`${API_BASE}/master/shifts`, payload, {
+          headers,
+        });
+
+        const created = {
+          id: res.data.id,
+          name: res.data.shift_name || "",
+          code: res.data.shift_code || "",
+          company: res.data.company || "",
+          intime: parseTime(res.data.start_time),
+          outtime: parseTime(res.data.end_time),
+          isActive:
+            res.data.is_active === true ||
+            res.data.is_active === "true" ||
+            res.data.is_active === 1 ||
+            res.data.isActive === true,
+        };
+
+        setShift((prev) => [created, ...prev]);
+
+        toast.success("Data Added");
+      }
+
+      setOpenModal(false);
+      setEditId(null);
+
+      setFormData({
+        company: "",
+        name: "",
+        code: "",
+        intime: null,
+        outtime: null,
+        isActive: false,
+      });
+    } catch (error) {
+      console.error("Failed to save shift", error);
+      toast.error(error.response?.data?.message || "Unable to save shift");
     }
+  };
 
-    setOpenModal(false);
-    setEditId(null);
+  const handleDelete = async (id) => {
+    const token = localStorage.getItem("token");
+    const headers = {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
 
-    setFormData({
-      company: "",
-      name: "",
-      code: "",
-      intime: null,
-      outtime: null,
-      isActive: false,
-    });
+    try {
+      await axios.delete(`${API_BASE}/master/shifts/${id}`, { headers });
+      setShift((prev) => prev.filter((v) => v.id !== id));
+      toast.success("Shift deleted");
+    } catch (error) {
+      console.error("Failed to delete shift", error);
+      toast.error(error.response?.data?.message || "Unable to delete shift");
+    }
   };
 
   const handleCopy = () => {
@@ -407,9 +536,7 @@ const Shift = () => {
 
                           {/* Delete */}
                           <MdDeleteForever
-                            onClick={() =>
-                              setShift(shift.filter((v) => v.id !== item.id))
-                            }
+                            onClick={() => handleDelete(item.id)}
                             className="inline text-red-500 cursor-pointer text-xl"
                           />
                         </div>

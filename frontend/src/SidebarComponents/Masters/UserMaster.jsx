@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -241,43 +241,121 @@ const UserMaster = () => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!formData.userName || !formData.company || !formData.empname) {
       toast.error("Please fill required fields");
       return;
     }
 
-    const newUser = {
-      id: Date.now(),
-      ...formData,
+    const token = localStorage.getItem("token");
+    const headers = {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
 
-    if (editId) {
-      setUsers((prev) =>
-        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
-      );
+    try {
+      if (editId) {
+        await fetch(`${API_BASE}/users/${editId}`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            user_name: formData.userName,
+            emp_name: formData.empname,
+            enrollment_id: formData.enrollmentId,
+            company: formData.company,
+            password: formData.password,
+            role: formData.role,
+            active: formData.active,
+          }),
+        });
 
-      toast.success("Data updated");
-    } else {
-      setUsers((prev) => [...prev, newUser]);
+        toast.success("User updated");
+      } else {
+        const res = await fetch(`${API_BASE}/users`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            user_name: formData.userName,
+            emp_name: formData.empname,
+            enrollment_id: formData.enrollmentId,
+            company: formData.company,
+            password: formData.password,
+            role: formData.role,
+            roll: formData.role,
+            active: formData.active,
+          }),
+        });
 
-      toast.success("Data Added");
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.message || "Failed to create user");
+        }
+
+        toast.success("User created successfully");
+      }
+
+      setOpenModal(false);
+      setEditId(null);
+      setActiveTab("details");
+      setFormData({
+        userName: "",
+        empname: "",
+        enrollmentId: "",
+        company: "",
+        password: "",
+        active: false,
+        role: "User",
+      });
+
+      // refresh list from server
+      fetchUsers();
+    } catch (error) {
+      console.error("User save error", error);
+      toast.error(error.message || "Unable to save user");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-    setActiveTab("details");
-
-    setFormData({
-      userName: "",
-      empname: "",
-      enrollmentId: "",
-      company: "",
-      password: "",
-      active: false,
-      role: "User",
-    });
   };
+
+  const API_BASE = "http://localhost:3000/api";
+
+  const fetchUsers = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
+      const res = await fetch(`${API_BASE}/users`, {
+        method: "GET",
+        credentials: "include",
+        headers,
+      });
+      if (!res.ok) throw new Error("Failed to fetch users");
+
+      const data = await res.json();
+      const usersFromApi = Array.isArray(data) ? data : data?.users || [];
+
+      const mappedUsers = usersFromApi.map((u) => ({
+        id: u.id,
+        userName: u.user_name || u.userName || "",
+        empname: u.emp_name || u.empname || "",
+        enrollmentId: u.enrollment_id || u.enrollmentId || "",
+        company: u.company || "",
+        password: "",
+        role: u.role || "",
+        active: u.active === true || u.active === "true" || u.active === 1,
+      }));
+
+      setUsers(mappedUsers);
+    } catch (error) {
+      console.error("Failed to fetch users", error);
+      toast.error("Unable to load users");
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const handleCheckbox = (id) => {
     setMenuData((prev) =>
@@ -743,7 +821,7 @@ const UserMaster = () => {
                     }
                     name="role"
                     value={formData.role}
-                    options={["Company Admin", "Manager / Approver", "User"]}
+                    options={["admin", "appover", "employee","hr","manager"]}
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}

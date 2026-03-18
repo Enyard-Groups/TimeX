@@ -22,7 +22,9 @@ import { load, setAuth, setUser } from "./action";
 
 const App = () => {
   const dispatch = useDispatch();
-  const { isAuthenticated, user, loading } = useSelector((state) => state);
+const isAuthenticated = useSelector((state) => state.isAuthenticated);
+const user = useSelector((state) => state.user);
+const loading = useSelector((state) => state.loading);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");

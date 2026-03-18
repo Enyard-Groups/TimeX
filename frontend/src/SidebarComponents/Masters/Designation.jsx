@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -14,6 +15,8 @@ import SearchDropdown from "../SearchDropdown";
 import { MdDeleteForever } from "react-icons/md";
 
 const Designation = () => {
+  const API_BASE = "http://localhost:3000/api";
+
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [designation, setDesignation] = useState([]);
@@ -30,6 +33,45 @@ const Designation = () => {
     description: "",
     isActive: false,
   });
+
+  const fetchDesignations = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
+      const res = await axios.get(`${API_BASE}/master/designation`, {
+        headers,
+      });
+
+      const data = Array.isArray(res.data) ? res.data : [];
+
+      setDesignation(
+        data.map((d) => ({
+          id: d.id,
+          name: d.name || "",
+          code: d.code || "",
+          company: d.company || "",
+          department: d.department || "",
+          description: d.description || "",
+          isActive:
+            d.is_active === true ||
+            d.is_active === "true" ||
+            d.is_active === 1 ||
+            d.isActive === true,
+        })),
+      );
+    } catch (error) {
+      console.error("Failed to fetch designations", error);
+      toast.error("Unable to load designations");
+    }
+  };
+
+  useEffect(() => {
+    fetchDesignations();
+  }, []);
 
   const inputStyle =
     "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -64,7 +106,7 @@ const Designation = () => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const { name, company, code, department, description, isActive } = formData;
 
     if (!name || !company || !code || !department) {
@@ -72,39 +114,104 @@ const Designation = () => {
       return; // stop execution
     }
 
-    const newdesignation = {
-      id: Date.now(),
+    const payload = {
       name,
       code,
       company,
       department,
       description,
-      isActive,
+      is_active: isActive,
     };
 
-    if (editId) {
-      setDesignation((prev) =>
-        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
-      );
+    const token = localStorage.getItem("token");
+    const headers = {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
 
-      toast.success("Data updated");
-    } else {
-      setDesignation((prev) => [...prev, newdesignation]);
+    try {
+      if (editId) {
+        const res = await axios.put(
+          `${API_BASE}/master/designation/${editId}`,
+          payload,
+          { headers },
+        );
 
-      toast.success("Data Added");
+        const updated = {
+          id: res.data.id,
+          name: res.data.name || "",
+          code: res.data.code || "",
+          company: res.data.company || "",
+          department: res.data.department || "",
+          description: res.data.description || "",
+          isActive:
+            res.data.is_active === true ||
+            res.data.is_active === "true" ||
+            res.data.is_active === 1 ||
+            res.data.isActive === true,
+        };
+
+        setDesignation((prev) =>
+          prev.map((emp) => (emp.id === editId ? updated : emp)),
+        );
+
+        toast.success("Data updated");
+      } else {
+        const res = await axios.post(`${API_BASE}/master/designation`, payload, {
+          headers,
+        });
+
+        const created = {
+          id: res.data.id,
+          name: res.data.name || "",
+          code: res.data.code || "",
+          company: res.data.company || "",
+          department: res.data.department || "",
+          description: res.data.description || "",
+          isActive:
+            res.data.is_active === true ||
+            res.data.is_active === "true" ||
+            res.data.is_active === 1 ||
+            res.data.isActive === true,
+        };
+
+        setDesignation((prev) => [created, ...prev]);
+
+        toast.success("Data Added");
+      }
+
+      setOpenModal(false);
+      setEditId(null);
+
+      setFormData({
+        company: "",
+        name: "",
+        code: "",
+        department: "",
+        description: "",
+        isActive: false,
+      });
+    } catch (error) {
+      console.error("Failed to save designation", error);
+      toast.error(error.response?.data?.message || "Unable to save designation");
     }
+  };
 
-    setOpenModal(false);
-    setEditId(null);
+  const handleDelete = async (id) => {
+    const token = localStorage.getItem("token");
+    const headers = {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
 
-    setFormData({
-      company: "",
-      name: "",
-      code: "",
-      department: "",
-      description: "",
-      isActive: false,
-    });
+    try {
+      await axios.delete(`${API_BASE}/master/designation/${id}`, { headers });
+      setDesignation((prev) => prev.filter((v) => v.id !== id));
+      toast.success("Designation deleted");
+    } catch (error) {
+      console.error("Failed to delete designation", error);
+      toast.error(error.response?.data?.message || "Unable to delete designation");
+    }
   };
 
   const handleCopy = () => {
@@ -368,11 +475,7 @@ const Designation = () => {
 
                           {/* Delete */}
                           <MdDeleteForever
-                            onClick={() =>
-                              setDesignation(
-                                designation.filter((v) => v.id !== item.id),
-                              )
-                            }
+                            onClick={() => handleDelete(item.id)}
                             className="inline text-red-500 cursor-pointer text-xl"
                           />
                         </div>

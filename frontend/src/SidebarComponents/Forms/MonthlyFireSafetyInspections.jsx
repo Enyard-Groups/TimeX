@@ -911,7 +911,10 @@ const MonthlyFireSafetyInspections = () => {
               </div>
 
               {/* Form data  */}
-              <div className="max-h-[75vh] overflow-y-auto pr-2 text-sm mt-6">
+              <div
+                className="max-h-[75vh] overflow-y-auto pr-2 text-sm mt-6"
+                style={{ scrollbarWidth: "none" }}
+              >
                 {/* HEADER ROW */}
                 <div className="grid grid-cols-12 bg-gray-200 font-semibold">
                   <div className="col-span-5 p-2">Checklist</div>
@@ -1149,19 +1152,19 @@ const MonthlyFireSafetyInspections = () => {
                     </div>
                   )}
                 </div>
-              </div>
 
-              {/* Save */}
-              {mode !== "view" && (
-                <div className="flex justify-end mt-10">
-                  <button
-                    onClick={handleSubmit}
-                    className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md mb-6"
-                  >
-                    Save
-                  </button>
-                </div>
-              )}
+                {/* Save */}
+                {mode !== "view" && (
+                  <div className="flex justify-end mt-10">
+                    <button
+                      onClick={handleSubmit}
+                      className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md mb-6"
+                    >
+                      Save
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
