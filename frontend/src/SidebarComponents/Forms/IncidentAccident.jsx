@@ -30,8 +30,7 @@ const IncidentAccident = () => {
   const inputStyle =
     "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
 
-  const labelStyle =
-    "text-lg text-[oklch(0.147_0.004_49.25)] my-1 block whitespace-nowrap";
+  const labelStyle = "text-md text-[oklch(0.147_0.004_49.25)] my-1 block";
 
   const defaultFormData = {
     dateOfIncident: null,
@@ -93,48 +92,58 @@ const IncidentAccident = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 mt-2 gap-4">
             <div className="flex flex-row gap-2">
-              <label className={labelStyle}>Date of Incident: </label>
+              <label className={`${labelStyle}  w-1/3`}>
+                Date of Incident:{" "}
+              </label>
               <input type="text" className={inputStyle} />
             </div>
 
             <div className="flex flex-row gap-2">
-              <label className={labelStyle}>Time of Incident: </label>
+              <label className={`${labelStyle}  w-1/3`}>
+                Time of Incident:{" "}
+              </label>
               <input type="text" className={inputStyle} />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 mt-2 gap-4">
             <div className="flex flex-row gap-2">
-              <label className={labelStyle}>Location: </label>
+              <label className={`${labelStyle} w-1/3`}>Location: </label>
               <input type="text" className={inputStyle} />
             </div>
 
             <div className="flex flex-row gap-2">
-              <label className={labelStyle}>Building/Room: </label>
+              <label className={`${labelStyle} w-1/3`}>Building/Room: </label>
               <input type="text" className={inputStyle} />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 mt-2 gap-4">
             <div className="flex flex-row gap-2">
-              <label className={labelStyle}>Other Details: </label>
+              <label className={`${labelStyle}  w-1/3`}>Other Details: </label>
               <input type="text" className={inputStyle} />
             </div>
             <div className="flex flex-row gap-2">
-              <label className={labelStyle}>Type of the incident: </label>
+              <label className={`${labelStyle}  w-1/3`}>
+                Type of the incident:{" "}
+              </label>
               <input type="text" className={inputStyle} />
             </div>
           </div>
-          <h1>
+          <h1 className="mt-2">
             (Assult, Verbal Abuse, Security Threat,Fire, Theft, Robbery, Fraud,
             injury, Illness, damage, etc)
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 mt-2 gap-4">
             <div className="flex flex-row gap-2">
-              <label className={labelStyle}>Person Affected: </label>
+              <label className={`${labelStyle}  w-1/3`}>
+                Person Affected:{" "}
+              </label>
               <input type="text" className={inputStyle} />
             </div>
             <div className="flex flex-row gap-2">
-              <label className={labelStyle}>Others (Please Specify): </label>
+              <label className={`${labelStyle}  w-1/3`}>
+                Others (Please Specify):{" "}
+              </label>
               <input type="text" className={inputStyle} />
             </div>
           </div>
@@ -178,18 +187,18 @@ const IncidentAccident = () => {
           </div>
 
           {/* Table Row */}
-          <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-2">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
             <div>
-              <label className={labelStyle}>Name</label>
-              <textarea
-                placeholder="Name"
-                className={`${inputStyle}col-span-2`}
-              />
+              <label className={labelStyle}>Name of injured/ ill Person</label>
+              <input className={inputStyle} />
             </div>
             <div>
               <label className={labelStyle}>Age</label>
-              <input placeholder="Age" className={inputStyle} />
+              <input className={inputStyle} />
+            </div>
 
+            <div>
+              <h1 className={labelStyle}>Gender</h1>
               <div className="flex items-center gap-2">
                 <label>
                   <input type="radio" name="gender" /> M
@@ -201,29 +210,13 @@ const IncidentAccident = () => {
             </div>
 
             <div>
-              <label className={labelStyle}>Category</label>
-              <textarea
-                placeholder="Category"
-                className={`${inputStyle}col-span-2`}
-              />
-            </div>
-
-            <div>
-              <label className={labelStyle}>Description</label>
-              <textarea
-                placeholder="Description"
-                className={`${inputStyle}col-span-2`}
-              />
-            </div>
-
-            <div>
               <h1 className={labelStyle}>Was First Aid Provided?</h1>
               <div className="space-x-2">
                 <label>
-                  <input type="checkbox" /> YES
+                  <input type="radio" name="firstaid" /> Yes
                 </label>
                 <label>
-                  <input type="checkbox" /> NO
+                  <input type="radio" name="firstaid" /> No
                 </label>
               </div>
             </div>
@@ -233,61 +226,124 @@ const IncidentAccident = () => {
 
               <div className="space-x-2">
                 <label>
-                  <input type="checkbox" /> YES
+                  <input type="radio" name="takentohospital" /> Yes
                 </label>
                 <label>
-                  <input type="checkbox" /> NO
+                  <input type="radio" name="takentohospital" /> No
                 </label>
               </div>
             </div>
+
+            <div>
+              <label className={labelStyle}>
+                Category ( Contractor, third party, public, staff, student etc)
+              </label>
+              <input className={inputStyle} />
+            </div>
+
+            <div className="col-span-2">
+              <label className={`${labelStyle} text-center`}>
+                Description of Injury/ Illness
+              </label>
+              <textarea className={`${inputStyle}col-span-2`} />
+            </div>
           </div>
-        </div>
-        <div className="border p-4 mb-4">
+
           <h2 className="font-semibold mb-2">First Aid Details</h2>
 
-          <div className="grid grid-cols-2 gap-4">
-            <input placeholder="Name of First Aider" className="border p-2" />
-            <input placeholder="Designation" className="border p-2" />
-            <textarea
-              placeholder="Details of First Aid Provided"
-              className="border p-2 col-span-2"
-            />
+          <div className="md:w-3/4">
+            <div className="flex flex-row mt-2">
+              <label className={`${labelStyle} whitespace-nowrap mr-2 w-1/2`}>
+                Name of First Aider :
+              </label>
+              <input className={inputStyle} />
+            </div>
+            <div className="flex flex-row mt-2">
+              <label className={`${labelStyle} whitespace-nowrap mr-2  w-1/2`}>
+                Designation :
+              </label>
+              <input className={inputStyle} />
+            </div>
+            <div className="flex flex-row mt-2">
+              <label className={`${labelStyle} whitespace-nowrap mr-2  w-1/2`}>
+                Details of First Aid Provided :
+              </label>
+              <input className={inputStyle} />
+            </div>
           </div>
         </div>
 
         {/* Reporting Section */}
-        <div className="border p-4 mb-4">
+        <div className="border border-gray-400 rounded p-4 mb-4">
           <h2 className="font-semibold mb-2">Reporting to MSO & Safecor OCC</h2>
 
-          <div className="grid grid-cols-4 gap-4">
-            <input type="time" className="border p-2" />
-            <input type="date" className="border p-2" />
-            <input placeholder="Reported to MSO Name" className="border p-2" />
-            <input
-              placeholder="Safecor OCC Staff Name"
-              className="border p-2"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className=" mt-2">
+              <label className={`${labelStyle} whitespace-nowrap mr-2 w-1/2`}>
+                Time
+              </label>
+              <input type="time" className={inputStyle} />
+            </div>
+
+            <div className=" mt-2">
+              <label className={`${labelStyle} whitespace-nowrap mr-2 w-1/2`}>
+                Date
+              </label>
+              <input type="date" className={inputStyle} />
+            </div>
+
+            <div className=" mt-2">
+              <label className={`${labelStyle} whitespace-nowrap mr-2 w-1/2`}>
+                Reported to MSO Name
+              </label>
+              <input className={inputStyle} />
+            </div>
+
+            <div className=" mt-2">
+              <label className={`${labelStyle} whitespace-nowrap mr-2 w-1/2`}>
+                Safecor OCC Staff Name
+              </label>
+              <input className={inputStyle} />
+            </div>
           </div>
         </div>
 
         {/* Acknowledgement */}
-        <div className="border p-4">
+        <div className="border border-gray-400 rounded p-4 mb-4">
           <h2 className="font-semibold mb-2">Signature</h2>
 
           <div className="grid grid-cols-2 gap-4 mb-4">
-            <input placeholder="Incident Reported By" className="border p-2" />
-            <input placeholder="Designation" className="border p-2" />
-            <input placeholder="Form Filled By" className="border p-2" />
-            <input placeholder="Designation" className="border p-2" />
-            <input type="date" className="border p-2 col-span-2" />
+            <input
+              placeholder="Incident Reported By"
+              className="border border-gray-400 p-2"
+            />
+            <input
+              placeholder="Designation"
+              className="border border-gray-400 p-2"
+            />
+            <input
+              placeholder="Form Filled By"
+              className="border border-gray-400 p-2"
+            />
+            <input
+              placeholder="Designation"
+              className="border border-gray-400 p-2"
+            />
+            <input
+              type="date"
+              className="border border-gray-400 p-2 col-span-2"
+            />
           </div>
 
           <h2 className="font-semibold mb-2">Report Acknowledged By</h2>
 
           <div className="grid grid-cols-2 gap-4">
-            <input placeholder="MSO Name" className="border p-2" />
-            <input type="file" className="border p-2" />
-            <input type="date" className="border p-2" />
+            <input
+              placeholder="MSO Name"
+              className="border border-gray-400 p-2"
+            />
+            <input type="file" className="border border-gray-400 p-2" />
+            <input type="date" className="border border-gray-400 p-2" />
             <div className="border h-24 flex items-center justify-center">
               Sign Here
             </div>

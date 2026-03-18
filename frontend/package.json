@@ -15,7 +15,7 @@
     "@mui/x-charts": "^8.27.0",
     "@react-google-maps/api": "^2.20.8",
     "@tailwindcss/vite": "^4.2.1",
-    "axios": "^1.13.5",
+    "axios": "^1.13.6",
     "jspdf": "^4.2.0",
     "jspdf-autotable": "^5.0.7",
     "leaflet": "^1.9.4",
