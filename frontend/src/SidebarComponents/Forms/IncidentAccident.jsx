@@ -313,10 +313,10 @@ const IncidentAccident = () => {
           <h2 className="font-semibold mb-2">Signature</h2>
 
           <div className="grid grid-cols-2 gap-4 mb-4">
-            <input
-              placeholder="Incident Reported By"
-              className="border border-gray-400 p-2"
-            />
+            <div>
+              <label className={labelStyle}>Incident Reported By</label>
+              <input className={inputStyle} />
+            </div>
             <input
               placeholder="Designation"
               className="border border-gray-400 p-2"
