@@ -234,7 +234,7 @@ const IncidentAccident = () => {
           Forms
           <FaAngleRight />
           <div onClick={() => setOpenModal(false)} className="cursor-pointer">
-            Incident Accident
+            Incident / Accident
           </div>
         </h1>
         {!openModal && (
