@@ -170,3 +170,40 @@ export const getIssueTypes = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const createIssueType = async (req, res) => {
+  const { type_name, code, description, is_active } = req.body;
+  try {
+    const result = await db.query(
+      'INSERT INTO issue_types (type_name, code, description, is_active) VALUES ($1, $2, $3, $4) RETURNING *',
+      [type_name, code, description, is_active],
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateIssueType = async (req, res) => {
+  const { id } = req.params;
+  const { type_name, code, description, is_active } = req.body;
+  try {
+    const result = await db.query(
+      'UPDATE issue_types SET type_name=$1, code=$2, description=$3, is_active=$4 WHERE id=$5 RETURNING *',
+      [type_name, code, description, is_active, id],
+    );
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteIssueType = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await db.query('DELETE FROM issue_types WHERE id = $1', [id]);
+    res.json({ message: 'Issue type removed' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

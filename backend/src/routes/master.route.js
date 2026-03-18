@@ -19,6 +19,9 @@ import {
   getHolidays,
   getClaimCategories,
   getIssueTypes,
+  createIssueType,
+  updateIssueType,
+  deleteIssueType,
 } from "../controllers/master.controller.js"
 
 masterRoute.get("/departments",getDepartments);
@@ -39,6 +42,9 @@ masterRoute.delete("/shifts/:id",deleteShift);
 masterRoute.get('/holidays', getHolidays);
 masterRoute.get('/claim-categories', getClaimCategories);
 masterRoute.get('/issue-types', getIssueTypes);
+masterRoute.post('/issue-types', createIssueType);
+masterRoute.put('/issue-types/:id', updateIssueType);
+masterRoute.delete('/issue-types/:id', deleteIssueType);
 
 
 export default masterRoute;
