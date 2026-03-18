@@ -1,6 +1,17 @@
 import React from "react";
-import { Routes,Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Navbar from "../../components/Navbar";
+import MonthlyFireSafetyInspections from "./MonthlyFireSafetyInspections";
+import IncidentAccident from "./IncidentAccident";
+import LeaveApplication from "./LeaveApplication";
+import OptOutRequestForm from "./OptOutRequestForm";
+import PassportRequest from "./PassportRequest";
+import ShiftHandOver from "./ShiftHandOver";
+import StaffTrainingChecklist from "./StaffTrainingChecklist";
+import TpcForm from "./TpcForm";
+import WeeklyOvertimeForm from "./WeeklyOvertimeForm";
+import PatrollingChecklist from "./PatrollingChecklist";
+import FacilityComplaintForm from "./FacilityComplaintForm";
 
 const FormsRoute = ({ user }) => {
   return (
@@ -8,17 +19,26 @@ const FormsRoute = ({ user }) => {
       <Navbar user={user} />
       <div className="lg:ml-50 mt-16 p-6 md:p-10 min-h-screen">
         <Routes>
-          <Route path="monthly-fire-safety-inspections" element={<div>MonthlyFireSafetyInspections</div>} />
-          <Route path="incident-accident" element={<div>IncidentAccident</div>} />
-          <Route path="leave-application" element={<div>LeaveApplication</div>} />
-          <Route path="opt-out-req-form" element={<div>OptOutRequestForm</div>} />
-          <Route path="passport-req" element={<div>PassportRequest</div>} />
-          <Route path="shift-hand-over" element={<div>ShiftHandOver</div>} />
-          <Route path="staff-training-checklist" element={<div>StaffTrainingChecklist</div>} />
-          <Route path="tpc-form" element={<div>TpcForm</div>} />
-          <Route path="weekly-overtime-form" element={<div>WeeklyOvertimeForm</div>} />
-          <Route path="patolling-checklist" element={<div>PatrollingChecklist</div>} />
-          <Route path="facility-complaint-form" element={<div>FacilityComplaintForm</div>} />
+          <Route
+            path="monthly-fire-safety-inspections"
+            element={<MonthlyFireSafetyInspections />}
+          />
+          <Route path="incident-accident" element={<IncidentAccident />} />
+          <Route path="leave-application" element={<LeaveApplication />} />
+          <Route path="opt-out-req-form" element={<OptOutRequestForm />} />
+          <Route path="passport-req" element={<PassportRequest />} />
+          <Route path="shift-hand-over" element={<ShiftHandOver />} />
+          <Route
+            path="staff-training-checklist"
+            element={<StaffTrainingChecklist />}
+          />
+          <Route path="tpc-form" element={<TpcForm />} />
+          <Route path="weekly-overtime-form" element={<WeeklyOvertimeForm />} />
+          <Route path="patolling-checklist" element={<PatrollingChecklist />} />
+          <Route
+            path="facility-complaint-form"
+            element={<FacilityComplaintForm />}
+          />
         </Routes>
       </div>
     </div>
