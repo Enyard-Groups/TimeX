@@ -52,7 +52,7 @@ const Login = () => {
               Time<span className="text-[oklch(0.645_0.246_16.439)]">X</span>
             </h1>
 
-              <h2 className="text-xl font-bold mb-4">Welcome !</h2>
+              <h2 className="text-xl font-bold mb-4 ml-6">Welcome !</h2>
             <p className="mt-6 px-4 text-lg text-gray-600 max-w-sm leading-relaxed">
               To see the Dashboard, Please login with your Credentials.
             </p>
