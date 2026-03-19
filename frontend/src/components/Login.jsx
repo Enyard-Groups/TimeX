@@ -48,7 +48,7 @@ const Login = () => {
               active ? "opacity-0 -translate-x-10" : "opacity-100 translate-x-0"
             }`}
           >
-            <img src="../timexlogo.png" alt="" height="150px" width="150px" className="ml-5" />
+            <img src="../timexlogo.png" alt="" height="200px" width="200px" />
 
             <h2 className="text-xl font-bold mb-4 ml-5">Welcome !</h2>
             <p className="mt-6 px-4 text-lg text-gray-600 max-w-sm leading-relaxed">
