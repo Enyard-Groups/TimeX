@@ -34,7 +34,7 @@ const AdminDashboard = ({ user }) => {
         });
 
         const { totalEmployees, presentToday } = res.data;
-        console.log(res.data)
+        // console.log(res.data)
 
         const total = Number(totalEmployees) || 0;
         const present = Number(presentToday) || 0;
