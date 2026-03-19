@@ -1,15 +1,12 @@
 const EmployeeDashboard = ({ user }) => {
-  const formattedName =
-    user?.email?.split("@")[0].charAt(0).toUpperCase() +
-    user?.email?.split("@")[0].slice(1).toLowerCase();
-
+  
   return (
     <div className="space-y-6">
       <div className="mb-10 font-mono font-bold">
         <h2 className="text-2xl tracking-tight">
           Welcome back,{" "}
           <span style={{ color: "oklch(0.645 0.246 16.439)" }}>
-            {user?.name || formattedName}
+            {user?.user_name || "User"}
           </span>
         </h2>
       </div>

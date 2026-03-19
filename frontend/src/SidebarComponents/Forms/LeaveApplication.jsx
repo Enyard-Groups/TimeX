@@ -16,6 +16,7 @@ import SearchDropdown from "../SearchDropdown";
 import SpinnerTimePicker from "../SpinnerTimePicker";
 import SpinnerDatePicker from "../SpinnerDatePicker";
 import { getNames } from "country-list";
+import SignPad from "./SignPad";
 
 const LeaveApplication = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -120,6 +121,11 @@ const LeaveApplication = () => {
       countryAddress: "",
     },
     finalSignature: null,
+    sign: null,
+    approval1sign: null,
+    approval2sign: null,
+    passportsign: null,
+    finalsign: null,
   };
 
   const [formData, setFormData] = useState(defaultFormData);
@@ -1074,6 +1080,12 @@ const LeaveApplication = () => {
                       className={inputStyle}
                       disabled={mode === "view"}
                     />
+                    <SignPad
+                      fieldName="sign"
+                      formData={formData}
+                      setFormData={setFormData}
+                      mode={mode}
+                    />
                   </div>
                 </div>
 
@@ -1369,6 +1381,12 @@ const LeaveApplication = () => {
                         className={inputStyle}
                         disabled={mode === "view"}
                       />
+                      <SignPad
+                        fieldName="approval1sign"
+                        formData={formData}
+                        setFormData={setFormData}
+                        mode={mode}
+                      />
                     </div>
                   </div>
 
@@ -1414,6 +1432,12 @@ const LeaveApplication = () => {
                         className={inputStyle}
                         disabled={mode === "view"}
                       />
+                      <SignPad
+                        fieldName="approval2sign"
+                        formData={formData}
+                        setFormData={setFormData}
+                        mode={mode}
+                      />
                     </div>
                   </div>
                 </div>
@@ -1441,23 +1465,30 @@ const LeaveApplication = () => {
                       disabled={mode === "view"}
                     />
                   </div>
-
-                  <div className="flex flex-row gap-2 mt-2">
-                    <label className={labelStyle}>Signature</label>
-                    <input
-                      type="file"
-                      name="signature"
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          passportCollection: {
-                            ...prev.passportCollection,
-                            signature: e.target.files[0],
-                          },
-                        }))
-                      }
-                      className={inputStyle}
-                      disabled={mode === "view"}
+                  <div>
+                    <div className="flex flex-row gap-2 mt-2">
+                      <label className={labelStyle}>Signature</label>
+                      <input
+                        type="file"
+                        name="signature"
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            passportCollection: {
+                              ...prev.passportCollection,
+                              signature: e.target.files[0],
+                            },
+                          }))
+                        }
+                        className={inputStyle}
+                        disabled={mode === "view"}
+                      />
+                    </div>
+                    <SignPad
+                      fieldName="passportsign"
+                      formData={formData}
+                      setFormData={setFormData}
+                      mode={mode}
                     />
                   </div>
 
@@ -1763,6 +1794,12 @@ const LeaveApplication = () => {
                     disabled={mode === "view"}
                   />
                 </div>
+                <SignPad
+                  fieldName="finalsign"
+                  formData={formData}
+                  setFormData={setFormData}
+                  mode={mode}
+                />
 
                 {/* Save */}
                 {mode !== "view" && (

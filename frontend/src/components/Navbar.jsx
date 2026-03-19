@@ -61,10 +61,6 @@ export default function Navbar() {
     navigate("/login");
   };
 
-  const formattedName =
-    user?.email?.split("@")[0]?.charAt(0)?.toUpperCase() +
-    user?.email?.split("@")[0]?.slice(1)?.toLowerCase();
-
   return (
     <>
       {/* Navbar */}
@@ -146,9 +142,7 @@ export default function Navbar() {
 
             {/* User Info */}
             <div className="hidden sm:block text-[oklch(0.147_0.004_49.25)]">
-              <p className="text-md font-bold">
-                {user?.name || formattedName || "User"}
-              </p>
+              <p className="text-md font-bold">{user?.user_name || "User"}</p>
               <p className="text-md mt-1 opacity-60">
                 {user?.role?.charAt(0).toUpperCase() +
                   user?.role?.slice(1).toLowerCase()}
@@ -161,9 +155,7 @@ export default function Navbar() {
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="w-12 h-12 rounded-full flex items-center justify-center font-black shadow-md cursor-pointer transition-all hover:scale-105 bg-[oklch(0.645_0.246_16.439)] text-white"
               >
-                {user?.name?.charAt(0)?.toUpperCase() ||
-                  user?.email?.charAt(0)?.toUpperCase() ||
-                  "U"}
+                {user?.user_name?.charAt(0)?.toUpperCase() || "U"}
               </div>
 
               {/* Profile Dropdown */}
@@ -180,9 +172,11 @@ export default function Navbar() {
 
                   <div className="m-3 px-3 text-[oklch(0.147_0.004_49.25)]">
                     <p className="text-md font-bold">
-                      {user?.name || formattedName || "User"}
+                      {user?.user_name || "User"}
                     </p>
-                    <p className="text-xs mt-1 opacity-60">{user?.email}</p>
+                    <p className="text-xs mt-1 opacity-60">
+                      {user?.enrollment_id}
+                    </p>
                   </div>
 
                   <button

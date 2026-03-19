@@ -15,6 +15,7 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../SearchDropdown";
 import SpinnerTimePicker from "../SpinnerTimePicker";
 import SpinnerDatePicker from "../SpinnerDatePicker";
+import SignPad from "./SignPad";
 
 const IncidentAccident = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -78,6 +79,7 @@ const IncidentAccident = () => {
       dateTime: null,
       uploadSign: null,
     },
+    signhere: null,
   };
 
   const [formData, setFormData] = useState(defaultFormData);
@@ -1109,6 +1111,31 @@ const IncidentAccident = () => {
                       <label
                         className={`${labelStyle} whitespace-nowrap mr-2 w-1/2`}
                       >
+                        Signature
+                      </label>
+                      <input
+                        name="uploadSign"
+                        type="file"
+                        disabled={mode === "view"}
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+
+                          setFormData((prev) => ({
+                            ...prev,
+                            reportAcknowledge: {
+                              ...prev.reportAcknowledge,
+                              uploadSign: file,
+                            },
+                          }));
+                        }}
+                        className={inputStyle}
+                      />
+                    </div>
+
+                    <div className="flex flex-row mt-2">
+                      <label
+                        className={`${labelStyle} whitespace-nowrap mr-2 w-1/2`}
+                      >
                         Date
                       </label>
                       <input
@@ -1118,7 +1145,7 @@ const IncidentAccident = () => {
                         onClick={() => setShowAckDateSpinner(true)}
                         disabled={mode === "view"}
                         placeholder="dd/mm/yyyy"
-                        className={inputStyle}
+                        className={`${inputStyle} h-10`}
                       />
 
                       {showDateAckSpinner && (
@@ -1140,28 +1167,13 @@ const IncidentAccident = () => {
                       )}
                     </div>
 
-                    <div className="flex flex-row mt-2">
-                      <label
-                        className={`${labelStyle} whitespace-nowrap mr-2 w-1/2`}
-                      >
-                        Signature
-                      </label>
-                      <input
-                        name="uploadSign"
-                        type="file"
-                        disabled={mode === "view"}
-                        onChange={(e) => {
-                          const file = e.target.files[0];
-
-                          setFormData((prev) => ({
-                            ...prev,
-                            reportAcknowledge: {
-                              ...prev.reportAcknowledge,
-                              uploadSign: file,
-                            },
-                          }));
-                        }}
-                        className={inputStyle}
+                    <div className="sm:flex sm:flex-row">
+                      <h1 className="mt-3 w-1/3">Sign Here:</h1>
+                      <SignPad
+                        fieldName="signhere"
+                        formData={formData}
+                        setFormData={setFormData}
+                        mode={mode}
                       />
                     </div>
                   </div>

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import DonutChart from "../components/DonutChart";
 import GeoLocationMap from "../components/GeoLocationMap";
 import { useEffect, useState } from "react";
@@ -58,9 +57,6 @@ const AdminDashboard = ({ user }) => {
     fetchDashboardStats();
   }, []);
 
-  const formattedName =
-    user?.email?.split("@")[0].charAt(0).toUpperCase() +
-    user?.email?.split("@")[0].slice(1).toLowerCase();
 
   return (
     <>
@@ -68,7 +64,7 @@ const AdminDashboard = ({ user }) => {
         <h2 className="text-2xl tracking-tight">
           Welcome back,{" "}
           <span style={{ color: "oklch(0.645 0.246 16.439)" }}>
-            {user?.name || formattedName}
+            {user?.user_name || "User"}
           </span>
         </h2>
       </div>
