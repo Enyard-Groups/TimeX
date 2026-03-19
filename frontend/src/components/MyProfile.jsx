@@ -23,13 +23,13 @@ const MyProfile = () => {
           {/* Profile Header */}
           <div className="flex flex-col md:flex-row items-center gap-6">
             <div className="w-28 h-28 rounded-full bg-gray-200 flex items-center justify-center text-3xl font-semibold text-gray-600">
-              {user.name?.charAt(0).toUpperCase() ||
+              {user.user_name?.charAt(0).toUpperCase() ||
                 user.email?.charAt(0).toUpperCase()}
             </div>
 
             <div className="text-center md:text-left">
               <h1 className="text-2xl font-bold text-gray-800">
-                {user.name || user?.email?.split("@")[0]}
+                {user.user_name || user?.email?.split("@")[0]}
               </h1>
               <p className="text-gray-500">{user.email}</p>
             </div>
@@ -45,7 +45,9 @@ const MyProfile = () => {
                 Full Name
               </label>
               <p className="text-gray-800 font-medium">
-                {user?.name || user?.email?.split("@")[0] || "Not provided"}
+                {user?.user_name ||
+                  user?.email?.split("@")[0] ||
+                  "Not provided"}
               </p>
             </div>
 
