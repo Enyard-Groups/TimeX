@@ -16,7 +16,10 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:3000/api/users/login", { user_name: userName, password });
+      const res = await axios.post("http://localhost:3000/api/users/login", {
+        user_name: userName,
+        password,
+      });
       const userData = res.data.User || res.data.user || res.data;
       const authToken = res.data.token || res.data.accessToken || null;
 
@@ -28,10 +31,7 @@ const Login = () => {
       dispatch(setUser(userData));
       dispatch(setAuth(true));
       navigate("/");
-
-
-    } 
-    catch (err) {
+    } catch (err) {
       setError(err.response?.data?.message || "Invalid credentials");
     }
   };
@@ -48,11 +48,9 @@ const Login = () => {
               active ? "opacity-0 -translate-x-10" : "opacity-100 translate-x-0"
             }`}
           >
-            <h1 className="text-5xl font-black tracking-tight text-[oklch(0.147_0.004_49.25)] p-4">
-              Time<span className="text-[oklch(0.645_0.246_16.439)]">X</span>
-            </h1>
+            <img src="../timexlogo.png" alt="" height="100px" width="100px" />
 
-              <h2 className="text-xl font-bold mb-4 ml-6">Welcome !</h2>
+            <h2 className="text-xl font-bold mb-4 ml-5">Welcome !</h2>
             <p className="mt-6 px-4 text-lg text-gray-600 max-w-sm leading-relaxed">
               To see the Dashboard, Please login with your Credentials.
             </p>
@@ -67,7 +65,9 @@ const Login = () => {
           {/* Left Image after Slide */}
           <div
             className={`transition-all duration-700 ${
-              active ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10 pointer-events-none "
+              active
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 translate-x-10 pointer-events-none "
             }`}
           >
             <img src="./Login.png" className="rounded-full" />
