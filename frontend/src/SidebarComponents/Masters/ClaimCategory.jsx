@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -14,6 +15,8 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../SearchDropdown";
 
 const ClaimCategory = () => {
+  const API_BASE = "http://localhost:3000/api";
+
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [category, setCategory] = useState([]);
@@ -28,6 +31,40 @@ const ClaimCategory = () => {
     isAttachment: false,
     isActive: false,
   });
+
+  const fetchClaimCategories = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
+      const res = await axios.get(`${API_BASE}/master/claim-categories`, {
+        headers,
+      });
+
+      const data = Array.isArray(res.data) ? res.data : [];
+
+      setCategory(
+        data.map((d) => ({
+          id: d.id,
+          name: d.name || "",
+          company: d.company || "",
+          description: d.description || "",
+          isAttachment: d.is_attachment === true || d.is_attachment === "true" || d.is_attachment === 1,
+          isActive: d.is_active === true || d.is_active === "true" || d.is_active === 1,
+        })),
+      );
+    } catch (error) {
+      console.error("Failed to fetch claim categories", error);
+      toast.error("Unable to load claim categories");
+    }
+  };
+
+  useEffect(() => {
+    fetchClaimCategories();
+  }, []);
 
   const inputStyle =
     "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-lg py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -61,7 +98,7 @@ const ClaimCategory = () => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const { name, company, description, isAttachment, isActive } = formData;
 
     if (!name || !company) {
@@ -69,25 +106,36 @@ const ClaimCategory = () => {
       return; // stop execution
     }
 
-    const newcategory = {
-      id: Date.now(),
-      name,
-      company,
-      description,
-      isAttachment,
-      isActive,
-    };
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
 
-    if (editId) {
-      setCategory((prev) =>
-        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
-      );
+      const payload = {
+        name: formData.name,
+        company: formData.company,
+        description: formData.description,
+        is_attachment: formData.isAttachment,
+        is_active: formData.isActive,
+      };
 
-      toast.success("Data updated");
-    } else {
-      setCategory((prev) => [...prev, newcategory]);
+      if (editId) {
+        // Update existing claim category
+        await axios.put(`${API_BASE}/master/claim-categories/${editId}`, payload, { headers });
+        toast.success("Claim category updated successfully");
+      } else {
+        // Create new claim category
+        await axios.post(`${API_BASE}/master/claim-categories`, payload, { headers });
+        toast.success("Claim category created successfully");
+      }
 
-      toast.success("Data Added");
+      // Refresh the claim categories list
+      fetchClaimCategories();
+    } catch (error) {
+      console.error("Failed to save claim category", error);
+      toast.error("Failed to save claim category");
     }
 
     setOpenModal(false);
@@ -354,11 +402,21 @@ const ClaimCategory = () => {
 
                           {/* Delete */}
                           <MdDeleteForever
-                            onClick={() =>
-                              setCategory(
-                                category.filter((v) => v.id !== item.id),
-                              )
-                            }
+                            onClick={async () => {
+                              try {
+                                const token = localStorage.getItem("token");
+                                const headers = {
+                                  "Content-Type": "application/json",
+                                  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                                };
+                                await axios.delete(`${API_BASE}/master/claim-categories/${item.id}`, { headers });
+                                toast.success("Claim category deleted successfully");
+                                fetchClaimCategories();
+                              } catch (error) {
+                                console.error("Failed to delete claim category", error);
+                                toast.error("Failed to delete claim category");
+                              }
+                            }}
                             className="inline text-red-500 cursor-pointer text-xl"
                           />
                         </div>

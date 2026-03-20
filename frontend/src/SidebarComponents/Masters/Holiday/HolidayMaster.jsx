@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -15,6 +16,8 @@ import SpinnerDatePicker from "../../SpinnerDatePicker";
 import SearchDropdown from "../../SearchDropdown";
 
 const HolidayMaster = () => {
+  const API_BASE = "http://localhost:3000/api";
+
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [holidayMaster, setHolidayMaster] = useState([]);
@@ -34,6 +37,46 @@ const HolidayMaster = () => {
     location: "",
     isActive: false,
   });
+
+  const fetchHolidays = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
+      const res = await axios.get(`${API_BASE}/master/holidays`, {
+        headers,
+      });
+
+      const data = Array.isArray(res.data) ? res.data : [];
+
+      setHolidayMaster(
+        data.map((d) => ({
+          id: d.id,
+          name: d.name || "",
+          code: d.code || "",
+          holidaystart: d.holidaystart || "",
+          holidayend: d.holidayend || "",
+          company: d.company || "",
+          location: d.location || "",
+          isActive:
+            d.is_active === true ||
+            d.is_active === "true" ||
+            d.is_active === 1 ||
+            d.isActive === true,
+        })),
+      );
+    } catch (error) {
+      console.error("Failed to fetch holidays", error);
+      toast.error("Unable to load holidays");
+    }
+  };
+
+  useEffect(() => {
+    fetchHolidays();
+  }, []);
 
   const inputStyle =
     "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -69,7 +112,7 @@ const HolidayMaster = () => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const { name, code, holidaystart, holidayend } = formData;
 
     if (!name || !code || !holidaystart || !holidayend) {
@@ -98,15 +141,38 @@ const HolidayMaster = () => {
       return;
     }
 
-    if (editId) {
-      setHolidayMaster((prev) =>
-        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
-      );
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
 
-      toast.success("Data updated");
-    } else {
-      setHolidayMaster((prev) => [...prev, { id: Date.now(), ...formData }]);
-      toast.success("Data added");
+      const payload = {
+        name: formData.name,
+        code: formData.code,
+        holidaystart: formData.holidaystart,
+        holidayend: formData.holidayend,
+        company: formData.company,
+        location: formData.location,
+        is_active: formData.isActive,
+      };
+
+      if (editId) {
+        // Update existing holiday
+        await axios.put(`${API_BASE}/master/holidays/${editId}`, payload, { headers });
+        toast.success("Holiday updated successfully");
+      } else {
+        // Create new holiday
+        await axios.post(`${API_BASE}/master/holidays`, payload, { headers });
+        toast.success("Holiday created successfully");
+      }
+
+      // Refresh the holidays list
+      fetchHolidays();
+    } catch (error) {
+      console.error("Failed to save holiday", error);
+      toast.error("Failed to save holiday");
     }
 
     setOpenModal(false);
@@ -407,11 +473,21 @@ const HolidayMaster = () => {
 
                         {/* Delete */}
                         <MdDeleteForever
-                          onClick={() =>
-                            setHolidayMaster(
-                              holidayMaster.filter((v) => v.id !== item.id),
-                            )
-                          }
+                          onClick={async () => {
+                            try {
+                              const token = localStorage.getItem("token");
+                              const headers = {
+                                "Content-Type": "application/json",
+                                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                              };
+                              await axios.delete(`${API_BASE}/master/holidays/${item.id}`, { headers });
+                              toast.success("Holiday deleted successfully");
+                              fetchHolidays();
+                            } catch (error) {
+                              console.error("Failed to delete holiday", error);
+                              toast.error("Failed to delete holiday");
+                            }
+                          }}
                           className="inline text-red-500 cursor-pointer text-xl"
                         />
                       </div>

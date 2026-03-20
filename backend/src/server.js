@@ -17,7 +17,7 @@ const app=express();
 dotenv.config();
 app.use(express.json())
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175"],
   credentials:true
 }));
 
@@ -34,11 +34,60 @@ app.use("/api/visit",visitorRouter);
 const testDB = async () => {
   try {
     const result = await db.query("SELECT * FROM users");
-
     console.log("database is connected");
-    
-    
-   
+
+    // Drop and recreate holidays table to ensure latest schema
+    await db.query(`DROP TABLE IF EXISTS holidays;`);
+
+    // Create holidays table if it doesn't exist
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS holidays (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        code VARCHAR(50) NOT NULL UNIQUE,
+        holidaystart DATE NOT NULL,
+        holidayend DATE NOT NULL,
+        company VARCHAR(255),
+        location VARCHAR(255),
+        is_active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await db.query(`CREATE INDEX IF NOT EXISTS idx_holidays_code ON holidays(code);`);
+    await db.query(`CREATE INDEX IF NOT EXISTS idx_holidays_company ON holidays(company);`);
+    await db.query(`CREATE INDEX IF NOT EXISTS idx_holidays_location ON holidays(location);`);
+
+    // Check if claim_categories table exists and has the correct structure
+    try {
+      await db.query(`SELECT name FROM claim_categories LIMIT 1;`);
+    } catch (error) {
+      // Table doesn't exist or doesn't have 'name' column, create it
+      await db.query(`DROP TABLE IF EXISTS claim_categories CASCADE;`);
+      await db.query(`
+        CREATE TABLE claim_categories (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          company VARCHAR(255),
+          description TEXT,
+          is_attachment BOOLEAN DEFAULT false,
+          is_active BOOLEAN DEFAULT true,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+    }
+
+    // Create indexes (these will be created if they don't exist)
+    try {
+      await db.query(`CREATE INDEX IF NOT EXISTS idx_claim_categories_name ON claim_categories(name);`);
+      await db.query(`CREATE INDEX IF NOT EXISTS idx_claim_categories_company ON claim_categories(company);`);
+    } catch (indexError) {
+      console.log("Index creation skipped:", indexError.message);
+    }
+
+    console.log("Holidays and Claim Categories tables ready");
   } 
   catch (error) {
     console.error(error); 

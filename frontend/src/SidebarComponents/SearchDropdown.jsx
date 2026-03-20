@@ -43,7 +43,10 @@ const SearchDropdown = ({
             className="w-full px-2 py-1 border-b border-gray-300 outline-none"
           />
 
-          <div className="max-h-40 overflow-y-auto">
+          <div
+            className="max-h-40 overflow-y-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
             {options
               .filter((o) => o.toLowerCase().includes(search.toLowerCase()))
               .map((o, i) => (

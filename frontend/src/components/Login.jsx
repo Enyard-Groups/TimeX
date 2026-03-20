@@ -2,41 +2,38 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setAuth, setUser } from "../action";
+import axios from "axios";
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [active, setActive] = useState(false);
-  const [email, setEmail] = useState("");
+  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const adminName = import.meta.env.VITE_ADMIN_NAME;
-  const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
-  const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (email === adminEmail && password === adminPassword) {
-      const userData = { name: adminName, email, role: "admin" };
+    try {
+      const res = await axios.post("http://localhost:3000/api/users/login", {
+        user_name: userName,
+        password,
+      });
+      const userData = res.data.User || res.data.user || res.data;
+      const authToken = res.data.token || res.data.accessToken || null;
+
       localStorage.setItem("user", JSON.stringify(userData));
+      if (authToken) {
+        localStorage.setItem("token", authToken);
+      }
+
       dispatch(setUser(userData));
       dispatch(setAuth(true));
       navigate("/");
-      return;
+    } catch (err) {
+      setError(err.response?.data?.message || "Invalid credentials");
     }
-
-    if (email === adminEmail && password !== adminPassword) {
-      setError("Incorrect password for admin.");
-      return;
-    }
-
-    const userData = { email, role: "employee" };
-    localStorage.setItem("user", JSON.stringify(userData));
-    dispatch(setUser(userData));
-    dispatch(setAuth(true));
-    navigate("/");
   };
 
   return (
@@ -51,12 +48,10 @@ const Login = () => {
               active ? "opacity-0 -translate-x-10" : "opacity-100 translate-x-0"
             }`}
           >
-            <h1 className="text-5xl font-black tracking-tight text-[oklch(0.147_0.004_49.25)] p-4">
-              Time<span className="text-[oklch(0.645_0.246_16.439)]">X</span>
-            </h1>
+            <img src="../timexlogo.png" alt="" height="200px" width="200px" />
 
+            <h2 className="text-xl font-bold mb-4 ml-5">Welcome !</h2>
             <p className="mt-6 px-4 text-lg text-gray-600 max-w-sm leading-relaxed">
-              <h2 className="text-xl font-bold mb-4">Welcome !</h2>
               To see the Dashboard, Please login with your Credentials.
             </p>
             <button
@@ -70,7 +65,9 @@ const Login = () => {
           {/* Left Image after Slide */}
           <div
             className={`transition-all duration-700 ${
-              active ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10 pointer-events-none "
+              active
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 translate-x-10 pointer-events-none "
             }`}
           >
             <img src="./Login.png" className="rounded-full" />
@@ -112,11 +109,11 @@ const Login = () => {
 
               <div>
                 <input
-                  type="email"
+                  type="text"
                   required
-                  placeholder="Email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Username"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
                   className="w-full px-6 py-4 rounded-2xl bg-[oklch(0.97_0.001_106.424)] border border-[oklch(0.923_0.003_48.717)] focus:border-[oklch(0.645_0.246_16.439)] outline-none transition-all"
                 />
               </div>
@@ -147,169 +144,3 @@ const Login = () => {
 };
 
 export default Login;
-
-
-
-// import React, { useState } from "react";
-// import { useDispatch } from "react-redux";
-// import { useNavigate } from "react-router-dom";
-// import { setAuth, setUser } from "../action";
-
-// const Login = () => {
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [error, setError] = useState("");
-
-//   const adminName = import.meta.env.VITE_ADMIN_NAME;
-//   const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
-//   const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-
-//     if (email === adminEmail && password === adminPassword) {
-//       const userData = { name: adminName, email, role: "admin" };
-
-//       localStorage.setItem("user", JSON.stringify(userData));
-//       dispatch(setUser(userData));
-//       dispatch(setAuth(true));
-//       navigate("/");
-//       return;
-//     }
-
-//     if (email === adminEmail && password !== adminPassword) {
-//       setError("Incorrect password for admin.");
-//       return;
-//     }
-
-//     const userData = { email, role: "employee" };
-
-//     localStorage.setItem("user", JSON.stringify(userData));
-//     dispatch(setUser(userData));
-//     dispatch(setAuth(true));
-//     navigate("/");
-//   };
-
-//   return (
-//     <div
-//       className="min-h-screen flex items-center justify-center px-4"
-//       style={{ backgroundColor: "oklch(1 0 0)" }}
-//     >
-//       <div
-//         className="max-w-md w-full p-10 rounded-3xl border shadow-xl"
-//         style={{
-//           backgroundColor: "oklch(1 0 0)",
-//           borderColor: "oklch(0.923 0.003 48.717)",
-//         }}
-//       >
-//         {/* Header */}
-//         <div className="mb-10 text-center">
-//           <h1
-//             className="text-4xl font-black tracking-tight"
-//             style={{ color: "oklch(0.147 0.004 49.25)" }}
-//           >
-//             Time
-//             <span style={{ color: "oklch(0.645 0.246 16.439)" }}>X</span>
-//           </h1>
-//         </div>
-
-//         <form onSubmit={handleSubmit} className="space-y-6">
-
-//           {/* Error */}
-//           {error && (
-//             <div
-//               className="p-4 rounded-xl text-xs font-bold border"
-//               style={{
-//                 color: "oklch(0.577 0.245 27.325)",
-//                 backgroundColor: "oklch(0.577 0.245 27.325 / 0.06)",
-//                 borderColor: "oklch(0.577 0.245 27.325 / 0.2)",
-//               }}
-//             >
-//               {error}
-//             </div>
-//           )}
-
-//           {/* Email */}
-//           <div className="space-y-2">
-//             <label
-//               className="block text-[10px] font-bold uppercase tracking-[0.2em]"
-//               style={{ color: "oklch(0.147 0.004 49.25 / 0.6)" }}
-//             >
-//               Email
-//             </label>
-
-//             <input
-//               type="email"
-//               required
-//               placeholder="example@gmail.com"
-//               value={email}
-//               onChange={(e) => setEmail(e.target.value)}
-//               className="w-full px-5 py-4 rounded-2xl outline-none font-medium transition-all"
-//               style={{
-//                 backgroundColor: "oklch(0.97 0.001 106.424)",
-//                 border: "1px solid oklch(0.923 0.003 48.717)",
-//               }}
-//               onFocus={(e) =>
-//                 (e.target.style.border =
-//                   "1px solid oklch(0.645 0.246 16.439)")
-//               }
-//               onBlur={(e) =>
-//                 (e.target.style.border =
-//                   "1px solid oklch(0.923 0.003 48.717)")
-//               }
-//             />
-//           </div>
-
-//           {/* Password */}
-//           <div className="space-y-2">
-//             <label
-//               className="block text-[10px] font-bold uppercase tracking-[0.2em]"
-//               style={{ color: "oklch(0.147 0.004 49.25 / 0.6)" }}
-//             >
-//               Password
-//             </label>
-
-//             <input
-//               type="password"
-//               required
-//               placeholder="••••••••"
-//               value={password}
-//               onChange={(e) => setPassword(e.target.value)}
-//               className="w-full px-5 py-4 rounded-2xl outline-none font-medium transition-all"
-//               style={{
-//                 backgroundColor: "oklch(0.97 0.001 106.424)",
-//                 border: "1px solid oklch(0.923 0.003 48.717)",
-//               }}
-//               onFocus={(e) =>
-//                 (e.target.style.border =
-//                   "1px solid oklch(0.645 0.246 16.439)")
-//               }
-//               onBlur={(e) =>
-//                 (e.target.style.border =
-//                   "1px solid oklch(0.923 0.003 48.717)")
-//               }
-//             />
-//           </div>
-
-//           {/* Button */}
-//           <button
-//             type="submit"
-//             className="w-full py-4 mt-4 rounded-2xl text-white font-black text-lg tracking-tight transition-all active:scale-[0.98]"
-//             style={{
-//               backgroundColor: "oklch(0.645 0.246 16.439)",
-//               boxShadow:
-//                 "0 20px 25px -5px oklch(0.645 0.246 16.439 / 0.3)",
-//             }}
-//           >
-//             Sign In
-//           </button>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Login;

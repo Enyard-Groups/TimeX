@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -13,6 +14,8 @@ import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
 
 const IssueType = () => {
+  const API_BASE = "http://localhost:3000/api";
+
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [issueType, setIssueType] = useState([]);
@@ -26,6 +29,80 @@ const IssueType = () => {
     description: "",
     isActive: false,
   });
+
+  const fetchIssueTypes = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
+      const res = await axios.get(`${API_BASE}/master/issue-types`, {
+        headers,
+      });
+
+      const data = Array.isArray(res.data) ? res.data : [];
+
+      setIssueType(
+        data.map((d) => ({
+          id: d.id,
+          name: d.type_name || "",
+          code: d.code || "",
+          description: d.description || "",
+          isActive:
+            d.is_active === true ||
+            d.is_active === "true" ||
+            d.is_active === 1 ||
+            d.isActive === true,
+        })),
+      );
+    } catch (error) {
+      console.error("Failed to fetch issue types", error);
+      toast.error("Unable to load issue types");
+    }
+  };
+
+  const fetchExecutives = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
+      const res = await axios.get(`${API_BASE}/master/executives`, {
+        headers,
+      });
+
+      const data = Array.isArray(res.data) ? res.data : [];
+
+      const executives = data.map((d) => ({
+        id: d.id,
+        name: d.type_name || "",
+        code: d.code || "",
+        description: d.description || "",
+        isActive:
+          d.is_active === true ||
+          d.is_active === "true" ||
+          d.is_active === 1 ||
+          d.isActive === true,
+      }));
+
+      setIssueType((prev) => [...prev, ...executives]);
+    } catch (error) {
+      console.error("Failed to fetch executives", error);
+      toast.error("Unable to load executives");
+    }
+  };
+
+  useEffect(() => {
+    const loadData = async () => {
+      await fetchIssueTypes();
+      await fetchExecutives();
+    };
+    loadData();
+  }, []);
 
   const inputStyle =
     "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-lg py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -59,7 +136,7 @@ const IssueType = () => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const { name, code, description, isActive } = formData;
 
     if (!name || !code) {
@@ -67,36 +144,98 @@ const IssueType = () => {
       return; // stop execution
     }
 
-    const newissueType = {
-      id: Date.now(),
+    const payload = {
       name,
       code,
       description,
-      isActive,
+      is_active: isActive,
     };
 
-    if (editId) {
-      setIssueType((prev) =>
-        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
-      );
+    const token = localStorage.getItem("token");
+    const headers = {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
 
-      toast.success("Data updated");
-    } else {
-      setIssueType((prev) => [...prev, newissueType]);
+    try {
+      if (editId) {
+        const res = await axios.put(
+          `${API_BASE}/master/issue-types/${editId}`,
+          payload,
+          { headers },
+        );
 
-      toast.success("Data Added");
+        const updated = {
+          id: res.data.id,
+          name: res.data.name || "",
+          code: res.data.code || "",
+          description: res.data.description || "",
+          isActive:
+            res.data.is_active === true ||
+            res.data.is_active === "true" ||
+            res.data.is_active === 1 ||
+            res.data.isActive === true,
+        };
+
+        setIssueType((prev) =>
+          prev.map((emp) => (emp.id === editId ? updated : emp)),
+        );
+
+        toast.success("Data updated");
+      } else {
+        const res = await axios.post(`${API_BASE}/master/issue-types`, payload, {
+          headers,
+        });
+
+        const created = {
+          id: res.data.id,
+          name: res.data.name || "",
+          code: res.data.code || "",
+          description: res.data.description || "",
+          isActive:
+            res.data.is_active === true ||
+            res.data.is_active === "true" ||
+            res.data.is_active === 1 ||
+            res.data.isActive === true,
+        };
+
+        setIssueType((prev) => [created, ...prev]);
+
+        toast.success("Data Added");
+      }
+
+      setOpenModal(false);
+      setEditId(null);
+
+      setFormData({
+        name: "",
+        code: "",
+        description: "",
+        isActive: false,
+      });
+    } catch (error) {
+      console.error("Failed to save issue type", error);
+      toast.error(error.response?.data?.message || "Unable to save issue type");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData({
-      name: "",
-      code: "",
-      description: "",
-      isActive: false,
-    });
   };
+
+  const handleDelete = async (id) => {
+    const token = localStorage.getItem("token");
+    const headers = {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    try {
+      await axios.delete(`${API_BASE}/master/issue-types/${id}`, { headers });
+      setIssueType((prev) => prev.filter((v) => v.id !== id));
+      toast.success("Issue Type deleted");
+    } catch (error) {
+      console.error("Failed to delete issue type", error);
+      toast.error(error.response?.data?.message || "Unable to delete issue type");
+    }
+  };
+
   const handleCopy = () => {
     const header = [
       "SL.NO",
@@ -342,11 +481,7 @@ const IssueType = () => {
 
                           {/* Delete */}
                           <MdDeleteForever
-                            onClick={() =>
-                              setIssueType(
-                                issueType.filter((v) => v.id !== item.id),
-                              )
-                            }
+                            onClick={() => handleDelete(item.id)}
                             className="inline text-red-500 cursor-pointer text-xl"
                           />
                         </div>

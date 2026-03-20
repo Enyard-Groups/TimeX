@@ -838,330 +838,337 @@ const MonthlyFireSafetyInspections = () => {
             style={{ scrollbarWidth: "none" }}
           >
             <div
-              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+              className="bg-white rounded-xl shadow-xl w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-6"
               style={{ scrollbarWidth: "none" }}
             >
               {/* Close */}
               <div className="flex justify-end">
                 <RxCross2
                   onClick={() => setOpenModal(false)}
-                  className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
+                  className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer mb-3"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div>
-                  <SearchDropdown
-                    label={
-                      <>
-                        Location <span className="text-red-500">*</span>
-                      </>
-                    }
-                    name="location"
-                    value={formData.location}
-                    options={["Head Office"]}
-                    formData={formData}
-                    setFormData={setFormData}
-                    disabled={mode === "view"}
-                    inputStyle={inputStyle}
-                    labelStyle={labelStyle}
-                  />
-                </div>
-
-                <div>
-                  <label className={labelStyle}>
-                    {" "}
-                    Inspected By <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className={inputStyle}
-                    name="employee"
-                    value={formData.employee}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                  />
-                </div>
-
-                <div>
-                  <label className={labelStyle}>
-                    Date <span className="text-red-500">*</span>
-                  </label>
-
-                  <input
-                    name="createdDate"
-                    value={formData.createdDate}
-                    onChange={handleChange}
-                    onClick={() => setShowDateSpinner(true)}
-                    disabled={mode === "view"}
-                    placeholder="dd/mm/yyyy"
-                    className={inputStyle}
-                  />
-
-                  {showDateSpinner && (
-                    <SpinnerDatePicker
-                      value={formData.createdDate}
-                      onChange={(date) =>
-                        setFormData({ ...formData, createdDate: date })
-                      }
-                      onClose={() => setShowDateSpinner(false)}
-                    />
-                  )}
-                </div>
-              </div>
-
-              {/* Form data  */}
-              <div className="max-h-[75vh] overflow-y-auto pr-2 text-sm mt-6">
-                {/* HEADER ROW */}
-                <div className="grid grid-cols-12 bg-gray-200 font-semibold">
-                  <div className="col-span-5 p-2">Checklist</div>
-                  <div className="col-span-1 text-center p-2">Yes</div>
-                  <div className="col-span-1 text-center p-2">No</div>
-                  <div className="col-span-5 p-2 text-center">Remarks</div>
-                </div>
-
-                {checklistConfig.map((sectionItem) => (
-                  <div key={sectionItem.section}>
-                    {/* Section Title */}
-                    <div className="bg-gray-100 font-semibold p-2 mt-4">
-                      {sectionItem.title}
-                    </div>
-
-                    {/* Fields */}
-                    {sectionItem.fields.map((field) => (
-                      <div
-                        key={field.key}
-                        className="grid grid-cols-12 border-b items-center"
-                      >
-                        {/* Label */}
-                        <div className="col-span-5 p-2">{field.label}</div>
-
-                        {/* YES */}
-                        <div className="col-span-1 text-center">
-                          <input
-                            type="radio"
-                            name={`${sectionItem.section}-${field.key}`}
-                            checked={
-                              formData[sectionItem.section][field.key] === "yes"
-                            }
-                            disabled={mode === "view"}
-                            onChange={() =>
-                              handleChecklistChange(
-                                sectionItem.section,
-                                field.key,
-                                "yes",
-                              )
-                            }
-                          />
-                        </div>
-
-                        {/* NO */}
-                        <div className="col-span-1 text-center">
-                          <input
-                            type="radio"
-                            name={`${sectionItem.section}-${field.key}`}
-                            checked={
-                              formData[sectionItem.section][field.key] === "no"
-                            }
-                            disabled={mode === "view"}
-                            onChange={() =>
-                              handleChecklistChange(
-                                sectionItem.section,
-                                field.key,
-                                "no",
-                              )
-                            }
-                          />
-                        </div>
-
-                        {/* REMARK */}
-                        <div className="col-span-5 p-2 md:flex md:flex-row gap-2">
-                          <label className="w-1/2 mt-1">{field.mark}</label>
-                          <input
-                            type="text"
-                            placeholder="Enter remarks"
-                            className="w-full border rounded px-2 py-1"
-                            value={
-                              formData[sectionItem.section].remarks[
-                                field.key
-                              ] || ""
-                            }
-                            disabled={mode === "view"}
-                            onChange={(e) =>
-                              handleRemarkChange(
-                                sectionItem.section,
-                                field.key,
-                                e.target.value,
-                              )
-                            }
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-
-                {/* Remark Details */}
-                <div className="mt-8">
-                  <p className="font-semibold mb-2">
-                    Remarks or any other details:
-                  </p>
-
-                  <table className="w-full border border-gray-500 text-sm focus:outline-none">
-                    <thead className="bg-gray-200">
-                      <tr>
-                        <th className="border p-2">Area</th>
-                        <th className="border p-2">Observation</th>
-                        <th className="border p-2">Action Required</th>
-                        <th className="border p-2">Action By</th>
-                        <th className="border p-2">Target Date</th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      <tr>
-                        <td className="border border-gray-500 p-2">
-                          <input
-                            type="text"
-                            className="w-full border border-gray-400 px-2 py-1 focus:outline-none"
-                            value={formData.remarks[0]?.area || ""}
-                            disabled={mode === "view"}
-                            onChange={(e) =>
-                              handleRemarkDetailChange("area", e.target.value)
-                            }
-                          />
-                        </td>
-
-                        <td className="border border-gray-500 p-2">
-                          <textarea
-                            className="w-full border border-gray-400 px-2 py-1 focus:outline-none"
-                            value={formData.remarks[0]?.observation || ""}
-                            disabled={mode === "view"}
-                            onChange={(e) =>
-                              handleRemarkDetailChange(
-                                "observation",
-                                e.target.value,
-                              )
-                            }
-                          />
-                        </td>
-
-                        <td className="border border-gray-500 p-2">
-                          <input
-                            type="text"
-                            className="w-full border border-gray-400 px-2 py-1 focus:outline-none"
-                            value={formData.remarks[0]?.actionRequired || ""}
-                            disabled={mode === "view"}
-                            onChange={(e) =>
-                              handleRemarkDetailChange(
-                                "actionRequired",
-                                e.target.value,
-                              )
-                            }
-                          />
-                        </td>
-
-                        <td className="border border-gray-500 p-2">
-                          <input
-                            type="text"
-                            className="w-full border border-gray-400 px-2 py-1 focus:outline-none"
-                            value={formData.remarks[0]?.actionBy || ""}
-                            disabled={mode === "view"}
-                            onChange={(e) =>
-                              handleRemarkDetailChange(
-                                "actionBy",
-                                e.target.value,
-                              )
-                            }
-                          />
-                        </td>
-
-                        <td className="border border-gray-500 p-2">
-                          <input
-                            type="text"
-                            className="w-full border border-gray-400 px-2 py-1 focus:outline-none"
-                            value={formData.remarks[0]?.targetDate || ""}
-                            disabled={mode === "view"}
-                            onChange={(e) =>
-                              handleRemarkDetailChange(
-                                "targetDate",
-                                e.target.value,
-                              )
-                            }
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Signature  */}
-                <div className="mt-6">
-                  <label className="block text-sm font-medium mb-2">
-                    Signature :
-                  </label>
-
-                  <div className="flex items-center gap-3 border rounded-md px-3 py-2 w-full max-w-md bg-gray-50">
-                    {/* Hidden File Input */}
-                    <input
-                      type="file"
-                      id="signatureUpload"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-
-                        if (file) {
-                          setFormData({
-                            ...formData,
-                            signature: file,
-                            signaturePreview: URL.createObjectURL(file),
-                          });
+              <div className="border p-4 rounded-xl border-gray-400 shadow">
+                {/* Form data  */}
+                <div
+                  className="max-h-[75vh] overflow-y-auto pr-2 text-sm"
+                  style={{ scrollbarWidth: "none" }}
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                    <div>
+                      <SearchDropdown
+                        label={
+                          <>
+                            Location <span className="text-red-500">*</span>
+                          </>
                         }
-                      }}
-                    />
-
-                    {/* Button */}
-                    <label
-                      htmlFor="signatureUpload"
-                      className="cursor-pointer bg-white border px-3 py-1 rounded shadow-sm hover:bg-gray-100"
-                    >
-                      Choose File
-                    </label>
-
-                    {/* File Name */}
-                    <span className="text-gray-600 text-sm truncate">
-                      {formData.signature
-                        ? formData.signature.name
-                        : "No file chosen"}
-                    </span>
-                  </div>
-
-                  {formData.signaturePreview && (
-                    <div className="mt-4">
-                      <p className="text-sm mb-1 text-gray-600">Preview:</p>
-
-                      <img
-                        src={formData.signaturePreview}
-                        alt="Signature Preview"
-                        className="h-24 border rounded bg-white p-2 shadow-sm"
+                        name="location"
+                        value={formData.location}
+                        options={["Head Office"]}
+                        formData={formData}
+                        setFormData={setFormData}
+                        disabled={mode === "view"}
+                        inputStyle={inputStyle}
+                        labelStyle={labelStyle}
                       />
                     </div>
+
+                    <div>
+                      <label className={labelStyle}>
+                        {" "}
+                        Inspected By <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        className={inputStyle}
+                        name="employee"
+                        value={formData.employee}
+                        onChange={handleChange}
+                        disabled={mode === "view"}
+                      />
+                    </div>
+
+                    <div>
+                      <label className={labelStyle}>
+                        Date <span className="text-red-500">*</span>
+                      </label>
+
+                      <input
+                        name="createdDate"
+                        value={formData.createdDate}
+                        onChange={handleChange}
+                        onClick={() => setShowDateSpinner(true)}
+                        disabled={mode === "view"}
+                        placeholder="dd/mm/yyyy"
+                        className={inputStyle}
+                      />
+
+                      {showDateSpinner && (
+                        <SpinnerDatePicker
+                          value={formData.createdDate}
+                          onChange={(date) =>
+                            setFormData({ ...formData, createdDate: date })
+                          }
+                          onClose={() => setShowDateSpinner(false)}
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* HEADER ROW */}
+                  <div className="grid grid-cols-12 bg-gray-200 font-semibold">
+                    <div className="col-span-5 p-2">Checklist</div>
+                    <div className="col-span-1 text-center p-2">Yes</div>
+                    <div className="col-span-1 text-center p-2">No</div>
+                    <div className="col-span-5 p-2 text-center">Remarks</div>
+                  </div>
+
+                  {checklistConfig.map((sectionItem) => (
+                    <div key={sectionItem.section}>
+                      {/* Section Title */}
+                      <div className="bg-gray-100 font-semibold p-2 mt-4">
+                        {sectionItem.title}
+                      </div>
+
+                      {/* Fields */}
+                      {sectionItem.fields.map((field) => (
+                        <div
+                          key={field.key}
+                          className="grid grid-cols-12 border-b items-center"
+                        >
+                          {/* Label */}
+                          <div className="col-span-5 p-2">{field.label}</div>
+
+                          {/* YES */}
+                          <div className="col-span-1 text-center">
+                            <input
+                              type="radio"
+                              name={`${sectionItem.section}-${field.key}`}
+                              checked={
+                                formData[sectionItem.section][field.key] ===
+                                "yes"
+                              }
+                              disabled={mode === "view"}
+                              onChange={() =>
+                                handleChecklistChange(
+                                  sectionItem.section,
+                                  field.key,
+                                  "yes",
+                                )
+                              }
+                            />
+                          </div>
+
+                          {/* NO */}
+                          <div className="col-span-1 text-center">
+                            <input
+                              type="radio"
+                              name={`${sectionItem.section}-${field.key}`}
+                              checked={
+                                formData[sectionItem.section][field.key] ===
+                                "no"
+                              }
+                              disabled={mode === "view"}
+                              onChange={() =>
+                                handleChecklistChange(
+                                  sectionItem.section,
+                                  field.key,
+                                  "no",
+                                )
+                              }
+                            />
+                          </div>
+
+                          {/* REMARK */}
+                          <div className="col-span-5 p-2 md:flex md:flex-row gap-2">
+                            <label className="w-1/2 mt-1">{field.mark}</label>
+                            <input
+                              type="text"
+                              placeholder="Enter remarks"
+                              className="w-full border rounded px-2 py-1"
+                              value={
+                                formData[sectionItem.section].remarks[
+                                  field.key
+                                ] || ""
+                              }
+                              disabled={mode === "view"}
+                              onChange={(e) =>
+                                handleRemarkChange(
+                                  sectionItem.section,
+                                  field.key,
+                                  e.target.value,
+                                )
+                              }
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+
+                  {/* Remark Details */}
+                  <div className="mt-8">
+                    <p className="font-semibold mb-2">
+                      Remarks or any other details:
+                    </p>
+
+                    <table className="w-full border border-gray-500 text-sm focus:outline-none">
+                      <thead className="bg-gray-200">
+                        <tr>
+                          <th className="border p-2">Area</th>
+                          <th className="border p-2">Observation</th>
+                          <th className="border p-2">Action Required</th>
+                          <th className="border p-2">Action By</th>
+                          <th className="border p-2">Target Date</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        <tr>
+                          <td className="border border-gray-500 p-2">
+                            <input
+                              type="text"
+                              className="w-full border border-gray-400 px-2 py-1 focus:outline-none"
+                              value={formData.remarks[0]?.area || ""}
+                              disabled={mode === "view"}
+                              onChange={(e) =>
+                                handleRemarkDetailChange("area", e.target.value)
+                              }
+                            />
+                          </td>
+
+                          <td className="border border-gray-500 p-2">
+                            <textarea
+                              className="w-full border border-gray-400 px-2 py-1 focus:outline-none"
+                              value={formData.remarks[0]?.observation || ""}
+                              disabled={mode === "view"}
+                              onChange={(e) =>
+                                handleRemarkDetailChange(
+                                  "observation",
+                                  e.target.value,
+                                )
+                              }
+                            />
+                          </td>
+
+                          <td className="border border-gray-500 p-2">
+                            <input
+                              type="text"
+                              className="w-full border border-gray-400 px-2 py-1 focus:outline-none"
+                              value={formData.remarks[0]?.actionRequired || ""}
+                              disabled={mode === "view"}
+                              onChange={(e) =>
+                                handleRemarkDetailChange(
+                                  "actionRequired",
+                                  e.target.value,
+                                )
+                              }
+                            />
+                          </td>
+
+                          <td className="border border-gray-500 p-2">
+                            <input
+                              type="text"
+                              className="w-full border border-gray-400 px-2 py-1 focus:outline-none"
+                              value={formData.remarks[0]?.actionBy || ""}
+                              disabled={mode === "view"}
+                              onChange={(e) =>
+                                handleRemarkDetailChange(
+                                  "actionBy",
+                                  e.target.value,
+                                )
+                              }
+                            />
+                          </td>
+
+                          <td className="border border-gray-500 p-2">
+                            <input
+                              type="text"
+                              className="w-full border border-gray-400 px-2 py-1 focus:outline-none"
+                              value={formData.remarks[0]?.targetDate || ""}
+                              disabled={mode === "view"}
+                              onChange={(e) =>
+                                handleRemarkDetailChange(
+                                  "targetDate",
+                                  e.target.value,
+                                )
+                              }
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Signature  */}
+                  <div className="mt-6">
+                    <label className="block text-sm font-medium mb-2">
+                      Signature :
+                    </label>
+
+                    <div className="flex items-center gap-3 border rounded-md px-3 py-2 w-full max-w-md bg-gray-50">
+                      {/* Hidden File Input */}
+                      <input
+                        type="file"
+                        id="signatureUpload"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+
+                          if (file) {
+                            setFormData({
+                              ...formData,
+                              signature: file,
+                              signaturePreview: URL.createObjectURL(file),
+                            });
+                          }
+                        }}
+                      />
+
+                      {/* Button */}
+                      <label
+                        htmlFor="signatureUpload"
+                        className="cursor-pointer bg-white border px-3 py-1 rounded shadow-sm hover:bg-gray-100"
+                      >
+                        Choose File
+                      </label>
+
+                      {/* File Name */}
+                      <span className="text-gray-600 text-sm truncate">
+                        {formData.signature
+                          ? formData.signature.name
+                          : "No file chosen"}
+                      </span>
+                    </div>
+
+                    {formData.signaturePreview && (
+                      <div className="mt-4">
+                        <p className="text-sm mb-1 text-gray-600">Preview:</p>
+
+                        <img
+                          src={formData.signaturePreview}
+                          alt="Signature Preview"
+                          className="h-24 border rounded bg-white p-2 shadow-sm"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Save */}
+                  {mode !== "view" && (
+                    <div className="flex justify-end mt-10">
+                      <button
+                        onClick={handleSubmit}
+                        className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md mb-6"
+                      >
+                        Save
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
-
-              {/* Save */}
-              {mode !== "view" && (
-                <div className="flex justify-end mt-10">
-                  <button
-                    onClick={handleSubmit}
-                    className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md mb-6"
-                  >
-                    Save
-                  </button>
-                </div>
-              )}
             </div>
           </div>
         )}
