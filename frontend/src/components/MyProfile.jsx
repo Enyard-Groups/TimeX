@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 
 const MyProfile = () => {
   const { user, isAuthenticated } = useSelector((state) => state);
+  console.log(user);
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />;
@@ -23,15 +24,14 @@ const MyProfile = () => {
           {/* Profile Header */}
           <div className="flex flex-col md:flex-row items-center gap-6">
             <div className="w-28 h-28 rounded-full bg-gray-200 flex items-center justify-center text-3xl font-semibold text-gray-600">
-              {user.user_name?.charAt(0).toUpperCase() ||
-                user.email?.charAt(0).toUpperCase()}
+              {user.user_name?.charAt(0).toUpperCase()}
             </div>
 
             <div className="text-center md:text-left">
               <h1 className="text-2xl font-bold text-gray-800">
-                {user.user_name || user?.email?.split("@")[0]}
+                {user.user_name}
               </h1>
-              <p className="text-gray-500">{user.email}</p>
+              <p className="text-gray-500">{user.enrollment_id}</p>
             </div>
           </div>
 
@@ -45,18 +45,16 @@ const MyProfile = () => {
                 Full Name
               </label>
               <p className="text-gray-800 font-medium">
-                {user?.user_name ||
-                  user?.email?.split("@")[0] ||
-                  "Not provided"}
+                {user?.user_name || "Not provided"}
               </p>
             </div>
 
             <div>
               <label className="block text-md text-gray-600 mb-1">
-                Email Address
+                Enrollment ID / Email Address
               </label>
               <p className="text-gray-800 font-medium">
-                {user?.email || "Not provided"}
+                {user?.enrollment_id || "Not provided"}
               </p>
             </div>
           </div>

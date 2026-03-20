@@ -13,6 +13,7 @@ import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../SearchDropdown";
 import SpinnerDatePicker from "../SpinnerDatePicker";
+import SignPad from "./SignPad";
 
 const MonthlyFireSafetyInspections = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -159,6 +160,7 @@ const MonthlyFireSafetyInspections = () => {
     ],
     signature: null,
     signaturePreview: null,
+    signhere: null,
   };
   const [formData, setFormData] = useState(defaultFormData);
 
@@ -1155,6 +1157,13 @@ const MonthlyFireSafetyInspections = () => {
                       </div>
                     )}
                   </div>
+                  <h1>Sign Here:</h1>
+                  <SignPad
+                    fieldName="signhere"
+                    formData={formData}
+                    setFormData={setFormData}
+                    mode={mode}
+                  />
 
                   {/* Save */}
                   {mode !== "view" && (
