@@ -88,6 +88,58 @@ const testDB = async () => {
     }
 
     console.log("Holidays and Claim Categories tables ready");
+
+    // ── Device tables ────────────────────────────────────────────────────────
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS device_models (
+        id         SERIAL PRIMARY KEY,
+        name       VARCHAR(255) NOT NULL,
+        code       VARCHAR(100) NOT NULL,
+        company    VARCHAR(255),
+        is_active  BOOLEAN DEFAULT true,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS devices (
+        id             SERIAL PRIMARY KEY,
+        name           VARCHAR(255) NOT NULL,
+        company        VARCHAR(255),
+        deviceip       VARCHAR(100),
+        deviceserialno VARCHAR(100),
+        devicemodel    VARCHAR(255),
+        latitude       VARCHAR(100),
+        longitude      VARCHAR(100),
+        is_face        BOOLEAN DEFAULT false,
+        is_fingerprint BOOLEAN DEFAULT false,
+        is_card_no     BOOLEAN DEFAULT false,
+        is_pin_no      BOOLEAN DEFAULT false,
+        is_active      BOOLEAN DEFAULT false,
+        created_at     TIMESTAMPTZ DEFAULT NOW(),
+        updated_at     TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS device_communications (
+        id               SERIAL PRIMARY KEY,
+        status           VARCHAR(50),
+        serialno         VARCHAR(100),
+        devicename       VARCHAR(255),
+        transfername     VARCHAR(100),
+        interval         VARCHAR(50),
+        lastactivity     VARCHAR(100),
+        fwversion        VARCHAR(50),
+        usercount        INTEGER DEFAULT 0,
+        fpcount          INTEGER DEFAULT 0,
+        transactioncount INTEGER DEFAULT 0,
+        created_at       TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+
+    console.log("Device tables ready");
   } 
   catch (error) {
     console.error(error); 

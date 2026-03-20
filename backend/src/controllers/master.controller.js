@@ -322,3 +322,89 @@ export const deleteIssueType = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// ─── Location Groups ────────────────────────────────────────────────────────
+
+export const getLocationGroups = async (req, res) => {
+  try {
+    const result = await db.query(
+      'SELECT * FROM location_groups ORDER BY created_at DESC'
+    );
+    res.json({ data: result.rows });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const createLocationGroup = async (req, res) => {
+  const {
+    group_name,
+    description,
+    time_keeper,
+    site_manager,
+    company,
+  } = req.body;
+
+  if (!group_name || !company) {
+    return res.status(400).json({ message: 'locationgroupname and company are required' });
+  }
+
+  try {
+    const result = await db.query(
+      `INSERT INTO location_groups
+        (group_name, description, time_keeper, site_manager, company)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING *`,
+      [group_name,description, time_keeper, site_manager, company]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateLocationGroup = async (req, res) => {
+  const { id } = req.params;
+  const {
+    group_name,
+    description,
+    time_keeper,
+    site_manager,
+    company,
+  } = req.body;
+
+  try {
+    const result = await db.query(
+      `UPDATE location_groups
+       SET group_name=$1,
+           description=$2,
+           time_keeper=$3,
+           site_manager=$4,
+           company=$5
+       WHERE id=$6
+       RETURNING *`,
+      [group_name,description, time_keeper, site_manager, company, id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: 'Location group not found' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteLocationGroup = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await db.query('DELETE FROM location_groups WHERE id=$1 RETURNING id', [id]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: 'Location group not found' });
+    }
+    res.json({ message: 'Location group deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
