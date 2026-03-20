@@ -22,7 +22,7 @@ const Dashboard = () => {
     >
       <Navbar user={user} />
 
-      <main className="md:ml-52 mt-16 mb-12 p-6 md:p-10">
+      <main className="lg:ml-52 mt-16 mb-12 p-6 md:p-10">
         {isAdmin ? (
           <AdminDashboard user={user} />
         ) : (
