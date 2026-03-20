@@ -65,7 +65,6 @@ const OptOutRequestForm = () => {
 
   const [formData, setFormData] = useState(defaultFormData);
   console.log(formData);
-  
 
   const handleChange = (e, section = null, subsection = null) => {
     const { name, value, type, checked } = e.target;
@@ -863,7 +862,7 @@ const OptOutRequestForm = () => {
                         />
                         <SignPad
                           fieldName="approvedBy_drawn"
-                           name="approvedBy"
+                          name="approvedBy"
                           formData={formData}
                           setFormData={setFormData}
                           mode={mode}
@@ -890,7 +889,7 @@ const OptOutRequestForm = () => {
                       />
                       <SignPad
                         fieldName="concurredBy_drawn"
-                         name="concurredBy"
+                        name="concurredBy"
                         formData={formData}
                         setFormData={setFormData}
                         mode={mode}
