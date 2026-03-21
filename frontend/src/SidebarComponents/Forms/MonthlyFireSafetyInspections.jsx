@@ -419,10 +419,10 @@ const MonthlyFireSafetyInspections = () => {
   ];
 
   const inputStyle =
-    "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+    " text-[16px] w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
 
   const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
+    " text-[16px] font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const filteredinspectionData = inspectionData.filter(
     (x) =>
@@ -854,7 +854,7 @@ const MonthlyFireSafetyInspections = () => {
               <div className="border p-4 rounded-xl border-gray-400 shadow">
                 {/* Form data  */}
                 <div
-                  className="max-h-[75vh] overflow-y-auto pr-2 text-sm"
+                  className="max-h-[75vh] overflow-y-auto pr-2 text-[16px]"
                   style={{ scrollbarWidth: "none" }}
                 >
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
@@ -1157,7 +1157,7 @@ const MonthlyFireSafetyInspections = () => {
                       </div>
                     )}
                   </div>
-                  <h1>Sign Here:</h1>
+                  <h1 className="mt-2">Sign Here:</h1>
                   <SignPad
                     fieldName="signhere"
                     formData={formData}

@@ -31,10 +31,10 @@ const WeeklyOvertimeForm = () => {
   const [activeInTimeIndex, setActiveInTimeIndex] = useState(null);
   const [activeOutTimeIndex, setActiveOutTimeIndex] = useState(null);
 
-  const labelStyle = "text-md text-[oklch(0.147_0.004_49.25)] my-1 block mx-1";
+  const labelStyle = "text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block mx-1";
 
   const inputStyle =
-    "text-sm w-full border border-[oklch(0.923_0.003_48.717)] bg-white  rounded-md px-3 py-1 pt-0.5 text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
+    "text-[16px] w-full border border-[oklch(0.923_0.003_48.717)] bg-white  rounded-md px-3 py-1 pt-0.5 text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
 
   const defaultFormData = {
     employeeName: "",
@@ -230,11 +230,11 @@ const WeeklyOvertimeForm = () => {
   };
 
   const handleCopy = () => {
-    const header = ["School Name", "Time In", "Time Out", "Date"].join("\t");
+    const header = ["Employee Name", "Enrollment ID", "Designation"].join("\t");
 
     const rows = requestData
       .map((item) => {
-        return [item.schoolname, item.startTime, item.endTime, item.date].join(
+        return [item.employeeName, item.enrollmentId, item.designation].join(
           "\t",
         );
       })
@@ -248,10 +248,9 @@ const WeeklyOvertimeForm = () => {
 
   const handleExcel = () => {
     const excelData = requestData.map((item) => ({
-      SchoolName: item.schoolname,
-      TimeIn: item.startTime,
-      TimeOut: item.endTime,
-      Date: item.date,
+      EmployeeName: item.employeeName,
+      EnrollmentID: item.enrollmentId,
+      Designation: item.designation,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -265,12 +264,12 @@ const WeeklyOvertimeForm = () => {
   const handlePDF = () => {
     const doc = new jsPDF("landscape");
 
-    const tableColumn = ["School Name", "Time In", "Time Out", "Date"];
+    const tableColumn = ["Employee Name", "Enrollment ID", "Designation"];
 
     const tableRows = [];
 
     requestData.forEach((item) => {
-      const row = [item.schoolname, item.startTime, item.endTime, item.date];
+      const row = [item.employeeName, item.enrollmentId, item.designation];
 
       tableRows.push(row);
     });
@@ -513,7 +512,7 @@ const WeeklyOvertimeForm = () => {
             <div className="border p-4 rounded-xl border-gray-400 shadow">
               <div className="flex justify-center">
                 <div
-                  className="max-h-[75vh] max-w-[1200px] overflow-y-auto pr-2 text-sm"
+                  className="max-h-[75vh] max-w-[1200px] overflow-y-auto pr-2 text-[16px]"
                   style={{ scrollbarWidth: "none" }}
                 >
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4">
@@ -594,7 +593,7 @@ const WeeklyOvertimeForm = () => {
 
                   {/* Overtime Section */}
                   <div className="mt-6">
-                    <h3 className="text-md font-semibold mb-2">
+                    <h3 className="text-[16px] font-semibold mb-2">
                       Over time Type
                     </h3>
 
@@ -622,7 +621,7 @@ const WeeklyOvertimeForm = () => {
                       </label>
                     </div>
 
-                    <table className="w-full border border-gray-400 text-sm">
+                    <table className="w-full border border-gray-400 text-[16px]">
                       <thead className="bg-gray-200">
                         <tr>
                           <th className="p-2 ">SL.No.</th>
@@ -938,7 +937,7 @@ const WeeklyOvertimeForm = () => {
                     <h1 className="border-b-2 border-[oklch(0.645_0.246_16.439)] py-1 mb-2 w-fit">
                       For Office Use Only
                     </h1>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                       <div>
                         <label className={labelStyle}> Verified By</label>
 

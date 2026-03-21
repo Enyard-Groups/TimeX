@@ -15,7 +15,6 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../SearchDropdown";
 import SpinnerDatePicker from "../SpinnerDatePicker";
 import SignPad from "./SignPad";
-import SpinnerTimePicker from "../SpinnerTimePicker";
 
 const StaffTrainingChecklist = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -25,14 +24,12 @@ const StaffTrainingChecklist = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
   const [showDateSpinner, setShowDateSpinner] = useState(false);
-  const [showInTimePicker, setShowInTimePicker] = useState(false);
-  const [showOutTimePicker, setShowOutTimePicker] = useState(false);
 
   const labelStyle =
-    "whitespace-nowrap text-md text-[oklch(0.147_0.004_49.25)] my-1 block w-1/2";
+    "whitespace-nowrap text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block w-1/2";
 
   const inputStyle =
-    "text-sm w-full border border-[oklch(0.923_0.003_48.717)] bg-white  rounded-md px-3 pt-0.5 text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
+    "text-[16px] w-full border border-[oklch(0.923_0.003_48.717)] bg-white  rounded-md px-3 pt-0.5 text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
 
   const defaultFormData = {
     employeeName: "",
@@ -235,38 +232,13 @@ const StaffTrainingChecklist = () => {
     ],
   };
 
-  const handleChange = (e, section = null, subsection = null) => {
+  const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    setFormData((prev) => {
-      if (section && subsection) {
-        return {
-          ...prev,
-          [section]: {
-            ...prev[section],
-            [subsection]: {
-              ...prev[section][subsection],
-              [name]: type === "checkbox" ? checked : value,
-            },
-          },
-        };
-      }
-
-      if (section) {
-        return {
-          ...prev,
-          [section]: {
-            ...prev[section],
-            [name]: type === "checkbox" ? checked : value,
-          },
-        };
-      }
-
-      return {
-        ...prev,
-        [name]: type === "checkbox" ? checked : value,
-      };
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const endIndex = currentPage * entriesPerPage;
@@ -638,7 +610,7 @@ const StaffTrainingChecklist = () => {
             <div className="border p-4 rounded-xl border-gray-400 shadow">
               <div className="flex justify-center">
                 <div
-                  className="max-h-[75vh] max-w-[1200px] overflow-y-auto pr-2 text-sm"
+                  className="max-h-[75vh] max-w-[1200px] overflow-y-auto pr-2 text-[16px]"
                   style={{ scrollbarWidth: "none" }}
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">

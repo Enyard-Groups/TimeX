@@ -40,9 +40,9 @@ const LeaveApplication = () => {
 
   const countries = getNames();
   const inputStyle =
-    "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
+    "text-[16px] w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
 
-  const labelStyle = "text-md text-[oklch(0.147_0.004_49.25)] my-1 block";
+  const labelStyle = "text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block";
 
   const defaultFormData = {
     employee: "",
@@ -514,7 +514,7 @@ const LeaveApplication = () => {
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-white rounded-xl shadow-xl w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-6"
+            className="bg-white rounded-xl shadow-xl w-full max-w-[1300px] max-h-[90vh] overflow-y-auto p-6"
             style={{ scrollbarWidth: "none" }}
           >
             {/* Close */}
@@ -527,7 +527,7 @@ const LeaveApplication = () => {
 
             <div className="border p-4 rounded-xl border-gray-400 shadow">
               <div
-                className="max-h-[75vh] overflow-y-auto pr-2 text-sm"
+                className="max-h-[75vh] overflow-y-auto pr-2 text-[16px]"
                 style={{ scrollbarWidth: "none" }}
               >
                 {/*  Details  */}
@@ -537,7 +537,7 @@ const LeaveApplication = () => {
                   </h1>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-2 gap-4">
-                    <div className="flex flex-row gap-2">
+                    <div className="flex flex-row gap-2  text-[16px]">
                       <h1 className="w-1/3 mt-2">
                         Name <span className="text-red-500">*</span>
                       </h1>
@@ -556,7 +556,7 @@ const LeaveApplication = () => {
                       </div>
                     </div>
 
-                    <div className="flex flex-row gap-2">
+                    <div className="flex flex-row gap-2 text-[16px]">
                       <label className={`${labelStyle} w-1/3`}>Id No: </label>
                       <input
                         name="enrollmentId"
@@ -567,7 +567,7 @@ const LeaveApplication = () => {
                       />
                     </div>
 
-                    <div className="flex flex-row gap-2 relative">
+                    <div className="flex flex-row gap-2 relative  text-[16px]">
                       <label className={`${labelStyle}  w-1/3`}>Date: </label>
                       <input
                         name="date"
@@ -595,7 +595,7 @@ const LeaveApplication = () => {
                       )}
                     </div>
 
-                    <div className="flex flex-row gap-2">
+                    <div className="flex flex-row gap-2  text-[16px]">
                       <h1 className="w-1/3 mt-2">
                         Desination <span className="text-red-500">*</span>
                       </h1>
@@ -637,7 +637,7 @@ const LeaveApplication = () => {
                       </div>
                     </div>
 
-                    <div className="flex flex-row gap-2">
+                    <div className="flex flex-row gap-2  text-[16px]">
                       <h1 className="w-1/3 mt-2">
                         Nationality <span className="text-red-500">*</span>
                       </h1>
@@ -656,7 +656,7 @@ const LeaveApplication = () => {
                       </div>
                     </div>
 
-                    <div className="flex flex-row gap-2">
+                    <div className="flex flex-row gap-2 text-[16px]">
                       <h1 className="w-1/3 mt-2">
                         Location <span className="text-red-500">*</span>
                       </h1>
@@ -694,7 +694,7 @@ const LeaveApplication = () => {
                     ].map((item) => (
                       <label
                         key={item.name}
-                        className="flex items-center gap-2 text-lg"
+                        className="flex items-center gap-2  text-[16px]"
                       >
                         <input
                           type="checkbox"
@@ -744,7 +744,7 @@ const LeaveApplication = () => {
                 </div>
 
                 {/* Calender of Days of Leave */}
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4  text-[16px]">
                   <div className="flex flex-row">
                     <label className={labelStyle}>
                       Total Calender Days of Leave requested
@@ -816,7 +816,7 @@ const LeaveApplication = () => {
                   </div>
                 </div>
 
-                <div className="mt-6 flex flex-row gap-6">
+                <div className="mt-6 flex flex-row gap-6 text-[16px]">
                   <h1>TOIL (Time off in lieu) requested:</h1>
                   <label>
                     <input
@@ -837,7 +837,7 @@ const LeaveApplication = () => {
                 </div>
 
                 {/* Calender of Days of Toil */}
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-[16px]">
                   <div className="flex flex-row">
                     <label className={labelStyle}>
                       Total Calender Days of Toil requested
@@ -910,7 +910,7 @@ const LeaveApplication = () => {
                 </div>
 
                 {/* Calender of Days of Toil */}
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-[16px]">
                   <div className="flex flex-row">
                     <label className={labelStyle}>
                       Total Calender Days of Leave/s reuqested = Leave + Toil
@@ -968,7 +968,7 @@ const LeaveApplication = () => {
                   </div>
                 </div>
 
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-[16px]">
                   <div className="flex flex-row">
                     <label className={labelStyle}>
                       Reason for Leave, in case of Emergency / Unpaid Leave:
@@ -1016,7 +1016,7 @@ const LeaveApplication = () => {
                 <h1 className={`${labelStyle} mt-4 font-medium`}>
                   Declaration
                 </h1>
-                <ul className="text-sm">
+                <ul className="text-md">
                   <li>
                     • I understand that given leave policies and procedures are
                     for betterment for employees and manpower planning of the
@@ -1049,7 +1049,7 @@ const LeaveApplication = () => {
                   </li>
                 </ul>
 
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-[16px]">
                   <div>
                     <label className={labelStyle}>
                       Emergency Contact No. During the leave:
@@ -1093,7 +1093,7 @@ const LeaveApplication = () => {
                   II. To be filled by the Admin Operations
                 </h1>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4 text-[16px]">
                   <div className="flex flex-row relative">
                     <label className={`${labelStyle} md:w-2/3`}>
                       Employee's Date of Joining
@@ -1140,7 +1140,7 @@ const LeaveApplication = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 mt-4 gap-2">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 mt-4 gap-2 text-[16px]">
                   <div>
                     <h1 className={labelStyle}>Nature of Leave</h1>
                     <div className="w-full">
@@ -1224,7 +1224,7 @@ const LeaveApplication = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-row md:w-7/12 mt-4">
+                <div className="flex flex-row md:w-7/12 mt-4 text-[16px]">
                   <label className={`${labelStyle} md:w-1/3`}>
                     Remarks if any :
                   </label>
@@ -1237,7 +1237,7 @@ const LeaveApplication = () => {
                   />
                 </div>
 
-                <div className="flex flex-row mt-4">
+                <div className="flex flex-row mt-4 text-[16px]">
                   <label className={`${labelStyle} md:w-3/5`}>
                     Reason for non-approval? (only if leave request rejected)
                   </label>
@@ -1251,7 +1251,7 @@ const LeaveApplication = () => {
                 </div>
 
                 {/* LEave granted*/}
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-[16px]">
                   <div className="flex flex-row gap-4">
                     <h1 className={labelStyle}> Leave Granted ?</h1>
 
@@ -1338,7 +1338,7 @@ const LeaveApplication = () => {
                   III. Final Approvals
                 </h1>
 
-                <div className="md:flex md:flex-row gap-6 mt-4">
+                <div className="md:flex md:flex-row gap-6 mt-4 text-[16px]">
                   <div>
                     <h1 className="text-lg font-medium">Approval - 1</h1>
                     <div className="flex flex-row gap-2 mt-2">
@@ -1452,7 +1452,7 @@ const LeaveApplication = () => {
                   Department.
                 </p>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4  text-[16px]">
                   <div className="flex flex-row gap-2 mt-2">
                     <label className={`whitespace-nowrap ${labelStyle}`}>
                       Applicant's Name
@@ -1648,7 +1648,7 @@ const LeaveApplication = () => {
                   I.TO BE FILLED BY THE EMPLOYEE IN CAPITALS
                 </h1>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4 text-[16px]">
                   <div className="flex flex-row gap-2">
                     <label className={labelStyle}>Signature</label>
                     <input
@@ -1682,7 +1682,7 @@ const LeaveApplication = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4 text-[16px]">
                   <div className="flex flex-row gap-2">
                     <label className={labelStyle}>Name:</label>
                     <input
@@ -1707,7 +1707,7 @@ const LeaveApplication = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4 text-[16px]">
                   <div className="flex flex-row gap-2">
                     <label className={labelStyle}>ID No.:</label>
                     <input
@@ -1730,7 +1730,7 @@ const LeaveApplication = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 text-[16px]">
                   <div className="flex flex-row gap-2 mt-4 relative">
                     <label className={labelStyle}>Date</label>
                     <input
@@ -1779,7 +1779,7 @@ const LeaveApplication = () => {
                   />
                 </div>
 
-                <div className="mt-4 flex flex-row gap-2">
+                <div className="mt-4 flex flex-row gap-2 text-[16px]">
                   <label className={labelStyle}>Signature</label>
                   <input
                     type="file"

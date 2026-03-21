@@ -27,7 +27,7 @@ const ShiftHandOver = () => {
   const [showInTimePicker, setShowInTimePicker] = useState(false);
   const [showOutTimePicker, setShowOutTimePicker] = useState(false);
 
-  const labelStyle = "text-md text-[oklch(0.147_0.004_49.25)] my-1 block";
+  const labelStyle = "text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block";
 
   const defaultFormData = {
     schoolname: "",
@@ -93,38 +93,13 @@ const ShiftHandOver = () => {
     { label: "Keys", name: "keys" },
   ];
 
-  const handleChange = (e, section = null, subsection = null) => {
+  const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    setFormData((prev) => {
-      if (section && subsection) {
-        return {
-          ...prev,
-          [section]: {
-            ...prev[section],
-            [subsection]: {
-              ...prev[section][subsection],
-              [name]: type === "checkbox" ? checked : value,
-            },
-          },
-        };
-      }
-
-      if (section) {
-        return {
-          ...prev,
-          [section]: {
-            ...prev[section],
-            [name]: type === "checkbox" ? checked : value,
-          },
-        };
-      }
-
-      return {
-        ...prev,
-        [name]: type === "checkbox" ? checked : value,
-      };
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const endIndex = currentPage * entriesPerPage;
@@ -152,16 +127,10 @@ const ShiftHandOver = () => {
 
       setRequestData(updated);
 
-      // Backend version
-      // await axios.put(`/api/manual-entry/${editId}`, newEntry)
-
       toast.success("Request Updated");
     } else {
       const updated = [...requestData, newEntry];
       setRequestData(updated);
-
-      // Backend version
-      // await axios.post("/api/manual-entry-request", newEntry)
 
       toast.success("Request Submitted");
     }
@@ -460,7 +429,7 @@ const ShiftHandOver = () => {
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-white rounded-xl shadow-xl w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-6"
+            className="bg-white rounded-xl shadow-xl w-full max-w-[1400px] max-h-[90vh] overflow-y-auto p-6"
             style={{ scrollbarWidth: "none" }}
           >
             {/* Close */}
@@ -474,7 +443,7 @@ const ShiftHandOver = () => {
             <div className="border p-4 rounded-xl border-gray-400 shadow">
               <div className="flex justify-center">
                 <div
-                  className="max-h-[75vh] max-w-[1200px] overflow-y-auto pr-2 text-sm"
+                  className="max-h-[75vh] overflow-y-auto pr-2 text-[16px]"
                   style={{ scrollbarWidth: "none" }}
                 >
                   <div className="grid sm:grid-cols-2 gap-4 mt-4">
@@ -522,6 +491,7 @@ const ShiftHandOver = () => {
                   <p className="my-2">
                     * Make sure that handover note is signed by both parties
                   </p>
+
                   {/* Shift Section */}
                   <table className="w-full border border-gray-400 mb-6">
                     <thead>
