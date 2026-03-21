@@ -323,39 +323,22 @@ export const deleteIssueType = async (req, res) => {
   }
 };
 
-// ─── Location Groups ────────────────────────────────────────────────────────
 
-export const getLocationGroups = async (req, res) => {
+export const getLeaveTypes = async (req, res) => {
   try {
-    const result = await db.query(
-      'SELECT * FROM location_groups ORDER BY created_at DESC'
-    );
-    res.json({ data: result.rows });
+    const result = await db.query('SELECT * FROM leave_types ORDER BY created_at DESC');
+    res.json(result.rows);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-export const createLocationGroup = async (req, res) => {
-  const {
-    group_name,
-    description,
-    time_keeper,
-    site_manager,
-    company,
-  } = req.body;
-
-  if (!group_name || !company) {
-    return res.status(400).json({ message: 'locationgroupname and company are required' });
-  }
-
+export const createLeaveType = async (req, res) => {
+  const { name, code, company, total_leaves, description, is_active } = req.body;
   try {
     const result = await db.query(
-      `INSERT INTO location_groups
-        (group_name, description, time_keeper, site_manager, company)
-       VALUES ($1, $2, $3, $4, $5)
-       RETURNING *`,
-      [group_name,description, time_keeper, site_manager, company]
+      'INSERT INTO leave_types (name, code, company, total_leaves, description, is_active) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [name, code, company, total_leaves, description, is_active]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -363,48 +346,131 @@ export const createLocationGroup = async (req, res) => {
   }
 };
 
-export const updateLocationGroup = async (req, res) => {
+export const updateLeaveType = async (req, res) => {
   const { id } = req.params;
-  const {
-    group_name,
-    description,
-    time_keeper,
-    site_manager,
-    company,
-  } = req.body;
-
+  const { name, code, company, total_leaves, description, is_active } = req.body;
   try {
     const result = await db.query(
-      `UPDATE location_groups
-       SET group_name=$1,
-           description=$2,
-           time_keeper=$3,
-           site_manager=$4,
-           company=$5
-       WHERE id=$6
-       RETURNING *`,
-      [group_name,description, time_keeper, site_manager, company, id]
+      'UPDATE leave_types SET name=$1, code=$2, company=$3, total_leaves=$4, description=$5, is_active=$6 WHERE id=$7 RETURNING *',
+      [name, code, company, total_leaves, description, is_active, id]
     );
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: 'Location group not found' });
-    }
-
     res.json(result.rows[0]);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-export const deleteLocationGroup = async (req, res) => {
+export const deleteLeaveType = async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await db.query('DELETE FROM location_groups WHERE id=$1 RETURNING id', [id]);
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: 'Location group not found' });
-    }
-    res.json({ message: 'Location group deleted' });
+    await db.query('DELETE FROM leave_types WHERE id = $1', [id]);
+    res.json({ message: 'Leave type removed' });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+
+export const getGeofencingLocations = async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM geofencing_masters ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (error) {
+    console.log("Error in get geo fencing :",error.message)
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const createGeofencingLocation = async (req, res) => {
+  const { name, latitude, longitude, search_radius } = req.body;
+  try {
+    const result = await db.query(
+      'INSERT INTO geofencing_masters (name, latitude, longitude, radius) VALUES ($1, $2, $3, $4) RETURNING *',
+      [name, latitude, longitude, search_radius]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateGeofencingLocation = async (req, res) => {
+  const { id } = req.params;
+  const { name, latitude, longitude, search_radius } = req.body;
+  try {
+    const result = await db.query(
+      'UPDATE geofencing_masters SET name=$1, latitude=$2, longitude=$3, radius=$4 WHERE id=$5 RETURNING *',
+      [name, latitude, longitude, search_radius, id]
+    );
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteGeofencingLocation = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await db.query('DELETE FROM geofencing_masters WHERE id = $1', [id]);
+    res.json({ message: 'Geofencing location removed' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+export const getEmployeeGeofencing = async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT e.id as employee_id, e.full_name, e.device_enrollment_id, e.company_enrollment_id, 
+             d.name as department_name, ds.name as designation_name,
+             gm.name as geofencing_name, gm.id as geofencing_id
+      FROM employees e
+      LEFT JOIN departments d ON e.department_id = d.id
+      LEFT JOIN designations ds ON e.designation_id = ds.id
+      LEFT JOIN employee_geofencing eg ON e.id = eg.employee_id
+      LEFT JOIN geofencing_masters gm ON eg.geofencing_id = gm.id
+      ORDER BY e.created_at DESC
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.log("Error in get employee geofencing :",error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const assignGeofencingToEmployees = async (req, res) => {
+  const { employeeIds, geofencingIds } = req.body; // geofencingIds should be an array
+  
+  if (!employeeIds || !Array.isArray(employeeIds) || !geofencingIds || !Array.isArray(geofencingIds)) {
+    return res.status(400).json({ message: "Invalid payload: employeeIds and geofencingIds must be arrays." });
+  }
+
+  const client = await db.connect();
+  try {
+    await client.query('BEGIN');
+    
+    for (const empId of employeeIds) {
+      // Clear existing assignments for this employee
+      await client.query('DELETE FROM employee_geofencing WHERE employee_id = $1', [empId]);
+      
+      // Insert new assignments
+      for (const geoId of geofencingIds) {
+        if (geoId) {
+          await client.query(
+            'INSERT INTO employee_geofencing (employee_id, geofencing_id) VALUES ($1, $2) ON CONFLICT DO NOTHING',
+            [empId, geoId]
+          );
+        }
+      }
+    }
+    
+    await client.query('COMMIT');
+    res.json({ message: "Geofencing assigned successfully" });
+  } catch (error) {
+    await client.query('ROLLBACK');
+    res.status(500).json({ message: error.message });
+  } finally {
+    client.release();
   }
 };

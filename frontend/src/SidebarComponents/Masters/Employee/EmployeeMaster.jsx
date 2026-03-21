@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -14,6 +15,32 @@ import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../../SearchDropdown";
 
+const API_BASE = "http://localhost:3000/api";
+
+const emptyForm = {
+  device_enrollment_id: "",
+  company_enrollment_id: "",
+  full_name: "",
+  mobile: "",
+  dob: "",
+  doj: "",
+  company: "",
+  location: "",
+  designation: "",
+  shift: "",
+  leave_plan: "",
+  first_approver: "",
+  second_approver: "",
+  is_manager: false,
+  type: "User",
+  break_hours_friday: false,
+  is_active: false,
+  is_mobile_user: false,
+  department_id: "",
+  designation_id: "",
+  shift_id: "",
+};
+
 const EmployeeMaster = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
@@ -24,27 +51,16 @@ const EmployeeMaster = () => {
   const [editId, setEditId] = useState(null);
   const [showDobPicker, setShowDobPicker] = useState(false);
   const [showDojPicker, setShowDojPicker] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [formData, setFormData] = useState({
-    deviceEnrollmentId: "",
-    companyEnrollmentId: "",
-    fullName: "",
-    mobile: "",
-    dob: "",
-    doj: "",
-    company: "",
-    location: "",
-    designation: "",
-    shift: "",
-    leavePlan: "",
-    firstApprover: "",
-    secondApprover: "",
-    isManager: false,
-    type: "User",
-    breakHoursFriday: false,
-    active: false,
-    isMobileUser: false,
-  });
+  // Dropdown options fetched from backend
+  const [departmentOptions, setDepartmentOptions] = useState([]);
+  const [designationOptions, setDesignationOptions] = useState([]);
+  const [shiftOptions, setShiftOptions] = useState([]);
+  const [approverOptions, setApproverOptions] = useState([]);
+
+
+  const [formData, setFormData] = useState(emptyForm);
 
   const inputStyle =
     "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -52,79 +68,106 @@ const EmployeeMaster = () => {
   const labelStyle =
     "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
+  // ── Fetch employees on mount ──────────────────────────────────────────────
+  const fetchEmployees = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`${API_BASE}/employee`);
+      setEmployeeMaster(res.data);
+    } catch (error) {
+      toast.error("Failed to load employees");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Fetch dropdown options from backend ───────────────────────────────────
+  const fetchDropdowns = async () => {
+    try {
+      const [deptRes, desRes, shiftRes, appRes] = await Promise.all([
+        axios.get(`${API_BASE}/master/departments`),
+        axios.get(`${API_BASE}/master/designation`),
+        axios.get(`${API_BASE}/master/shifts`),
+        axios.get(`${API_BASE}/users/approvers`, { withCredentials: true }),
+      ]);
+      setDepartmentOptions(deptRes.data || []);
+      setDesignationOptions(desRes.data || []);
+      setShiftOptions(shiftRes.data || []);
+      setApproverOptions(appRes.data || []);
+
+    } catch (error) {
+      console.error("Failed to fetch dropdowns", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchEmployees();
+    fetchDropdowns();
+  }, []);
+
+  // ── Filtered / paged data ─────────────────────────────────────────────────
   const filteredemployeeMaster = employeeMaster.filter(
     (x) =>
-      x.fullName.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.location.toLowerCase().startsWith(searchTerm.toLowerCase()),
+      (x.full_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      (x.location || "").toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      (x.department_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      (x.designation_name || "").toLowerCase().startsWith(searchTerm.toLowerCase())
   );
 
   const endIndex = currentPage * entriesPerPage;
-
   const startIndex = endIndex - entriesPerPage;
+  const currentemployeeMaster = filteredemployeeMaster.slice(startIndex, endIndex);
+  const totalPages = Math.max(1, Math.ceil(filteredemployeeMaster.length / entriesPerPage));
 
-  const currentemployeeMaster = filteredemployeeMaster.slice(
-    startIndex,
-    endIndex,
-  );
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredemployeeMaster.length / entriesPerPage),
-  );
-
+  // ── Handlers ──────────────────────────────────────────────────────────────
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const handleSubmit = () => {
-    const { deviceEnrollmentId, companyEnrollmentId, fullName } = formData;
+  const handleSubmit = async () => {
+    const { device_enrollment_id, company_enrollment_id, full_name } = formData;
 
-    if (!deviceEnrollmentId || !companyEnrollmentId || !fullName) {
+    if (!device_enrollment_id || !company_enrollment_id || !full_name) {
       toast.error("Please fill required fields");
       return;
     }
 
-    if (editId) {
-      setEmployeeMaster((prev) =>
-        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
-      );
+    try {
+      if (editId) {
+        const res = await axios.put(`${API_BASE}/employee/${editId}`, formData);
+        setEmployeeMaster((prev) =>
+          prev.map((emp) => (emp.id === editId ? res.data : emp))
+        );
+        toast.success("Employee updated");
+      } else {
+        const res = await axios.post(`${API_BASE}/employee`, formData);
+        setEmployeeMaster((prev) => [res.data, ...prev]);
+        toast.success("Employee added");
+      }
 
-      toast.success("Data updated");
-    } else {
-      setEmployeeMaster((prev) => [...prev, { id: Date.now(), ...formData }]);
-      toast.success("Data added");
+      setOpenModal(false);
+      setEditId(null);
+      setFormData(emptyForm);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Operation failed");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData({
-      deviceEnrollmentId: "",
-      companyEnrollmentId: "",
-      fullName: "",
-      mobile: "",
-      dob: "",
-      doj: "",
-      company: "",
-      location: "",
-      designation: "",
-      shift: "",
-      leavePlan: "",
-      firstApprover: "",
-      secondApprover: "",
-      isManager: false,
-      type: "User",
-      breakHoursFriday: false,
-      active: false,
-      isMobileUser: false,
-    });
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_BASE}/employee/${id}`);
+      setEmployeeMaster((prev) => prev.filter((v) => v.id !== id));
+      toast.success("Employee deleted");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Delete failed");
+    }
+  };
+
+  // ── Export handlers ───────────────────────────────────────────────────────
   const handleCopy = () => {
     const header = [
       "SL.NO",
@@ -140,44 +183,39 @@ const EmployeeMaster = () => {
       .map((item, index) =>
         [
           index + 1,
-          item.deviceEnrollmentId,
-          item.companyEnrollmentId,
+          item.device_enrollment_id,
+          item.company_enrollment_id,
           item.location,
-          item.fullName,
-          item.shift,
-          item.designation,
-        ].join("\t"),
+          item.full_name,
+          item.shift_name || item.shift,
+          item.designation_name || item.designation,
+        ].join("\t")
       )
       .join("\n");
 
-    const text = `${header}\n${rows}`;
-
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(`${header}\n${rows}`);
     toast.success("Table copied to clipboard");
   };
 
   const handleExcel = () => {
     const excelData = filteredemployeeMaster.map((item, index) => ({
       "SL.NO": index + 1,
-      "Device ID": item.deviceEnrollmentId,
-      "Company ID": item.companyEnrollmentId,
+      "Device ID": item.device_enrollment_id,
+      "Company ID": item.company_enrollment_id,
       Location: item.location,
-      "Full Name": item.fullName,
-      Shift: item.shift,
-      Designation: item.designation,
+      "Full Name": item.full_name,
+      Shift: item.shift_name || item.shift,
+      Designation: item.designation_name || item.designation,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     const workbook = XLSX.utils.book_new();
-
     XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
-
     XLSX.writeFile(workbook, "EmployeeMaster.xlsx");
   };
 
   const handlePDF = () => {
     const doc = new jsPDF("landscape");
-
     const tableColumn = [
       "SL.NO",
       "Device ID",
@@ -187,31 +225,21 @@ const EmployeeMaster = () => {
       "Shift",
       "Designation",
     ];
+    const tableRows = filteredemployeeMaster.map((item, index) => [
+      index + 1,
+      item.device_enrollment_id,
+      item.company_enrollment_id,
+      item.location,
+      item.full_name,
+      item.shift_name || item.shift,
+      item.designation_name || item.designation,
+    ]);
 
-    const tableRows = [];
-
-    filteredemployeeMaster.forEach((item, index) => {
-      const row = [
-        index + 1,
-        item.deviceEnrollmentId,
-        item.companyEnrollmentId,
-        item.location,
-        item.fullName,
-        item.shift,
-        item.designation,
-      ];
-
-      tableRows.push(row);
-    });
-
-    autoTable(doc, {
-      head: [tableColumn],
-      body: tableRows,
-    });
-
+    autoTable(doc, { head: [tableColumn], body: tableRows });
     doc.save("EmployeeMaster.pdf");
   };
 
+  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="mb-16">
       {/* Header */}
@@ -229,26 +257,7 @@ const EmployeeMaster = () => {
             onClick={() => (
               setMode(""),
               setEditId(null),
-              setFormData({
-                deviceEnrollmentId: "",
-                companyEnrollmentId: "",
-                fullName: "",
-                mobile: "",
-                dob: "",
-                doj: "",
-                company: "",
-                location: "",
-                designation: "",
-                shift: "",
-                leavePlan: "",
-                firstApprover: "",
-                secondApprover: "",
-                isManager: false,
-                type: "User",
-                breakHoursFriday: false,
-                active: false,
-                isMobileUser: false,
-              }),
+              setFormData(emptyForm),
               setOpenModal(true)
             )}
             className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md"
@@ -324,34 +333,33 @@ const EmployeeMaster = () => {
                 <th className="p-2 font-semibold hidden sm:table-cell">
                   SL.NO
                 </th>
-
                 <th className="p-2 font-semibold">Device ID</th>
-
                 <th className="p-2 font-semibold hidden md:table-cell">
                   Company ID
                 </th>
-
                 <th className="p-2 font-semibold hidden lg:table-cell">
                   Location
                 </th>
-
                 <th className="p-2 font-semibold">Full Name</th>
-
                 <th className="p-2 font-semibold hidden md:table-cell">
                   Shift
                 </th>
-
                 <th className="p-2 font-semibold hidden lg:table-cell">
                   Designation
                 </th>
-
                 <th className="p-2 font-semibold">Action</th>
               </tr>
             </thead>
             <tbody>
-              {currentemployeeMaster.length === 0 ? (
+              {loading ? (
                 <tr>
-                  <td colSpan="12" className="sm:text-center p-10">
+                  <td colSpan="8" className="sm:text-center p-10 text-gray-400">
+                    Loading...
+                  </td>
+                </tr>
+              ) : currentemployeeMaster.length === 0 ? (
+                <tr>
+                  <td colSpan="8" className="sm:text-center p-10">
                     No Data Available
                   </td>
                 </tr>
@@ -361,26 +369,19 @@ const EmployeeMaster = () => {
                     key={item.id}
                     className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                   >
-                    <td className="p-2 hidden sm:table-cell">{index + 1}</td>
-
-                    <td className="p-2 ">{item.deviceEnrollmentId}</td>
-
+                    <td className="p-2 hidden sm:table-cell">{startIndex + index + 1}</td>
+                    <td className="p-2 ">{item.device_enrollment_id}</td>
                     <td className="p-2  hidden md:table-cell">
-                      {item.companyEnrollmentId}
+                      {item.company_enrollment_id}
                     </td>
-
                     <td className="p-2  hidden lg:table-cell">
                       {item.location}
                     </td>
-
-                    <td className="p-2 ">{item.fullName}</td>
-
-                    <td className="p-2  hidden md:table-cell">{item.shift}</td>
-
+                    <td className="p-2 ">{item.full_name}</td>
+                    <td className="p-2  hidden md:table-cell">{item.shift_name || item.shift}</td>
                     <td className="p-2 hidden lg:table-cell">
-                      {item.designation}
+                      {item.designation_name || item.designation}
                     </td>
-
                     <td className="p-2">
                       <div className="flex flex-row space-x-3 justify-center ">
                         {/* View */}
@@ -396,7 +397,15 @@ const EmployeeMaster = () => {
                         {/* Edit */}
                         <FaPen
                           onClick={() => {
-                            setFormData(item);
+                            setFormData({
+                              ...item,
+                              department_id: item.department_id || "",
+                              designation_id: item.designation_id || "",
+                              shift_id: item.shift_id || "",
+                              department_id_name: item.department_name || "",
+                              designation_id_name: item.designation_name || "",
+                              shift_id_name: item.shift_name || "",
+                            });
                             setEditId(item.id);
                             setMode("edit");
                             setOpenModal(true);
@@ -406,11 +415,7 @@ const EmployeeMaster = () => {
 
                         {/* Delete */}
                         <MdDeleteForever
-                          onClick={() =>
-                            setEmployeeMaster(
-                              employeeMaster.filter((v) => v.id !== item.id),
-                            )
-                          }
+                          onClick={() => handleDelete(item.id)}
                           className="inline text-red-500 cursor-pointer text-xl"
                         />
                       </div>
@@ -492,8 +497,8 @@ const EmployeeMaster = () => {
                   <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
                 </label>
                 <input
-                  name="deviceEnrollmentId"
-                  value={formData.deviceEnrollmentId}
+                  name="device_enrollment_id"
+                  value={formData.device_enrollment_id}
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="DeviceID"
@@ -507,8 +512,8 @@ const EmployeeMaster = () => {
                   <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
                 </label>
                 <input
-                  name="companyEnrollmentId"
-                  value={formData.companyEnrollmentId}
+                  name="company_enrollment_id"
+                  value={formData.company_enrollment_id}
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="CompanyID"
@@ -523,8 +528,8 @@ const EmployeeMaster = () => {
                   <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
                 </label>
                 <input
-                  name="fullName"
-                  value={formData.fullName}
+                  name="full_name"
+                  value={formData.full_name}
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Full Name"
@@ -626,27 +631,16 @@ const EmployeeMaster = () => {
                 />
               </div>
 
-              {/* Designation */}
+              {/* Department */}
               <div>
                 <SearchDropdown
-                  label="Designation"
-                  name="designation"
-                  value={formData.designation}
-                  options={[
-                    "Banking Officer",
-                    "Service Sales manager",
-                    "Finance Assistant",
-                    "Trade Finance Specialist",
-                    "Sales Support Officer",
-                    "General",
-                    "HR manager",
-                    "HR Supervisor",
-                    "HR Specialist",
-                    "Facilities Manager",
-                    "Project Manager",
-                    "Team Lead – Operations",
-                    "Driver",
-                  ]}
+                  label="Department"
+                  name="department_id"
+                  value={formData.department_id}
+                  displayValue={formData.department_id_name}
+                  options={departmentOptions}
+                  labelKey="name"
+                  valueKey="id"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
@@ -655,13 +649,34 @@ const EmployeeMaster = () => {
                 />
               </div>
 
-              {/* Shift */}
+              {/* Designation (from backend) */}
+              <div>
+                <SearchDropdown
+                  label="Designation"
+                  name="designation_id"
+                  value={formData.designation_id}
+                  displayValue={formData.designation_id_name}
+                  options={designationOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  formData={formData}
+                  setFormData={setFormData}
+                  disabled={mode === "view"}
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                />
+              </div>
+
+              {/* Shift (from backend) */}
               <div>
                 <SearchDropdown
                   label="Shift"
-                  name="shift"
-                  value={formData.shift}
-                  options={["Morning", "Evening", "Night", "General"]}
+                  name="shift_id"
+                  value={formData.shift_id}
+                  displayValue={formData.shift_id_name}
+                  options={shiftOptions}
+                  labelKey="shift_name"
+                  valueKey="id"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
@@ -674,8 +689,8 @@ const EmployeeMaster = () => {
               <div>
                 <SearchDropdown
                   label="Leave Plan"
-                  name="leavePlan"
-                  value={formData.leavePlan}
+                  name="leave_plan"
+                  value={formData.leave_plan}
                   options={["Working Days", "Calendar Days"]}
                   formData={formData}
                   setFormData={setFormData}
@@ -690,9 +705,11 @@ const EmployeeMaster = () => {
               <div>
                 <SearchDropdown
                   label="First Approver"
-                  name="firstApprover"
-                  value={formData.firstApprover}
-                  options={["Name 1", "Name 2"]}
+                  name="first_approver"
+                  value={formData.first_approver}
+                  options={approverOptions}
+                  labelKey="emp_name"
+                  valueKey="emp_name"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
@@ -705,9 +722,11 @@ const EmployeeMaster = () => {
               <div>
                 <SearchDropdown
                   label="Second Approver"
-                  name="secondApprover"
-                  value={formData.secondApprover}
-                  options={["Name 1", "Name 2"]}
+                  name="second_approver"
+                  value={formData.second_approver}
+                  options={approverOptions}
+                  labelKey="emp_name"
+                  valueKey="emp_name"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
@@ -716,13 +735,14 @@ const EmployeeMaster = () => {
                 />
               </div>
 
+
               {/* Manager */}
               <div className="flex items-center gap-2 mt-6">
                 <label className={labelStyle}>IsManager</label>
                 <input
                   type="checkbox"
-                  name="isManager"
-                  checked={formData.isManager}
+                  name="is_manager"
+                  checked={formData.is_manager}
                   onChange={handleChange}
                   disabled={mode === "view"}
                 />
@@ -763,8 +783,8 @@ const EmployeeMaster = () => {
                 <label className={labelStyle}>Break Hours (Friday)</label>
                 <input
                   type="checkbox"
-                  name="breakHoursFriday"
-                  checked={formData.breakHoursFriday}
+                  name="break_hours_friday"
+                  checked={formData.break_hours_friday}
                   onChange={handleChange}
                   disabled={mode === "view"}
                 />
@@ -775,8 +795,8 @@ const EmployeeMaster = () => {
                 <label className={labelStyle}>Active</label>
                 <input
                   type="checkbox"
-                  name="active"
-                  checked={formData.active}
+                  name="is_active"
+                  checked={formData.is_active}
                   onChange={handleChange}
                   disabled={mode === "view"}
                 />
@@ -787,8 +807,8 @@ const EmployeeMaster = () => {
                 <label className={labelStyle}>Is Mobile User</label>
                 <input
                   type="checkbox"
-                  name="isMobileUser"
-                  checked={formData.isMobileUser}
+                  name="is_mobile_user"
+                  checked={formData.is_mobile_user}
                   onChange={handleChange}
                   disabled={mode === "view"}
                 />

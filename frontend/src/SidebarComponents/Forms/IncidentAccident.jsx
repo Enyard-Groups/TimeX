@@ -33,9 +33,9 @@ const IncidentAccident = () => {
   const [showTimeSpinner2, setShowTimeSpinner2] = useState(false);
 
   const inputStyle =
-    "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
+    " text-[16px] w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
 
-  const labelStyle = "text-md text-[oklch(0.147_0.004_49.25)] my-1 block";
+  const labelStyle = " text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block";
 
   const defaultFormData = {
     dateOfIncident: null,
@@ -201,9 +201,9 @@ const IncidentAccident = () => {
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     const workbook = XLSX.utils.book_new();
 
-    XLSX.utils.book_append_sheet(workbook, worksheet, "inspectionData");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "incidentAccidentData");
 
-    XLSX.writeFile(workbook, "inspectionDataData.xlsx");
+    XLSX.writeFile(workbook, "Incident/AccidentData.xlsx");
   };
 
   const handlePDF = () => {
@@ -224,7 +224,7 @@ const IncidentAccident = () => {
       body: tableRows,
     });
 
-    doc.save("inspectionDataData.pdf");
+    doc.save("Incident/AccidentData.pdf");
   };
 
   return (
@@ -660,7 +660,7 @@ const IncidentAccident = () => {
 
                 <div className="border border-gray-400 rounded p-4 mb-4">
                   {/* Yes / No */}
-                  <div className="flex items-center gap-4 mb-3">
+                  <div className="flex items-center gap-4 mb-3 text-[16px]">
                     <span>
                       Was anyone injured or ill due to or as part of the
                       incident?
@@ -1168,7 +1168,7 @@ const IncidentAccident = () => {
                     </div>
 
                     <div className="sm:flex sm:flex-row">
-                      <h1 className="mt-3 w-1/3">Sign Here:</h1>
+                      <h1 className="mt-3 w-1/3 text-[16px]">Sign Here:</h1>
                       <SignPad
                         fieldName="signhere"
                         formData={formData}

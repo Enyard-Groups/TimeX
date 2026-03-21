@@ -36,6 +36,34 @@ const testDB = async () => {
     const result = await db.query("SELECT * FROM users");
     console.log("database is connected");
 
+    // Recreate employees table with full schema matching frontend
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS employees (
+        id SERIAL PRIMARY KEY,
+        device_enrollment_id VARCHAR(100),
+        company_enrollment_id VARCHAR(100),
+        full_name VARCHAR(255) NOT NULL,
+        mobile VARCHAR(20),
+        dob DATE,
+        doj DATE,
+        company VARCHAR(255),
+        location VARCHAR(255),
+        designation VARCHAR(255),
+        shift VARCHAR(100),
+        leave_plan VARCHAR(100),
+        first_approver VARCHAR(255),
+        second_approver VARCHAR(255),
+        is_manager BOOLEAN DEFAULT false,
+        type VARCHAR(50) DEFAULT 'User',
+        break_hours_friday BOOLEAN DEFAULT false,
+        is_active BOOLEAN DEFAULT false,
+        is_mobile_user BOOLEAN DEFAULT false,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log("Employees table ready");
+
     // Drop and recreate holidays table to ensure latest schema
     await db.query(`DROP TABLE IF EXISTS holidays;`);
 

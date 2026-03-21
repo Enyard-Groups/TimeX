@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import toast from "react-hot-toast";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
@@ -10,39 +11,71 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import { FaAngleRight } from "react-icons/fa6";
 
 const EmployeeGeofencing = () => {
-  const [employee] = useState([
-    {
-      id: "000971001",
-      name: "Sharma",
-      department: "Finance",
-      designation: "Senior Banking Officer",
-      location: "Manesar",
-    },
-    {
-      id: "000971004",
-      name: "Drishti",
-      department: "Operations",
-      designation: "Banking Officer",
-      location: "Gurgaon",
-    },
-  ]);
+  const API_BASE = "http://localhost:3000/api";
+
+  const [employee, setEmployee] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedEmployees, setSelectedEmployees] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState("");
+  const [selectedLocations, setSelectedLocations] = useState([]); // Changed to array
   const [showSingleLocation, setShowSingleLocation] = useState(false);
   const [showMultipleLocation, setShowMultipleLocation] = useState(false);
 
-  const locations = [
-    "Manesar",
-    "Gurugram",
-    "Bengaluru",
-    "Mumbai",
-    "Noida",
-    "Hyderabad",
-    "Delhi",
-  ];
+  const getHeaders = () => {
+    const token = localStorage.getItem("token");
+    return {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  };
+
+  const fetchData = async () => {
+    try {
+      const [empRes, locRes] = await Promise.all([
+        axios.get(`${API_BASE}/master/employee-geofencing`, {
+          headers: getHeaders(),
+        }),
+        axios.get(`${API_BASE}/master/geofencing`, {
+          headers: getHeaders(),
+        }),
+      ]);
+
+      const empData = Array.isArray(empRes.data) ? empRes.data : [];
+      // Group by employee to handle multiple geofencing names
+      const grouped = empData.reduce((acc, curr) => {
+        const existing = acc.find((e) => e.id === curr.employee_id);
+        if (existing) {
+          if (curr.geofencing_name) {
+            existing.location = existing.location
+              ? `${existing.location}, ${curr.geofencing_name}`
+              : curr.geofencing_name;
+          }
+        } else {
+          acc.push({
+            id: curr.employee_id,
+            enroll_id: curr.device_enrollment_id || curr.company_enrollment_id,
+            name: curr.full_name,
+            department: curr.department_name || "",
+            designation: curr.designation_name || "",
+            location: curr.geofencing_name || "",
+          });
+        }
+        return acc;
+      }, []);
+
+      setEmployee(grouped);
+      setLocations(Array.isArray(locRes.data) ? locRes.data : []);
+    } catch (error) {
+      console.error("Failed to fetch data", error);
+      toast.error("Unable to load employee geofencing data");
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const filteredemployee = employee.filter(
     (x) =>
@@ -61,9 +94,9 @@ const EmployeeGeofencing = () => {
     Math.ceil(filteredemployee.length / entriesPerPage),
   );
 
-  const applyLocation = () => {
-    if (!selectedLocation) {
-      toast.error("Please select a location");
+  const applyLocation = async () => {
+    if (selectedLocations.length === 0) {
+      toast.error("Please select at least one location");
       return;
     }
 
@@ -72,11 +105,26 @@ const EmployeeGeofencing = () => {
       return;
     }
 
-    console.log("Employees:", selectedEmployees);
+    try {
+      await axios.post(
+        `${API_BASE}/master/employee-geofencing`,
+        {
+          employeeIds: selectedEmployees,
+          geofencingIds: selectedLocations,
+        },
+        { headers: getHeaders() }
+      );
 
-    console.log("Assigned Locations:", selectedLocation);
-
-    toast.success("Location assigned successfully");
+      toast.success("Location assigned successfully");
+      fetchData(); // Refresh the list
+      setSelectedEmployees([]);
+      setSelectedLocations([]);
+    } catch (error) {
+      console.error("Failed to assign location", error);
+      toast.error(
+        error.response?.data?.message || "Unable to assign location"
+      );
+    }
   };
 
   const handleSelect = (id) => {
@@ -97,7 +145,7 @@ const EmployeeGeofencing = () => {
     const rows = filteredemployee
       .map((item) => {
         return [
-          item.id,
+          item.enroll_id || item.id,
           item.name,
           item.department,
           item.designation,
@@ -114,7 +162,7 @@ const EmployeeGeofencing = () => {
 
   const handleExcel = () => {
     const excelData = filteredemployee.map((item) => ({
-      EnrollmentID: item.id,
+      EnrollmentID: item.enroll_id || item.id,
       EmployeeName: item.name,
       DepartmentName: item.department,
       DesignationName: item.designation,
@@ -144,7 +192,7 @@ const EmployeeGeofencing = () => {
 
     filteredemployee.forEach((item) => {
       const row = [
-        item.id,
+        item.enroll_id || item.id,
         item.name,
         item.department,
         item.designation,
@@ -201,14 +249,14 @@ const EmployeeGeofencing = () => {
 
         {showSingleLocation && (
           <select
-            value={selectedLocation}
-            onChange={(e) => setSelectedLocation(e.target.value)}
+            value={selectedLocations[0] || ""}
+            onChange={(e) => setSelectedLocations([Number(e.target.value)])}
             className="shadow-md ml-4 rounded-md p-2 w-40 md:w-70"
           >
             <option value="">Select Location</option>
             {locations.map((loc) => (
-              <option key={loc} value={loc}>
-                {loc}
+              <option key={loc.id} value={loc.id}>
+                {loc.name}
               </option>
             ))}
           </select>
@@ -216,14 +264,21 @@ const EmployeeGeofencing = () => {
 
         {showMultipleLocation && (
           <select
+            multiple
             size={3}
-            value={selectedLocation}
-            onChange={(e) => setSelectedLocation(e.target.value)}
+            value={selectedLocations}
+            onChange={(e) =>
+              setSelectedLocations(
+                Array.from(e.target.selectedOptions, (option) =>
+                  Number(option.value)
+                )
+              )
+            }
             className="shadow-md ml-4 rounded-md p-2 w-40 md:w-70"
           >
             {locations.map((loc) => (
-              <option key={loc} value={loc}>
-                {loc}
+              <option key={loc.id} value={loc.id}>
+                {loc.name}
               </option>
             ))}
           </select>
@@ -349,7 +404,7 @@ const EmployeeGeofencing = () => {
                       />
                     </td>
 
-                    <td className="p-2 hidden sm:table-cell hidden sm:table-cell">{item.id}</td>
+                    <td className="p-2 hidden sm:table-cell">{item.enroll_id}</td>
                     <td className="p-2 ">{item.name}</td>
                     <td className="p-2 hidden lg:table-cell ">{item.department}</td>
                     <td className="p-2 hidden md:table-cell">{item.designation}</td>
