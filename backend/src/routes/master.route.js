@@ -14,6 +14,7 @@ import {
   getShifts,
   createShift,
   updateShift,
+  
   deleteShift,
   getHolidays,
   createHoliday,
@@ -27,10 +28,6 @@ import {
   createIssueType,
   updateIssueType,
   deleteIssueType,
-  getLocationGroups,
-  createLocationGroup,
-  updateLocationGroup,
-  deleteLocationGroup,
 } from "../controllers/master.controller.js"
 
 masterRoute.get("/departments",getDepartments);
@@ -61,10 +58,5 @@ masterRoute.post('/issue-types', createIssueType);
 masterRoute.put('/issue-types/:id', updateIssueType);
 masterRoute.delete('/issue-types/:id', deleteIssueType);
 
-// Location Groups
-masterRoute.get('/location-groups', getLocationGroups);
-masterRoute.post('/location-groups', createLocationGroup);
-masterRoute.put('/location-groups/:id', updateLocationGroup);
-masterRoute.delete('/location-groups/:id', deleteLocationGroup);
 
 export default masterRoute;
