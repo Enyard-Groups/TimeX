@@ -47,7 +47,7 @@ const IssueType = () => {
       setIssueType(
         data.map((d) => ({
           id: d.id,
-          name: d.name || "",
+          name: d.type_name || "",
           code: d.code || "",
           description: d.description || "",
           isActive:
@@ -63,8 +63,45 @@ const IssueType = () => {
     }
   };
 
+  const fetchExecutives = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
+      const res = await axios.get(`${API_BASE}/master/executives`, {
+        headers,
+      });
+
+      const data = Array.isArray(res.data) ? res.data : [];
+
+      const executives = data.map((d) => ({
+        id: d.id,
+        name: d.type_name || "",
+        code: d.code || "",
+        description: d.description || "",
+        isActive:
+          d.is_active === true ||
+          d.is_active === "true" ||
+          d.is_active === 1 ||
+          d.isActive === true,
+      }));
+
+      setIssueType((prev) => [...prev, ...executives]);
+    } catch (error) {
+      console.error("Failed to fetch executives", error);
+      toast.error("Unable to load executives");
+    }
+  };
+
   useEffect(() => {
-    fetchIssueTypes();
+    const loadData = async () => {
+      await fetchIssueTypes();
+      await fetchExecutives();
+    };
+    loadData();
   }, []);
 
   const inputStyle =
@@ -108,7 +145,7 @@ const IssueType = () => {
     }
 
     const payload = {
-      type_name,
+      name,
       code,
       description,
       is_active: isActive,
