@@ -1,45 +1,46 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setAuth, setUser } from "../action";
-import axios from "axios";
 
 const Login = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [active, setActive] = useState(false);
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
+  // Dummy credentials
+  const DUMMY_USER = {
+    username: "Drishti",
+    password: "Drishti@123",
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    try {
-      const res = await axios.post("http://localhost:3000/api/users/login", {
-        user_name: userName,
-        password,
-      });
-      const userData = res.data.User || res.data.user || res.data;
-      const authToken = res.data.token || res.data.accessToken || null;
+    if (
+      userName === DUMMY_USER.username &&
+      password === DUMMY_USER.password
+    ) {
+      const userData = {
+        username: userName,
+      };
 
+      // Save to localStorage
       localStorage.setItem("user", JSON.stringify(userData));
-      if (authToken) {
-        localStorage.setItem("token", authToken);
-      }
+      localStorage.setItem("isAuth", "true");
 
-      dispatch(setUser(userData));
-      dispatch(setAuth(true));
       navigate("/");
-    } catch (err) {
-      setError(err.response?.data?.message || "Invalid credentials");
+    } else {
+      setError("Invalid username or password");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[oklch(1_0_0)] ">
+    <div className="min-h-screen flex items-center justify-center bg-[oklch(1_0_0)]">
       {/* Main Card */}
-      <div className=" shadow-2xl m-4 w-full max-w-5xl rounded-3xl backdrop-blur-xl px-4 py-10 grid md:grid-cols-2 transition-all duration-700">
+      <div className="shadow-2xl m-4 w-full max-w-5xl rounded-3xl backdrop-blur-xl px-4 py-10 grid md:grid-cols-2 transition-all duration-700">
+        
         {/* LEFT SIDE */}
         <div className="flex items-center justify-center">
           {/* Welcome Content */}
@@ -67,15 +68,15 @@ const Login = () => {
             className={`transition-all duration-700 ${
               active
                 ? "opacity-100 translate-x-0"
-                : "opacity-0 translate-x-10 pointer-events-none "
+                : "opacity-0 translate-x-10 pointer-events-none"
             }`}
           >
-            <img src="./Login.png" className="rounded-full" />
+            <img src="./Login.png" className="rounded-full" alt="login" />
           </div>
         </div>
 
         {/* RIGHT SIDE */}
-        <div className="flex items-center justify-center ">
+        <div className="flex items-center justify-center">
           {/* Image Initially */}
           <div
             className={`absolute transition-all duration-700 ${
@@ -84,7 +85,7 @@ const Login = () => {
                 : "opacity-100 translate-x-0 pointer-events-auto z-10"
             }`}
           >
-            <img src="./Login.png" className="rounded-full" />
+            <img src="./Login.png" className="rounded-full" alt="login" />
           </div>
 
           {/* Login Form */}
