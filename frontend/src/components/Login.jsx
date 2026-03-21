@@ -12,18 +12,17 @@ const Login = () => {
   // Dummy credentials
   const DUMMY_USER = {
     username: "Drishti",
-    password: "Drishti@123",
+    password: "Drishti@2010",
+    role: "admin",
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (
-      userName === DUMMY_USER.username &&
-      password === DUMMY_USER.password
-    ) {
+    if (userName === DUMMY_USER.username && password === DUMMY_USER.password) {
       const userData = {
         username: userName,
+        role: DUMMY_USER.role,
       };
 
       // Save to localStorage
@@ -40,7 +39,6 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-[oklch(1_0_0)]">
       {/* Main Card */}
       <div className="shadow-2xl m-4 w-full max-w-5xl rounded-3xl backdrop-blur-xl px-4 py-10 grid md:grid-cols-2 transition-all duration-700">
-        
         {/* LEFT SIDE */}
         <div className="flex items-center justify-center">
           {/* Welcome Content */}
