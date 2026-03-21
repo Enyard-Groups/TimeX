@@ -22,7 +22,8 @@ const FacilityComplaintForm = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
 
-  const labelStyle = "text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block mx-1";
+  const labelStyle =
+    "text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block mx-1";
 
   const inputStyle =
     "text-[16px] w-full border border-[oklch(0.923_0.003_48.717)] bg-white  rounded-md px-3 py-1 text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
@@ -110,13 +111,29 @@ const FacilityComplaintForm = () => {
   };
 
   const handleCopy = () => {
-    const header = ["Employee Name", "Enrollment ID", "Designation"].join("\t");
+    const header = [
+      "Name",
+      "Issue Type ",
+      "Location",
+      "Description",
+      "Safety Concerns",
+      "Requested Action",
+      "Date Noticed",
+      "Urgent",
+    ].join("\t");
 
     const rows = requestData
       .map((item) => {
-        return [item.employeeName, item.enrollmentId, item.designation].join(
-          "\t",
-        );
+        return [
+          item.name,
+          item.issueType,
+          item.location,
+          item.description,
+          item.safetyConcerns,
+          item.requestedAction,
+          item.date,
+          item.urgent,
+        ].join("\t");
       })
       .join("\n");
 
@@ -128,9 +145,14 @@ const FacilityComplaintForm = () => {
 
   const handleExcel = () => {
     const excelData = requestData.map((item) => ({
-      EmployeeName: item.employeeName,
-      EnrollmentID: item.enrollmentId,
-      Designation: item.designation,
+      Name: item.name,
+      IssueType: item.issueType,
+      Location: item.location,
+      Description: item.description,
+      SafetyConcerns: item.safetyConcerns,
+      RequestedAction: item.requestedAction,
+      DateNoticed: item.date,
+      Urgent: item.urgent,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -148,13 +170,30 @@ const FacilityComplaintForm = () => {
   const handlePDF = () => {
     const doc = new jsPDF("landscape");
 
-    const tableColumn = ["Employee Name", "Enrollment ID", "Designation"];
+    const tableColumn = [
+      "Name",
+      "Issue Type ",
+      "Location",
+      "Description",
+      "Safety Concerns",
+      "Requested Action",
+      "Date Noticed",
+      "Urgent",
+    ];
 
     const tableRows = [];
 
     requestData.forEach((item) => {
-      const row = [item.employeeName, item.enrollmentId, item.designation];
-
+      const row = [
+        item.name,
+        item.issueType,
+        item.location,
+        item.description,
+        item.safetyConcerns,
+        item.requestedAction,
+        item.date,
+        item.urgent,
+      ];
       tableRows.push(row);
     });
 
@@ -326,7 +365,7 @@ const FacilityComplaintForm = () => {
                       <td className="p-2 hidden xl:table-cell">{item.date}</td>
 
                       <td className="p-2 hidden lg:table-cell">
-                        {item.urgent}
+                        {item.urgent?"Y":"N"}
                       </td>
 
                       <td className="p-2 flex flex-row space-x-3 justify-center whitespace-nowrap">
