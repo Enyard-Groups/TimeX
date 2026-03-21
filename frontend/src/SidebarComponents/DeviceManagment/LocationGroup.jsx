@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -14,6 +15,8 @@ import SearchDropdown from "../SearchDropdown";
 import { MdDeleteForever } from "react-icons/md";
 
 const LocationGroup = () => {
+  const API_BASE = "http://localhost:3000/api";
+
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [locationGroup, setLocationGroup] = useState([]);
@@ -22,11 +25,11 @@ const LocationGroup = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
   const [formData, setFormData] = useState({
-    locationgroupname: "",
+    group_name: "",
     company: "",
-    discription: "",
-    sitemanagername: "",
-    timekeepername: "",
+    description: "",
+    site_manager: "",
+    time_keeper: "",
   });
 
   const inputStyle =
@@ -35,13 +38,17 @@ const LocationGroup = () => {
   const labelStyle =
     "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
-  const filteredlocationGroup = locationGroup.filter(
-    (locationgroup) =>
-      locationgroup.locationgroupname
-        .toLowerCase()
-        .startsWith(searchTerm.toLowerCase()) ||
-      locationgroup.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
-  );
+  const filteredlocationGroup = locationGroup.filter((locationgroup) => {
+    const search = searchTerm.toLowerCase();
+    const nameMatch = (locationgroup.group_name ?? "")
+      .toLowerCase()
+      .startsWith(search);
+    const companyMatch = (locationgroup.company ?? "")
+      .toLowerCase()
+      .startsWith(search);
+
+    return nameMatch || companyMatch;
+  });
 
   const endIndex = currentPage * entriesPerPage;
 
@@ -57,6 +64,8 @@ const LocationGroup = () => {
     Math.ceil(filteredlocationGroup.length / entriesPerPage),
   );
 
+  const getLocationGroupId = (item) => item?.id ?? item?._id;
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -66,66 +75,83 @@ const LocationGroup = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    const {
-      locationgroupname,
-      company,
-      discription,
-      sitemanagername,
-      timekeepername,
-    } = formData;
+  const fetchLocationGroups = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
 
-    if (
-      !locationgroupname ||
-      !company ||
-      !discription ||
-      !sitemanagername ||
-      !timekeepername
-    ) {
-      toast.error("Please fill all required fields");
-      return; // stop execution
-    }
-
-    const newlocationgroup = {
-      id: Date.now(),
-      locationgroupname,
-      locationgroupdescription: discription,
-      timekeepername,
-      sitemanagername,
-      organization: company,
-    };
-
-    if (editId) {
-      setLocationGroup((prev) =>
-        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
+      const response = await axios.get(
+        `${API_BASE}/master/location-groups`,
+        { headers },
       );
 
-      toast.success("Data updated");
-    } else {
-      setLocationGroup((prev) => [...prev, newlocationgroup]);
+      // API shape varies across projects: handle both `{ data: [...] }` and `[...]`.
+      const payload = response?.data?.data ?? response?.data;
+      setLocationGroup(Array.isArray(payload) ? payload : []);
+    } catch (error) {
+      console.error("Failed to fetch location groups", error);
+      toast.error("Failed to load data");
+    }
+  };
 
-      toast.success("Data Added");
+  useEffect(() => {
+    // This is an intentional "load on mount" pattern.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchLocationGroups();
+  }, []);
+
+  const handleSubmit = async () => {
+    const { group_name, company, description, site_manager, time_keeper } = formData;
+
+    if (!group_name || !company || !description || !site_manager || !time_keeper) {
+      toast.error("Please fill all required fields");
+      return;
     }
 
-    setOpenModal(false);
-    setEditId(null);
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
 
-    setFormData({
-      company: "",
-      locationgroupname: "",
-      discription: "",
-      sitemanagername: "",
-      timekeepername: "",
-    });
+      const payload = { group_name, description, time_keeper, site_manager, company };
+
+      if (editId) {
+        console.log("Saving location group (PUT)", { editId, payload });
+        await axios.put(`${API_BASE}/master/location-groups/${editId}`, payload, { headers });
+        toast.success("Data updated");
+      } else {
+        console.log("Saving location group (POST)", { payload });
+        await axios.post(`${API_BASE}/master/location-groups`, payload, { headers });
+        toast.success("Data Added");
+      }
+
+      await fetchLocationGroups();
+      setOpenModal(false);
+      setEditId(null);
+      setFormData({ group_name: "", company: "", description: "", site_manager: "", time_keeper: "" });
+    } catch (error) {
+      console.error("Failed to save location group", error);
+      const message =
+        error?.response?.data?.message ??
+        error?.response?.data ??
+        error?.message ??
+        "Failed to save data";
+      toast.error(typeof message === "string" ? message : JSON.stringify(message));
+    }
   };
   const handleCopy = () => {
     const header =
-      "SL.NO\tLocation Group Name\tLocation Group Description\tTime Keeper Name\tSite Manager Name\tCompany";
+      "SL.NO\tLocation Group Name\tDescription\tTime Keeper Name\tSite Manager Name\tCompany";
 
     const rows = filteredlocationGroup
       .map(
         (d, i) =>
-          `${i + 1}\t${d.locationgroupname}\t${d.locationgroupdescription}\t${d.timekeepername}\t${d.sitemanagername}\t${d.organization}`,
+          `${i + 1}\t${d.group_name}\t${d.description}\t${d.time_keeper}\t${d.site_manager}\t${d.company}`,
       )
       .join("\n");
 
@@ -139,11 +165,11 @@ const LocationGroup = () => {
   const handleExcel = () => {
     const data = filteredlocationGroup.map((d, i) => ({
       "SL.NO": i + 1,
-      "Location Group Name": d.locationgroupname,
-      "Location Group Description": d.locationgroupdescription,
-      "Time Keeper Name": d.timekeepername,
-      "Site Manager Name": d.sitemanagername,
-      Company: d.organization,
+      "Location Group Name": d.group_name,
+      "Description": d.description,
+      "Time Keeper Name": d.time_keeper,
+      "Site Manager Name": d.site_manager,
+      Company: d.company,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(data);
@@ -168,11 +194,11 @@ const LocationGroup = () => {
 
     const tableRows = filteredlocationGroup.map((d, i) => [
       i + 1,
-      d.locationgroupname,
-      d.locationgroupdescription,
-      d.timekeepername,
-      d.sitemanagername,
-      d.organization,
+      d.group_name,
+      d.description,
+      d.time_keeper,
+      d.site_manager,
+      d.company,
     ]);
 
     autoTable(doc, {
@@ -201,11 +227,11 @@ const LocationGroup = () => {
               setMode(""),
               setEditId(null),
               setFormData({
+                group_name: "",
                 company: "",
-                locationgroupname: "",
-                discription: "",
-                sitemanagername: "",
-                timekeepername: "",
+                description: "",
+                site_manager: "",
+                time_keeper: "",
               }),
               setOpenModal(true)
             )}
@@ -281,7 +307,7 @@ const LocationGroup = () => {
               <tr>
                 <th className="p-2 font-semibold hidden sm:table-cell">
                   SL.NO
-                </th>
+                </th>+
 
                 <th className="p-2 font-semibold ">Location Group Name</th>
 
@@ -314,36 +340,42 @@ const LocationGroup = () => {
               ) : (
                 currentlocationGroup.map((item, index) => (
                   <tr
-                    key={item.id}
+                    key={getLocationGroupId(item) ?? index}
                     className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                   >
                     <td className="py-2 px-6 hidden sm:table-cell">
                       {index + 1}
                     </td>
 
-                    <td className="py-2 px-6 ">{item.locationgroupname}</td>
+                    <td className="py-2 px-6 ">{item.group_name}</td>
 
                     <td className="py-2 px-6 hidden lg:table-cell">
-                      {item.locationgroupdescription}
+                      {item.description}
                     </td>
 
                     <td className="py-2 px-6 hidden md:table-cell">
-                      {item.timekeepername}
+                      {item.time_keeper}
                     </td>
 
                     <td className="py-2 px-6 hidden lg:table-cell">
-                      {item.sitemanagername}
+                      {item.site_manager}
                     </td>
 
                     <td className="py-2 px-6 hidden xl:table-cell">
-                      {item.organization}
+                      {item.company}
                     </td>
                     <td className="py-2 px-6">
                       <div className="flex flex-row space-x-3 justify-center ">
                         {/* View */}
                         <FaEye
                           onClick={() => {
-                            setFormData(item);
+                            setFormData({
+                              group_name: item.group_name ?? "",
+                              company: item.company ?? "",
+                              description: item.description ?? "",
+                              site_manager: item.site_manager ?? "",
+                              time_keeper: item.time_keeper ?? "",
+                            });
                             setMode("view");
                             setOpenModal(true);
                           }}
@@ -353,8 +385,14 @@ const LocationGroup = () => {
                         {/* Edit */}
                         <FaPen
                           onClick={() => {
-                            setFormData(item);
-                            setEditId(item.id);
+                            setFormData({
+                              group_name: item.group_name ?? "",
+                              company: item.company ?? "",
+                              description: item.description ?? "",
+                              site_manager: item.site_manager ?? "",
+                              time_keeper: item.time_keeper ?? "",
+                            });
+                            setEditId(getLocationGroupId(item));
                             setMode("edit");
                             setOpenModal(true);
                           }}
@@ -365,7 +403,11 @@ const LocationGroup = () => {
                         <MdDeleteForever
                           onClick={() =>
                             setLocationGroup(
-                              locationGroup.filter((v) => v.id !== item.id),
+                              locationGroup.filter(
+                                (v) =>
+                                  getLocationGroupId(v) !==
+                                  getLocationGroupId(item),
+                              ),
                             )
                           }
                           className="inline text-red-500 cursor-pointer text-xl"
@@ -467,8 +509,8 @@ const LocationGroup = () => {
                   <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
                 </label>
                 <input
-                  name="locationgroupname"
-                  value={formData.locationgroupname}
+                  name="group_name"
+                  value={formData.group_name}
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Location Group Name"
@@ -479,15 +521,15 @@ const LocationGroup = () => {
 
               <div>
                 <label className={labelStyle}>
-                  Discription
+                  Description
                   <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
                 </label>
                 <input
-                  name="discription"
-                  value={formData.discription}
+                  name="description"
+                  value={formData.description}
                   onChange={handleChange}
                   disabled={mode === "view"}
-                  placeholder="Discription"
+                  placeholder="Description"
                   className={inputStyle}
                   required
                 />
@@ -496,8 +538,8 @@ const LocationGroup = () => {
               <div>
                 <SearchDropdown
                   label="Site Manager Name"
-                  name="sitemanagername"
-                  value={formData.sitemanagername}
+                  name="site_manager"
+                  value={formData.site_manager}
                   options={["Name 1", "Name 2", "Name 3"]}
                   formData={formData}
                   setFormData={setFormData}
@@ -509,9 +551,9 @@ const LocationGroup = () => {
 
               <div>
                 <SearchDropdown
-                  label="Time Keeper name"
-                  name="timekeepername"
-                  value={formData.timekeepername}
+                  label="Time Keeper Name"
+                  name="time_keeper"
+                  value={formData.time_keeper}
                   options={["Name 1", "Name 2", "Name 3"]}
                   formData={formData}
                   setFormData={setFormData}

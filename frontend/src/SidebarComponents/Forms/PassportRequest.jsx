@@ -25,7 +25,7 @@ const PassportRequest = () => {
   const [showDateSpinner, setShowDateSpinner] = useState(false);
   const [showDate2Spinner, setShowDate2Spinner] = useState(false);
 
-  const labelStyle = "text-md text-[oklch(0.147_0.004_49.25)] my-1 block";
+  const labelStyle = "text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block";
 
   const defaultFormData = {
     employee: "",
@@ -42,38 +42,13 @@ const PassportRequest = () => {
 
   const [formData, setFormData] = useState(defaultFormData);
 
-  const handleChange = (e, section = null, subsection = null) => {
+  const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    setFormData((prev) => {
-      if (section && subsection) {
-        return {
-          ...prev,
-          [section]: {
-            ...prev[section],
-            [subsection]: {
-              ...prev[section][subsection],
-              [name]: type === "checkbox" ? checked : value,
-            },
-          },
-        };
-      }
-
-      if (section) {
-        return {
-          ...prev,
-          [section]: {
-            ...prev[section],
-            [name]: type === "checkbox" ? checked : value,
-          },
-        };
-      }
-
-      return {
-        ...prev,
-        [name]: type === "checkbox" ? checked : value,
-      };
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const endIndex = currentPage * entriesPerPage;
@@ -441,7 +416,7 @@ const PassportRequest = () => {
             <div className="border p-4 rounded-xl border-gray-400 shadow">
               <div className="flex justify-center">
                 <div
-                  className="max-h-[75vh] max-w-5xl overflow-y-auto pr-2 text-sm"
+                  className="max-h-[75vh] max-w-5xl overflow-y-auto pr-2 text-[16px]"
                   style={{ scrollbarWidth: "none" }}
                 >
                   <div className="flex flex-row gap-3 mt-4">
@@ -479,7 +454,7 @@ const PassportRequest = () => {
                     </div>
                   </div>
 
-                  <div className="text-sm leading-7 space-y-4">
+                  <div className="text-[16px] leading-7 space-y-4">
                     {/* Line 1 */}
                     <p>
                       I am kindly requesting you to have my passport for the
