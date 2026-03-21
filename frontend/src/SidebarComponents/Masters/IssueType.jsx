@@ -43,6 +43,7 @@ const IssueType = () => {
       });
 
       const data = Array.isArray(res.data) ? res.data : [];
+      console.log(data)
 
       setIssueType(
         data.map((d) => ({
@@ -63,45 +64,8 @@ const IssueType = () => {
     }
   };
 
-  const fetchExecutives = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const headers = {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      };
-
-      const res = await axios.get(`${API_BASE}/master/executives`, {
-        headers,
-      });
-
-      const data = Array.isArray(res.data) ? res.data : [];
-
-      const executives = data.map((d) => ({
-        id: d.id,
-        name: d.type_name || "",
-        code: d.code || "",
-        description: d.description || "",
-        isActive:
-          d.is_active === true ||
-          d.is_active === "true" ||
-          d.is_active === 1 ||
-          d.isActive === true,
-      }));
-
-      setIssueType((prev) => [...prev, ...executives]);
-    } catch (error) {
-      console.error("Failed to fetch executives", error);
-      toast.error("Unable to load executives");
-    }
-  };
-
   useEffect(() => {
-    const loadData = async () => {
-      await fetchIssueTypes();
-      await fetchExecutives();
-    };
-    loadData();
+    fetchIssueTypes();
   }, []);
 
   const inputStyle =

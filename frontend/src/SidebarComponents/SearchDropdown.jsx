@@ -5,15 +5,26 @@ const SearchDropdown = ({
   label,
   name,
   value,
-  options,
+  displayValue,
+  options = [],
   formData,
   setFormData,
   disabled,
   inputStyle,
   labelStyle,
+  labelKey, // If options are objects, which key is the label
+  valueKey, // If options are objects, which key is the value
 }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+
+  const getLabel = (opt) => (labelKey ? opt[labelKey] : opt);
+  const getValue = (opt) => (valueKey ? opt[valueKey] : opt);
+
+  const filtered = options.filter((o) => {
+    const l = getLabel(o);
+    return l && l.toLowerCase().includes(search.toLowerCase());
+  });
 
   return (
     <div className="relative">
@@ -23,45 +34,57 @@ const SearchDropdown = ({
         onClick={() => !disabled && setOpen(!open)}
         className={`${inputStyle} ${
           disabled ? "cursor-default" : "cursor-pointer"
-        } flex items-center justify-between`}
+        } flex items-center justify-between min-h-[40px]`}
       >
-        {value || "Select"}
+        <span className="truncate">{displayValue || value || "Select"}</span>
         {!disabled &&
           (open ? (
-            <MdKeyboardArrowUp className="text-xl" />
+            <MdKeyboardArrowUp className="text-xl shrink-0" />
           ) : (
-            <MdKeyboardArrowDown className="text-xl" />
+            <MdKeyboardArrowDown className="text-xl shrink-0" />
           ))}
       </div>
 
       {open && (
-        <div className="absolute w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg z-50">
+        <div className="absolute w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg z-[100]">
           <input
             placeholder="Search.."
+            autoFocus
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full px-2 py-1 border-b border-gray-300 outline-none"
           />
 
           <div
-            className="max-h-40 overflow-y-auto"
+            className="max-h-48 overflow-y-auto"
             style={{ scrollbarWidth: "none" }}
           >
-            {options
-              .filter((o) => o.toLowerCase().includes(search.toLowerCase()))
-              .map((o, i) => (
+            {filtered.length > 0 ? (
+              filtered.map((o, i) => (
                 <div
                   key={i}
                   onClick={() => {
-                    setFormData({ ...formData, [name]: o });
+                    const val = getValue(o);
+                    const lbl = getLabel(o);
+                    // Update both the ID and name fields if needed, 
+                    // or just set the ID. Here we set the 'name' field in formData
+                    setFormData({ 
+                      ...formData, 
+                      [name]: val,
+                      // Optionally set a separate field for the label to avoid re-fetching
+                      [`${name}_name`]: lbl 
+                    });
                     setOpen(false);
                     setSearch("");
                   }}
                   className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
                 >
-                  {o}
+                  {getLabel(o)}
                 </div>
-              ))}
+              ))
+            ) : (
+              <div className="px-3 py-2 text-gray-400 italic">No results found</div>
+            )}
           </div>
         </div>
       )}

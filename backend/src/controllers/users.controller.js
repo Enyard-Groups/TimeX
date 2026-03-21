@@ -14,6 +14,17 @@ export const getUsers = async (req, res) => {
   }
 };
 
+export const getApprovers = async (req, res) => {
+  try {
+    const result = await db.query("SELECT id, emp_name FROM users WHERE role = 'approver' AND active = true ORDER BY emp_name ASC");
+    return res.status(200).json(result.rows);
+  } catch (error) {
+    console.log("Error in getApprovers :", error.message);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
+
+
 
 export const login=async(req,res)=>{
 
@@ -108,7 +119,7 @@ try{
   }
 
 
-  const allowedRoles=["admin","employee","hr","manager"];
+  const allowedRoles=["admin","employee","hr","manager","supervisor","approver"];
 
 if(!allowedRoles.includes(role)){
   return res.status(400).json({message:"Invalid roles",success:false});

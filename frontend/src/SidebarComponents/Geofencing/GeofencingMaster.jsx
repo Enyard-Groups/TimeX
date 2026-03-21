@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -47,6 +48,8 @@ const MapClickHandler = ({ setMarkerPosition, setFormData }) => {
 };
 
 const GeofencingMaster = () => {
+  const API_BASE = "http://localhost:3000/api";
+
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [location, setLocation] = useState([]);
@@ -66,6 +69,39 @@ const GeofencingMaster = () => {
     latitude: "",
     searchradius: "",
   });
+
+  const getHeaders = () => {
+    const token = localStorage.getItem("token");
+    return {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  };
+
+  const fetchLocations = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/master/geofencing`, {
+        headers: getHeaders(),
+      });
+      const data = Array.isArray(res.data) ? res.data : [];
+      setLocation(
+        data.map((d) => ({
+          id: d.id,
+          name: d.name || "",
+          latitude: d.latitude || "",
+          longitude: d.longitude || "",
+          searchradius: d.radius || "",
+        }))
+      );
+    } catch (error) {
+      console.error("Failed to fetch geofencing locations", error);
+      toast.error("Unable to load geofencing locations");
+    }
+  };
+
+  useEffect(() => {
+    fetchLocations();
+  }, []);
 
   const inputStyle =
     "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-lg py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -133,43 +169,77 @@ const GeofencingMaster = () => {
     }
   };
 
-  const handleSubmit = () => {
-    const { name, longitude, latitude } = formData;
+  const handleSubmit = async () => {
+    const { name, longitude, latitude, searchradius } = formData;
 
     if (!name || !longitude || !latitude) {
       toast.error("Please fill all required fields");
       return;
     }
 
-    if (editId) {
-      setLocation((prev) =>
-        prev.map((item) =>
-          item.id === editId ? { ...item, name, latitude, longitude } : item,
-        ),
+    const payload = {
+      name,
+      latitude,
+      longitude,
+      search_radius: searchradius,
+    };
+
+    try {
+      if (editId) {
+        const res = await axios.put(
+          `${API_BASE}/master/geofencing/${editId}`,
+          payload,
+          { headers: getHeaders() }
+        );
+
+        const updated = {
+          id: res.data.id,
+          name: res.data.name || "",
+          latitude: res.data.latitude || "",
+          longitude: res.data.longitude || "",
+          searchradius: res.data.search_radius || "",
+        };
+
+        setLocation((prev) =>
+          prev.map((item) => (item.id === editId ? updated : item))
+        );
+
+        toast.success("Data updated");
+      } else {
+        const res = await axios.post(
+          `${API_BASE}/master/geofencing`,
+          payload,
+          { headers: getHeaders() }
+        );
+
+        const created = {
+          id: res.data.id,
+          name: res.data.name || "",
+          latitude: res.data.latitude || "",
+          longitude: res.data.longitude || "",
+          searchradius: res.data.search_radius || "",
+        };
+
+        setLocation((prev) => [created, ...prev]);
+        toast.success("Data Added");
+      }
+
+      setOpenModal(false);
+      setEditId(null);
+
+      setFormData({
+        name: "",
+        latitude: "",
+        longitude: "",
+        searchradius: "",
+      });
+      setMarkerPosition(null);
+    } catch (error) {
+      console.error("Failed to save geofencing location", error);
+      toast.error(
+        error.response?.data?.message || "Unable to save geofencing location"
       );
-
-      toast.success("Data updated");
-    } else {
-      const newlocation = {
-        id: Date.now(),
-        name,
-        latitude,
-        longitude,
-      };
-
-      setLocation((prev) => [...prev, newlocation]);
-      toast.success("Data Added");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData({
-      name: "",
-      latitude: "",
-      longitude: "",
-      searchradius: "",
-    });
   };
 
   const handleCopy = () => {
@@ -398,11 +468,26 @@ const GeofencingMaster = () => {
 
                           {/* Delete */}
                           <MdDeleteForever
-                            onClick={() => {
-                              setLocation(
-                                location.filter((v) => v.id !== item.id),
-                              );
-                              toast.success("Location deleted");
+                            onClick={async () => {
+                              try {
+                                await axios.delete(
+                                  `${API_BASE}/master/geofencing/${item.id}`,
+                                  { headers: getHeaders() }
+                                );
+                                setLocation((prev) =>
+                                  prev.filter((v) => v.id !== item.id)
+                                );
+                                toast.success("Location deleted");
+                              } catch (error) {
+                                console.error(
+                                  "Failed to delete geofencing location",
+                                  error
+                                );
+                                toast.error(
+                                  error.response?.data?.message ||
+                                    "Unable to delete geofencing location"
+                                );
+                              }
                             }}
                             className="inline text-red-500 cursor-pointer text-xl"
                           />

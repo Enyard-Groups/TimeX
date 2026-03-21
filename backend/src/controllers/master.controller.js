@@ -322,3 +322,155 @@ export const deleteIssueType = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+export const getLeaveTypes = async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM leave_types ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const createLeaveType = async (req, res) => {
+  const { name, code, company, total_leaves, description, is_active } = req.body;
+  try {
+    const result = await db.query(
+      'INSERT INTO leave_types (name, code, company, total_leaves, description, is_active) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [name, code, company, total_leaves, description, is_active]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateLeaveType = async (req, res) => {
+  const { id } = req.params;
+  const { name, code, company, total_leaves, description, is_active } = req.body;
+  try {
+    const result = await db.query(
+      'UPDATE leave_types SET name=$1, code=$2, company=$3, total_leaves=$4, description=$5, is_active=$6 WHERE id=$7 RETURNING *',
+      [name, code, company, total_leaves, description, is_active, id]
+    );
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteLeaveType = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await db.query('DELETE FROM leave_types WHERE id = $1', [id]);
+    res.json({ message: 'Leave type removed' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+export const getGeofencingLocations = async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM geofencing_masters ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (error) {
+    console.log("Error in get geo fencing :",error.message)
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const createGeofencingLocation = async (req, res) => {
+  const { name, latitude, longitude, search_radius } = req.body;
+  try {
+    const result = await db.query(
+      'INSERT INTO geofencing_masters (name, latitude, longitude, radius) VALUES ($1, $2, $3, $4) RETURNING *',
+      [name, latitude, longitude, search_radius]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateGeofencingLocation = async (req, res) => {
+  const { id } = req.params;
+  const { name, latitude, longitude, search_radius } = req.body;
+  try {
+    const result = await db.query(
+      'UPDATE geofencing_masters SET name=$1, latitude=$2, longitude=$3, radius=$4 WHERE id=$5 RETURNING *',
+      [name, latitude, longitude, search_radius, id]
+    );
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteGeofencingLocation = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await db.query('DELETE FROM geofencing_masters WHERE id = $1', [id]);
+    res.json({ message: 'Geofencing location removed' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+export const getEmployeeGeofencing = async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT e.id as employee_id, e.full_name, e.device_enrollment_id, e.company_enrollment_id, 
+             d.name as department_name, ds.name as designation_name,
+             gm.name as geofencing_name, gm.id as geofencing_id
+      FROM employees e
+      LEFT JOIN departments d ON e.department_id = d.id
+      LEFT JOIN designations ds ON e.designation_id = ds.id
+      LEFT JOIN employee_geofencing eg ON e.id = eg.employee_id
+      LEFT JOIN geofencing_masters gm ON eg.geofencing_id = gm.id
+      ORDER BY e.created_at DESC
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.log("Error in get employee geofencing :",error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const assignGeofencingToEmployees = async (req, res) => {
+  const { employeeIds, geofencingIds } = req.body; // geofencingIds should be an array
+  
+  if (!employeeIds || !Array.isArray(employeeIds) || !geofencingIds || !Array.isArray(geofencingIds)) {
+    return res.status(400).json({ message: "Invalid payload: employeeIds and geofencingIds must be arrays." });
+  }
+
+  const client = await db.connect();
+  try {
+    await client.query('BEGIN');
+    
+    for (const empId of employeeIds) {
+      // Clear existing assignments for this employee
+      await client.query('DELETE FROM employee_geofencing WHERE employee_id = $1', [empId]);
+      
+      // Insert new assignments
+      for (const geoId of geofencingIds) {
+        if (geoId) {
+          await client.query(
+            'INSERT INTO employee_geofencing (employee_id, geofencing_id) VALUES ($1, $2) ON CONFLICT DO NOTHING',
+            [empId, geoId]
+          );
+        }
+      }
+    }
+    
+    await client.query('COMMIT');
+    res.json({ message: "Geofencing assigned successfully" });
+  } catch (error) {
+    await client.query('ROLLBACK');
+    res.status(500).json({ message: error.message });
+  } finally {
+    client.release();
+  }
+};

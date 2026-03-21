@@ -821,7 +821,7 @@ const UserMaster = () => {
                     }
                     name="role"
                     value={formData.role}
-                    options={["admin", "appover", "employee","hr","manager"]}
+                    options={["admin", "employee","hr","manager","approver","supervisor"]}
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}

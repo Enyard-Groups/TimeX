@@ -28,6 +28,16 @@ import {
   createIssueType,
   updateIssueType,
   deleteIssueType,
+  getLeaveTypes,
+  createLeaveType,
+  updateLeaveType,
+  deleteLeaveType,
+  getGeofencingLocations,
+  createGeofencingLocation,
+  updateGeofencingLocation,
+  deleteGeofencingLocation,
+  getEmployeeGeofencing,
+  assignGeofencingToEmployees,
 } from "../controllers/master.controller.js"
 
 masterRoute.get("/departments",getDepartments);
@@ -57,6 +67,16 @@ masterRoute.get('/issue-types', getIssueTypes);
 masterRoute.post('/issue-types', createIssueType);
 masterRoute.put('/issue-types/:id', updateIssueType);
 masterRoute.delete('/issue-types/:id', deleteIssueType);
+masterRoute.get('/leave-types', getLeaveTypes);
+masterRoute.post('/leave-types', createLeaveType);
+masterRoute.put('/leave-types/:id', updateLeaveType);
+masterRoute.delete('/leave-types/:id', deleteLeaveType);
+masterRoute.get('/geofencing', getGeofencingLocations);
+masterRoute.post('/geofencing', createGeofencingLocation);
+masterRoute.put('/geofencing/:id', updateGeofencingLocation);
+masterRoute.delete('/geofencing/:id', deleteGeofencingLocation);
+masterRoute.get('/employee-geofencing', getEmployeeGeofencing);
+masterRoute.post('/employee-geofencing', assignGeofencingToEmployees);
 
 
 export default masterRoute;

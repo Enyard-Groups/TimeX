@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -14,6 +15,8 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../SearchDropdown";
 
 const Leave = () => {
+  const API_BASE = "http://localhost:3000/api";
+
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [leave, setLeave] = useState([]);
@@ -29,6 +32,44 @@ const Leave = () => {
     leaves: "",
     isActive: false,
   });
+
+  const getHeaders = () => {
+    const token = localStorage.getItem("token");
+    return {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  };
+
+  const mapRow = (d) => ({
+    id: d.id,
+    name: d.name || "",
+    code: d.code || "",
+    company: d.company || "",
+    leaves: d.total_leaves ?? "",
+    description: d.description || "",
+    isActive:
+      d.is_active === true ||
+      d.is_active === "true" ||
+      d.is_active === 1,
+  });
+
+  const fetchLeaveTypes = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/master/leave-types`, {
+        headers: getHeaders(),
+      });
+      const data = Array.isArray(res.data) ? res.data : [];
+      setLeave(data.map(mapRow));
+    } catch (error) {
+      console.error("Failed to fetch leave types", error);
+      toast.error("Unable to load leave types");
+    }
+  };
+
+  useEffect(() => {
+    fetchLeaveTypes();
+  }, []);
 
   const inputStyle =
     "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-lg py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -63,47 +104,58 @@ const Leave = () => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const { name, company, code, leaves, description, isActive } = formData;
 
     if (!name || !leaves) {
       toast.error("Please fill all required fields");
-      return; // stop execution
+      return;
     }
 
-    const newleave = {
-      id: Date.now(),
+    const payload = {
       name,
       code,
       company,
+      total_leaves: leaves,
       description,
-      leaves,
-      isActive,
+      is_active: isActive,
     };
 
-    if (editId) {
-      setLeave((prev) =>
-        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
-      );
+    try {
+      if (editId) {
+        const res = await axios.put(
+          `${API_BASE}/master/leave-types/${editId}`,
+          payload,
+          { headers: getHeaders() }
+        );
+        setLeave((prev) =>
+          prev.map((item) => (item.id === editId ? mapRow(res.data) : item))
+        );
+        toast.success("Data updated");
+      } else {
+        const res = await axios.post(
+          `${API_BASE}/master/leave-types`,
+          payload,
+          { headers: getHeaders() }
+        );
+        setLeave((prev) => [mapRow(res.data), ...prev]);
+        toast.success("Data Added");
+      }
 
-      toast.success("Data updated");
-    } else {
-      setLeave((prev) => [...prev, newleave]);
-
-      toast.success("Data Added");
+      setOpenModal(false);
+      setEditId(null);
+      setFormData({
+        company: "",
+        name: "",
+        code: "",
+        description: "",
+        leaves: "",
+        isActive: false,
+      });
+    } catch (error) {
+      console.error("Failed to save leave type", error);
+      toast.error(error.response?.data?.message || "Unable to save leave type");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData({
-      company: "",
-      name: "",
-      code: "",
-      description: "",
-      leaves: "",
-      isActive: false,
-    });
   };
   const handleCopy = () => {
     const header = [
@@ -353,9 +405,24 @@ const Leave = () => {
 
                           {/* Delete */}
                           <MdDeleteForever
-                            onClick={() =>
-                              setLeave(leave.filter((v) => v.id !== item.id))
-                            }
+                            onClick={async () => {
+                              try {
+                                await axios.delete(
+                                  `${API_BASE}/master/leave-types/${item.id}`,
+                                  { headers: getHeaders() }
+                                );
+                                setLeave((prev) =>
+                                  prev.filter((v) => v.id !== item.id)
+                                );
+                                toast.success("Leave type deleted");
+                              } catch (error) {
+                                console.error("Failed to delete leave type", error);
+                                toast.error(
+                                  error.response?.data?.message ||
+                                    "Unable to delete leave type"
+                                );
+                              }
+                            }}
                             className="inline text-red-500 cursor-pointer text-xl"
                           />
                         </div>
