@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -14,8 +16,11 @@ import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../SearchDropdown";
 
+const API_BASE = "http://localhost:3000/api";
+
 const VisitorBooking = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
+
   const [openModal, setOpenModal] = useState(false);
   const [visitors, setVisitors] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -31,23 +36,23 @@ const VisitorBooking = () => {
   const [formData, setFormData] = useState({
     searchType: "Mobile no.",
     searchValue: "",
-    visitorName: "",
-    purpose: "",
-    visitDate: today,
-    visitTime: currentTime,
+    visitor_name: "",
+    purpose_of_visit: "",
+    visit_date: today,
+    visit_time: currentTime,
     company: "",
-    mobile: "",
-    contactPerson: "",
+    mobile_no: "",
+    point_of_contact: "",
     email: "",
-    cicpaCard: "",
-    companyCode: "",
-    cicpaExpiry: "",
-    idType: "EID",
-    idNumber: "",
+    cicpa_card_no: "",
+    company_code: "",
+    cicpa_expiry_date: "",
+    id_type: "EID",
+    id_number: "",
     nationality: "",
-    idExpiry: "",
-    accessCard: "",
-    isPermanent: false,
+    id_expiry_date: "",
+    access_card: "",
+    is_permanent: false,
   });
 
   const inputStyle =
@@ -69,25 +74,25 @@ const VisitorBooking = () => {
     switch (searchType) {
       case "Mobile no.":
         filtered = visitors.filter((v) =>
-          v.phone?.toLowerCase().includes(searchValue.toLowerCase()),
+          v.mobile_no?.toLowerCase().includes(searchValue.toLowerCase()),
         );
         break;
 
       case "Visitor":
         filtered = visitors.filter((v) =>
-          v.visitorName?.toLowerCase().includes(searchValue.toLowerCase()),
+          v.visitor_name?.toLowerCase().includes(searchValue.toLowerCase()),
         );
         break;
 
       case "CICPA no.":
         filtered = visitors.filter((v) =>
-          v.cicpaCard?.toLowerCase().includes(searchValue.toLowerCase()),
+          v.cicpa_card_no?.toLowerCase().includes(searchValue.toLowerCase()),
         );
         break;
 
       case "EID no.":
         filtered = visitors.filter((v) =>
-          v.idNumber?.toLowerCase().includes(searchValue.toLowerCase()),
+          v.id_number?.toLowerCase().includes(searchValue.toLowerCase()),
         );
         break;
 
@@ -111,9 +116,42 @@ const VisitorBooking = () => {
     setCurrentPage(1); // reset pagination
   };
 
+  const getHeaders = () => {
+    const token = localStorage.getItem("token");
+    return {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  };
+
+  const fetchVisitors = async () => {
+    try {
+      const response = await axios.get(`${API_BASE}/visitor/booking`, { headers: getHeaders() });
+      const payload = response?.data?.data ?? response?.data;
+      // Map backend fields to frontend state format if necessary
+      const mapped = (Array.isArray(payload) ? payload : []).map((v) => ({
+        ...v,
+        vDateTime: `${v.visit_date} (${v.visit_time})`,
+        organization: v.company || "N/A", // Default if blank
+        meetingPerson: v.point_of_contact || "N/A",
+        // Carry over other fields if present in DB
+        visitorCode: `VS-${v.id}`,
+      }));
+      setVisitors(mapped);
+    } catch (error) {
+      console.error("Failed to fetch visitors", error);
+      toast.error("Failed to load data");
+    }
+  };
+
+  useEffect(() => {
+    fetchVisitors();
+  }, []);
+
   const filteredVisitors = visitors.filter((visitor) =>
-    visitor.visitorName.toLowerCase().startsWith(searchTerm.toLowerCase()),
+    (visitor.visitor_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
+
 
   const endIndex = currentPage * entriesPerPage;
 
@@ -135,102 +173,95 @@ const VisitorBooking = () => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const {
-      visitorName,
-      purpose,
+      visitor_name,
+      purpose_of_visit,
       company,
-      mobile,
-      contactPerson,
-      accessCard,
-      visitDate,
-      visitTime,
-      idType,
-      isPermanent,
-      idNumber,
-      nationality,
-      idExpiry,
-      email,
-      cicpaCard,
-      companyCode,
-      cicpaExpiry,
-      searchValue,
+      mobile_no,
+      point_of_contact,
+      access_card,
     } = formData;
 
     if (
-      !visitorName ||
-      !purpose ||
+      !visitor_name ||
+      !purpose_of_visit ||
       !company ||
-      !mobile ||
-      !contactPerson ||
-      !accessCard
+      !mobile_no ||
+      !point_of_contact ||
+      !access_card
     ) {
       toast.error("Please fill all required fields");
       return; // stop execution
     }
 
-    const newVisitor = {
-      id: Date.now(),
-      visitorCode: `VS-${visitors.length + 1}`,
-      visitorName,
-      phone: mobile,
-      cardReference: accessCard,
-      vDateTime: visitDate + " (" + visitTime + ")",
-      organization: company,
-      meetingPerson: contactPerson,
-      searchValue,
-      purpose,
-      company,
-      mobile,
-      contactPerson,
-      email,
-      cicpaCard,
-      companyCode,
-      cicpaExpiry,
-      idType,
-      idNumber,
-      nationality,
-      idExpiry,
-      accessCard,
-      isPermanent,
+    const formatDateForBackend = (str) => {
+      if (!str || typeof str !== "string") return str;
+      if (str.includes("/")) {
+        const [d, m, y] = str.split("/");
+        return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+      }
+      return str;
     };
 
-    if (editId) {
-      setVisitors((prev) =>
-        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
-      );
+    const payload = {
+      ...formData,
+      visit_date: formatDateForBackend(formData.visit_date),
+      cicpa_expiry_date: formatDateForBackend(formData.cicpa_expiry_date),
+      id_expiry_date: formatDateForBackend(formData.id_expiry_date),
+      status: "booked", // default status
+    };
 
-      toast.success("Data updated");
-    } else {
-      setVisitors((prev) => [...prev, newVisitor]);
-
-      toast.success("Data Added");
+    try {
+      if (editId) {
+        await axios.put(`${API_BASE}/visitor/booking/${editId}`, payload, { headers: getHeaders() });
+        toast.success("Data updated");
+      } else {
+        await axios.post(`${API_BASE}/visitor/booking`, payload, { headers: getHeaders() });
+        toast.success("Data Added");
+      }
+      await fetchVisitors();
+      setOpenModal(false);
+      setEditId(null);
+      setFormData({
+        searchType: "Mobile no.",
+        searchValue: "",
+        visitor_name: "",
+        purpose_of_visit: "",
+        visit_date: today,
+        visit_time: currentTime,
+        company: "",
+        mobile_no: "",
+        point_of_contact: "",
+        email: "",
+        cicpa_card_no: "",
+        company_code: "",
+        cicpa_expiry_date: "",
+        id_type: "EID",
+        id_number: "",
+        nationality: "",
+        id_expiry_date: "",
+        access_card: "",
+        is_permanent: false,
+      });
+    } catch (error) {
+      console.error("Failed to save visitor", error);
+      toast.error(error.response?.data?.message || "Failed to save data");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData({
-      searchType: "Mobile no.",
-      visitorName: "",
-      visitDate: today,
-      visitTime: currentTime,
-      purpose: "",
-      company: "",
-      mobile: "",
-      contactPerson: "",
-      email: "",
-      cicpaCard: "",
-      companyCode: "",
-      cicpaExpiry: "",
-      idType: "EID",
-      idNumber: "",
-      nationality: "",
-      idExpiry: "",
-      accessCard: "",
-      isPermanent: false,
-    });
   };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this booking?")) return;
+    try {
+      await axios.delete(`${API_BASE}/visitor/booking/${id}`, { headers: getHeaders() });
+      toast.success("Booking removed");
+      await fetchVisitors();
+    } catch (error) {
+      console.error("Failed to delete booking", error);
+      toast.error("Failed to delete booking");
+    }
+  };
+
 
   const handleCopy = () => {
     const header =
@@ -239,7 +270,7 @@ const VisitorBooking = () => {
     const rows = filteredVisitors
       .map(
         (v, i) =>
-          `${i + 1}\t${v.visitorCode}\t${v.visitorName}\t${v.phone}\t${v.cardReference}\t${v.vDateTime}\t${v.organization}\t${v.meetingPerson}`,
+          `${i + 1}\t${v.visitorCode}\t${v.visitor_name}\t${v.mobile_no}\t${v.cardReference || ""}\t${v.vDateTime}\t${v.organization}\t${v.meetingPerson}`,
       )
       .join("\n");
 
@@ -254,9 +285,9 @@ const VisitorBooking = () => {
     const data = filteredVisitors.map((v, i) => ({
       "SL.NO": i + 1,
       "Visitor Code": v.visitorCode,
-      "Visitor Name": v.visitorName,
-      "V-Phone": v.phone,
-      CardReference: v.cardReference,
+      "Visitor Name": v.visitor_name,
+      "V-Phone": v.mobile_no,
+      CardReference: v.cardReference || "",
       "V-Date & Time": v.vDateTime,
       Organization: v.organization,
       "Meeting Person": v.meetingPerson,
@@ -287,9 +318,9 @@ const VisitorBooking = () => {
     const tableRows = filteredVisitors.map((v, i) => [
       i + 1,
       v.visitorCode,
-      v.visitorName,
-      v.phone,
-      v.cardReference,
+      v.visitor_name,
+      v.mobile_no,
+      v.cardReference || "",
       v.vDateTime,
       v.organization,
       v.meetingPerson,
@@ -430,9 +461,9 @@ const VisitorBooking = () => {
                       <td className="py-2 px-6 hidden md:table-cell ">
                         {item.visitorCode}
                       </td>
-                      <td className="py-2 px-6">{item.visitorName}</td>
+                      <td className="py-2 px-6">{item.visitor_name}</td>
                       <td className="py-2 px-6 hidden md:table-cell ">
-                        {item.phone}
+                        {item.mobile_no}
                       </td>
                       <td className="py-2 px-6 hidden xl:table-cell ">
                         {item.vDateTime}
@@ -468,13 +499,10 @@ const VisitorBooking = () => {
 
                           {/* Delete */}
                           <MdDeleteForever
-                            onClick={() =>
-                              setVisitors(
-                                visitors.filter((v) => v.id !== item.id),
-                              )
-                            }
+                            onClick={() => handleDelete(item.id)}
                             className="inline text-red-500 cursor-pointer text-xl"
                           />
+
                         </div>
                       </td>
                     </tr>
@@ -596,8 +624,8 @@ const VisitorBooking = () => {
                     </span>
                   </label>
                   <input
-                    name="visitorName"
-                    value={formData.visitorName}
+                    name="visitor_name"
+                    value={formData.visitor_name}
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Visitor Name"
@@ -613,8 +641,8 @@ const VisitorBooking = () => {
                         Purpose of Visit <span className="text-red-500">*</span>
                       </>
                     }
-                    name="purpose"
-                    value={formData.purpose}
+                    name="purpose_of_visit"
+                    value={formData.purpose_of_visit}
                     options={[
                       "Business",
                       "Meeting",
@@ -634,22 +662,22 @@ const VisitorBooking = () => {
                   <div>
                     <label className={labelStyle}>Date</label>
                     <div
-                      name="visitDate"
-                      value={formData.visitDate}
+                      name="visit_date"
+                      value={formData.visit_date}
                       className={inputStyle}
                     >
-                      {formData.visitDate}
+                      {formData.visit_date}
                     </div>
                   </div>
 
                   <div>
                     <label className={labelStyle}>Time</label>
                     <div
-                      name="visitTime"
-                      value={formData.visitTime}
+                      name="visit_time"
+                      value={formData.visit_time}
                       className={inputStyle}
                     >
-                      {formData.visitTime}
+                      {formData.visit_time}
                     </div>
                   </div>
                 </div>
@@ -683,8 +711,8 @@ const VisitorBooking = () => {
                   </label>
                   <input
                     type="number"
-                    name="mobile"
-                    value={formData.mobile}
+                    name="mobile_no"
+                    value={formData.mobile_no}
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Contact No"
@@ -696,8 +724,8 @@ const VisitorBooking = () => {
                 <div>
                   <SearchDropdown
                     label=" F1 Point of Contact"
-                    name="contactPerson"
-                    value={formData.contactPerson}
+                    name="point_of_contact"
+                    value={formData.point_of_contact}
                     options={["Name 1", "Name 2", "Name 3"]}
                     formData={formData}
                     setFormData={setFormData}
@@ -730,8 +758,8 @@ const VisitorBooking = () => {
                 <div>
                   <label className={labelStyle}>CICPA Card No</label>
                   <input
-                    name="cicpaCard"
-                    value={formData.cicpaCard}
+                    name="cicpa_card_no"
+                    value={formData.cicpa_card_no}
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="CICPA Card Number"
@@ -742,8 +770,8 @@ const VisitorBooking = () => {
                 <div>
                   <label className={labelStyle}>Company Code</label>
                   <input
-                    name="companyCode"
-                    value={formData.companyCode}
+                    name="company_code"
+                    value={formData.company_code}
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Company Code"
@@ -754,8 +782,8 @@ const VisitorBooking = () => {
                 <div className="relative">
                   <label className={labelStyle}>CICPA Expiry Date</label>
                   <input
-                    name="cicpaExpiry"
-                    value={formData.cicpaExpiry}
+                    name="cicpa_expiry_date"
+                    value={formData.cicpa_expiry_date}
                     onChange={handleChange}
                     onClick={() => setShowCicpaExpiryPicker(true)}
                     disabled={mode === "view"}
@@ -764,9 +792,9 @@ const VisitorBooking = () => {
                   />
                   {showCicpaExpiryPicker && (
                     <SpinnerDatePicker
-                      value={formData.cicpaExpiry}
+                      value={formData.cicpa_expiry_date}
                       onChange={(date) =>
-                        setFormData({ ...formData, cicpaExpiry: date })
+                        setFormData({ ...formData, cicpa_expiry_date: date })
                       }
                       onClose={() => setShowCicpaExpiryPicker(false)}
                     />
@@ -783,8 +811,8 @@ const VisitorBooking = () => {
                 <div>
                   <SearchDropdown
                     label="IdType"
-                    name="idType"
-                    value={formData.idType}
+                    name="id_type"
+                    value={formData.id_type}
                     options={["EID", "Passport", "Driving License"]}
                     formData={formData}
                     setFormData={setFormData}
@@ -796,8 +824,8 @@ const VisitorBooking = () => {
                 <div>
                   <label className={labelStyle}>Number</label>
                   <input
-                    name="idNumber"
-                    value={formData.idNumber}
+                    name="id_number"
+                    value={formData.id_number}
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="ID Number"
@@ -822,8 +850,8 @@ const VisitorBooking = () => {
                 <div className="relative">
                   <label className={labelStyle}>Expiry Date</label>
                   <input
-                    name="idExpiry"
-                    value={formData.idExpiry}
+                    name="id_expiry_date"
+                    value={formData.id_expiry_date}
                     onChange={handleChange}
                     onClick={() => setShowIdExpiryPicker(true)}
                     disabled={mode === "view"}
@@ -832,9 +860,9 @@ const VisitorBooking = () => {
                   />
                   {showIdExpiryPicker && (
                     <SpinnerDatePicker
-                      value={formData.idExpiry}
+                      value={formData.id_expiry_date}
                       onChange={(date) =>
-                        setFormData({ ...formData, idExpiry: date })
+                        setFormData({ ...formData, id_expiry_date: date })
                       }
                       onClose={() => setShowIdExpiryPicker(false)}
                     />
@@ -855,8 +883,8 @@ const VisitorBooking = () => {
                         Access card <span className="text-red-500">*</span>
                       </>
                     }
-                    name="accessCard"
-                    value={formData.accessCard}
+                    name="access_card"
+                    value={formData.access_card}
                     options={["Card 1", "Card 2"]}
                     formData={formData}
                     setFormData={setFormData}
@@ -868,11 +896,10 @@ const VisitorBooking = () => {
                 <div className="flex items-center gap-2 mt-6">
                   <input
                     type="checkbox"
-                    name="isPermanent"
-                    checked={formData.isPermanent}
+                    name="is_permanent"
+                    checked={formData.is_permanent}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    required
                   />
                   <span>Is Permanent</span>
                 </div>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -27,20 +28,53 @@ const CardDetach = () => {
   const [formData, setFormData] = useState({
     searchType: "Mobile no.",
     searchValue: "",
-    visitorName: "",
+    visitor_name: "",
     company: "",
-    mobile: "",
-    contactPerson: "",
+    mobile_no: "",
+    point_of_contact: "",
     email: "",
-    cicpaCard: "",
-    companyCode: "",
-    cicpaExpiry: "",
-    idNumber: "",
+    cicpa_card_no: "",
+    company_code: "",
+    cicpa_expiry_date: "",
+    id_type: "EID",
+    id_number: "",
     nationality: "",
-    idExpiry: "",
-    accessCard: "",
-    isPermanent: false,
+    id_expiry_date: "",
+    access_card: "",
+    is_permanent: false,
+    status: "booked"
   });
+
+  const API_BASE = "http://localhost:3000/api";
+
+  const getHeaders = () => {
+    const token = localStorage.getItem("token");
+    return {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  };
+
+  const fetchVisitors = async () => {
+    try {
+      const response = await axios.get(`${API_BASE}/visitor/booking`, { headers: getHeaders() });
+      const payload = response?.data?.data ?? response?.data;
+      const mapped = (Array.isArray(payload) ? payload : []).map((v) => ({
+        ...v,
+        visitorCode: `VS-${v.id}`,
+        organization: v.company || "N/A",
+        meetingPerson: v.point_of_contact || "N/A",
+      }));
+      setVisitors(mapped);
+    } catch (error) {
+      console.error("Failed to fetch visitors", error);
+      toast.error("Failed to load data");
+    }
+  };
+
+  React.useEffect(() => {
+    fetchVisitors();
+  }, []);
 
   const inputStyle =
     "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -61,25 +95,25 @@ const CardDetach = () => {
     switch (searchType) {
       case "Mobile no.":
         filtered = visitors.filter((v) =>
-          v.phone?.toLowerCase().includes(searchValue.toLowerCase()),
+          v.mobile_no?.toLowerCase().includes(searchValue.toLowerCase()),
         );
         break;
 
       case "Visitor":
         filtered = visitors.filter((v) =>
-          v.visitorName?.toLowerCase().includes(searchValue.toLowerCase()),
+          v.visitor_name?.toLowerCase().includes(searchValue.toLowerCase()),
         );
         break;
 
       case "CICPA no.":
         filtered = visitors.filter((v) =>
-          v.cicpaCard?.toLowerCase().includes(searchValue.toLowerCase()),
+          v.cicpa_card_no?.toLowerCase().includes(searchValue.toLowerCase()),
         );
         break;
 
       case "EID no.":
         filtered = visitors.filter((v) =>
-          v.idNumber?.toLowerCase().includes(searchValue.toLowerCase()),
+          v.id_number?.toLowerCase().includes(searchValue.toLowerCase()),
         );
         break;
 
@@ -104,7 +138,7 @@ const CardDetach = () => {
   };
 
   const filteredVisitors = visitors.filter((visitor) =>
-    visitor.visitorName.toLowerCase().startsWith(searchTerm.toLowerCase()),
+    (visitor.visitor_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -127,99 +161,116 @@ const CardDetach = () => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const {
-      visitorName,
+      visitor_name,
       company,
-      mobile,
-      contactPerson,
+      mobile_no,
+      point_of_contact,
       email,
-      cicpaCard,
-      companyCode,
-      cicpaExpiry,
-      idNumber,
+      cicpa_card_no,
+      company_code,
+      cicpa_expiry_date,
+      id_number,
       nationality,
-      idExpiry,
-      accessCard,
-      searchType,
-      idType,
-      isPermanent,
+      id_expiry_date,
+      access_card,
     } = formData;
 
     if (
-      !visitorName ||
+      !visitor_name ||
       !company ||
-      !mobile ||
-      !contactPerson ||
+      !mobile_no ||
+      !point_of_contact ||
       !email ||
-      !cicpaCard ||
-      !companyCode ||
-      !cicpaExpiry ||
-      !idNumber ||
+      !cicpa_card_no ||
+      !company_code ||
+      !cicpa_expiry_date ||
+      !id_number ||
       !nationality ||
-      !idExpiry ||
-      !accessCard
+      !id_expiry_date ||
+      !access_card
     ) {
       toast.error("Please fill all required fields");
-      return; // stop execution
+      return;
     }
 
-    const newVisitor = {
-      id: Date.now(),
-      visitorCode: `VS-${visitors.length + 1}`,
-      visitorName,
-      email,
-      cicpaCard,
-      idNumber,
-      companyCode,
-      phone: mobile,
-      cardReference: accessCard,
-      organization: company,
-      meetingPerson: contactPerson,
-      searchType,
-      company,
-      mobile,
-      contactPerson,
-      cicpaExpiry,
-      idType,
-      nationality,
-      idExpiry,
-      accessCard,
-      isPermanent,
+    const formatDateForBackend = (str) => {
+      if (!str || typeof str !== "string") return str;
+      if (str.includes("/")) {
+        const [d, m, y] = str.split("/");
+        return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+      }
+      return str;
     };
 
-    if (editId) {
-      setVisitors((prev) =>
-        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
-      );
+    const payload = {
+      ...formData,
+      visit_date: formatDateForBackend(formData.visit_date),
+      cicpa_expiry_date: formatDateForBackend(formData.cicpa_expiry_date),
+      id_expiry_date: formatDateForBackend(formData.id_expiry_date),
+      status: "booked", // default status
+    };
 
-      toast.success("Data updated");
-    } else {
-      setVisitors((prev) => [...prev, newVisitor]);
-
-      toast.success("Data Added");
+    try {
+      if (editId) {
+        await axios.put(`${API_BASE}/visitor/booking/${editId}`, payload, { headers: getHeaders() });
+        toast.success("Data updated");
+      } else {
+        await axios.post(`${API_BASE}/visitor/booking`, payload, { headers: getHeaders() });
+        toast.success("Data Added");
+      }
+      await fetchVisitors();
+      setOpenModal(false);
+      setEditId(null);
+      setFormData({
+        searchType: "Mobile no.",
+        searchValue: "",
+        visitor_name: "",
+        company: "",
+        mobile_no: "",
+        point_of_contact: "",
+        email: "",
+        cicpa_card_no: "",
+        company_code: "",
+        cicpa_expiry_date: "",
+        id_type: "EID",
+        id_number: "",
+        nationality: "",
+        id_expiry_date: "",
+        access_card: "",
+        is_permanent: false,
+        status: "booked"
+      });
+    } catch (error) {
+      console.error("Failed to save visitor", error);
+      toast.error(error.response?.data?.message || "Failed to save data");
     }
+  };
 
-    setOpenModal(false);
-    setEditId(null);
+  const handleDetach = async (id) => {
+    if (!window.confirm("Are you sure you want to detach this card?")) return;
+    try {
+      // Detach logic: set status to 'checked-out' or 'completed' and clear access_card
+      await axios.put(`${API_BASE}/visitor/booking/${id}`, { status: 'checked-out', access_card: '' }, { headers: getHeaders() });
+      toast.success("Card detached successfully");
+      await fetchVisitors();
+    } catch (error) {
+      console.error("Failed to detach card", error);
+      toast.error("Failed to detach card");
+    }
+  };
 
-    setFormData({
-      searchType: "Mobile no.",
-      visitorName: "",
-      company: "",
-      mobile: "",
-      contactPerson: "",
-      email: "",
-      cicpaCard: "",
-      companyCode: "",
-      cicpaExpiry: "",
-      idType: "EID",
-      idNumber: "",
-      nationality: "",
-      idExpiry: "",
-      accessCard: "",
-      isPermanent: false,
-    });
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this booking?")) return;
+    try {
+      await axios.delete(`${API_BASE}/visitor/booking/${id}`, { headers: getHeaders() });
+      toast.success("Booking removed");
+      await fetchVisitors();
+    } catch (error) {
+      console.error("Failed to delete booking", error);
+      toast.error("Failed to delete booking");
+    }
   };
 
   const handleCopy = () => {
@@ -229,7 +280,7 @@ const CardDetach = () => {
     const rows = filteredVisitors
       .map(
         (v, i) =>
-          `${i + 1}\t${v.visitorCode}\t${v.visitorName}\t${v.organization}\t${v.phone}\t${v.email}\t${v.cicpaCard}\t${v.companyCode}\t${v.idNumber}\t${v.cardReference}\t${v.meetingPerson}`,
+          `${i + 1}\t${v.visitorCode}\t${v.visitor_name}\t${v.organization}\t${v.mobile_no}\t${v.email}\t${v.cicpa_card_no}\t${v.company_code}\t${v.id_number}\t${v.access_card}\t${v.meetingPerson}`,
       )
       .join("\n");
 
@@ -244,14 +295,14 @@ const CardDetach = () => {
     const data = filteredVisitors.map((v, i) => ({
       "SL.NO": i + 1,
       "Visitor Code": v.visitorCode,
-      "Visitor Name": v.visitorName,
+      "Visitor Name": v.visitor_name,
       Company: v.organization,
-      Phone: v.phone,
+      Phone: v.mobile_no,
       Email: v.email,
-      "CICPA Card": v.cicpaCard,
-      "Company Code": v.companyCode,
-      "EID Number": v.idNumber,
-      "Card Reference": v.cardReference,
+      "CICPA Card": v.cicpa_card_no,
+      "Company Code": v.company_code,
+      "EID Number": v.id_number,
+      "Card Reference": v.access_card,
       "Meeting Person": v.meetingPerson,
     }));
 
@@ -283,14 +334,14 @@ const CardDetach = () => {
     const tableRows = filteredVisitors.map((v, i) => [
       i + 1,
       v.visitorCode,
-      v.visitorName,
+      v.visitor_name,
       v.organization,
-      v.phone,
+      v.mobile_no,
       v.email,
-      v.cicpaCard,
-      v.companyCode,
-      v.idNumber,
-      v.cardReference,
+      v.cicpa_card_no,
+      v.company_code,
+      v.id_number,
+      v.access_card,
       v.meetingPerson,
     ]);
 
@@ -404,6 +455,7 @@ const CardDetach = () => {
                   <th className="py-2 px-6 font-semibold hidden lg:table-cell whitespace-nowrap">
                     Meeting Person
                   </th>
+                  <th className="py-2 px-6 font-semibold">Status</th>
                   <th className="py-2 px-6 font-semibold">Action</th>
                 </tr>
               </thead>
@@ -431,13 +483,32 @@ const CardDetach = () => {
                         {item.organization}
                       </td>
                       <td className="py-2 px-6 hidden md:table-cell">
-                        {item.phone}
+                        {item.mobile_no}
                       </td>
                       <td className="py-2 px-6 hidden lg:table-cell">
-                        {item.meetingPerson}
+                        {item.point_of_contact}
+                      </td>
+                      <td className="py-2 px-6 whitespace-nowrap">
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                          item.status === 'booked' ? 'bg-blue-100 text-blue-800' : 
+                          item.status === 'checked-out' ? 'bg-gray-100 text-gray-800' : 
+                          'bg-green-100 text-green-800'
+                        }`}>
+                          {item.status}
+                        </span>
                       </td>
                       <td className="py-2 px-6">
                         <div className="flex flex-row space-x-3 justify-center ">
+                          {/* Detach */}
+                          {item.status === 'booked' && item.access_card && (
+                             <button 
+                               onClick={() => handleDetach(item.id)}
+                               title="Detach Card"
+                               className="text-orange-500 hover:text-orange-700"
+                             >
+                               Det.
+                             </button>
+                          )}
                           {/* View */}
                           <FaEye
                             onClick={() => {
@@ -461,11 +532,7 @@ const CardDetach = () => {
 
                           {/* Delete */}
                           <MdDeleteForever
-                            onClick={() =>
-                              setVisitors(
-                                visitors.filter((v) => v.id !== item.id),
-                              )
-                            }
+                            onClick={() => handleDelete(item.id)}
                             className="inline text-red-500 cursor-pointer text-xl"
                           />
                         </div>
@@ -589,8 +656,8 @@ const CardDetach = () => {
                     </span>
                   </label>
                   <input
-                    name="visitorName"
-                    value={formData.visitorName}
+                    name="visitor_name"
+                    value={formData.visitor_name}
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Visitor Name"
@@ -628,8 +695,8 @@ const CardDetach = () => {
                   </label>
                   <input
                     type="number"
-                    name="mobile"
-                    value={formData.mobile}
+                    name="mobile_no"
+                    value={formData.mobile_no}
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Contact No"
@@ -646,8 +713,8 @@ const CardDetach = () => {
                         <span className="text-red-500">*</span>
                       </>
                     }
-                    name="contactPerson"
-                    value={formData.contactPerson}
+                    name="point_of_contact"
+                    value={formData.point_of_contact}
                     options={["Name 1", "Name 2", "Name 3"]}
                     formData={formData}
                     setFormData={setFormData}
@@ -692,8 +759,8 @@ const CardDetach = () => {
                     </span>
                   </label>
                   <input
-                    name="cicpaCard"
-                    value={formData.cicpaCard}
+                    name="cicpa_card_no"
+                    value={formData.cicpa_card_no}
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="CICPA Card Number"
@@ -710,8 +777,8 @@ const CardDetach = () => {
                     </span>
                   </label>
                   <input
-                    name="companyCode"
-                    value={formData.companyCode}
+                    name="company_code"
+                    value={formData.company_code}
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Company Code"
@@ -728,8 +795,8 @@ const CardDetach = () => {
                     </span>
                   </label>
                   <input
-                    name="cicpaExpiry"
-                    value={formData.cicpaExpiry}
+                    name="cicpa_expiry_date"
+                    value={formData.cicpa_expiry_date}
                     onChange={handleChange}
                     onClick={() => setShowCicpaExpiryPicker(true)}
                     disabled={mode === "view"}
@@ -738,9 +805,9 @@ const CardDetach = () => {
                   />
                   {showCicpaExpiryPicker && (
                     <SpinnerDatePicker
-                      value={formData.cicpaExpiry}
+                      value={formData.cicpa_expiry_date}
                       onChange={(date) =>
-                        setFormData({ ...formData, cicpaExpiry: date })
+                        setFormData({ ...formData, cicpa_expiry_date: date })
                       }
                       onClose={() => setShowCicpaExpiryPicker(false)}
                     />
@@ -763,8 +830,8 @@ const CardDetach = () => {
                     </span>
                   </label>
                   <input
-                    name="idNumber"
-                    value={formData.idNumber}
+                    name="id_number"
+                    value={formData.id_number}
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="ID Number"
@@ -801,8 +868,8 @@ const CardDetach = () => {
                     </span>
                   </label>
                   <input
-                    name="idExpiry"
-                    value={formData.idExpiry}
+                    name="id_expiry_date"
+                    value={formData.id_expiry_date}
                     onChange={handleChange}
                     onClick={() => setShowIdExpiryPicker(true)}
                     disabled={mode === "view"}
@@ -811,9 +878,9 @@ const CardDetach = () => {
                   />
                   {showIdExpiryPicker && (
                     <SpinnerDatePicker
-                      value={formData.idExpiry}
+                      value={formData.id_expiry_date}
                       onChange={(date) =>
-                        setFormData({ ...formData, idExpiry: date })
+                        setFormData({ ...formData, id_expiry_date: date })
                       }
                       onClose={() => setShowIdExpiryPicker(false)}
                     />
@@ -834,8 +901,8 @@ const CardDetach = () => {
                         Access card <span className="text-red-500">*</span>
                       </>
                     }
-                    name="accessCard"
-                    value={formData.accessCard}
+                    name="access_card"
+                    value={formData.access_card}
                     options={["Card 1", "Card 2"]}
                     formData={formData}
                     setFormData={setFormData}
@@ -847,11 +914,10 @@ const CardDetach = () => {
                 <div className="flex items-center gap-2 mt-6">
                   <input
                     type="checkbox"
-                    name="isPermanent"
-                    checked={formData.isPermanent}
+                    name="is_permanent"
+                    checked={formData.is_permanent}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    required
                   />
                   <span>Is Permanent</span>
                 </div>

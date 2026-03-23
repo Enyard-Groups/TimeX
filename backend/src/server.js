@@ -27,7 +27,7 @@ app.use("/api/master",masterRoute);
 app.use("/api/device",deviceRouter);
 app.use("/api/attendence",attendenceRouter);
 app.use("/api/requests",requestRouter);
-app.use("/api/visit",visitorRouter);
+app.use("/api/visitor", visitorRouter);
 
 
 
