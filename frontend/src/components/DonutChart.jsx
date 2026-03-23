@@ -37,14 +37,10 @@ const DonutChart = ({ attendanceData }) => {
     <div
       className="
         relative
-        bg-[oklch(0.98_0.001_106.424)]
-        border border-[oklch(0.923_0.003_48.717)]
-        rounded
         p-6
-        shadow-sm
         flex flex-col items-center
         transition-all duration-300
-        hover:shadow-lg
+        hover:shadow-lg h-[326px]
       "
     >
       <div className="relative">

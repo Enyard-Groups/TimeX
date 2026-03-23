@@ -106,7 +106,7 @@ const AdminDashboard = ({ user }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mt-6 items-start">
         <div
-          className="col-span-1 lg:col-span-2 bg-white rounded shadow-md p-4 sm:p-6 hover:scale-105 active:scale-95 overflow-x-auto sm:overflow-hidden transition-all duration-300"
+          className="col-span-1 lg:col-span-2 bg-white rounded shadow-md p-4 sm:p-6 sm:overflow-hidden   border border-gray-200"
           style={{ scrollbarWidth: "none" }}
         >
           <EmployeeAttendance attendanceData={attendanceData} />
@@ -116,7 +116,7 @@ const AdminDashboard = ({ user }) => {
         </div>
 
         <div
-          className="col-span-1 lg:col-span-3 bg-white rounded shadow-md p-4 sm:p-6 overflow-x-auto"
+          className="col-span-1 lg:col-span-3 bg-white rounded shadow-md p-4 sm:p-6 overflow-x-auto  border border-gray-200"
           style={{ scrollbarWidth: "none" }}
         >
           <AttendanceLineChart attendanceData={attendanceData} />
@@ -135,7 +135,7 @@ const AdminDashboard = ({ user }) => {
         </div>
 
         <div
-          className="col-span-1 text-center bg-white rounded shadow-md p-4 sm:p-6 overflow-x-auto sm:overflow-hidden "
+          className="col-span-1 text-center bg-white rounded shadow-md p-4 sm:p-6 overflow-x-auto sm:overflow-hidden  border border-gray-200"
           style={{ scrollbarWidth: "none" }}
         >
           <DonutChart attendanceData={attendanceData} />
@@ -150,6 +150,7 @@ const AdminDashboard = ({ user }) => {
       rounded
       p-6
       shadow-md
+       border border-gray-200
     "
       >
         <RecentActivity />

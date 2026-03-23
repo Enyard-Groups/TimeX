@@ -102,10 +102,7 @@ const AttendanceLineChart = ({ attendanceData }) => {
   ];
 
   return (
-    <div
-      className="py-6 rounded-2xl"
-      style={{ background: "oklch(0.98 0.001 106.424)" }}
-    >
+    <div className="py-6 rounded-2xl">
       <Chart options={options} series={series} type="area" height={240} />
     </div>
   );
