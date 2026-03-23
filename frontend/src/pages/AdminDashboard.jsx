@@ -98,7 +98,7 @@ const AdminDashboard = ({ user }) => {
       <div className="mb-10 font-bold">
         <h2 className="text-2xl tracking-tight">
           Welcome back,{" "}
-          <span style={{ color: "oklch(0.645 0.246 16.439)" }}>
+          <span className="bg-clip-text text-transparent bg-gradient-to-b from-red-600 to-yellow-500">
             {user?.user_name || "User"}
           </span>
         </h2>
