@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import DonutChart from "../components/DonutChart";
 import GeoLocationMap from "../components/GeoLocationMap";
 import { useEffect, useState } from "react";
@@ -7,87 +8,91 @@ import EmployeeAttendance from "../components/EmployeeAttendance";
 import AttendanceLineChart from "../components/AttendanceLineChart";
 
 const AdminDashboard = ({ user }) => {
-  const [attendanceData, setAttendanceData] = useState([
-    {
-      date: "2026-03-17",
-      totalEmployees: 120,
-      presentToday: 95,
-      leave: 1,
-      earlyin: 15,
-      latein: 4,
-    },
-    {
-      date: "2026-03-18",
-      totalEmployees: 120,
-      presentToday: 89,
-      leave: 6,
-      earlyin: 12,
-      latein: 3,
-    },
-    {
-      date: "2026-03-19",
-      totalEmployees: 120,
-      presentToday: 100,
-      leave: 5,
-      earlyin: 10,
-      latein: 5,
-    },
-    {
-      date: "2026-03-20",
-      totalEmployees: 120,
-      presentToday: 110,
-      leave: 7,
-      earlyin: 14,
-      latein: 2,
-    },
-    {
-      date: "2026-03-21",
-      totalEmployees: 120,
-      presentToday: 108,
-      leave: 7,
-      earlyin: 9,
-      latein: 6,
-    },
-    {
-      date: "2026-03-22",
-      totalEmployees: 120,
-      presentToday: 115,
-      leave: 7,
-      earlyin: 16,
-      latein: 3,
-    },
-    {
-      date: "2026-03-23",
-      totalEmployees: 120,
-      presentToday: 98,
-      leave: 10,
-      earlyin: 14,
-      latein: 5,
-    },
-  ]);
+  const [attendanceData, setAttendanceData] = useState([]);
 
-  // useEffect(() => {
-  //   const fetchDashboardStats = async () => {
-  //     try {
-  //       const API_BASE = "http://localhost:3000/api";
-  //       const token = localStorage.getItem("token");
-  //       const headers = {
-  //         "Content-Type": "application/json",
-  //         ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  //       };
+  useEffect(() => {
+    const fetchDashboardStats = async () => {
+      try {
+        // const API_BASE = "http://localhost:3000/api";
+        // const token = localStorage.getItem("token");
+        // const headers = {
+        //   "Content-Type": "application/json",
+        //   ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        // };
 
-  //       let res = await axios.get(`${API_BASE}/attendence/stats`, {
-  //         headers,
-  //       });
+        // let res = await axios.get(`${API_BASE}/attendence/stats`, {
+        //   headers,
+        // });
 
-  //       setAttendanceData([res.data]);
-  //     } catch (error) {
-  //       console.error("Failed to load dashboard stats:", error);
-  //     }
-  //   };
+        const res = {
+          data: [
+            {
+              date: "2026-03-17",
+              totalEmployees: 120,
+              presentToday: 95,
+              leave: 1,
+              earlyin: 15,
+              latein: 4,
+            },
+            {
+              date: "2026-03-18",
+              totalEmployees: 120,
+              presentToday: 89,
+              leave: 6,
+              earlyin: 12,
+              latein: 3,
+            },
+            {
+              date: "2026-03-19",
+              totalEmployees: 120,
+              presentToday: 100,
+              leave: 5,
+              earlyin: 10,
+              latein: 5,
+            },
+            {
+              date: "2026-03-20",
+              totalEmployees: 120,
+              presentToday: 110,
+              leave: 7,
+              earlyin: 14,
+              latein: 2,
+            },
+            {
+              date: "2026-03-21",
+              totalEmployees: 120,
+              presentToday: 108,
+              leave: 7,
+              earlyin: 9,
+              latein: 6,
+            },
+            {
+              date: "2026-03-22",
+              totalEmployees: 120,
+              presentToday: 115,
+              leave: 7,
+              earlyin: 16,
+              latein: 3,
+            },
+            {
+              date: "2026-03-23",
+              totalEmployees: 120,
+              presentToday: 98,
+              leave: 10,
+              earlyin: 14,
+              latein: 5,
+            },
+          ],
+        };
 
-  //   fetchDashboardStats();
-  // }, []);
+        setAttendanceData(res.data);
+      } catch (error) {
+        console.error("Failed to load dashboard stats:", error);
+      }
+    };
+
+    fetchDashboardStats();
+  }, []);
 
   return (
     <>

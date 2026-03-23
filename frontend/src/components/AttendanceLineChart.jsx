@@ -2,16 +2,20 @@ import React from "react";
 import Chart from "react-apexcharts";
 
 const AttendanceLineChart = ({ attendanceData }) => {
-  const formattedData = attendanceData?.map((item) => {
+  const formattedData = attendanceData.map((item) => {
     const total = Number(item.totalEmployees) || 0;
     const present = Number(item.presentToday) || 0;
     const absent = Math.max(0, total - present);
-    const day = new Date(item.date).toLocaleDateString("en-IN", {
-      weekday: "long",
-    });
-    const leave = item.leave;
-    const latein = item.latein;
-    const earlyin = item.earlyin;
+
+    const day = item.date
+      ? new Date(item.date).toLocaleDateString("en-IN", {
+          weekday: "long",
+        })
+      : "Today";
+
+    const leave = item.leave || 0;
+    const latein = item.latein || 0;
+    const earlyin = item.earlyin || 0;
 
     return {
       day,
