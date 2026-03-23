@@ -75,31 +75,16 @@ const GeoLocationMap = () => {
   };
 
   return (
-    <div
-      className="
-      h-[490px]
-      col-span-2
-      bg-white
-      border
-      border-gray-200
-      rounded-3xl
-      p-6
-      shadow-lg
-      "
-    >
-      <h2 className="text-md text-center font-semibold mb-4 text-gray-600">
-        Geographical Attendance Distribution
-      </h2>
-
+    <div className=" border-2 border-red-400 p-0.5 rounded">
       <div
-        className="w-full h-[400px] rounded-2xl overflow-hidden relative z-0"
+        className="w-full h-[325px] rounded overflow-hidden relative z-0 "
         style={{ scrollbarWidth: "none" }}
       >
         <MapContainer
           center={[20.5937, 78.9629]}
           zoom={5}
           scrollWheelZoom={false}
-          className="h-full w-full"
+          className="h-full w-full "
         >
           <TileLayer
             attribution=""
