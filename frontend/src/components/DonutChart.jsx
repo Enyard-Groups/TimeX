@@ -23,7 +23,7 @@ const DonutChart = ({ attendanceData }) => {
             id: 0,
             value: earlyin,
             label: "Early In",
-            color: "oklch(0.35 0.18 160)", // soft green
+            color: "oklch(0.75 0.8 100)",
           },
           {
             id: 1,
@@ -39,7 +39,7 @@ const DonutChart = ({ attendanceData }) => {
         relative
         bg-[oklch(0.98_0.001_106.424)]
         border border-[oklch(0.923_0.003_48.717)]
-        rounded-3xl
+        rounded
         p-6
         shadow-sm
         flex flex-col items-center
@@ -65,35 +65,37 @@ const DonutChart = ({ attendanceData }) => {
               outerRadius: 100,
               paddingAngle: 4,
               cornerRadius: 8,
+              startAngle: -90,
+              endAngle: 90,
+              cx: 125,
+              cy: 120,
             },
           ]}
-          width={260}
-          height={260}
+          width={250}
+          height={180}
           slotProps={{
             legend: { hidden: true },
             tooltip: { trigger: "item" },
           }}
         />
 
-        {total > 0 && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <p className="text-sm text-[oklch(0.147_0.004_49.25)]/60 tracking-wide">
-              TOTAL
-            </p>
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pt-6">
+          <p className="text-sm text-[oklch(0.147_0.004_49.25)]/60 tracking-wide">
+            TOTAL
+          </p>
 
-            <p className="text-3xl font-bold text-[oklch(0.645_0.246_16.439)]">
-              {total}
-            </p>
-          </div>
-        )}
+          <p className="text-3xl font-bold text-[oklch(0.645_0.246_16.439)]">
+            {total}
+          </p>
+        </div>
       </div>
 
-      {total > 0 && (
-        <div className="flex justify-center gap-8 mt-6 text-sm ">
-          <div className="flex items-center gap-3 bg-[oklch(0.97_0.001_106.424)] px-4 py-2 rounded-xl">
+      <div className="flex justify-center gap-8 mt-6 text-sm ">
+        <div className="flex flex-col">
+          <div className="flex gap-3 bg-[oklch(0.97_0.001_106.424)] px-4 py-2 rounded-xl">
             <span
-              className="w-3 h-3 rounded-full"
-              style={{ background: "oklch(0.35 0.18 160)" }}
+              className="w-3 h-3 rounded-full mt-1"
+              style={{ background: "oklch(0.75 0.8 100)" }}
             />
             <span className="text-[oklch(0.147_0.004_49.25)] whitespace-nowrap">
               Early In ({earlyin})
@@ -110,7 +112,7 @@ const DonutChart = ({ attendanceData }) => {
             </span>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
