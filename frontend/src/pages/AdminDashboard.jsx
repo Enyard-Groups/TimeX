@@ -153,10 +153,10 @@ const AdminDashboard = ({ user }) => {
        border border-gray-200
     "
       >
-        <RecentActivity />
-        <p className="mt-4 text-center text-md font-bold bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent">
+        <p className="mb-4 text-center text-md font-bold bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent">
           Recent Activity
         </p>
+        <RecentActivity />
       </div>
     </>
   );
