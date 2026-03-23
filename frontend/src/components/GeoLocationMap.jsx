@@ -75,9 +75,9 @@ const GeoLocationMap = () => {
   };
 
   return (
-    <div className=" border border-red-400 p-0.5 rounded">
+    <div className=" border-2 border-red-400 p-0.5 rounded">
       <div
-        className="w-full h-[325px] rounded overflow-hidden relative z-0 border border-yellow-600"
+        className="w-full h-[325px] rounded overflow-hidden relative z-0 "
         style={{ scrollbarWidth: "none" }}
       >
         <MapContainer
