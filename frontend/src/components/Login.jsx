@@ -24,12 +24,13 @@ const Login = () => {
       };
 
       localStorage.setItem("user", JSON.stringify(adminUserData));
-      localStorage.setItem("token", "admin-bypass-token");
+      localStorage.setItem("token", "admin-bypass");
 
       dispatch(setUser(adminUserData));
       dispatch(setAuth(true));
       setError("");
       navigate("/");
+
       return;
     }
 
