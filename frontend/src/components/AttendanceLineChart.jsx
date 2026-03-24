@@ -2,9 +2,34 @@ import React from "react";
 import Chart from "react-apexcharts";
 
 const AttendanceLineChart = ({ attendanceData }) => {
+  const formattedData = attendanceData.map((item) => {
+    const total = Number(item.totalEmployees) || 0;
+    const present = Number(item.presentToday) || 0;
+    const absent = Math.max(0, total - present);
+
+    const day = item.date
+      ? new Date(item.date).toLocaleDateString("en-IN", {
+          weekday: "long",
+        })
+      : "Today";
+
+    const leave = item.leave || 0;
+    const latein = item.latein || 0;
+    const earlyin = item.earlyin || 0;
+
+    return {
+      day,
+      total,
+      leave,
+      absent,
+      latein,
+      earlyin,
+    };
+  });
+
   const options = {
     chart: {
-      type: "line",
+      type: "area",
       height: 300,
       toolbar: { show: false },
       zoom: { enabled: false },
@@ -22,8 +47,7 @@ const AttendanceLineChart = ({ attendanceData }) => {
     },
 
     dataLabels: {
-      enabled: true,
-      enabledOnSeries: [1, 3],
+      enabled: false,
       offsetY: -3,
       style: {
         fontSize: "10px",
@@ -45,23 +69,7 @@ const AttendanceLineChart = ({ attendanceData }) => {
     },
 
     xaxis: {
-      categories: attendanceData.map((item) => item.day),
-      labels: {
-        style: {
-          colors: "oklch(0.147 0.004 49.25)",
-        },
-      },
-      axisBorder: {
-        color: "oklch(0.923 0.003 48.717)",
-      },
-    },
-
-    yaxis: {
-      labels: {
-        style: {
-          colors: "oklch(0.147 0.004 49.25)",
-        },
-      },
+      categories: formattedData.map((item) => item.day),
     },
 
     tooltip: {
@@ -71,65 +79,35 @@ const AttendanceLineChart = ({ attendanceData }) => {
     legend: {
       position: "top",
       horizontalAlign: "right",
-      labels: {
-        colors: "oklch(0.147 0.004 49.25)",
-      },
     },
 
-    colors: [
-      "oklch(0.4 0.003 48.717)",
-      "oklch(0.45 0.246 16.439)",
-      "oklch(0.25 0.245 27.325)",
-      "oklch(0.2 0.02 260)",
-    ],
+    colors: ["oklch(0.65 0.246 16.439)"],
 
     fill: {
       type: "gradient",
       gradient: {
         shade: "light",
-        type: "horizontal",
-        gradientToColors: [
-          "oklch(0.9 0.003 48.717)",
-          "oklch(0.845 0.246 16.439)",
-          "oklch(0.577 0.245 27.325)",
-          "oklch(0.6 0.02 260)",
-        ],
-        stops: [50, 100],
-        opacityFrom: 1,
-        opacityTo: 1,
+        type: "vertical",
+        gradientToColors: ["oklch(0.85 0.08 95)"],
+        stops: [0, 100],
+        opacityFrom: 0.8,
+        opacityTo: 0.05,
       },
     },
   };
 
   const series = [
     {
-      name: "Total",
-      data: attendanceData.map((item) => item.total),
-    },
-    {
       name: "Present",
-      data: attendanceData.map(
+      data: formattedData.map(
         (item) => item.total - (item.absent + item.leave),
       ),
-    },
-    {
-      name: "Absent",
-      data: attendanceData.map((item) => item.absent),
-    },
-    {
-      name: "Leave",
-      data: attendanceData.map((item) => item.leave),
     },
   ];
 
   return (
-    <div
-      className="p-6 rounded-2xl"
-      style={{
-        background: "oklch(0.98 0.001 106.424)",
-      }}
-    >
-      <Chart options={options} series={series} type="line" height={240} />
+    <div className="py-6 rounded-2xl">
+      <Chart options={options} series={series} type="area" height={240} />
     </div>
   );
 };

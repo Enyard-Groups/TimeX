@@ -15,8 +15,6 @@ import ApprovalsRoute from "./SidebarComponents/Approvals/ApprovalRoute";
 import ReportsRoute from "./SidebarComponents/Reports/ReportsRoute";
 import VisitorRoute from "./SidebarComponents/VisitorManagement/VisitorRoute";
 import FormsRoute from "./SidebarComponents/Forms/FormsRoute";
-import MyAttendance from "./EmployeeSidebar/MyAttendance";
-import ApplyForLeave from "./EmployeeSidebar/ApplyForLeave";
 import MyProfile from "./components/MyProfile";
 import { load, setAuth, setUser } from "./action";
 
@@ -90,8 +88,6 @@ const loading = useSelector((state) => state.loading);
           <Route path="/reports/*" element={privateRoute(ReportsRoute)} />
           <Route path="/visitor/*" element={privateRoute(VisitorRoute)} />
           <Route path="/forms/*" element={privateRoute(FormsRoute)} />
-          <Route path="/myattendance" element={privateRoute(MyAttendance)} />
-          <Route path="/applyforleave" element={privateRoute(ApplyForLeave)} />
           <Route path="/my-profile" element={privateRoute(MyProfile)} />
 
           {/* 404 */}
