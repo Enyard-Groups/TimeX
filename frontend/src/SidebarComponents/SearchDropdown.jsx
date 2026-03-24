@@ -14,6 +14,7 @@ const SearchDropdown = ({
   labelStyle,
   labelKey, // If options are objects, which key is the label
   valueKey, // If options are objects, which key is the value
+  labelName, // Custom field name for the label in formData
 }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -66,13 +67,11 @@ const SearchDropdown = ({
                   onClick={() => {
                     const val = getValue(o);
                     const lbl = getLabel(o);
-                    // Update both the ID and name fields if needed, 
-                    // or just set the ID. Here we set the 'name' field in formData
+                    const labelField = labelName || `${name}_name`;
                     setFormData({ 
                       ...formData, 
                       [name]: val,
-                      // Optionally set a separate field for the label to avoid re-fetching
-                      [`${name}_name`]: lbl 
+                      [labelField]: lbl 
                     });
                     setOpen(false);
                     setSearch("");

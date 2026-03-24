@@ -1,10 +1,13 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import toast from "react-hot-toast";
 import { FaAngleRight } from "react-icons/fa6";
 import { GrNext, GrPrevious } from "react-icons/gr";
 import { FaEye } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
+
+const API_BASE = "http://localhost:3000/api";
 
 const WfhApproval = () => {
   const [requests, setRequests] = useState([]);
@@ -14,11 +17,23 @@ const WfhApproval = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  const fetchPendingRequests = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`${API_BASE}/requests/wfh?status=Pending`);
+      setRequests(res.data);
+    } catch (error) {
+      console.error("Failed to fetch pending requests", error);
+      toast.error("Failed to load requests");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("wfhRequests")) || [];
-
-    setRequests(stored);
+    fetchPendingRequests();
   }, []);
   const inputStyle =
     "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -31,50 +46,37 @@ const WfhApproval = () => {
     JSON.parse(localStorage.getItem("user")).role.slice(1).toLowerCase();
 
   // Single Approve/ Reject
-  const updateStatus = (id, value) => {
-    const updated = requests.map((item) => {
-      if (item.id === id) {
-        if (value === "Approved") {
-          return {
-            ...item,
-            status: "Approved",
-            fa: "✔",
-            sa: "✔",
-            faname: approverName,
-            saname: approverName,
-            rejectedreason: "-",
-          };
-        }
+  const updateStatus = async (id, value) => {
+    const item = requests.find((r) => r.id === id);
+    if (!item) return;
 
-        if (value === "Rejected") {
-          return {
-            ...item,
-            status: "Rejected",
-            fa: "✘",
-            sa: "✘",
-            faname: approverName,
-            saname: approverName,
-            rejectedreason: item.rejectedreason || "",
-          };
-        }
-      }
+    const payload = {
+      status: value,
+      remarks: item.remarks || "-",
+      rejectedreason: value === "Rejected" ? (item.rejectedreason || "-") : "-",
+    };
 
-      return item;
-    });
+    try {
+      await axios.put(`${API_BASE}/requests/wfh/${id}`, payload);
+      setRequests((prev) => prev.filter((r) => r.id !== id));
+      toast.success(`Request ${value}`);
+    } catch (error) {
+      toast.error(error?.response?.data?.error || "Update failed");
+    }
+  };
 
-    setRequests(updated);
-
-    localStorage.setItem("wfhRequests", JSON.stringify(updated));
-
-    toast.success(`Request ${value}`);
+  const handleRemarks = (id, text) => {
+    setRequests((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, remarks: text } : item)),
+    );
   };
 
   const handleRejectedReason = (id, text) => {
-    const updated = requests.map((item) =>
-      item.id === id ? { ...item, rejectedreason: text } : item,
+    setRequests((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, rejectedreason: text } : item,
+      ),
     );
-
-    setRequests(updated);
   };
 
   // Selecting Ids
@@ -87,54 +89,31 @@ const WfhApproval = () => {
   };
 
   // Bulk Approve and Reject
-  const bulkAction = (value) => {
+  const bulkAction = async (value) => {
     if (selectedIds.length === 0) {
       toast.error("Please select Request");
       return;
     }
 
-    const updated = requests.map((item) => {
-      if (selectedIds.includes(item.id)) {
-        if (value === "Approved") {
-          return {
-            ...item,
-            status: "Approved",
-            fa: "✔",
-            sa: "✔",
-            faname: approverName,
-            saname: approverName,
-            rejectedreason: "-",
-          };
-        }
+    const payload = {
+      ids: selectedIds,
+      status: value,
+      remarks: "-",
+      rejectedreason: value === "Rejected" ? "Bulk Rejection" : "-",
+    };
 
-        if (value === "Rejected") {
-          return {
-            ...item,
-            status: "Rejected",
-            fa: "✘",
-            sa: "✘",
-            faname: approverName,
-            saname: approverName,
-            rejectedreason: item.rejectedreason || "",
-          };
-        }
-      }
-
-      return item;
-    });
-
-    setRequests(updated);
-    localStorage.setItem("wfhRequests", JSON.stringify(updated));
-
-    setSelectedIds([]);
-
-    toast.success(`Bulk ${value}`);
+    try {
+      await axios.put(`${API_BASE}/requests/wfh/bulk`, payload);
+      setRequests((prev) => prev.filter((r) => !selectedIds.includes(r.id)));
+      setSelectedIds([]);
+      toast.success(`Bulk ${value}`);
+    } catch (error) {
+      toast.error(error?.response?.data?.error || "Bulk update failed");
+    }
   };
 
-  const pending = requests.filter((r) => r.status === "Pending");
-
-  const filteredData = pending.filter((x) =>
-    x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()),
+  const filteredData = requests.filter((x) =>
+    (x.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -220,85 +199,109 @@ const WfhApproval = () => {
             style={{ scrollbarWidth: "none" }}
           >
             <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="py-2 px-4">
-                    <input
-                      type="checkbox"
-                      checked={
-                        currentData.length > 0 &&
-                        currentData.every((emp) => selectedIds.includes(emp.id))
-                      }
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setSelectedIds(currentData.map((x) => x.id));
-                        } else {
-                          setSelectedIds([]);
-                        }
-                      }}
-                    />
-                  </th>
-                  <th className="py-2 px-6 font-semibold">Employee</th>
-                  <th className="py-2 px-6 font-semibold hidden md:table-cell ">
-                    From
-                  </th>
-                  <th className="py-2 px-6 font-semibold hidden md:table-cell ">
-                    To
-                  </th>
-                  <th className="py-2 px-6 font-semibold hidden lg:table-cell ">
-                    Reason
-                  </th>
-                  <th className="py-2 px-6 font-semibold hidden xl:table-cell ">
-                    Rejected Reason
-                  </th>
-                  <th className="py-2 px-6 font-semibold">Approve / Reject</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {filteredData.length === 0 ? (
+                <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                   <tr>
-                    <td colSpan="8" className="text-center p-10">
-                      No Pending Requests
-                    </td>
-                  </tr>
-                ) : (
-                  currentData.map((item) => (
-                    <tr
-                      key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)]"
-                    >
-                      <td className="py-2 px-4">
-                        <input
-                          type="checkbox"
-                          checked={selectedIds.includes(item.id)}
-                          onChange={() => handleSelect(item.id)}
-                        />
-                      </td>
-                      <td className="py-2 px-6">{item.employee}</td>
-
-                      <td className="py-2 px-6 hidden md:table-cell ">
-                        {item.fromDate}
-                      </td>
-
-                      <td className="py-2 px-6 hidden md:table-cell ">
-                        {item.toDate}
-                      </td>
-
-                      <td className="py-2 px-6 hidden lg:table-cell  ">
-                        {item.reason || "NIL"}
-                      </td>
-
-                      <td className="py-2 px-6 hidden xl:table-cell ">
-                        <input
-                          placeholder="Rejected Reason"
-                          className="border border-gray-200 rounded px-2 py-1 text-sm w-40 "
-                          value={item.rejectedreason || ""}
-                          onChange={(e) =>
-                            handleRejectedReason(item.id, e.target.value)
+                    <th className="py-2 px-4">
+                      <input
+                        type="checkbox"
+                        checked={
+                          currentData.length > 0 &&
+                          currentData.every((emp) => selectedIds.includes(emp.id))
+                        }
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedIds(currentData.map((x) => x.id));
+                          } else {
+                            setSelectedIds([]);
                           }
-                        />
+                        }}
+                      />
+                    </th>
+                    <th className="py-2 px-6 font-semibold">Employee</th>
+                    <th className="py-2 px-6 font-semibold hidden md:table-cell ">
+                      From
+                    </th>
+                    <th className="py-2 px-6 font-semibold hidden md:table-cell ">
+                      To
+                    </th>
+                    <th className="py-2 px-6 font-semibold hidden lg:table-cell ">
+                      Reason
+                    </th>
+                    <th className="py-2 px-6 font-semibold hidden xl:table-cell ">
+                      Remarks
+                    </th>
+                    <th className="py-2 px-6 font-semibold hidden xl:table-cell ">
+                      Rejected Reason
+                    </th>
+                    <th className="py-2 px-6 font-semibold">Approve / Reject</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td colSpan="8" className="text-center p-10">
+                        Loading...
                       </td>
+                    </tr>
+                  ) : filteredData.length === 0 ? (
+                    <tr>
+                      <td colSpan="8" className="text-center p-10">
+                        No Pending Requests
+                      </td>
+                    </tr>
+                  ) : (
+                    currentData.map((item) => (
+                      <tr
+                        key={item.id}
+                        className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)]"
+                      >
+                        <td className="py-2 px-4">
+                          <input
+                            type="checkbox"
+                            checked={selectedIds.includes(item.id)}
+                            onChange={() => handleSelect(item.id)}
+                          />
+                        </td>
+                        <td className="py-2 px-6">{item.employee_name}</td>
+
+                        <td className="py-2 px-6 hidden md:table-cell ">
+                          {item.start_date
+                            ? new Date(item.start_date).toLocaleDateString()
+                            : "-"}
+                        </td>
+
+                        <td className="py-2 px-6 hidden md:table-cell ">
+                          {item.end_date
+                            ? new Date(item.end_date).toLocaleDateString()
+                            : "-"}
+                        </td>
+
+                        <td className="py-2 px-6 hidden lg:table-cell  ">
+                          {item.reason || "NIL"}
+                        </td>
+
+                        <td className="py-2 px-6 hidden xl:table-cell ">
+                          <input
+                            placeholder="Remarks"
+                            className="border border-gray-200 rounded px-2 py-1 text-sm w-40 "
+                            value={item.remarks || ""}
+                            onChange={(e) =>
+                              handleRemarks(item.id, e.target.value)
+                            }
+                          />
+                        </td>
+
+                        <td className="py-2 px-6 hidden xl:table-cell ">
+                          <input
+                            placeholder="Rejected Reason"
+                            className="border border-gray-200 rounded px-2 py-1 text-sm w-40 "
+                            value={item.rejectedreason || ""}
+                            onChange={(e) =>
+                              handleRejectedReason(item.id, e.target.value)
+                            }
+                          />
+                        </td>
 
                       <td className="p-2">
                         <div className="flex gap-2 justify-center">
@@ -397,22 +400,42 @@ const WfhApproval = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-lg">
                 <div>
                   <p className={labelStyle}>Employee</p>
-                  <p className={inputStyle}>{selectedItem.employee}</p>
+                  <p className={inputStyle}>{selectedItem.employee_name}</p>
                 </div>
 
                 <div>
                   <p className={labelStyle}>From</p>
-                  <p className={inputStyle}>{selectedItem.fromDate}</p>
+                  <p className={inputStyle}>
+                    {selectedItem.start_date
+                      ? new Date(selectedItem.start_date).toLocaleDateString()
+                      : "-"}
+                  </p>
                 </div>
 
                 <div>
                   <p className={labelStyle}>To</p>
-                  <p className={inputStyle}>{selectedItem.toDate}</p>
+                  <p className={inputStyle}>
+                    {selectedItem.end_date
+                      ? new Date(selectedItem.end_date).toLocaleDateString()
+                      : "-"}
+                  </p>
                 </div>
 
                 <div>
                   <p className={labelStyle}>Reason</p>
                   <p className={inputStyle}>{selectedItem.reason}</p>
+                </div>
+
+                <div>
+                  <p className={labelStyle}>Remarks</p>
+                  <input
+                    placeholder="Remarks"
+                    className={inputStyle}
+                    value={selectedItem.remarks || ""}
+                    onChange={(e) =>
+                      handleRemarks(selectedItem.id, e.target.value)
+                    }
+                  />
                 </div>
 
                 <div>

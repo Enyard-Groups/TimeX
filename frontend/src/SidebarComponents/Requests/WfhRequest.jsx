@@ -432,6 +432,7 @@ const WfhRequest = () => {
                                 <SearchDropdown
                                     label={<>Employee <span className="text-red-500">*</span></>}
                                     name="employee_id"
+                                    labelName="employee_name"
                                     value={formData.employee_id}
                                     displayValue={formData.employee_name || ""}
                                     options={employeeOptions}

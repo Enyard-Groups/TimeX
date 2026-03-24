@@ -19,6 +19,7 @@ import {
   createWfhRequest,
   updateWfhRequest,
   deleteWfhRequest,
+  bulkUpdateWfhStatus,
   getManualRequests,
   createManualRequest,
   updateManualRequest,
@@ -51,6 +52,7 @@ router.delete("/travel/:id", deleteTravelRequest);
 // WFH
 router.get("/wfh", getWfhRequests);
 router.post("/wfh", createWfhRequest);
+router.put("/wfh/bulk", bulkUpdateWfhStatus);
 router.put("/wfh/:id", updateWfhRequest);
 router.delete("/wfh/:id", deleteWfhRequest);
 

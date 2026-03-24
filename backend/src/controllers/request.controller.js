@@ -29,7 +29,7 @@ export const getLeaveRequests = async (req, res) => {
       params.push(status);
     }
     query += ` ORDER BY lr.created_at DESC`;
-    
+
     const result = await db.query(query, params);
     return res.json(result.rows);
   } catch (error) {
@@ -467,12 +467,20 @@ export const deleteTravelRequest = async (req, res) => {
 // WFH Requests
 export const getWfhRequests = async (req, res) => {
   try {
-    const result = await db.query(`
+    const { status } = req.query;
+    let query = `
       SELECT w.*, e.full_name as employee_name 
       FROM wfh_requests w
       LEFT JOIN employees e ON w.employee_id = e.id
-      ORDER BY w.created_at DESC
-    `);
+    `;
+    const params = [];
+    if (status) {
+      query += ` WHERE w.status = $1`;
+      params.push(status);
+    }
+    query += ` ORDER BY w.created_at DESC`;
+
+    const result = await db.query(query, params);
     return res.json(result.rows);
   } catch (error) {
     return handleError(res, error, "Error in getWfhRequests");
@@ -517,21 +525,32 @@ export const updateWfhRequest = async (req, res) => {
     number_of_days,
     reason,
     status,
+    remarks,
+    rejectedreason,
   } = req.body;
 
   try {
     const result = await db.query(
       `UPDATE wfh_requests SET 
-        employee_id = $1, start_date = $2, end_date = $3, number_of_days = $4, 
-        reason = $5, status = $6, updated_at = CURRENT_TIMESTAMP
-      WHERE id = $7 RETURNING *`,
+        employee_id = COALESCE($1, employee_id), 
+        start_date = COALESCE($2, start_date), 
+        end_date = COALESCE($3, end_date), 
+        number_of_days = COALESCE($4, number_of_days), 
+        reason = COALESCE($5, reason), 
+        status = COALESCE($6, status),
+        remarks = COALESCE($7, remarks),
+        rejectedreason = COALESCE($8, rejectedreason),
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = $9 RETURNING *`,
       [
         employee_id,
-        formatToPostgresDate(start_date),
-        formatToPostgresDate(end_date),
+        start_date ? formatToPostgresDate(start_date) : null,
+        end_date ? formatToPostgresDate(end_date) : null,
         number_of_days,
         reason,
         status,
+        remarks,
+        rejectedreason,
         id,
       ]
     );
@@ -543,6 +562,30 @@ export const updateWfhRequest = async (req, res) => {
     return res.json(result.rows[0]);
   } catch (error) {
     return handleError(res, error, "Error in updateWfhRequest");
+  }
+};
+
+export const bulkUpdateWfhStatus = async (req, res) => {
+  const { ids, status, remarks, rejectedreason } = req.body;
+
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ error: "Invalid or empty IDs list" });
+  }
+
+  try {
+    const result = await db.query(
+      `UPDATE wfh_requests SET 
+        status = $1, 
+        remarks = COALESCE($2, remarks), 
+        rejectedreason = COALESCE($3, rejectedreason),
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ANY($4) RETURNING *`,
+      [status, remarks, rejectedreason, ids]
+    );
+
+    return res.json({ message: "Bulk update successful", count: result.rows.length, data: result.rows });
+  } catch (error) {
+    return handleError(res, error, "Error in bulkUpdateWfhStatus");
   }
 };
 

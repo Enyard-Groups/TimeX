@@ -19,7 +19,7 @@ const API_BASE = "http://localhost:3000/api";
 
 const emptyForm = {
     employee_id: "",
-    enrollment_id: "",
+    company_enrollment_id: "",
     location: "Head Office",
     in_time: null,
     out_time: null,
@@ -64,12 +64,12 @@ const ManualEntryRequest = () => {
         fetchData();
     }, []);
 
-    // Update enrollment_id when employee changes
+    // Update company_enrollment_id when employee changes
     useEffect(() => {
         if (formData.employee_id) {
             const emp = employeeOptions.find(e => e.id === formData.employee_id);
             if (emp) {
-                setFormData(prev => ({ ...prev, enrollment_id: emp.enrollment_id || "N/A" }));
+                setFormData(prev => ({ ...prev, company_enrollment_id: emp.company_enrollment_id || "N/A" }));
             }
         }
     }, [formData.employee_id, employeeOptions]);
@@ -407,6 +407,7 @@ const ManualEntryRequest = () => {
                                 <SearchDropdown
                                     label={<>Employee <span className="text-red-500">*</span></>}
                                     name="employee_id"
+                                    labelName="employee_name"
                                     value={formData.employee_id}
                                     displayValue={formData.employee_name || ""}
                                     options={employeeOptions}
@@ -423,7 +424,7 @@ const ManualEntryRequest = () => {
                             <div>
                                 <label className={labelStyle}>Enrollment ID</label>
                                 <input
-                                    value={formData.enrollment_id}
+                                    value={formData.company_enrollment_id}
                                     readOnly
                                     className="text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-gray-100 px-2 py-1 rounded-md"
                                 />

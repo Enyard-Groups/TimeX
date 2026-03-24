@@ -568,6 +568,7 @@ const LeaveRequest = () => {
                       </>
                     }
                     name="employee_id"
+                    labelName="employee_name"
                     value={formData.employee_id}
                     displayValue={formData.employee_name || ""}
                     options={employeeOptions}
