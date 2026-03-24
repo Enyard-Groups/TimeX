@@ -1,24 +1,17 @@
 import { useState, useRef, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../action";
+import { useSelector } from "react-redux";
 import Sidebar from "./Sidebar";
-import { Link, useNavigate } from "react-router-dom";
 import { IoMdNotificationsOutline } from "react-icons/io";
-import Footer from "./Footer";
 
 export default function Navbar() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const user = useSelector((state) => state.user);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationsDropdownOpen, setNotificationsDropdownOpen] =
     useState(false);
   const [notifications] = useState([]);
 
   const sidebarRef = useRef(null);
-  const dropdownRef = useRef(null);
   const notificationRef = useRef(null);
 
   useEffect(() => {
@@ -29,14 +22,6 @@ export default function Navbar() {
         !sidebarRef.current.contains(event.target)
       ) {
         setSidebarOpen(false);
-      }
-
-      if (
-        dropdownOpen &&
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target)
-      ) {
-        setDropdownOpen(false);
       }
 
       if (
@@ -53,147 +38,64 @@ export default function Navbar() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [sidebarOpen, dropdownOpen, notificationsDropdownOpen]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    dispatch(logout());
-    navigate("/login");
-  };
+  }, [sidebarOpen, notificationsDropdownOpen]);
 
   return (
     <>
-      {/* Navbar */}
-      <nav className="fixed top-0 left-0 w-full z-50 border-b backdrop-blur-xl bg-[oklch(1_0_0)] border-[oklch(0.923_0.003_48.717)]">
-        <div className="h-20 px-6 md:px-14 flex items-center justify-between mx-auto">
-          {/* Left Section */}
-          <div className="flex items-center gap-4">
-            {/* Mobile Toggle */}
-            <button
-              className="p-2 rounded-xl lg:hidden transition-all bg-[oklch(0.97_0.001_106.424)] text-[oklch(0.147_0.004_49.25)]"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
+      <button
+        className="p-2 relative top-4 left-4 rounded-xl lg:hidden transition-all bg-[oklch(0.97_0.001_106.424)] text-[oklch(0.147_0.004_49.25)]"
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+      >
+        {sidebarOpen ? "✕" : "☰"}
+      </button>
+
+      <div ref={notificationRef} className="absolute top-5 right-4">
+        <button
+          onClick={() =>
+            setNotificationsDropdownOpen(!notificationsDropdownOpen)
+          }
+          className="relative md:mr-4 text-2xl text-[oklch(0.147_0.004_49.25)] cursor-pointer"
+        >
+          <IoMdNotificationsOutline />
+
+          {notifications.length > 0 && (
+            <span className="absolute -top-1 -right-1 w-4 h-4 text-[10px] flex items-center justify-center rounded-full bg-[oklch(0.577_0.245_27.325)] text-white">
+              {notifications.length}
+            </span>
+          )}
+        </button>
+
+        {notificationsDropdownOpen && (
+          <div
+            className="absolute right-4 mt-3 w-60 sm:w-88 h-80 rounded-2xl shadow-xl border bg-[oklch(1_0_0)] border-[oklch(0.923_0.003_48.717)] overflow-hidden z-50"
+            style={{ scrollbarWidth: "none" }}
+          >
+            <div className="p-4 border-b border-[oklch(0.923_0.003_48.717)] font-semibold text-[oklch(0.147_0.004_49.25)]">
+              Notifications
+            </div>
+
+            <div
+              className="overflow-y-auto h-[calc(100%-56px)] p-3"
+              style={{ scrollbarWidth: "none" }}
             >
-              {sidebarOpen ? "✕" : "☰"}
-            </button>
-
-            {/* Logo */}
-            <div className="text-2xl font-black tracking-tight text-[oklch(0.147_0.004_49.25)]">
-              <Link to="/dashboard">
-                <img
-                  src="../timexlogo.png"
-                  alt=""
-                  height="100px"
-                  width="100px"
-                />
-              </Link>
-            </div>
-          </div>
-
-          {/* Right Section */}
-          <div className="flex items-center gap-4 relative">
-            {/* Notifications */}
-            <div ref={notificationRef}>
-              <button
-                onClick={() =>
-                  setNotificationsDropdownOpen(!notificationsDropdownOpen)
-                }
-                className="relative md:mr-4 text-2xl text-[oklch(0.147_0.004_49.25)] cursor-pointer"
-              >
-                <IoMdNotificationsOutline />
-
-                {notifications.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 text-[10px] flex items-center justify-center rounded-full bg-[oklch(0.577_0.245_27.325)] text-white">
-                    {notifications.length}
-                  </span>
-                )}
-              </button>
-
-              {notificationsDropdownOpen && (
-                <div
-                  className="absolute right-0 mt-3 w-60 sm:w-88 h-80 rounded-2xl shadow-xl border bg-[oklch(1_0_0)] border-[oklch(0.923_0.003_48.717)] overflow-hidden z-50"
-                  style={{ scrollbarWidth: "none" }}
-                >
-                  <div className="p-4 border-b border-[oklch(0.923_0.003_48.717)] font-semibold text-[oklch(0.147_0.004_49.25)]">
-                    Notifications
-                  </div>
-
+              {notifications.length === 0 ? (
+                <div className="flex items-center justify-center h-full text-md opacity-60 text-[oklch(0.147_0.004_49.25)]">
+                  No Notifications
+                </div>
+              ) : (
+                notifications.map((item, index) => (
                   <div
-                    className="overflow-y-auto h-[calc(100%-56px)] p-3"
-                    style={{ scrollbarWidth: "none" }}
+                    key={index}
+                    className="p-3 mb-2 rounded-xl bg-[oklch(0.97_0.001_106.424)] hover:bg-[oklch(0.923_0.003_48.717)] transition text-md text-[oklch(0.147_0.004_49.25)]"
                   >
-                    {notifications.length === 0 ? (
-                      <div className="flex items-center justify-center h-full text-md opacity-60 text-[oklch(0.147_0.004_49.25)]">
-                        No Notifications
-                      </div>
-                    ) : (
-                      notifications.map((item, index) => (
-                        <div
-                          key={index}
-                          className="p-3 mb-2 rounded-xl bg-[oklch(0.97_0.001_106.424)] hover:bg-[oklch(0.923_0.003_48.717)] transition text-md text-[oklch(0.147_0.004_49.25)]"
-                        >
-                          {item.message}
-                        </div>
-                      ))
-                    )}
+                    {item.message}
                   </div>
-                </div>
-              )}
-            </div>
-
-            {/* User Info */}
-            <div className="hidden sm:block text-[oklch(0.147_0.004_49.25)]">
-              <p className="text-md font-bold">{user?.user_name || "User"}</p>
-              <p className="text-md mt-1 opacity-60">
-                {user?.role?.charAt(0).toUpperCase() +
-                  user?.role?.slice(1).toLowerCase()}
-              </p>
-            </div>
-
-            {/* Avatar */}
-            <div ref={dropdownRef} className="relative">
-              <div
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="w-12 h-12 rounded-full flex items-center justify-center font-black shadow-md cursor-pointer transition-all hover:scale-105 bg-[oklch(0.645_0.246_16.439)] text-white"
-              >
-                {user?.user_name?.charAt(0)?.toUpperCase() || "U"}
-              </div>
-
-              {/* Profile Dropdown */}
-              {dropdownOpen && (
-                <div className="absolute right-0 top-14 w-56 rounded-xl border shadow-xl bg-[oklch(1_0_0)] border-[oklch(0.923_0.003_48.717)]">
-                  <Link to="/my-profile">
-                    <button
-                      onClick={() => setDropdownOpen(false)}
-                      className="w-full text-left px-6 my-2 pt-2 text-md font-semibold text-[oklch(0.147_0.004_49.25)]"
-                    >
-                      My Profile
-                    </button>
-                  </Link>
-
-                  <div className="m-3 px-3 text-[oklch(0.147_0.004_49.25)]">
-                    <p className="text-md font-bold">
-                      {user?.user_name || "User"}
-                    </p>
-                    <p className="text-xs mt-1 opacity-60">
-                      {user?.enrollment_id}
-                    </p>
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      setDropdownOpen(false);
-                      handleLogout();
-                    }}
-                    className="w-full text-left px-6 py-3 text-md font-semibold border-t border-[oklch(0.923_0.003_48.717)] text-[oklch(0.577_0.245_27.325)]"
-                  >
-                    Logout
-                  </button>
-                </div>
+                ))
               )}
             </div>
           </div>
-        </div>
-      </nav>
+        )}
+      </div>
 
       {/* Sidebar */}
       <aside
@@ -206,8 +108,6 @@ export default function Navbar() {
       >
         <Sidebar user={user} />
       </aside>
-
-      <Footer />
     </>
   );
 }
