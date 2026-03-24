@@ -52,28 +52,30 @@ const Sidebar = ({ user }) => {
       </div>
 
       {/* Profile */}
-      <div className="flex justify-center items-start  py-5 ">
-        <div className="text-center">
+      <div className="flex justify-center items-start pb-5">
+        <div className="text-center ">
           <div
             src="/profile.jpg"
             alt="Profile"
-            className="w-20 h-20 rounded-full flex items-center justify-center font-black shadow-md cursor-pointer transition-all hover:scale-105 bg-[oklch(0.645_0.246_16.439)] text-white object-cover mx-auto mb-4 text-3xl"
+            className="w-20 h-20 mt-5 mr-2 rounded-full flex items-center justify-center font-black shadow-md cursor-pointer transition-all hover:scale-105 bg-[oklch(0.645_0.246_16.439)] text-white object-cover mx-auto mb-4 text-3xl"
           >
             {" "}
             {user?.user_name?.charAt(0)?.toUpperCase() || "U"}
           </div>
-          <h3 className="text-lg font-semibold text-gray-800">
-            {user?.user_name}
-          </h3>
-          <p className="text-sm text-gray-500">{user?.enrollment_id}</p>
-          <p className="text-sm text-gray-500">
-            {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
-          </p>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800">
+              {user?.user_name}
+            </h3>
+            <p className="text-sm text-gray-500">{user?.enrollment_id}</p>
+            <p className="text-sm text-gray-500">
+              {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Sidebar Components */}
-      <nav className=" pl-7 pr-2 pb-8 space-y-2">
+      <nav className=" px-3 pb-8 space-y-2">
         {isAdmin ? (
           <div>
             {" "}
@@ -103,9 +105,9 @@ const Sidebar = ({ user }) => {
             </div>
             <button
               onClick={handleLogout}
-              className="w-full cursor-pointer flex flex-row gap-2 my-10 font-bold"
+              className="w-full pl-10 cursor-pointer flex flex-row gap-2 my-10 font-bold"
             >
-              <span className="text-lg mt-1 bg-red-600 rounded-full p-1 text-white">
+              <span className="text-lg mt-1 bg-[oklch(0.645_0.246_16.439)] rounded-full p-1 text-white">
                 <IoIosLogOut />
               </span>
               <span className="mt-1">Logout</span>

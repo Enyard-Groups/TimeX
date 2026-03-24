@@ -13,7 +13,7 @@ const RequestsRoute = ({ user }) => {
   return (
     <div>
       <Navbar user={user} />
-      <div className="lg:ml-50 mt-16 p-6 md:p-10 min-h-screen">
+      <div className="lg:ml-50 mt-6 p-6 md:p-10 min-h-screen">
         <Routes>
           <Route path="mannual-entry-req" element={<ManualEntryRequest/>} />
           <Route path="leave-req" element={<LeaveRequest/>} />

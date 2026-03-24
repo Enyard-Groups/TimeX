@@ -9,7 +9,7 @@ const AttendanceLineChart = ({ attendanceData }) => {
 
     const day = item.date
       ? new Date(item.date).toLocaleDateString("en-IN", {
-          weekday: "long",
+          weekday: "short",
         })
       : "Today";
 
@@ -30,7 +30,7 @@ const AttendanceLineChart = ({ attendanceData }) => {
   const options = {
     chart: {
       type: "area",
-      height: 300,
+      height: 190,
       toolbar: { show: false },
       zoom: { enabled: false },
       background: "transparent",
@@ -42,25 +42,20 @@ const AttendanceLineChart = ({ attendanceData }) => {
     },
 
     grid: {
-      borderColor: "oklch(0.923 0.003 48.717)",
-      strokeDashArray: 4,
+      borderColor: "#f1f5f9",
+      strokeDashArray: 3,
+      padding: {
+        left: 10,
+        right: 10,
+      },
     },
 
     dataLabels: {
       enabled: false,
-      offsetY: -3,
-      style: {
-        fontSize: "10px",
-        colors: ["oklch(0.147 0.004 49.25)"],
-        fontWeight: 600,
-      },
-      background: {
-        enabled: false,
-      },
     },
 
     markers: {
-      size: 4,
+      size: 0,
       strokeWidth: 2,
       strokeColors: "#fff",
       hover: {
@@ -70,27 +65,54 @@ const AttendanceLineChart = ({ attendanceData }) => {
 
     xaxis: {
       categories: formattedData.map((item) => item.day),
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+      labels: {
+        style: {
+          colors: "#94a3b8",
+          fontSize: "11px",
+        },
+      },
+    },
+
+    yaxis: {
+      labels: {
+        style: {
+          colors: "#94a3b8",
+          fontSize: "11px",
+        },
+      },
     },
 
     tooltip: {
       theme: "light",
+      y: {
+        formatter: (val) => `${val} employees`,
+      },
+      style: {
+        fontSize: "12px",
+      },
     },
 
     legend: {
       position: "top",
       horizontalAlign: "right",
+      fontSize: "12px",
+      labels: {
+        colors: "#64748b",
+      },
     },
 
-    colors: ["oklch(0.65 0.246 16.439)"],
+    colors: ["oklch(0.645 0.246 16.439)"],
 
     fill: {
       type: "gradient",
       gradient: {
         shade: "light",
         type: "vertical",
-        gradientToColors: ["oklch(0.85 0.08 95)"],
+        gradientToColors: ["oklch(0.745 0.246 16.439)"],
         stops: [0, 100],
-        opacityFrom: 0.8,
+        opacityFrom: 0.7,
         opacityTo: 0.05,
       },
     },
@@ -106,8 +128,8 @@ const AttendanceLineChart = ({ attendanceData }) => {
   ];
 
   return (
-    <div className="py-6 rounded-2xl">
-      <Chart options={options} series={series} type="area" height={240} />
+    <div className="py-4 bg-white">
+      <Chart options={options} series={series} type="area" height={205} />
     </div>
   );
 };

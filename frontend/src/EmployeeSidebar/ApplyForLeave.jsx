@@ -11,7 +11,7 @@ const ApplyForLeave = ({ user }) => {
       }}
     >
       <Navbar user={user} />
-      <div className="md:ml-64 mt-16 p-6 md:p-10">Apply For Leave</div>
+      <div className="md:ml-64 mt-6 p-6 md:p-10">Apply For Leave</div>
     </div>
   );
 };
