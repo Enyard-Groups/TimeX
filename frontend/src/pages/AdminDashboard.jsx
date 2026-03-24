@@ -16,6 +16,7 @@ const AdminDashboard = ({ user }) => {
       latein: 0,
       earlyin: 0,
     },
+    
   ]);
 
   useEffect(() => {
@@ -41,10 +42,26 @@ const AdminDashboard = ({ user }) => {
 
         setAttendanceData([
           {
-            day: "Today",
-            total,
+            day: "Monday",
+            total:100,
             leave: 0,
-            absent,
+            absent:50,
+            latein: 0,
+            earlyin: 0,
+          },
+          {
+            day: "Tuesday",
+            total:100,
+            leave: 0,
+            absent:30,
+            latein: 0,
+            earlyin: 0,
+          },
+          {
+            day: "Today",
+            total:100,
+            leave: 0,
+            absent:10,
             latein: 0,
             earlyin: 0,
           },

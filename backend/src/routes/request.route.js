@@ -1,11 +1,63 @@
 import express from "express";
+import {
+  getLeaveRequests,
+  createLeaveRequest,
+  updateLeaveRequest,
+  deleteLeaveRequest,
+  bulkUpdateLeaveStatus,
+  getClaimRequests,
+  createClaimRequest,
+  updateClaimRequest,
+  deleteClaimRequest,
+  bulkUpdateClaimStatus,
+  getTravelRequests,
+  createTravelRequest,
+  updateTravelRequest,
+  deleteTravelRequest,
+  bulkUpdateTravelStatus,
+  getWfhRequests,
+  createWfhRequest,
+  updateWfhRequest,
+  deleteWfhRequest,
+  getManualRequests,
+  createManualRequest,
+  updateManualRequest,
+  deleteManualRequest,
+} from "../controllers/request.controller.js";
 
-import { getleaveRequests,createLeaveRequest,getWfhRequests } from "../controllers/request.controller.js";
+const router = express.Router();
 
-const requestRouter=express.Router();
+// Leave
+router.get("/leave", getLeaveRequests);
+router.post("/leave", createLeaveRequest);
+router.put("/leave/bulk", bulkUpdateLeaveStatus);
+router.put("/leave/:id", updateLeaveRequest);
+router.delete("/leave/:id", deleteLeaveRequest);
 
-requestRouter.get("/leave",getleaveRequests);
-requestRouter.post("/leave",createLeaveRequest);
-requestRouter.get("/wfh",getWfhRequests);
+// Claim
+router.get("/claim", getClaimRequests);
+router.post("/claim", createClaimRequest);
+router.put("/claim/bulk", bulkUpdateClaimStatus);
+router.put("/claim/:id", updateClaimRequest);
+router.delete("/claim/:id", deleteClaimRequest);
 
-export default requestRouter;
+// Travel
+router.get("/travel", getTravelRequests);
+router.post("/travel", createTravelRequest);
+router.put("/travel/bulk", bulkUpdateTravelStatus);
+router.put("/travel/:id", updateTravelRequest);
+router.delete("/travel/:id", deleteTravelRequest);
+
+// WFH
+router.get("/wfh", getWfhRequests);
+router.post("/wfh", createWfhRequest);
+router.put("/wfh/:id", updateWfhRequest);
+router.delete("/wfh/:id", deleteWfhRequest);
+
+// Manual Entry
+router.get("/manual", getManualRequests);
+router.post("/manual", createManualRequest);
+router.put("/manual/:id", updateManualRequest);
+router.delete("/manual/:id", deleteManualRequest);
+
+export default router;
