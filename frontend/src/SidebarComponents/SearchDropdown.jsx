@@ -14,6 +14,7 @@ const SearchDropdown = ({
   labelStyle,
   labelKey, // If options are objects, which key is the label
   valueKey, // If options are objects, which key is the value
+  labelName, // The field in formData to store the selected label
 }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -72,7 +73,7 @@ const SearchDropdown = ({
                       ...formData, 
                       [name]: val,
                       // Optionally set a separate field for the label to avoid re-fetching
-                      [`${name}_name`]: lbl 
+                      [labelName || `${name}_name`]: lbl 
                     });
                     setOpen(false);
                     setSearch("");

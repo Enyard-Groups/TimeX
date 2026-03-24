@@ -412,6 +412,7 @@ const ManualEntryRequest = () => {
                                     options={employeeOptions}
                                     labelKey="full_name"
                                     valueKey="id"
+                                    labelName="employee_name"
                                     formData={formData}
                                     setFormData={setFormData}
                                     disabled={mode === "view"}
