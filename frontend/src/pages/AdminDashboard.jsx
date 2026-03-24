@@ -6,6 +6,7 @@ import axios from "axios";
 import RecentActivity from "../components/RecentActivity";
 import EmployeeAttendance from "../components/EmployeeAttendance";
 import AttendanceLineChart from "../components/AttendanceLineChart";
+import PendingRequest from "../components/PendingRequest";
 
 const AdminDashboard = ({ user }) => {
   const [attendanceData, setAttendanceData] = useState([]);
@@ -99,65 +100,61 @@ const AdminDashboard = ({ user }) => {
       <div className="mb-10 font-bold">
         <h2 className="text-2xl tracking-tight">
           Welcome back,{" "}
-          <span className="bg-clip-text text-transparent bg-gradient-to-b from-red-600 to-yellow-500">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[oklch(0.6_0.246_16.439)] to-[oklch(0.7_0.146_16.439)]">
             {user?.user_name || "User"}
           </span>
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mt-6 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 items-start">
+        {/* Line Chart */}
         <div
-          className="col-span-1 lg:col-span-2 bg-white rounded shadow-md p-4 sm:p-6 sm:overflow-hidden   border border-gray-200"
-          style={{ scrollbarWidth: "none" }}
-        >
-          <EmployeeAttendance attendanceData={attendanceData} />
-          <p className="mt-4 text-center text-md font-bold bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent">
-            Today's Overview
-          </p>
-        </div>
-
-        <div
-          className="col-span-1 lg:col-span-3 bg-white rounded shadow-md p-4 sm:p-6 overflow-x-auto  border border-gray-200"
+          className="md:col-span-2 bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200"
           style={{ scrollbarWidth: "none" }}
         >
           <AttendanceLineChart attendanceData={attendanceData} />
-          <p className="mt-4 text-center text-md font-bold bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent">
-            Weekly Presentences Report{" "}
-          </p>
+        </div>
+
+        {/* Today Attendance */}
+        <div
+          className="bg-white rounded shadow-md p-4 sm:p-6 sm:overflow-hidden   border border-gray-200 h-[270px]"
+          style={{ scrollbarWidth: "none" }}
+        >
+          <EmployeeAttendance attendanceData={attendanceData} />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6 items-start">
-        <div className=" col-span-2 bg-white border border-gray-200 rounded p-6 shadow-lg">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 items-start">
+        {/* Recent Actvity */}
+        <div
+          className=" bg-white rounded shadow-md p-4 overflow-x-auto  border border-gray-200"
+          style={{ scrollbarWidth: "none" }}
+        >
+          <RecentActivity />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
+          <div
+            className="text-center bg-white rounded shadow-md p-4 overflow-x-auto sm:overflow-hidden  border border-gray-200 h-[245px]"
+            style={{ scrollbarWidth: "none" }}
+          >
+            <PendingRequest />
+          </div>
+
+          <div
+            className="text-center bg-white rounded shadow-md p-4 overflow-x-auto sm:overflow-hidden  border border-gray-200 h-[245px]"
+            style={{ scrollbarWidth: "none" }}
+          >
+            <DonutChart attendanceData={attendanceData} />
+          </div>
+        </div>
+
+        {/* <div className=" col-span-2 bg-white border border-gray-200 rounded p-6 shadow-lg">
           <GeoLocationMap />
           <p className="mt-4 text-center text-md font-bold bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent">
             Geographical Distribution
           </p>
-        </div>
-
-        <div
-          className="col-span-1 text-center bg-white rounded shadow-md p-4 sm:p-6 overflow-x-auto sm:overflow-hidden  border border-gray-200"
-          style={{ scrollbarWidth: "none" }}
-        >
-          <DonutChart attendanceData={attendanceData} />
-          <p className="mt-4 text-center text-md font-bold bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent">
-            Early Vs Late In
-          </p>
-        </div>
-      </div>
-
-      <div
-        className="mt-6
-      rounded
-      p-6
-      shadow-md
-       border border-gray-200
-    "
-      >
-        <p className="mb-4 text-center text-md font-bold bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent">
-          Recent Activity
-        </p>
-        <RecentActivity />
+        </div> */}
       </div>
     </>
   );

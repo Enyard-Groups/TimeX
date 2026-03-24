@@ -120,7 +120,7 @@ const MannualEntryApproval = () => {
   const selectedItem = requests.find((item) => item.id === selectedId);
 
   return (
-    <div className="mb-16">
+    <div className="mb-6">
       <div className="flex items-center gap-2 text-lg font-semibold">
         <FaAngleRight />
         Requests
