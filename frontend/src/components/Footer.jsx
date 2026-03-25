@@ -5,7 +5,7 @@ const Footer = () => {
 
   return (
     <div
-      className="fixed w-full pt-3 z-10 bottom-0 h-12 border-t "
+      className=" w-full pt-3 z-10 h-12 border-t "
       style={{
         backgroundColor: "oklch(1 0 0)",
         borderColor: "oklch(0.823 0.003 48.717)",

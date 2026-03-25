@@ -1,5 +1,5 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -15,6 +15,23 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import SpinnerDatePicker from "../SpinnerDatePicker";
 import SearchDropdown from "../SearchDropdown";
 
+const API_BASE = "http://localhost:3000/api";
+
+const emptyForm = {
+  employee_id: "",
+  leave_type: "",
+  start_date: "",
+  end_date: "",
+  resume_date: "",
+  number_of_days: "",
+  pendingDays: "",
+  leaveBalance: "",
+  contact_number: "",
+  email: "",
+  reason: "",
+  is_half_day: false,
+};
+
 const LeaveRequest = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
@@ -22,63 +39,18 @@ const LeaveRequest = () => {
   const [fromDateSpinner, setFromDateSpinner] = useState(false);
   const [toDateSpinner, setToDateSpinner] = useState(false);
   const [showResumeSpinner, setShowResumeSpinner] = useState(false);
-  const [leave, setLeave] = useState(() => {
-    const stored = localStorage.getItem("leaveRequests");
+  const [leave, setLeave] = useState([]);
+  const [employeeOptions, setEmployeeOptions] = useState([]);
+  const [leaveTypeOptions, setLeaveTypeOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-    if (stored) {
-      return JSON.parse(stored).map((item) => ({
-        ...item,
-        createdDate: new Date(item.createdDate),
-      }));
-    }
-
-    return [
-      {
-        id: 1,
-        employee: "Employee 1",
-        leaveType: "Sick Leave",
-        fromDate: "23/01/2026",
-        toDate: "24/01/2026",
-        resumeOn: "25/01/2026",
-        reason: "Fever",
-        numberOfDays: "2",
-        pendingDays: "0",
-        leaveBalance: "10",
-        contact: "1234567890",
-        email: "employee@gmail.com",
-        createdDate: new Date(),
-        fa: "",
-        faname: "",
-        sa: "",
-        saname: "",
-        rejectedreason: "",
-        status: "Pending",
-      },
-    ];
-  });
-
-  useEffect(() => {
-    localStorage.setItem("leaveRequests", JSON.stringify(leave));
-  }, [leave]);
+  // useEffect for localStorage removed as we use backend
 
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
-  const [formData, setFormData] = useState({
-    employee: "",
-    leaveType: "",
-    fromDate: "",
-    toDate: "",
-    resumeOn: "",
-    numberOfDays: "",
-    pendingDays: "",
-    leaveBalance: "",
-    contact: "",
-    email: "",
-    reason: "",
-    isHalfDay: false,
-  });
+  const [formData, setFormData] = useState(emptyForm);
 
   const parseDate = (dateStr) => {
     if (!dateStr) return null;
@@ -93,7 +65,7 @@ const LeaveRequest = () => {
     "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const filteredLeave = leave.filter((x) =>
-    x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()),
+    (x.employee_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -117,54 +89,76 @@ const LeaveRequest = () => {
   };
 
   useEffect(() => {
-    const from = parseDate(formData.fromDate);
-    const to = parseDate(formData.toDate);
+    const from = parseDate(formData.start_date);
+    const to = parseDate(formData.end_date);
 
     if (from && to && to >= from) {
       const diffTime = to.getTime() - from.getTime();
       let days = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
       // ✅ Handle Half Day
-      if (formData.isHalfDay) {
+      if (formData.is_half_day) {
         days = 0.5;
       }
 
       setFormData((prev) => ({
         ...prev,
-        numberOfDays: days.toString(),
+        number_of_days: days.toString(),
       }));
     } else {
       setFormData((prev) => ({
         ...prev,
-        numberOfDays: "",
+        number_of_days: "",
       }));
     }
-  }, [formData.fromDate, formData.toDate, formData.isHalfDay]);
+  }, [formData.start_date, formData.end_date, formData.is_half_day]);
+
+  // Fetch data
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [leaveRes, empRes, typeRes] = await Promise.all([
+        axios.get(`${API_BASE}/requests/leave`),
+        axios.get(`${API_BASE}/employee`),
+        axios.get(`${API_BASE}/master/leave-types`),
+      ]);
+      setLeave(leaveRes.data);
+      setEmployeeOptions(empRes.data);
+      setLeaveTypeOptions(typeRes.data);
+    } catch (error) {
+      console.error("Failed to fetch data", error);
+      toast.error("Failed to load data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   // Handle Submit
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const {
-      employee,
-      leaveType,
-      fromDate,
-      toDate,
-      resumeOn,
+      employee_id,
+      leave_type,
+      start_date,
+      end_date,
+      resume_date,
       reason,
-      contact,
+      contact_number,
       email,
-      isHalfDay,
-      numberOfDays,
-      pendingDays,
-      leaveBalance,
+      is_half_day,
+      number_of_days,
     } = formData;
 
     if (
-      !employee ||
-      !leaveType ||
-      !fromDate ||
-      !toDate ||
-      !resumeOn ||
-      !contact ||
+      !employee_id ||
+      !leave_type ||
+      !start_date ||
+      !end_date ||
+      !resume_date ||
+      !contact_number ||
       !email
     ) {
       toast.error("Please fill required fields");
@@ -174,9 +168,9 @@ const LeaveRequest = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const from = parseDate(fromDate);
-    const to = parseDate(toDate);
-    const resume = parseDate(resumeOn);
+    const from = parseDate(start_date);
+    const to = parseDate(end_date);
+    const resume = parseDate(resume_date);
 
     if (from < today) {
       toast.error("First Date cannot be in the past");
@@ -192,85 +186,36 @@ const LeaveRequest = () => {
       return;
     }
 
-    const stored = JSON.parse(localStorage.getItem("leaveRequests")) || [];
+    try {
+      if (editId) {
+        const res = await axios.put(`${API_BASE}/requests/leave/${editId}`, formData);
+        setLeave((prev) =>
+          prev.map((item) => (item.id === editId ? { ...item, ...res.data, employee_name: employeeOptions.find(e => e.id === employee_id)?.full_name } : item))
+        );
+        toast.success("Updated Successfully");
+      } else {
+        const res = await axios.post(`${API_BASE}/requests/leave`, formData);
+        setLeave((prev) => [{ ...res.data, employee_name: employeeOptions.find(e => e.id === employee_id)?.full_name }, ...prev]);
+        toast.success("Submitted Successfully");
+      }
 
-    const newLeave = {
-      id: editId ? editId : Date.now(),
-      employee,
-      leaveType,
-      fromDate,
-      toDate,
-      resumeOn,
-      reason,
-      contact,
-      numberOfDays,
-      pendingDays,
-      leaveBalance,
-      email,
-      isHalfDay,
-      createdDate: new Date(),
-      fa: "",
-      faname: "",
-      sa: "",
-      saname: "",
-      rejectedreason: "",
-      status: "Pending",
-    };
-
-    if (editId) {
-      const updated = stored.map((item) =>
-        item.id === editId ? { ...item, ...newLeave } : item,
-      );
-
-      localStorage.setItem("leaveRequests", JSON.stringify(updated));
-
-      setLeave(updated);
-
-      toast.success(" Updated");
-    } else {
-      const updated = [...stored, newLeave];
-
-      localStorage.setItem("leaveRequests", JSON.stringify(updated));
-
-      setLeave(updated);
-
-      toast.success(" Submitted");
+      setOpenModal(false);
+      setEditId(null);
+      setFormData(emptyForm);
+    } catch (error) {
+      toast.error(error?.response?.data?.error || "Operation failed");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData({
-      employee: "",
-      leaveType: "",
-      fromDate: "",
-      toDate: "",
-      resumeOn: "",
-      numberOfDays: "",
-      pendingDays: "",
-      leaveBalance: "",
-      contact: "",
-      email: "",
-      reason: "",
-      isHalfDay: false,
-    });
   };
 
   // Handle delete
-  const handleDelete = (id) => {
-    const stored = JSON.parse(localStorage.getItem("leaveRequests")) || [];
-
-    const updated = stored.filter((v) => v.id !== id);
-
-    localStorage.setItem("leaveRequests", JSON.stringify(updated));
-
-    setLeave(
-      updated.map((item) => ({
-        ...item,
-      })),
-    );
-
-    toast.success("Deleted Successfully");
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_BASE}/requests/leave/${id}`);
+      setLeave((prev) => prev.filter((v) => v.id !== id));
+      toast.success("Deleted Successfully");
+    } catch (error) {
+      toast.error(error?.response?.data?.error || "Delete failed");
+    }
   };
 
   const handleCopy = () => {
@@ -287,13 +232,13 @@ const LeaveRequest = () => {
     const rows = filteredLeave
       .map((item) => {
         return [
-          item.employee,
-          item.leaveType,
-          item.fromDate,
-          item.toDate,
-          item.resumeOn,
+          item.employee_name,
+          item.leave_type,
+          item.start_date,
+          item.end_date,
+          item.resume_date,
           item.reason || "NIL",
-          new Date(item.createdDate).toLocaleDateString(),
+          new Date(item.created_at).toLocaleDateString(),
         ].join("\t");
       })
       .join("\n");
@@ -306,13 +251,13 @@ const LeaveRequest = () => {
 
   const handleExcel = () => {
     const excelData = filteredLeave.map((item) => ({
-      Employee: item.employee,
-      LeaveType: item.leaveType,
-      FromDate: item.fromDate,
-      ToDate: item.toDate,
-      ResumeOn: item.resumeOn,
+      Employee: item.employee_name,
+      LeaveType: item.leave_type,
+      FromDate: item.start_date,
+      ToDate: item.end_date,
+      ResumeOn: item.resume_date,
       Reason: item.reason || "NIL",
-      CreatedDate: new Date(item.createdDate).toLocaleDateString(),
+      CreatedDate: new Date(item.created_at).toLocaleDateString(),
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -340,13 +285,13 @@ const LeaveRequest = () => {
 
     filteredLeave.forEach((item) => {
       const row = [
-        item.employee,
-        item.leaveType,
-        item.fromDate,
-        item.toDate,
-        item.resumeOn,
+        item.employee_name,
+        item.leave_type,
+        item.start_date,
+        item.end_date,
+        item.resume_date,
         item.reason || "NIL",
-        new Date(item.createdDate).toLocaleDateString(),
+        new Date(item.created_at).toLocaleDateString(),
       ];
 
       tableRows.push(row);
@@ -378,20 +323,7 @@ const LeaveRequest = () => {
               onClick={() => (
                 setMode(""),
                 setEditId(null),
-                setFormData({
-                  employee: "",
-                  leaveType: "",
-                  fromDate: "",
-                  toDate: "",
-                  resumeOn: "",
-                  numberOfDays: "",
-                  pendingDays: "",
-                  leaveBalance: "",
-                  contact: "",
-                  email: "",
-                  reason: "",
-                  isHalfDay: false,
-                }),
+                setFormData(emptyForm),
                 setOpenModal(true)
               )}
               className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md"
@@ -496,28 +428,28 @@ const LeaveRequest = () => {
                       key={item.id}
                       className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                     >
-                      <td className="p-2">{item.employee}</td>
+                      <td className="p-2">{item.employee_name}</td>
 
                       <td className="p-2 hidden sm:table-cell whitespace-nowraps">
-                        {item.leaveType}
+                        {item.leave_type}
                       </td>
 
                       <td className="p-2 hidden lg:table-cell whitespace-nowrap">
-                        {item.fromDate}
+                        {item.start_date}
                       </td>
 
                       <td className="p-2 hidden lg:table-cell whitespace-nowrap">
-                        {item.toDate}
+                        {item.end_date}
                       </td>
 
                       <td className="p-2 hidden sm:table-cell whitespace-nowrap">
-                        {item.resumeOn}
+                        {item.resume_date}
                       </td>
 
                       <td className="p-2 hidden md:table-cell whitespace-nowrap">
                         {item.reason
-                          ? `${item.leaveType} - ${item.reason}`
-                          : `${item.leaveType} - NIL`}
+                          ? `${item.leave_type} - ${item.reason}`
+                          : `${item.leave_type} - NIL`}
                       </td>
 
                       {/* Actions */}
@@ -635,15 +567,12 @@ const LeaveRequest = () => {
                         Employee <span className="text-red-500">*</span>
                       </>
                     }
-                    name="employee"
-                    value={formData.employee}
-                    options={[
-                      "Employee 1",
-                      "Employee 2",
-                      "Employee 3",
-                      "Employee 4",
-                      "Employee 5",
-                    ]}
+                    name="employee_id"
+                    value={formData.employee_id}
+                    displayValue={formData.employee_name || ""}
+                    options={employeeOptions}
+                    labelKey="full_name"
+                    valueKey="id"
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
@@ -660,9 +589,11 @@ const LeaveRequest = () => {
                         Leave Type <span className="text-red-500">*</span>
                       </>
                     }
-                    name="leaveType"
-                    value={formData.leaveType}
-                    options={["Sick Leave", "Casual leave", "Annual leave "]}
+                    name="leave_type"
+                    value={formData.leave_type}
+                    options={leaveTypeOptions}
+                    labelKey="name"
+                    valueKey="name"
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
@@ -679,8 +610,8 @@ const LeaveRequest = () => {
                   </label>
 
                   <input
-                    name="fromDate"
-                    value={formData.fromDate}
+                    name="start_date"
+                    value={formData.start_date}
                     onChange={handleChange}
                     onClick={() => setFromDateSpinner(true)}
                     disabled={mode === "view"}
@@ -690,9 +621,9 @@ const LeaveRequest = () => {
 
                   {fromDateSpinner && (
                     <SpinnerDatePicker
-                      value={formData.fromDate}
+                      value={formData.start_date}
                       onChange={(date) =>
-                        setFormData({ ...formData, fromDate: date })
+                        setFormData({ ...formData, start_date: date })
                       }
                       onClose={() => setFromDateSpinner(false)}
                     />
@@ -707,8 +638,8 @@ const LeaveRequest = () => {
                   </label>
 
                   <input
-                    name="toDate"
-                    value={formData.toDate}
+                    name="end_date"
+                    value={formData.end_date}
                     onChange={handleChange}
                     onClick={() => setToDateSpinner(true)}
                     disabled={mode === "view"}
@@ -718,9 +649,9 @@ const LeaveRequest = () => {
 
                   {toDateSpinner && (
                     <SpinnerDatePicker
-                      value={formData.toDate}
+                      value={formData.end_date}
                       onChange={(date) =>
-                        setFormData({ ...formData, toDate: date })
+                        setFormData({ ...formData, end_date: date })
                       }
                       onClose={() => setToDateSpinner(false)}
                     />
@@ -732,8 +663,8 @@ const LeaveRequest = () => {
                   <label className={labelStyle}>Resume Duty On</label>
 
                   <input
-                    name="resumeOn"
-                    value={formData.resumeOn}
+                    name="resume_date"
+                    value={formData.resume_date}
                     onChange={handleChange}
                     onClick={() => setShowResumeSpinner(true)}
                     disabled={mode === "view"}
@@ -743,9 +674,9 @@ const LeaveRequest = () => {
 
                   {showResumeSpinner && (
                     <SpinnerDatePicker
-                      value={formData.resumeOn}
+                      value={formData.resume_date}
                       onChange={(date) =>
-                        setFormData({ ...formData, resumeOn: date })
+                        setFormData({ ...formData, resume_date: date })
                       }
                       onClose={() => setShowResumeSpinner(false)}
                     />
@@ -759,8 +690,8 @@ const LeaveRequest = () => {
                   </label>
 
                   <input
-                    name="numberOfDays"
-                    value={formData.numberOfDays}
+                    name="number_of_days"
+                    value={formData.number_of_days}
                     className={inputStyle}
                     placeholder="Number of Days"
                     disabled
@@ -802,8 +733,8 @@ const LeaveRequest = () => {
                   </label>
 
                   <input
-                    name="contact"
-                    value={formData.contact}
+                    name="contact_number"
+                    value={formData.contact_number}
                     onChange={handleChange}
                     className={inputStyle}
                     placeholder="Contact"
@@ -846,8 +777,8 @@ const LeaveRequest = () => {
                   <label className={labelStyle}>Is HalfDay</label>
                   <input
                     type="checkbox"
-                    name="isHalfDay"
-                    checked={formData.isHalfDay}
+                    name="is_half_day"
+                    checked={formData.is_half_day}
                     onChange={handleChange}
                     disabled={mode === "view"}
                   />
