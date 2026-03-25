@@ -229,7 +229,7 @@ const WfhRequest = () => {
     const labelStyle = "text-lg font-medium mb-1 block";
 
     return (
-        <div className="mb-16">
+        <div className="mb-6">
             <div className="flex items-center justify-between">
                 <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
                     <FaAngleRight />
@@ -437,6 +437,7 @@ const WfhRequest = () => {
                                     options={employeeOptions}
                                     labelKey="full_name"
                                     valueKey="id"
+                                    labelName="employee_name"
                                     formData={formData}
                                     setFormData={setFormData}
                                     disabled={mode === "view"}

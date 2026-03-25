@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { MdOutlineStorage } from "react-icons/md";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 const Reports = ({ user }) => {
@@ -22,24 +21,24 @@ const Reports = ({ user }) => {
           {/* Reports Main Button */}
           <div
             onClick={() => setOpenReports(!openReports)}
-            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+            className={`flex flex-col items-center justify-center cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
               isreportsActive ? activeClass : ""
             }`}
           >
             <div className="flex items-center gap-2 font-medium text-lg">
-              <MdOutlineStorage />
               <span>Reports</span>
+
+              {/* {openReports ? (
+                <MdKeyboardArrowUp className="text-xl" />
+              ) : (
+                <MdKeyboardArrowDown className="text-xl" />
+              )} */}
             </div>
-            {openReports ? (
-              <MdKeyboardArrowUp className="text-xl" />
-            ) : (
-              <MdKeyboardArrowDown className="text-xl" />
-            )}
           </div>
 
           {/* Sub Menu */}
           {openReports && (
-            <div className="ml-6 mt-2 flex flex-col gap-2 text-lg space-y-2">
+            <div className="mt-2 flex flex-col items-center text-center gap-2 text-lg space-y-2">
               <NavLink
                 to="/reports/employee-report"
                 className={({ isActive }) =>
@@ -51,7 +50,7 @@ const Reports = ({ user }) => {
                 Employee Report
               </NavLink>
 
-              <div>
+              <div className="flex flex-col items-center justify-center cursor-pointer">
                 <div
                   onClick={() => setOpenMannualReports(!openMannualReports)}
                   className="flex justify-between items-center cursor-pointer hover:text-[oklch(0.645_0.246_16.439)]"
@@ -113,7 +112,7 @@ const Reports = ({ user }) => {
                 All Transaction Report
               </NavLink>
 
-              <div>
+              <div className="flex flex-col items-center justify-center cursor-pointer">
                 <div
                   onClick={() =>
                     setOpenAttendanceReports(!openAttendanceReports)
@@ -172,7 +171,6 @@ const Reports = ({ user }) => {
                     >
                       Attendance Summary Location
                     </NavLink>
-
                   </div>
                 )}
               </div>
@@ -188,7 +186,7 @@ const Reports = ({ user }) => {
                 Exception Reports
               </NavLink>
 
-              <div>
+              <div className="flex flex-col items-center justify-center cursor-pointer">
                 <div
                   onClick={() => setOpenAbsenceReports(!openAbsenceReports)}
                   className="flex justify-between items-center cursor-pointer hover:text-[oklch(0.645_0.246_16.439)]"
@@ -239,7 +237,7 @@ const Reports = ({ user }) => {
                 In out Report
               </NavLink>
 
-              <div>
+              <div className="flex flex-col items-center justify-center cursor-pointer">
                 <div
                   onClick={() => setOpenEarlyLateReports(!openEarlyLateReports)}
                   className="flex justify-between items-center cursor-pointer hover:text-[oklch(0.645_0.246_16.439)]"
@@ -268,7 +266,7 @@ const Reports = ({ user }) => {
                 )}
               </div>
 
-              <div>
+              <div className="flex flex-col items-center justify-center cursor-pointer">
                 <div
                   onClick={() => setOpenLeave(!openLeave)}
                   className="flex justify-between items-center cursor-pointer hover:text-[oklch(0.645_0.246_16.439)]"
@@ -315,7 +313,6 @@ const Reports = ({ user }) => {
                 WFH Report
               </NavLink>
 
-            
               <NavLink
                 to="/reports/claims-report"
                 className={({ isActive }) =>

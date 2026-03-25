@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FaAngleRight, FaEye } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import * as XLSX from "xlsx";
@@ -8,42 +9,36 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel, FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
 
+const API_BASE = "http://localhost:3000/api";
+
 const LeaveSummary = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [leaveData, setLeaveData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Mock data for leave summary
-  const [leaveData] = useState([
-    {
-      id: 1,
-      idNo: "1001",
-      employee: "Employee 1",
-      leaveType: "Sick Leave",
-      fromDate: "01/01/2024",
-      toDate: "02/01/2024",
-      days: 2,
-      appliedOn: "30/12/2023",
-      status: "Approved",
-    },
-    {
-      id: 2,
-      idNo: "1002",
-      employee: "Employee 2",
-      leaveType: "Annual Leave",
-      fromDate: "10/01/2024",
-      toDate: "15/01/2024",
-      days: 6,
-      appliedOn: "05/01/2024",
-      status: "Pending",
-    },
-    // Add more mock data as needed
-  ]);
+  const fetchLeaves = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`${API_BASE}/requests/leave`);
+      setLeaveData(res.data);
+    } catch (error) {
+      console.error("Failed to fetch leaves", error);
+      toast.error("Failed to load leave summary");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLeaves();
+  }, []);
 
   const filteredData = leaveData.filter(
     (item) =>
-      item.employee.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.idNo.toLowerCase().includes(searchTerm.toLowerCase())
+      (item.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.idNo || "").toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -55,7 +50,16 @@ const LeaveSummary = () => {
     const header = ["ID No", "Employee", "Leave Type", "From Date", "To Date", "Days", "Applied On", "Status"].join("\t");
     const rows = filteredData
       .map((item) =>
-        [item.idNo, item.employee, item.leaveType, item.fromDate, item.toDate, item.days, item.appliedOn, item.status].join("\t")
+        [
+          item.idNo,
+          item.employee_name,
+          item.leave_type,
+          item.start_date,
+          item.end_date,
+          item.number_of_days,
+          new Date(item.created_at).toLocaleDateString(),
+          item.status,
+        ].join("\t")
       )
       .join("\n");
     navigator.clipboard.writeText(`${header}\n${rows}`);
@@ -63,7 +67,17 @@ const LeaveSummary = () => {
   };
 
   const handleExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(filteredData);
+    const excelData = filteredData.map((item) => ({
+      "ID No": item.idNo,
+      Employee: item.employee_name,
+      "Leave Type": item.leave_type,
+      "From Date": item.start_date,
+      "To Date": item.end_date,
+      Days: item.number_of_days,
+      "Applied On": new Date(item.created_at).toLocaleDateString(),
+      Status: item.status,
+    }));
+    const ws = XLSX.utils.json_to_sheet(excelData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Leave Summary");
     XLSX.writeFile(wb, "Leave_Summary.xlsx");
@@ -76,12 +90,12 @@ const LeaveSummary = () => {
       head: [["ID No", "Employee", "Leave Type", "From Date", "To Date", "Days", "Applied On", "Status"]],
       body: filteredData.map((item) => [
         item.idNo,
-        item.employee,
-        item.leaveType,
-        item.fromDate,
-        item.toDate,
-        item.days,
-        item.appliedOn,
+        item.employee_name,
+        item.leave_type,
+        item.start_date,
+        item.end_date,
+        item.number_of_days,
+        new Date(item.created_at).toLocaleDateString(),
         item.status,
       ]),
     });
@@ -90,7 +104,7 @@ const LeaveSummary = () => {
   };
 
   return (
-    <div className="mb-16">
+    <div className="mb-6">
       <div className="flex items-center justify-between">
         <h1 className="flex items-center gap-2 text-lg font-semibold">
           <FaAngleRight />
@@ -159,7 +173,13 @@ const LeaveSummary = () => {
               </tr>
             </thead>
             <tbody>
-              {currentData.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan="9" className="text-center p-10">
+                    Loading...
+                  </td>
+                </tr>
+              ) : currentData.length === 0 ? (
                 <tr>
                   <td colSpan="9" className="text-center p-10">
                     No Data Available
@@ -172,12 +192,12 @@ const LeaveSummary = () => {
                     className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                   >
                     <td className="py-2 px-6">{item.idNo}</td>
-                    <td className="py-2 px-6 font-medium">{item.employee}</td>
-                    <td className="py-2 px-6">{item.leaveType}</td>
-                    <td className="py-2 px-6">{item.fromDate}</td>
-                    <td className="py-2 px-6">{item.toDate}</td>
-                    <td className="py-2 px-6">{item.days}</td>
-                    <td className="py-2 px-6">{item.appliedOn}</td>
+                    <td className="py-2 px-6 font-medium">{item.employee_name}</td>
+                    <td className="py-2 px-6">{item.leave_type}</td>
+                    <td className="py-2 px-6">{item.start_date}</td>
+                    <td className="py-2 px-6">{item.end_date}</td>
+                    <td className="py-2 px-6">{item.number_of_days}</td>
+                    <td className="py-2 px-6">{new Date(item.created_at).toLocaleDateString()}</td>
                     <td className="py-2 px-6">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${

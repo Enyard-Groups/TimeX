@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { IoMdLocate } from "react-icons/io";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 const Geofencing = ({ user }) => {
@@ -17,24 +16,23 @@ const Geofencing = ({ user }) => {
           {/* Geofencing Main Button */}
           <div
             onClick={() => setOpenGeofencing(!openGeofencing)}
-            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+            className={`flex flex-col items-center justify-center cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
               isgeofencingActive ? activeClass : ""
             }`}
           >
             <div className="flex items-center gap-2 font-medium text-lg">
-              <IoMdLocate />
               <span>Geofencing</span>
+              {/* {openGeofencing ? (
+                <MdKeyboardArrowUp className="text-xl" />
+              ) : (
+                <MdKeyboardArrowDown className="text-xl" />
+              )} */}
             </div>
-            {openGeofencing ? (
-              <MdKeyboardArrowUp className="text-xl" />
-            ) : (
-              <MdKeyboardArrowDown className="text-xl" />
-            )}
           </div>
 
           {/* Sub Menu */}
           {openGeofencing && (
-            <div className="ml-6 mt-2 flex flex-col gap-2 text-lg space-y-2">
+            <div className="mt-2 flex flex-col items-center text-center gap-2 text-lg space-y-2">
               <NavLink
                 to="/geofencing/geofencing-master"
                 className={({ isActive }) =>

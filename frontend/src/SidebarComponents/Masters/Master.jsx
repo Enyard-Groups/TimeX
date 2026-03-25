@@ -18,24 +18,34 @@ const Master = ({ user }) => {
           {/* Masters Main Button */}
           <div
             onClick={() => setOpenMasters(!openMasters)}
-            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+            className={`flex flex-col items-center justify-center cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
               ismastersActive ? activeClass : ""
             }`}
           >
             <div className="flex items-center gap-2 mt-2 font-medium text-lg">
-              <RiContactsFill />
               <span>Masters</span>
+              {/* {openMasters ? (
+                <MdKeyboardArrowUp className="text-xl" />
+              ) : (
+                <MdKeyboardArrowDown className="text-xl" />
+              )} */}
             </div>
-            {openMasters ? (
-              <MdKeyboardArrowUp className="text-xl" />
-            ) : (
-              <MdKeyboardArrowDown className="text-xl" />
-            )}
           </div>
 
           {/* Sub Menu */}
           {openMasters && (
-            <div className="ml-6 mt-2 flex flex-col gap-2 text-lg space-y-2">
+            <div className="mt-2 flex flex-col items-center text-center gap-2 text-lg space-y-2">
+
+              <NavLink
+                to="/masters/companies"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
+              >
+                Companies
+              </NavLink>
               <NavLink
                 to="/masters/department"
                 className={({ isActive }) =>
@@ -70,7 +80,7 @@ const Master = ({ user }) => {
               </NavLink>
 
               {/* EMPLOYEE DROPDOWN */}
-              <div>
+              <div className="flex flex-col items-center justify-center cursor-pointer">
                 <div
                   onClick={() => setOpenEmployee(!openEmployee)}
                   className="flex justify-between items-center cursor-pointer hover:text-[oklch(0.645_0.246_16.439)]"
@@ -132,7 +142,7 @@ const Master = ({ user }) => {
               </NavLink>
 
               {/* HOLIDAY DROPDOWN */}
-              <div>
+              <div className="flex flex-col items-center justify-center cursor-pointer">
                 <div
                   onClick={() => setOpenHoliday(!openHoliday)}
                   className="flex justify-between items-center cursor-pointer hover:text-[oklch(0.645_0.246_16.439)]"

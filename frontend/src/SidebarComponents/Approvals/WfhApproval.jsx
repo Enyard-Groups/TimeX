@@ -1,10 +1,12 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import toast from "react-hot-toast";
 import { FaAngleRight } from "react-icons/fa6";
 import { GrNext, GrPrevious } from "react-icons/gr";
 import { FaEye } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
+
+const API_BASE = "http://localhost:3000/api";
 
 const WfhApproval = () => {
   const [requests, setRequests] = useState([]);
@@ -15,10 +17,23 @@ const WfhApproval = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("wfhRequests")) || [];
+  const [loading, setLoading] = useState(false);
 
-    setRequests(stored);
+  const fetchRequests = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`${API_BASE}/requests/wfh`);
+      setRequests(res.data);
+    } catch (error) {
+      console.error("Failed to fetch WFH requests", error);
+      toast.error("Failed to load requests");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRequests();
   }, []);
   const inputStyle =
     "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -31,42 +46,24 @@ const WfhApproval = () => {
     JSON.parse(localStorage.getItem("user")).role.slice(1).toLowerCase();
 
   // Single Approve/ Reject
-  const updateStatus = (id, value) => {
-    const updated = requests.map((item) => {
-      if (item.id === id) {
-        if (value === "Approved") {
-          return {
-            ...item,
-            status: "Approved",
-            fa: "✔",
-            sa: "✔",
-            faname: approverName,
-            saname: approverName,
-            rejectedreason: "-",
-          };
-        }
+  const updateStatus = async (id, value) => {
+    try {
+      const item = requests.find((r) => r.id === id);
+      await axios.put(`${API_BASE}/requests/wfh/bulk`, {
+        ids: [id],
+        status: value,
+        rejectedreason: value === "Rejected" ? item.rejectedreason : "-",
+      });
 
-        if (value === "Rejected") {
-          return {
-            ...item,
-            status: "Rejected",
-            fa: "✘",
-            sa: "✘",
-            faname: approverName,
-            saname: approverName,
-            rejectedreason: item.rejectedreason || "",
-          };
-        }
-      }
-
-      return item;
-    });
-
-    setRequests(updated);
-
-    localStorage.setItem("wfhRequests", JSON.stringify(updated));
-
-    toast.success(`Request ${value}`);
+      setRequests((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, status: value } : item
+        )
+      );
+      toast.success(`Request ${value}`);
+    } catch (error) {
+      toast.error("Update failed");
+    }
   };
 
   const handleRejectedReason = (id, text) => {
@@ -87,54 +84,35 @@ const WfhApproval = () => {
   };
 
   // Bulk Approve and Reject
-  const bulkAction = (value) => {
+  const bulkAction = async (value) => {
     if (selectedIds.length === 0) {
       toast.error("Please select Request");
       return;
     }
 
-    const updated = requests.map((item) => {
-      if (selectedIds.includes(item.id)) {
-        if (value === "Approved") {
-          return {
-            ...item,
-            status: "Approved",
-            fa: "✔",
-            sa: "✔",
-            faname: approverName,
-            saname: approverName,
-            rejectedreason: "-",
-          };
-        }
+    try {
+      await axios.put(`${API_BASE}/requests/wfh/bulk`, {
+        ids: selectedIds,
+        status: value,
+        rejectedreason: value === "Rejected" ? "" : "-", // For bulk rejection, we might not have individual reasons yet
+      });
 
-        if (value === "Rejected") {
-          return {
-            ...item,
-            status: "Rejected",
-            fa: "✘",
-            sa: "✘",
-            faname: approverName,
-            saname: approverName,
-            rejectedreason: item.rejectedreason || "",
-          };
-        }
-      }
-
-      return item;
-    });
-
-    setRequests(updated);
-    localStorage.setItem("wfhRequests", JSON.stringify(updated));
-
-    setSelectedIds([]);
-
-    toast.success(`Bulk ${value}`);
+      setRequests((prev) =>
+        prev.map((item) =>
+          selectedIds.includes(item.id) ? { ...item, status: value } : item
+        )
+      );
+      setSelectedIds([]);
+      toast.success(`Bulk ${value}`);
+    } catch (error) {
+      toast.error("Bulk update failed");
+    }
   };
 
   const pending = requests.filter((r) => r.status === "Pending");
 
   const filteredData = pending.filter((x) =>
-    x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()),
+    (x.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -149,7 +127,7 @@ const WfhApproval = () => {
   );
   const selectedItem = requests.find((item) => item.id === selectedId);
   return (
-    <div className="mb-16">
+    <div className="mb-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
@@ -275,14 +253,14 @@ const WfhApproval = () => {
                           onChange={() => handleSelect(item.id)}
                         />
                       </td>
-                      <td className="py-2 px-6">{item.employee}</td>
+                      <td className="py-2 px-6">{item.employee_name}</td>
 
                       <td className="py-2 px-6 hidden md:table-cell ">
-                        {item.fromDate}
+                        {item.start_date}
                       </td>
 
                       <td className="py-2 px-6 hidden md:table-cell ">
-                        {item.toDate}
+                        {item.end_date}
                       </td>
 
                       <td className="py-2 px-6 hidden lg:table-cell  ">
@@ -397,17 +375,17 @@ const WfhApproval = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-lg">
                 <div>
                   <p className={labelStyle}>Employee</p>
-                  <p className={inputStyle}>{selectedItem.employee}</p>
+                  <p className={inputStyle}>{selectedItem.employee_name}</p>
                 </div>
 
                 <div>
                   <p className={labelStyle}>From</p>
-                  <p className={inputStyle}>{selectedItem.fromDate}</p>
+                  <p className={inputStyle}>{selectedItem.start_date}</p>
                 </div>
 
                 <div>
                   <p className={labelStyle}>To</p>
-                  <p className={inputStyle}>{selectedItem.toDate}</p>
+                  <p className={inputStyle}>{selectedItem.end_date}</p>
                 </div>
 
                 <div>

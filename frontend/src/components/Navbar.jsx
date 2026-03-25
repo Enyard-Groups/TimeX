@@ -1,7 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Sidebar from "./Sidebar";
 import { IoMdNotificationsOutline } from "react-icons/io";
+import Footer from "./Footer";
+import { IoIosLogOut } from "react-icons/io";
+import { logout } from "../action";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const user = useSelector((state) => state.user);
@@ -40,16 +44,28 @@ export default function Navbar() {
     };
   }, [sidebarOpen, notificationsDropdownOpen]);
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    dispatch(logout());
+    navigate("/login");
+  };
+
   return (
     <>
       <button
-        className="p-2 relative top-4 left-4 rounded-xl lg:hidden transition-all bg-[oklch(0.97_0.001_106.424)] text-[oklch(0.147_0.004_49.25)]"
+        className="p-2 relative top-0 left-2 rounded-xl lg:hidden transition-all text-[oklch(0.147_0.004_49.25)]"
         onClick={() => setSidebarOpen(!sidebarOpen)}
       >
         {sidebarOpen ? "✕" : "☰"}
       </button>
 
-      <div ref={notificationRef} className="absolute top-5 right-4">
+      <div
+        ref={notificationRef}
+        className="absolute top-5 right-12 md:right-10"
+      >
         <button
           onClick={() =>
             setNotificationsDropdownOpen(!notificationsDropdownOpen)
@@ -97,17 +113,28 @@ export default function Navbar() {
         )}
       </div>
 
+      <div className="absolute top-5 right-4">
+        <button
+          onClick={handleLogout}
+          className="text-[18px] bg-[oklch(0.645_0.246_16.439)] rounded-full text-white p-1 cursor-pointer"
+        >
+          <IoIosLogOut />
+        </button>
+      </div>
+
       {/* Sidebar */}
       <aside
         ref={sidebarRef}
         className={`fixed top-0 left-0 h-full transition-transform duration-300 ${
           sidebarOpen
-            ? "translate-x-0 w-56 backdrop-blur-xl"
+            ? "translate-x-0 w-60 backdrop-blur-xl"
             : "-translate-x-full "
-        } lg:translate-x-0 lg:w-56 z-40 bg-[oklch(1_0_0)] border-r border-[oklch(0.923_0.003_48.717)]`}
+        } lg:translate-x-0 lg:w-60 z-40 bg-[oklch(1_0_0)]`}
       >
         <Sidebar user={user} />
       </aside>
+
+      <Footer />
     </>
   );
 }

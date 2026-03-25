@@ -19,7 +19,7 @@ export const getLeaveRequests = async (req, res) => {
   try {
     const { status } = req.query;
     let query = `
-      SELECT lr.*, e.full_name as employee_name 
+      SELECT lr.*, e.full_name as employee_name, e.company_enrollment_id as "idNo"
       FROM leave_requests lr
       LEFT JOIN employees e ON lr.employee_id = e.id
     `;
@@ -468,7 +468,7 @@ export const deleteTravelRequest = async (req, res) => {
 export const getWfhRequests = async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT w.*, e.full_name as employee_name 
+      SELECT w.*, e.full_name as employee_name, e.company_enrollment_id as "idNo"
       FROM wfh_requests w
       LEFT JOIN employees e ON w.employee_id = e.id
       ORDER BY w.created_at DESC
@@ -543,6 +543,29 @@ export const updateWfhRequest = async (req, res) => {
     return res.json(result.rows[0]);
   } catch (error) {
     return handleError(res, error, "Error in updateWfhRequest");
+  }
+};
+
+export const bulkUpdateWfhStatus = async (req, res) => {
+  const { ids, status, rejectedreason } = req.body;
+
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ error: "Invalid or empty IDs list" });
+  }
+
+  try {
+    const result = await db.query(
+      `UPDATE wfh_requests SET 
+        status = $1, 
+        rejectedreason = COALESCE($2, rejectedreason),
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ANY($3) RETURNING *`,
+      [status, rejectedreason, ids]
+    );
+
+    return res.json({ message: "Bulk update successful", count: result.rows.length, data: result.rows });
+  } catch (error) {
+    return handleError(res, error, "Error in bulkUpdateWfhStatus");
   }
 };
 

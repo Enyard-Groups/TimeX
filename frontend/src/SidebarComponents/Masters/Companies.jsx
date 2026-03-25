@@ -14,61 +14,20 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../SearchDropdown";
 import { MdDeleteForever } from "react-icons/md";
 
-const Department = () => {
-  const API_BASE = "http://localhost:3000/api";
-
+const Companies = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
-  const [department, setDepartment] = useState([]);
+  const [company, setCompany] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
-    company: "",
     code: "",
     description: "",
     isActive: false,
   });
-
-  const fetchDepartments = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const headers = {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      };
-
-      const res = await axios.get(`${API_BASE}/master/departments`, {
-        headers,
-      });
-
-      const data = Array.isArray(res.data) ? res.data : [];
-
-      setDepartment(
-        data.map((d) => ({
-          id: d.id,
-          name: d.name || "",
-          code: d.code || "",
-          company: d.company || "",
-          description: d.description || "",
-          isActive:
-            d.is_active === true ||
-            d.is_active === "true" ||
-            d.is_active === 1 ||
-            d.isActive === true,
-        })),
-      );
-    } catch (error) {
-      console.error("Failed to fetch departments", error);
-      toast.error("Unable to load departments");
-    }
-  };
-
-  useEffect(() => {
-    fetchDepartments();
-  }, []);
 
   const inputStyle =
     "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-lg py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -76,23 +35,30 @@ const Department = () => {
   const labelStyle =
     "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
-  const filtereddepartment = department.filter(
+  const filteredcompany = company.filter(
     (x) =>
       x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.code.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
+      x.code.toLowerCase().startsWith(searchTerm.toLowerCase())
   );
 
   const endIndex = currentPage * entriesPerPage;
 
   const startIndex = endIndex - entriesPerPage;
 
-  const currentdepartment = filtereddepartment.slice(startIndex, endIndex);
+  const currentcompany = filteredcompany.slice(startIndex, endIndex);
 
   const totalPages = Math.max(
     1,
-    Math.ceil(filtereddepartment.length / entriesPerPage),
+    Math.ceil(filteredcompany.length / entriesPerPage),
   );
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("companies");
+
+    if (storedData) {
+      setCompany(JSON.parse(storedData));
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -103,128 +69,65 @@ const Department = () => {
     }));
   };
 
-  const handleSubmit = async () => {
-    const { name, company, code, description, isActive } = formData;
+  const handleSubmit = () => {
+    const { name, code, description, isActive } = formData;
 
-    if (!name || !company || !code) {
+    if (!name || !code) {
       toast.error("Please fill all required fields");
-      return; // stop execution
+      return;
     }
 
-    const payload = {
-      name,
-      code,
-      company,
-      description,
-      is_active: isActive,
-    };
+    let updatedCompany;
 
-    const token = localStorage.getItem("token");
-    const headers = {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
+    if (editId) {
+      updatedCompany = company.map((emp) =>
+        emp.id === editId ? { ...emp, ...formData } : emp,
+      );
 
-    try {
-      if (editId) {
-        const res = await axios.put(
-          `${API_BASE}/master/departments/${editId}`,
-          payload,
-          { headers },
-        );
+      toast.success("Data updated");
+    } else {
+      const newcompany = {
+        id: Date.now(),
+        name,
+        code,
+        description,
+        isActive,
+      };
 
-        const updated = {
-          id: res.data.id,
-          name: res.data.name || "",
-          code: res.data.code || "",
-          company: res.data.company || "",
-          description: res.data.description || "",
-          isActive:
-            res.data.is_active === true ||
-            res.data.is_active === "true" ||
-            res.data.is_active === 1 ||
-            res.data.isActive === true,
-        };
+      updatedCompany = [...company, newcompany];
 
-        setDepartment((prev) =>
-          prev.map((emp) => (emp.id === editId ? updated : emp)),
-        );
-
-        toast.success("Data updated");
-      } else {
-        const res = await axios.post(`${API_BASE}/master/departments`, payload, {
-          headers,
-        });
-
-        const created = {
-          id: res.data.id,
-          name: res.data.name || "",
-          code: res.data.code || "",
-          company: res.data.company || "",
-          description: res.data.description || "",
-          isActive:
-            res.data.is_active === true ||
-            res.data.is_active === "true" ||
-            res.data.is_active === 1 ||
-            res.data.isActive === true,
-        };
-
-        setDepartment((prev) => [created, ...prev]);
-
-        toast.success("Data Added");
-      }
-
-      setOpenModal(false);
-      setEditId(null);
-
-      setFormData({
-        company: "",
-        name: "",
-        code: "",
-        description: "",
-        isActive: false,
-      });
-    } catch (error) {
-      console.error("Failed to save department", error);
-      toast.error(error.response?.data?.message || "Unable to save department");
+      toast.success("Data Added");
     }
+
+    setCompany(updatedCompany);
+    localStorage.setItem("companies", JSON.stringify(updatedCompany));
+
+    setOpenModal(false);
+    setEditId(null);
+
+    setFormData({
+      name: "",
+      code: "",
+      description: "",
+      isActive: false,
+    });
   };
 
-  const handleDelete = async (id) => {
-    const token = localStorage.getItem("token");
-    const headers = {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
+  const handleDelete = (id) => {
+    const updated = company.filter((v) => v.id !== id);
 
-    try {
-      await axios.delete(`${API_BASE}/master/departments/${id}`, { headers });
-      setDepartment((prev) => prev.filter((v) => v.id !== id));
-      toast.success("Department deleted");
-    } catch (error) {
-      console.error("Failed to delete department", error);
-      toast.error(error.response?.data?.message || "Unable to delete department");
-    }
+    setCompany(updated);
+    localStorage.setItem("companies", JSON.stringify(updated));
   };
 
   const handleCopy = () => {
-    const header = [
-      "SL.NO",
-      "Department Name",
-      "Department Code",
-      "Company",
-      "Active",
-    ].join("\t");
+    const header = ["SL.NO", "Company Name", "Company Code", "Active"].join(
+      "\t",
+    );
 
-    const rows = filtereddepartment
+    const rows = filteredcompany
       .map((item, index) =>
-        [
-          index + 1,
-          item.name,
-          item.code,
-          item.company,
-          item.isActive ? "Y" : "N",
-        ].join("\t"),
+        [index + 1, item.name, item.code, item.isActive ? "Y" : "N"].join("\t"),
       )
       .join("\n");
 
@@ -235,43 +138,30 @@ const Department = () => {
   };
 
   const handleExcel = () => {
-    const excelData = filtereddepartment.map((item, index) => ({
+    const excelData = filteredcompany.map((item, index) => ({
       "SL.NO": index + 1,
-      "Department Name": item.name,
-      "Department Code": item.code,
-      Company: item.company,
+      "Company Name": item.name,
+      "Company Code": item.code,
       Active: item.isActive ? "Y" : "N",
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     const workbook = XLSX.utils.book_new();
 
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Department");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Company");
 
-    XLSX.writeFile(workbook, "DepartmentData.xlsx");
+    XLSX.writeFile(workbook, "CompanyData.xlsx");
   };
 
   const handlePDF = () => {
     const doc = new jsPDF("landscape");
 
-    const tableColumn = [
-      "SL.NO",
-      "Department Name",
-      "Department Code",
-      "Company",
-      "Active",
-    ];
+    const tableColumn = ["SL.NO", "Company Name", "Company Code", "Active"];
 
     const tableRows = [];
 
-    filtereddepartment.forEach((item, index) => {
-      const row = [
-        index + 1,
-        item.name,
-        item.code,
-        item.company,
-        item.isActive ? "Y" : "N",
-      ];
+    filteredcompany.forEach((item, index) => {
+      const row = [index + 1, item.name, item.code, item.isActive ? "Y" : "N"];
 
       tableRows.push(row);
     });
@@ -281,7 +171,7 @@ const Department = () => {
       body: tableRows,
     });
 
-    doc.save("DepartmentData.pdf");
+    doc.save("CompanyData.pdf");
   };
 
   return (
@@ -294,7 +184,7 @@ const Department = () => {
             Masters
             <FaAngleRight />
             <div onClick={() => setOpenModal(false)} className="cursor-pointer">
-              Department
+              Companies
             </div>
           </h1>
           {!openModal && (
@@ -386,13 +276,10 @@ const Department = () => {
                     SL.NO
                   </th>
                   <th className="p-2 font-semibold whitespace-nowrap">
-                    Department Name
+                    Company Name
                   </th>
                   <th className="p-2 font-semibold whitespace-nowrap hidden sm:table-cell">
-                    Department Code
-                  </th>
-                  <th className="p-2 font-semibold hidden md:table-cell">
-                    Company
+                    Company Code
                   </th>
                   <th className="p-2 font-semibold hidden lg:table-cell">
                     Active
@@ -401,14 +288,14 @@ const Department = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentdepartment.length === 0 ? (
+                {currentcompany.length === 0 ? (
                   <tr>
                     <td colSpan="6" className="sm:text-center p-10">
                       No Data Available
                     </td>
                   </tr>
                 ) : (
-                  currentdepartment.map((item, index) => (
+                  currentcompany.map((item, index) => (
                     <tr
                       key={item.id}
                       className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
@@ -416,9 +303,6 @@ const Department = () => {
                       <td className="p-2 hidden sm:table-cell">{index + 1}</td>
                       <td className="p-2">{item.name}</td>
                       <td className="p-2 hidden sm:table-cell">{item.code}</td>
-                      <td className="p-2 hidden md:table-cell">
-                        {item.company}
-                      </td>
                       <td className="p-2 hidden lg:table-cell">
                         {item.isActive ? "Y" : "N"}
                       </td>
@@ -462,9 +346,9 @@ const Department = () => {
           {/* Pagination */}
           <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
             <span>
-              Showing {filtereddepartment.length === 0 ? "0" : startIndex + 1}{" "}
-              to {Math.min(endIndex, filtereddepartment.length)} of{" "}
-              {filtereddepartment.length} entries
+              Showing {filteredcompany.length === 0 ? "0" : startIndex + 1} to{" "}
+              {Math.min(endIndex, filteredcompany.length)} of{" "}
+              {filteredcompany.length} entries
             </span>
 
             <div className="flex flex-row space-x-1">
@@ -525,7 +409,7 @@ const Department = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div>
                   <label className={labelStyle}>
-                    Name
+                    Company Name
                     <span className="text-[oklch(0.577_0.245_27.325)]">
                       {" "}
                       *{" "}
@@ -544,7 +428,7 @@ const Department = () => {
 
                 <div>
                   <label className={labelStyle}>
-                    Code
+                    Company Code
                     <span className="text-[oklch(0.577_0.245_27.325)]">
                       {" "}
                       *{" "}
@@ -558,24 +442,6 @@ const Department = () => {
                     placeholder="Code"
                     className={inputStyle}
                     required
-                  />
-                </div>
-
-                <div>
-                  <SearchDropdown
-                    label={
-                      <>
-                        Company <span className="text-red-500">*</span>
-                      </>
-                    }
-                    name="company"
-                    value={formData.company}
-                    options={["Company 1", "Company 2"]}
-                    formData={formData}
-                    setFormData={setFormData}
-                    disabled={mode === "view"}
-                    inputStyle={inputStyle}
-                    labelStyle={labelStyle}
                   />
                 </div>
 
@@ -623,4 +489,4 @@ const Department = () => {
   );
 };
 
-export default Department;
+export default Companies;

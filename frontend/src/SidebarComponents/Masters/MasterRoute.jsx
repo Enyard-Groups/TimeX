@@ -13,13 +13,15 @@ import IssueType from "./IssueType";
 import Leave from "./Leave";
 import Performance from "./Performance";
 import PerformanceDashboard from "./PerformanceDashboard";
+import Companies from "./Companies";
 
 const MasterRoute = ({ user }) => {
   return (
     <div>
       <Navbar user={user} />
-      <div className="lg:ml-50 mt-16 p-6 md:p-10 min-h-screen">
+      <div className="lg:ml-56 mt-6 p-6 md:p-10 min-h-screen">
         <Routes>
+          <Route path="companies" element={<Companies />} />
           <Route path="department" element={<Department />} />
           <Route path="designation" element={<Designation />} />
           <Route path="shift" element={<Shift />} />

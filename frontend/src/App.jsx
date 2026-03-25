@@ -17,9 +17,7 @@ import VisitorRoute from "./SidebarComponents/VisitorManagement/VisitorRoute";
 import FormsRoute from "./SidebarComponents/Forms/FormsRoute";
 import MyAttendance from "./EmployeeSidebar/MyAttendance";
 import ApplyForLeave from "./EmployeeSidebar/ApplyForLeave";
-import MyProfile from "./components/MyProfile";
 import { load, setAuth, setUser } from "./action";
-import Footer from "./components/Footer";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -93,8 +91,6 @@ const App = () => {
           <Route path="/forms/*" element={privateRoute(FormsRoute)} />
           <Route path="/myattendance" element={privateRoute(MyAttendance)} />
           <Route path="/applyforleave" element={privateRoute(ApplyForLeave)} />
-          <Route path="/my-profile" element={privateRoute(MyProfile)} />
-
           {/* 404 */}
           <Route
             path="*"
@@ -102,7 +98,6 @@ const App = () => {
           />
         </Routes>
       </BrowserRouter>
-      <Footer />
     </>
   );
 };

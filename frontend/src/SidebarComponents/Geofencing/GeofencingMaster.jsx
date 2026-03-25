@@ -298,7 +298,7 @@ const GeofencingMaster = () => {
 
   return (
     <>
-      <div className="mb-16">
+      <div className="mb-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">

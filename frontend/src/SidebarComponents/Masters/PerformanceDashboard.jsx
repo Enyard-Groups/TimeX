@@ -71,7 +71,7 @@ const PerformanceDashboard = () => {
         </h1>
       </div>
 
-      <div className="bg-gray-50 min-h-screen mb-16">
+      <div className="bg-gray-50 min-h-screen mb-6">
         {/* Summary Cards */}
         <div className="grid md:grid-cols-4 gap-5 mb-8">
           {summary.map((card, index) => (
