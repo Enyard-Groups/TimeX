@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { LuClipboardList } from "react-icons/lu";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 const Forms = ({ user }) => {
@@ -17,24 +16,24 @@ const Forms = ({ user }) => {
           {/* Forms Main Button */}
           <div
             onClick={() => setOpenForms(!openForms)}
-            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+            className={`flex flex-col items-center justify-center cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
               isformsActive ? activeClass : ""
             }`}
           >
             <div className="flex items-center gap-2 font-medium text-lg">
-              <LuClipboardList />
               <span>Forms</span>
+
+              {/* {openForms ? (
+                <MdKeyboardArrowUp className="text-xl" />
+              ) : (
+                <MdKeyboardArrowDown className="text-xl" />
+              )} */}
             </div>
-            {openForms ? (
-              <MdKeyboardArrowUp className="text-xl" />
-            ) : (
-              <MdKeyboardArrowDown className="text-xl" />
-            )}
           </div>
 
           {/* Sub Menu */}
           {openForms && (
-            <div className="ml-6 mt-2 flex flex-col gap-2 text-lg space-y-2">
+            <div className="mt-2 flex flex-col items-center text-center gap-2 text-lg space-y-2">
               <NavLink
                 to="/forms/monthly-fire-safety-inspections"
                 className={({ isActive }) =>

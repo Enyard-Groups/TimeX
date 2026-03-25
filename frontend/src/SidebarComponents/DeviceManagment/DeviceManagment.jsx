@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { TbDeviceDesktopFilled } from "react-icons/tb";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 const DeviceManagement = ({ user }) => {
@@ -17,24 +16,23 @@ const DeviceManagement = ({ user }) => {
           {/* devicemanagements Main Button */}
           <div
             onClick={() => setOpendevicemanagements(!opendevicemanagements)}
-            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+            className={`flex flex-col justify-center items-center cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
               isdevicemanagementsActive ? activeClass : ""
             }`}
           >
             <div className="flex items-center gap-2 font-medium text-lg">
-              <TbDeviceDesktopFilled />
-              <span>Device Management</span>
+              <span className="whitespace-nowrap">Device Management</span>
+              {/* {opendevicemanagements ? (
+                <MdKeyboardArrowUp className="text-xl" />
+              ) : (
+                <MdKeyboardArrowDown className="text-xl" />
+              )} */}
             </div>
-            {opendevicemanagements ? (
-              <MdKeyboardArrowUp className="text-2xl" />
-            ) : (
-              <MdKeyboardArrowDown className="text-2xl" />
-            )}
           </div>
 
           {/* Sub Menu */}
           {opendevicemanagements && (
-            <div className="ml-6 mt-2 flex flex-col gap-2 text-lg space-y-2">
+            <div className="mt-2 flex flex-col items-center text-center gap-2 text-lg space-y-2">
               <NavLink
                 to="/devicemanagements/location-group"
                 className={({ isActive }) =>

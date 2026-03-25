@@ -61,7 +61,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
         </div>
 
         {/* Stats */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {stats.map((item, index) => (
             <div key={index} className="group">
               {/* Title Row */}

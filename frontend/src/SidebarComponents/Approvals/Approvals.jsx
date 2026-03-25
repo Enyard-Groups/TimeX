@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { FaCheckCircle } from "react-icons/fa";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 const Approvals = ({ user }) => {
@@ -17,24 +16,24 @@ const Approvals = ({ user }) => {
           {/* Approvals Main Button */}
           <div
             onClick={() => setOpenApprovals(!openApprovals)}
-            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+            className={`flex flex-col items-center justify-center cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
               isApprovalsActive ? activeClass : ""
             }`}
           >
             <div className="flex items-center gap-2 font-medium text-lg">
-              <FaCheckCircle />
               <span>Approvals</span>
+
+              {/* {openApprovals ? (
+                <MdKeyboardArrowUp className="text-xl" />
+              ) : (
+                <MdKeyboardArrowDown className="text-xl" />
+              )} */}
             </div>
-            {openApprovals ? (
-              <MdKeyboardArrowUp className="text-xl" />
-            ) : (
-              <MdKeyboardArrowDown className="text-xl" />
-            )}
           </div>
 
           {/* Sub Menu */}
           {openApprovals && (
-            <div className="ml-6 mt-2 flex flex-col gap-2 text-lg space-y-2">
+            <div className="mt-2 flex flex-col items-center text-center gap-2 text-lg space-y-2">
               <NavLink
                 to="/approvals/mannual-entry-approval"
                 className={({ isActive }) =>

@@ -28,21 +28,21 @@ const Sidebar = ({ user }) => {
   };
 
   const isAdmin = user.role === "admin";
-  console.log(user);
+  // console.log(user);
 
   const isdashboardActive = location.pathname.startsWith("/dashboard");
   const activeClass = "text-[oklch(0.645_0.246_16.439)]";
 
   return (
     <div
-      className="h-screen overflow-y-auto bg-red-50/40"
+      className="h-screen overflow-y-auto bg-red-50/50"
       style={{
         // backgroundColor: "oklch(1 0 0)",
         scrollbarWidth: "none",
       }}
     >
       {/* Logo */}
-      <div className="flex justify-center items-center gap-4 py-4 bg-white">
+      <div className="flex justify-center items-center gap-4 py-4">
         {/* Logo */}
         <div className="text-2xl font-black tracking-tight text-[oklch(0.147_0.004_49.25)]">
           <Link to="/dashboard">
@@ -57,7 +57,7 @@ const Sidebar = ({ user }) => {
           <div
             src="/profile.jpg"
             alt="Profile"
-            className="w-20 h-20 mt-5 mr-2 rounded-full flex items-center justify-center font-black shadow-md cursor-pointer transition-all hover:scale-105 bg-[oklch(0.645_0.246_16.439)] text-white object-cover mx-auto mb-4 text-3xl"
+            className="w-20 h-20 mt-5 rounded-full flex items-center justify-center font-black shadow-md cursor-pointer transition-all hover:scale-105 bg-[oklch(0.645_0.246_16.439)] text-white object-cover mx-auto mb-4 text-3xl"
           >
             {" "}
             {user?.user_name?.charAt(0)?.toUpperCase() || "U"}
@@ -66,7 +66,6 @@ const Sidebar = ({ user }) => {
             <h3 className="text-lg font-semibold text-gray-800">
               {user?.user_name}
             </h3>
-            <p className="text-sm text-gray-500">{user?.enrollment_id}</p>
             <p className="text-sm text-gray-500">
               {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
             </p>
@@ -75,7 +74,7 @@ const Sidebar = ({ user }) => {
       </div>
 
       {/* Sidebar Components */}
-      <nav className=" px-3 pb-8 space-y-2">
+      <nav className="px-3 pb-8 space-y-2">
         {isAdmin ? (
           <div>
             {" "}
@@ -84,10 +83,9 @@ const Sidebar = ({ user }) => {
               style={{ color: "oklch(0.147 0.004 49.25)" }}
             >
               <div
-                className={`mt-5 pl-2 font-bold text-md ${isdashboardActive ? activeClass : ""}`}
+                className={`mt-5 font-bold text-md ${isdashboardActive ? activeClass : ""}`}
               >
-                <div className="flex items-center gap-2 font-medium text-lg">
-                  <RxDashboard />
+                <div className="text-center font-medium text-lg">
                   <span>
                     <Link to="/dashboard">Dashboard</Link>
                   </span>
@@ -105,12 +103,13 @@ const Sidebar = ({ user }) => {
             </div>
             <button
               onClick={handleLogout}
-              className="w-full pl-10 cursor-pointer flex flex-row gap-2 my-10 font-bold"
+              className="w-full flex justify-center cursor-pointer flex flex-row gap-2 my-10 font-bold"
             >
+              <span className="mt-1">Logout</span>
+
               <span className="text-lg mt-1 bg-[oklch(0.645_0.246_16.439)] rounded-full p-1 text-white">
                 <IoIosLogOut />
               </span>
-              <span className="mt-1">Logout</span>
             </button>
           </div>
         ) : (

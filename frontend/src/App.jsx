@@ -18,7 +18,6 @@ import FormsRoute from "./SidebarComponents/Forms/FormsRoute";
 import MyAttendance from "./EmployeeSidebar/MyAttendance";
 import ApplyForLeave from "./EmployeeSidebar/ApplyForLeave";
 import { load, setAuth, setUser } from "./action";
-import Footer from "./components/Footer";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -99,7 +98,6 @@ const App = () => {
           />
         </Routes>
       </BrowserRouter>
-      <Footer />
     </>
   );
 };
