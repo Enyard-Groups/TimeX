@@ -35,6 +35,17 @@ const Master = ({ user }) => {
           {/* Sub Menu */}
           {openMasters && (
             <div className="mt-2 flex flex-col items-center text-center gap-2 text-lg space-y-2">
+
+              <NavLink
+                to="/masters/companies"
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClass
+                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                }
+              >
+                Companies
+              </NavLink>
               <NavLink
                 to="/masters/department"
                 className={({ isActive }) =>
