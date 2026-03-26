@@ -1,11 +1,8 @@
-import DonutChart from "../components/DonutChart";
-import GeoLocationMap from "../components/GeoLocationMap";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import RecentActivity from "../components/RecentActivity";
 import EmployeeAttendance from "../components/EmployeeAttendance";
 import AttendanceLineChart from "../components/AttendanceLineChart";
-import PendingRequest from "../components/PendingRequest";
 import DeviceStats from "../components/DeviceStats";
 import { userData } from "../assets/userData";
 import Timeline from "../components/Timeline";
@@ -144,20 +141,18 @@ const AdminDashboard = ({ user }) => {
           className=" bg-white rounded shadow-md p-4 overflow-x-auto  border border-gray-200"
           style={{ scrollbarWidth: "none" }}
         >
-          <RecentActivity userData ={userData} />
+          <RecentActivity userData={userData} />
         </div>
-
       </div>
 
-       <div className="  mt-6 items-start">
+      <div className="  mt-6 items-start">
         {/* Recent Actvity */}
         <div
           className=" bg-white rounded shadow-md p-4 overflow-x-auto  border border-gray-200"
           style={{ scrollbarWidth: "none" }}
         >
-          <Timeline userData ={userData} />
+          <Timeline userData={userData} />
         </div>
-
       </div>
     </>
   );

@@ -6,17 +6,14 @@ import Footer from "./Footer";
 import { IoIosLogOut } from "react-icons/io";
 import { logout } from "../action";
 import { useNavigate } from "react-router-dom";
+import RightSidebar from "./RightSidebar";
 
 export default function Navbar() {
   const user = useSelector((state) => state.user);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [notificationsDropdownOpen, setNotificationsDropdownOpen] =
-    useState(false);
-  const [notifications] = useState([]);
-
+  const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
   const sidebarRef = useRef(null);
-  const notificationRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -27,14 +24,6 @@ export default function Navbar() {
       ) {
         setSidebarOpen(false);
       }
-
-      if (
-        notificationsDropdownOpen &&
-        notificationRef.current &&
-        !notificationRef.current.contains(event.target)
-      ) {
-        setNotificationsDropdownOpen(false);
-      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -42,11 +31,10 @@ export default function Navbar() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [sidebarOpen, notificationsDropdownOpen]);
+  }, [sidebarOpen]);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const handleLogout = () => {
     localStorage.removeItem("user");
     dispatch(logout());
@@ -74,60 +62,41 @@ export default function Navbar() {
           </button>
         </div>
 
-        <div ref={notificationRef}>
+        <div>
           <button
-            onClick={() =>
-              setNotificationsDropdownOpen(!notificationsDropdownOpen)
-            }
+            onClick={() => {
+              setRightSidebarOpen(true);
+            }}
             className="relative mx-2 text-[18px] bg-blue-950 rounded-full text-white p-1.5 cursor-pointer"
           >
             <IoMdNotificationsOutline />
-
-            {notifications.length > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 text-[10px] flex items-center justify-center rounded-full bg-[oklch(0.577_0.245_27.325)] text-white">
-                {notifications.length}
-              </span>
-            )}
           </button>
-
-          {notificationsDropdownOpen && (
-            <div
-              className="absolute right-4 mt-3 w-60 sm:w-88 h-80 rounded-2xl shadow-xl border bg-[oklch(1_0_0)] border-[oklch(0.923_0.003_48.717)] overflow-hidden z-50"
-              style={{ scrollbarWidth: "none" }}
-            >
-              <div className="p-4 border-b border-[oklch(0.923_0.003_48.717)] font-semibold text-[oklch(0.147_0.004_49.25)]">
-                Notifications
-              </div>
-
-              <div
-                className="overflow-y-auto h-[calc(100%-56px)] p-3"
-                style={{ scrollbarWidth: "none" }}
-              >
-                {notifications.length === 0 ? (
-                  <div className="flex items-center justify-center h-full text-md opacity-60 text-[oklch(0.147_0.004_49.25)]">
-                    No Notifications
-                  </div>
-                ) : (
-                  notifications.map((item, index) => (
-                    <div
-                      key={index}
-                      className="p-3 mb-2 rounded-xl bg-[oklch(0.97_0.001_106.424)] hover:bg-[oklch(0.923_0.003_48.717)] transition text-md text-[oklch(0.147_0.004_49.25)]"
-                    >
-                      {item.message}
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
         </div>
 
-        <div>
-          <div className="py-1 px-2.5 bg-blue-950 rounded-full text-white">
-            {user?.user_name.charAt(0).toUpperCase()}
-          </div>
+        <div
+          onClick={() => {
+            setRightSidebarOpen(true);
+          }}
+          className="py-1 px-2.5 bg-blue-950 rounded-full text-white cursor-pointer"
+        >
+          {user?.user_name.charAt(0).toUpperCase()}
         </div>
       </div>
+
+      {rightSidebarOpen && (
+        <div className="fixed top-3 right-0 rounded-tr-4xl h-full w-72 bg-white shadow-xl z-10 p-4 transform transition-transform duration-300 max-h-[90vh]">
+          <div className="flex justify-between">
+            <h1 className="text-gray-600 font-medium"></h1>
+            <button
+              className="text-[#003386] font-bold"
+              onClick={() => setRightSidebarOpen(false)}
+            >
+              ✕
+            </button>
+          </div>
+          <RightSidebar user={user} />
+        </div>
+      )}
 
       {/* Sidebar */}
       <aside

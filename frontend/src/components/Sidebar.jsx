@@ -54,27 +54,6 @@ const Sidebar = ({ user }) => {
         </div>
       </div>
 
-      {/* Profile
-      <div className="flex justify-center items-start pb-5">
-        <div className="text-center ">
-          <div
-            src="/profile.jpg"
-            alt="Profile"
-            className="w-20 h-20 mt-5 rounded-full flex items-center justify-center font-black shadow-md cursor-pointer transition-all hover:scale-105 bg-[oklch(0.645_0.246_16.439)] text-white object-cover mx-auto mb-4 text-3xl"
-          >
-            {" "}
-            {user?.user_name?.charAt(0)?.toUpperCase() || "U"}
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800">
-              {user?.user_name}
-            </h3>
-            <p className="text-sm text-gray-500">
-              {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
-            </p>
-          </div>
-        </div>
-      </div> */}
 
       {/* Sidebar Components */}
       <nav className="px-3 pb-8 space-y-2">

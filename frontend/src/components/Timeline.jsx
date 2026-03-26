@@ -76,7 +76,7 @@ const Timeline = ({ userData = [] }) => {
   );
 
   return (
-    <div className="bg-white rounded-3xl p-6 w-full shadow-sm border border-gray-50 relative overflow-hidden">
+    <div className="bg-white rounded-3xl p-6 w-full relative overflow-hidden">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-md font-bold text-gray-800 tracking-tight">
           Live Attendance Feed
