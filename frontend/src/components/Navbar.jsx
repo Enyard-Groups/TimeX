@@ -55,71 +55,78 @@ export default function Navbar() {
 
   return (
     <>
-      <button
-        className="p-2 relative top-0 left-2 rounded-xl lg:hidden transition-all text-[oklch(0.147_0.004_49.25)]"
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-      >
-        {sidebarOpen ? "✕" : "☰"}
-      </button>
-
-      <div
-        ref={notificationRef}
-        className="absolute top-5 right-12 md:right-10"
-      >
+      <div>
         <button
-          onClick={() =>
-            setNotificationsDropdownOpen(!notificationsDropdownOpen)
-          }
-          className="relative md:mr-4 text-2xl text-[oklch(0.147_0.004_49.25)] cursor-pointer"
+          className="absolute top-7 left-6 rounded-xl lg:hidden transition-all text-xl font-bold text-[oklch(0.147_0.004_49.25)]"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
         >
-          <IoMdNotificationsOutline />
-
-          {notifications.length > 0 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 text-[10px] flex items-center justify-center rounded-full bg-[oklch(0.577_0.245_27.325)] text-white">
-              {notifications.length}
-            </span>
-          )}
+          {sidebarOpen ? "✕" : "☰"}
         </button>
-
-        {notificationsDropdownOpen && (
-          <div
-            className="absolute right-4 mt-3 w-60 sm:w-88 h-80 rounded-2xl shadow-xl border bg-[oklch(1_0_0)] border-[oklch(0.923_0.003_48.717)] overflow-hidden z-50"
-            style={{ scrollbarWidth: "none" }}
-          >
-            <div className="p-4 border-b border-[oklch(0.923_0.003_48.717)] font-semibold text-[oklch(0.147_0.004_49.25)]">
-              Notifications
-            </div>
-
-            <div
-              className="overflow-y-auto h-[calc(100%-56px)] p-3"
-              style={{ scrollbarWidth: "none" }}
-            >
-              {notifications.length === 0 ? (
-                <div className="flex items-center justify-center h-full text-md opacity-60 text-[oklch(0.147_0.004_49.25)]">
-                  No Notifications
-                </div>
-              ) : (
-                notifications.map((item, index) => (
-                  <div
-                    key={index}
-                    className="p-3 mb-2 rounded-xl bg-[oklch(0.97_0.001_106.424)] hover:bg-[oklch(0.923_0.003_48.717)] transition text-md text-[oklch(0.147_0.004_49.25)]"
-                  >
-                    {item.message}
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        )}
       </div>
 
-      <div className="absolute top-5 right-4">
-        <button
-          onClick={handleLogout}
-          className="text-[18px] bg-[oklch(0.645_0.246_16.439)] rounded-full text-white p-1 cursor-pointer"
-        >
-          <IoIosLogOut />
-        </button>
+      <div className="flex flex-row absolute top-7 right-4">
+        <div>
+          <button
+            onClick={handleLogout}
+            className="text-[18px] bg-[#00173d] rounded-full text-white p-1.5 cursor-pointer"
+          >
+            <IoIosLogOut />
+          </button>
+        </div>
+
+        <div ref={notificationRef}>
+          <button
+            onClick={() =>
+              setNotificationsDropdownOpen(!notificationsDropdownOpen)
+            }
+            className="relative mx-2 text-[18px] bg-blue-950 rounded-full text-white p-1.5 cursor-pointer"
+          >
+            <IoMdNotificationsOutline />
+
+            {notifications.length > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 text-[10px] flex items-center justify-center rounded-full bg-[oklch(0.577_0.245_27.325)] text-white">
+                {notifications.length}
+              </span>
+            )}
+          </button>
+
+          {notificationsDropdownOpen && (
+            <div
+              className="absolute right-4 mt-3 w-60 sm:w-88 h-80 rounded-2xl shadow-xl border bg-[oklch(1_0_0)] border-[oklch(0.923_0.003_48.717)] overflow-hidden z-50"
+              style={{ scrollbarWidth: "none" }}
+            >
+              <div className="p-4 border-b border-[oklch(0.923_0.003_48.717)] font-semibold text-[oklch(0.147_0.004_49.25)]">
+                Notifications
+              </div>
+
+              <div
+                className="overflow-y-auto h-[calc(100%-56px)] p-3"
+                style={{ scrollbarWidth: "none" }}
+              >
+                {notifications.length === 0 ? (
+                  <div className="flex items-center justify-center h-full text-md opacity-60 text-[oklch(0.147_0.004_49.25)]">
+                    No Notifications
+                  </div>
+                ) : (
+                  notifications.map((item, index) => (
+                    <div
+                      key={index}
+                      className="p-3 mb-2 rounded-xl bg-[oklch(0.97_0.001_106.424)] hover:bg-[oklch(0.923_0.003_48.717)] transition text-md text-[oklch(0.147_0.004_49.25)]"
+                    >
+                      {item.message}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <div className="py-1 px-2.5 bg-blue-950 rounded-full text-white">
+            {user?.user_name.charAt(0).toUpperCase()}
+          </div>
+        </div>
       </div>
 
       {/* Sidebar */}

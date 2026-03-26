@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { LuClipboardList } from "react-icons/lu";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 const Forms = ({ user }) => {
@@ -7,7 +8,11 @@ const Forms = ({ user }) => {
 
   const isAdmin = user.role === "admin";
   const isformsActive = location.pathname.startsWith("/forms");
-  const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  // const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  const activeClass =
+    "text-white hover:text-black hover:bg-gray-100 rounded-xl bg-violet-300 p-2";
+  const hoverClass =
+    "text-white hover:text-black hover:bg-gray-100 p-2 rounded-xl";
 
   return (
     <>
@@ -16,19 +21,19 @@ const Forms = ({ user }) => {
           {/* Forms Main Button */}
           <div
             onClick={() => setOpenForms(!openForms)}
-            className={`flex flex-col items-center justify-center cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
-              isformsActive ? activeClass : ""
+            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+              isformsActive ? activeClass : hoverClass
             }`}
           >
-            <div className="flex items-center gap-2 font-medium text-lg">
+            <div className="flex items-center gap-4 text-[18px]">
+              <LuClipboardList />
               <span>Forms</span>
-
-              {/* {openForms ? (
-                <MdKeyboardArrowUp className="text-xl" />
-              ) : (
-                <MdKeyboardArrowDown className="text-xl" />
-              )} */}
             </div>
+            {openForms ? (
+              <MdKeyboardArrowUp className="text-xl" />
+            ) : (
+              <MdKeyboardArrowDown className="text-xl" />
+            )}
           </div>
 
           {/* Sub Menu */}
@@ -39,7 +44,7 @@ const Forms = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Monthly Fire Safety Inspections
@@ -50,7 +55,7 @@ const Forms = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Incident / Accident
@@ -61,7 +66,7 @@ const Forms = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Leave Application
@@ -72,7 +77,7 @@ const Forms = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Opt Out Request From
@@ -83,7 +88,7 @@ const Forms = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Passport Request
@@ -94,7 +99,7 @@ const Forms = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Shift Hand Over
@@ -105,7 +110,7 @@ const Forms = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Staff Training Checklist
@@ -116,7 +121,7 @@ const Forms = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 TPC Form
@@ -127,7 +132,7 @@ const Forms = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Weekly Overtime Form
@@ -138,7 +143,7 @@ const Forms = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Patrolling Checklist
@@ -149,7 +154,7 @@ const Forms = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Facility Complaint Form

@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
+import { FaCheckCircle } from "react-icons/fa";
 
 const Approvals = ({ user }) => {
   const [openApprovals, setOpenApprovals] = useState(false);
 
   const isAdmin = user.role === "admin";
   const isApprovalsActive = location.pathname.startsWith("/approvals");
-  const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  // const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  const activeClass =
+    "text-white hover:text-black hover:bg-gray-100 rounded-xl bg-violet-300 p-2";
+  const hoverClass =
+    "text-white hover:text-black hover:bg-gray-100 p-2 rounded-xl";
 
   return (
     <>
@@ -16,19 +21,19 @@ const Approvals = ({ user }) => {
           {/* Approvals Main Button */}
           <div
             onClick={() => setOpenApprovals(!openApprovals)}
-            className={`flex flex-col items-center justify-center cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
-              isApprovalsActive ? activeClass : ""
+            className={`flex  items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+              isApprovalsActive ? activeClass : hoverClass
             }`}
           >
-            <div className="flex items-center gap-2 font-medium text-lg">
+            <div className="flex items-center gap-4 text-[18px]">
+              <FaCheckCircle />
               <span>Approvals</span>
-
-              {/* {openApprovals ? (
-                <MdKeyboardArrowUp className="text-xl" />
-              ) : (
-                <MdKeyboardArrowDown className="text-xl" />
-              )} */}
             </div>
+            {openApprovals ? (
+              <MdKeyboardArrowUp className="text-xl" />
+            ) : (
+              <MdKeyboardArrowDown className="text-xl" />
+            )}
           </div>
 
           {/* Sub Menu */}
@@ -39,7 +44,7 @@ const Approvals = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Mannual Entry Approval
@@ -50,7 +55,7 @@ const Approvals = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Leave Request Approval
@@ -61,7 +66,7 @@ const Approvals = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Business Travel Approval
@@ -72,7 +77,7 @@ const Approvals = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 WFH Approval
@@ -83,7 +88,7 @@ const Approvals = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Claim Approval

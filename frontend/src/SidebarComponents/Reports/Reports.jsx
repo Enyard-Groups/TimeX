@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
+import {
+  MdKeyboardArrowDown,
+  MdKeyboardArrowUp,
+  MdOutlineStorage,
+} from "react-icons/md";
 
 const Reports = ({ user }) => {
   const [openReports, setOpenReports] = useState(false);
@@ -12,7 +16,11 @@ const Reports = ({ user }) => {
 
   const isAdmin = user.role === "admin";
   const isreportsActive = location.pathname.startsWith("/reports");
-  const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  // const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  const activeClass =
+    "text-white hover:text-black hover:bg-gray-100 rounded-xl bg-violet-300 p-2";
+  const hoverClass =
+    "text-white hover:text-black hover:bg-gray-100 p-2 rounded-xl";
 
   return (
     <>
@@ -21,19 +29,19 @@ const Reports = ({ user }) => {
           {/* Reports Main Button */}
           <div
             onClick={() => setOpenReports(!openReports)}
-            className={`flex flex-col items-center justify-center cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
-              isreportsActive ? activeClass : ""
+            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+              isreportsActive ? activeClass : hoverClass
             }`}
           >
-            <div className="flex items-center gap-2 font-medium text-lg">
+            <div className="flex items-center gap-4 text-[18px]">
+              <MdOutlineStorage />
               <span>Reports</span>
-
-              {/* {openReports ? (
-                <MdKeyboardArrowUp className="text-xl" />
-              ) : (
-                <MdKeyboardArrowDown className="text-xl" />
-              )} */}
             </div>
+            {openReports ? (
+              <MdKeyboardArrowUp className="text-xl" />
+            ) : (
+              <MdKeyboardArrowDown className="text-xl" />
+            )}
           </div>
 
           {/* Sub Menu */}
@@ -42,9 +50,7 @@ const Reports = ({ user }) => {
               <NavLink
                 to="/reports/employee-report"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                  isActive ? activeClass : hoverClass
                 }
               >
                 Employee Report
@@ -53,7 +59,7 @@ const Reports = ({ user }) => {
               <div className="flex flex-col items-center justify-center cursor-pointer">
                 <div
                   onClick={() => setOpenMannualReports(!openMannualReports)}
-                  className="flex justify-between items-center cursor-pointer hover:text-[oklch(0.645_0.246_16.439)]"
+                  className={`flex justify-between items-center cursor-pointer ${hoverClass}`}
                 >
                   <span>Mannual Reports</span>
                   {openMannualReports ? (
@@ -68,9 +74,7 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/mannual-entry-status"
                       className={({ isActive }) =>
-                        isActive
-                          ? activeClass
-                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                        isActive ? activeClass : hoverClass
                       }
                     >
                       Mannual Entry Status
@@ -79,9 +83,7 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/mannual-entry-report"
                       className={({ isActive }) =>
-                        isActive
-                          ? activeClass
-                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                        isActive ? activeClass : hoverClass
                       }
                     >
                       Mannual Entry Report
@@ -90,9 +92,7 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/mannual-entry-summary"
                       className={({ isActive }) =>
-                        isActive
-                          ? activeClass
-                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                        isActive ? activeClass : hoverClass
                       }
                     >
                       Mannual Entry Summary
@@ -104,9 +104,7 @@ const Reports = ({ user }) => {
               <NavLink
                 to="/reports/all-transaction-report"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                  isActive ? activeClass : hoverClass
                 }
               >
                 All Transaction Report
@@ -117,7 +115,7 @@ const Reports = ({ user }) => {
                   onClick={() =>
                     setOpenAttendanceReports(!openAttendanceReports)
                   }
-                  className="flex justify-between items-center cursor-pointer hover:text-[oklch(0.645_0.246_16.439)]"
+                  className={`flex justify-between items-center cursor-pointer ${hoverClass}`}
                 >
                   <span>Attendance Reports</span>
                   {openAttendanceReports ? (
@@ -132,9 +130,7 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/attendance-by-employee"
                       className={({ isActive }) =>
-                        isActive
-                          ? activeClass
-                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                        isActive ? activeClass : hoverClass
                       }
                     >
                       Attendance By Employee
@@ -142,9 +138,7 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/attendance-by-location"
                       className={({ isActive }) =>
-                        isActive
-                          ? activeClass
-                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                        isActive ? activeClass : hoverClass
                       }
                     >
                       Attendance By Location
@@ -153,9 +147,7 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/attendance-summary"
                       className={({ isActive }) =>
-                        isActive
-                          ? activeClass
-                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                        isActive ? activeClass : hoverClass
                       }
                     >
                       Attendance Summary
@@ -164,9 +156,7 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/attendance-summary-location"
                       className={({ isActive }) =>
-                        isActive
-                          ? activeClass
-                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                        isActive ? activeClass : hoverClass
                       }
                     >
                       Attendance Summary Location
@@ -178,9 +168,7 @@ const Reports = ({ user }) => {
               <NavLink
                 to="/reports/exception-reports"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                  isActive ? activeClass : hoverClass
                 }
               >
                 Exception Reports
@@ -189,7 +177,7 @@ const Reports = ({ user }) => {
               <div className="flex flex-col items-center justify-center cursor-pointer">
                 <div
                   onClick={() => setOpenAbsenceReports(!openAbsenceReports)}
-                  className="flex justify-between items-center cursor-pointer hover:text-[oklch(0.645_0.246_16.439)]"
+                  className={`flex justify-between items-center cursor-pointer ${hoverClass}`}
                 >
                   <span>Absence Reports</span>
                   {openAbsenceReports ? (
@@ -204,9 +192,7 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/absence-report"
                       className={({ isActive }) =>
-                        isActive
-                          ? activeClass
-                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                        isActive ? activeClass : hoverClass
                       }
                     >
                       Absence Report
@@ -215,9 +201,7 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/absence-summary-report"
                       className={({ isActive }) =>
-                        isActive
-                          ? activeClass
-                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                        isActive ? activeClass : hoverClass
                       }
                     >
                       Absence Summary Report
@@ -229,9 +213,7 @@ const Reports = ({ user }) => {
               <NavLink
                 to="/reports/in-out-report"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                  isActive ? activeClass : hoverClass
                 }
               >
                 In out Report
@@ -240,7 +222,7 @@ const Reports = ({ user }) => {
               <div className="flex flex-col items-center justify-center cursor-pointer">
                 <div
                   onClick={() => setOpenEarlyLateReports(!openEarlyLateReports)}
-                  className="flex justify-between items-center cursor-pointer hover:text-[oklch(0.645_0.246_16.439)]"
+                  className={`flex justify-between items-center cursor-pointer ${hoverClass}`}
                 >
                   <span>Early Late Reports</span>
                   {openEarlyLateReports ? (
@@ -255,9 +237,7 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/early-out-report"
                       className={({ isActive }) =>
-                        isActive
-                          ? activeClass
-                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                        isActive ? activeClass : hoverClass
                       }
                     >
                       Early Out Report
@@ -269,7 +249,7 @@ const Reports = ({ user }) => {
               <div className="flex flex-col items-center justify-center cursor-pointer">
                 <div
                   onClick={() => setOpenLeave(!openLeave)}
-                  className="flex justify-between items-center cursor-pointer hover:text-[oklch(0.645_0.246_16.439)]"
+                  className={`flex justify-between items-center cursor-pointer ${hoverClass}`}
                 >
                   <span>Leave</span>
                   {openLeave ? <MdKeyboardArrowUp /> : <MdKeyboardArrowDown />}
@@ -280,9 +260,7 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/leave-montly-summary"
                       className={({ isActive }) =>
-                        isActive
-                          ? activeClass
-                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                        isActive ? activeClass : hoverClass
                       }
                     >
                       Leave Monthly Summary
@@ -291,9 +269,7 @@ const Reports = ({ user }) => {
                     <NavLink
                       to="/reports/leave-summary-datewise"
                       className={({ isActive }) =>
-                        isActive
-                          ? activeClass
-                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                        isActive ? activeClass : hoverClass
                       }
                     >
                       Leave Summary Datewise
@@ -305,9 +281,7 @@ const Reports = ({ user }) => {
               <NavLink
                 to="/reports/wft-report"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                  isActive ? activeClass : hoverClass
                 }
               >
                 WFH Report
@@ -316,9 +290,7 @@ const Reports = ({ user }) => {
               <NavLink
                 to="/reports/claims-report"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                  isActive ? activeClass : hoverClass
                 }
               >
                 Claims Report

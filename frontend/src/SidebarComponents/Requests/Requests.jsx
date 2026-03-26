@@ -8,7 +8,11 @@ const Requests = ({ user }) => {
 
   const isAdmin = user.role === "admin";
   const isrequestsActive = location.pathname.startsWith("/requests");
-  const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  // const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  const activeClass =
+    "text-white hover:text-black hover:bg-gray-100 rounded-xl bg-violet-300 p-2";
+  const hoverClass =
+    "text-white hover:text-black hover:bg-gray-100 p-2 rounded-xl";
 
   return (
     <>
@@ -17,18 +21,19 @@ const Requests = ({ user }) => {
           {/* Requests Main Button */}
           <div
             onClick={() => setOpenRequests(!openRequests)}
-            className={`flex flex-col items-center justify-center cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
-              isrequestsActive ? activeClass : ""
+            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+              isrequestsActive ? activeClass : hoverClass
             }`}
           >
-            <div className="flex items-center gap-2 font-medium text-lg">
+            <div className="flex items-center gap-4 text-[18px]">
+              <IoInformationCircle />
               <span>Requests</span>
-              {/* {openRequests ? (
-                <MdKeyboardArrowUp className="text-xl" />
-              ) : (
-                <MdKeyboardArrowDown className="text-xl" />
-              )} */}
             </div>
+            {openRequests ? (
+              <MdKeyboardArrowUp className="text-xl" />
+            ) : (
+              <MdKeyboardArrowDown className="text-xl" />
+            )}
           </div>
 
           {/* Sub Menu */}
@@ -39,7 +44,7 @@ const Requests = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Mannual Entry Request
@@ -50,7 +55,7 @@ const Requests = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Leave Request
@@ -61,7 +66,7 @@ const Requests = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Claim Request
@@ -72,7 +77,7 @@ const Requests = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Business Travel Request
@@ -83,7 +88,7 @@ const Requests = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Leave Summary
@@ -94,7 +99,7 @@ const Requests = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 WFH Request
@@ -105,7 +110,7 @@ const Requests = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 WFH Summary
