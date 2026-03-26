@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
@@ -247,7 +246,7 @@ const IncidentAccident = () => {
               setFormData(defaultFormData),
               setOpenModal(true)
             )}
-            className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md"
+            className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
           >
             + Add New
           </button>

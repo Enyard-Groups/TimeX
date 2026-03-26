@@ -326,7 +326,7 @@ const LeaveRequest = () => {
                 setFormData(emptyForm),
                 setOpenModal(true)
               )}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md"
+              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
             >
               + Add New
             </button>

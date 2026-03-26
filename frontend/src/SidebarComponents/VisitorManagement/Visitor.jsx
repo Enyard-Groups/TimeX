@@ -8,7 +8,11 @@ const Visitor = ({ user }) => {
 
   const isAdmin = user.role === "admin";
   const isvisitorActive = location.pathname.startsWith("/visitor");
-  const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  // const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  const activeClass =
+    "text-white hover:text-black hover:bg-gray-100 rounded-xl bg-violet-300 p-2";
+  const hoverClass =
+    "text-white hover:text-black hover:bg-gray-100 p-2 rounded-xl";
 
   return (
     <>
@@ -17,19 +21,19 @@ const Visitor = ({ user }) => {
           {/* Visitor Main Button */}
           <div
             onClick={() => setOpenVisitor(!openVisitor)}
-            className={`flex flex-col items-center justify-center cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
-              isvisitorActive ? activeClass : ""
+            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+              isvisitorActive ? activeClass : hoverClass
             }`}
           >
-            <div className="flex items-center gap-2 font-medium text-lg">
+            <div className="flex items-center gap-4 text-[18px]">
+              <FaVimeoV />
               <span>Visitor</span>
-
-              {/* {openVisitor ? (
-                <MdKeyboardArrowUp className="text-xl" />
-              ) : (
-                <MdKeyboardArrowDown className="text-xl" />
-              )} */}
-            </div>{" "}
+            </div>
+            {openVisitor ? (
+              <MdKeyboardArrowUp className="text-xl" />
+            ) : (
+              <MdKeyboardArrowDown className="text-xl" />
+            )}
           </div>
 
           {/* Sub Menu */}
@@ -40,7 +44,7 @@ const Visitor = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Visitor Booking
@@ -51,7 +55,7 @@ const Visitor = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Card Detach

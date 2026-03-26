@@ -1,12 +1,11 @@
-/* eslint-disable no-unused-vars */
-import DonutChart from "../components/DonutChart";
-import GeoLocationMap from "../components/GeoLocationMap";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import RecentActivity from "../components/RecentActivity";
 import EmployeeAttendance from "../components/EmployeeAttendance";
 import AttendanceLineChart from "../components/AttendanceLineChart";
-import PendingRequest from "../components/PendingRequest";
+import DeviceStats from "../components/DeviceStats";
+import { userData } from "../assets/userData";
+import Timeline from "../components/Timeline";
 
 const AdminDashboard = ({ user }) => {
   const [attendanceData, setAttendanceData] = useState([]);
@@ -46,7 +45,7 @@ const AdminDashboard = ({ user }) => {
             {
               date: "2026-03-19",
               totalEmployees: 120,
-              presentToday: 100,
+              presentToday: 50,
               leave: 5,
               earlyin: 10,
               latein: 5,
@@ -62,7 +61,7 @@ const AdminDashboard = ({ user }) => {
             {
               date: "2026-03-21",
               totalEmployees: 120,
-              presentToday: 108,
+              presentToday: 88,
               leave: 7,
               earlyin: 9,
               latein: 6,
@@ -97,13 +96,27 @@ const AdminDashboard = ({ user }) => {
 
   return (
     <>
-      <div className="mb-10 font-bold">
-        <h2 className="text-2xl tracking-tight">
+      <div className="mb-10 pt-10 sm:pt-0 flex flex-wrap">
+        <h2 className="text-2xl  pl-8 font-bold tracking-tight mr-20">
           Welcome back,{" "}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[oklch(0.6_0.246_16.439)] to-[oklch(0.7_0.146_16.439)]">
+          <span className="bg-clip-text font-bold text-transparent bg-blue-900">
             {user?.user_name || "User"}
           </span>
         </h2>
+
+        <div className="flex border border-gray-200 items-center rounded-xl px-3 mx-2  py-2 w-full max-w-[300px] shadow-md md:mr-20">
+          {/* Input */}
+          <input
+            type="text"
+            placeholder="Search..."
+            className="bg-transparent outline-none px-3 text-sm text-white  placeholder-gray-400 w-full"
+          />
+        </div>
+      </div>
+
+      {/* Today Attendance */}
+      <div className="bg-white rounded " style={{ scrollbarWidth: "none" }}>
+        <EmployeeAttendance attendanceData={attendanceData} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 items-start">
@@ -114,47 +127,32 @@ const AdminDashboard = ({ user }) => {
         >
           <AttendanceLineChart attendanceData={attendanceData} />
         </div>
-
-        {/* Today Attendance */}
         <div
-          className="bg-white rounded shadow-md p-4 sm:p-6 sm:overflow-hidden   border border-gray-200 h-[270px]"
+          className=" bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200"
           style={{ scrollbarWidth: "none" }}
         >
-          <EmployeeAttendance attendanceData={attendanceData} />
+          <DeviceStats data={userData} />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 items-start">
+      <div className=" mt-6 items-start">
         {/* Recent Actvity */}
         <div
           className=" bg-white rounded shadow-md p-4 overflow-x-auto  border border-gray-200"
           style={{ scrollbarWidth: "none" }}
         >
-          <RecentActivity />
+          <RecentActivity userData={userData} />
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
-          <div
-            className="text-center bg-white rounded shadow-md p-4 overflow-x-auto sm:overflow-hidden  border border-gray-200 h-[245px]"
-            style={{ scrollbarWidth: "none" }}
-          >
-            <PendingRequest />
-          </div>
-
-          <div
-            className="text-center bg-white rounded shadow-md p-4 overflow-x-auto sm:overflow-hidden  border border-gray-200 h-[245px]"
-            style={{ scrollbarWidth: "none" }}
-          >
-            <DonutChart attendanceData={attendanceData} />
-          </div>
+      <div className="  mt-6 items-start">
+        {/* Recent Actvity */}
+        <div
+          className=" bg-white rounded shadow-md p-4 overflow-x-auto  border border-gray-200"
+          style={{ scrollbarWidth: "none" }}
+        >
+          <Timeline userData={userData} />
         </div>
-
-        {/* <div className=" col-span-2 bg-white border border-gray-200 rounded p-6 shadow-lg">
-          <GeoLocationMap />
-          <p className="mt-4 text-center text-md font-bold bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent">
-            Geographical Distribution
-          </p>
-        </div> */}
       </div>
     </>
   );

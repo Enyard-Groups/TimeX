@@ -8,7 +8,11 @@ const Transaction = ({ user }) => {
 
   const isAdmin = user.role === "admin";
   const istransactionActive = location.pathname.startsWith("/transaction");
-  const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  // const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  const activeClass =
+    "text-white hover:text-black hover:bg-gray-100 rounded-xl bg-violet-300 p-2";
+  const hoverClass =
+    "text-white hover:text-black hover:bg-gray-100 p-2 rounded-xl";
 
   return (
     <>
@@ -17,18 +21,19 @@ const Transaction = ({ user }) => {
           {/* Transaction Main Button */}
           <div
             onClick={() => setOpenTransaction(!openTransaction)}
-            className={`flex flex-col justify-center items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
-              istransactionActive ? activeClass : ""
+            className={`flex justify-between items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+              istransactionActive ? activeClass : hoverClass
             }`}
           >
-            <div className="flex items-center gap-2 font-medium text-lg">
+            <div className="flex items-center gap-4 text-[18px]">
+              <PiNotePencilFill />
               <span>Transaction</span>
-              {/* {openTransaction ? (
-                <MdKeyboardArrowUp className="text-xl" />
-              ) : (
-                <MdKeyboardArrowDown className="text-xl" />
-              )} */}
             </div>
+            {openTransaction ? (
+              <MdKeyboardArrowUp className="text-xl" />
+            ) : (
+              <MdKeyboardArrowDown className="text-xl" />
+            )}
           </div>
 
           {/* Sub Menu */}
@@ -39,7 +44,7 @@ const Transaction = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Monitoring
@@ -50,7 +55,7 @@ const Transaction = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Shift Planner
@@ -61,7 +66,7 @@ const Transaction = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Shift Upload

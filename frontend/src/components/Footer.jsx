@@ -5,25 +5,35 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
   const { user } = useSelector((state) => state);
 
+  // Note: Adjust 'ml-64' or 'left-64' to match your actual sidebar width
+  // If your sidebar is 250px, use left-[250px]
+
   return (
     <>
       {user && (
         <div
-          className=" fixed bottom-0 w-full pt-3 z-10 h-12 border-t"
+          className="fixed bottom-0 right-0 left-0 lg:left-64 z-50 h-12 border-t flex items-center justify-center transition-all duration-300"
           style={{
-            backgroundColor: "oklch(1 0 0)",
+            backgroundColor: "white",
             borderColor: "oklch(0.923 0.003 48.717)",
           }}
         >
           <div
-            className="text-sm gap-2 flex justify-center"
+            className="text-sm gap-2 flex justify-center items-center"
             style={{ color: "oklch(0.423 0.003 48.717)" }}
           >
-            <p className="whitespace-nowrap">© {currentYear} TimeX</p> |
-            <a href="https://enyard.in" target="_blank">
+            <p className="whitespace-nowrap">© {currentYear} TimeX</p>
+            <span className="opacity-30">|</span>
+            <a
+              href="https://enyard.in"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:underline"
+            >
               ENYARD
             </a>
-            | <p className="whitespace-nowrap">All rights reserved</p>
+            <span className="opacity-30">|</span>
+            <p className="whitespace-nowrap">All rights reserved</p>
           </div>
         </div>
       )}

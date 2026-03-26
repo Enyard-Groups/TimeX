@@ -9,7 +9,12 @@ const Master = ({ user }) => {
   const [openHoliday, setOpenHoliday] = useState(false);
   const isAdmin = user.role === "admin";
   const ismastersActive = location.pathname.startsWith("/masters");
-  const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  // const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  // const hoverClass = "hover:text-[oklch(0.645_0.246_16.439)]";
+  const activeClass =
+    "text-white hover:text-black hover:bg-gray-100 rounded-xl bg-violet-300 p-2";
+  const hoverClass =
+    "text-white hover:text-black hover:bg-gray-100 p-2 rounded-xl";
 
   return (
     <>
@@ -18,30 +23,27 @@ const Master = ({ user }) => {
           {/* Masters Main Button */}
           <div
             onClick={() => setOpenMasters(!openMasters)}
-            className={`flex flex-col items-center justify-center cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
-              ismastersActive ? activeClass : ""
+            className={`flex justify-between items-center cursor-pointer text-md p-2 pl-4 hover:bg-gray-200 rounded-xl ${
+              ismastersActive ? activeClass : hoverClass
             }`}
           >
-            <div className="flex items-center gap-2 mt-2 font-medium text-lg">
+            <div className="flex items-center gap-4 text-[18px]">
+              <RiContactsFill />
               <span>Masters</span>
-              {/* {openMasters ? (
-                <MdKeyboardArrowUp className="text-xl" />
-              ) : (
-                <MdKeyboardArrowDown className="text-xl" />
-              )} */}
             </div>
+            {openMasters ? (
+              <MdKeyboardArrowUp className="text-xl" />
+            ) : (
+              <MdKeyboardArrowDown className="text-xl" />
+            )}
           </div>
-
           {/* Sub Menu */}
           {openMasters && (
-            <div className="mt-2 flex flex-col items-center text-center gap-2 text-lg space-y-2">
-
+            <div className="mt-2 flex flex-col items-center text-center gap-2 text-lg space-y-2 ">
               <NavLink
                 to="/masters/companies"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                  isActive ? activeClass : hoverClass
                 }
               >
                 Companies
@@ -49,9 +51,7 @@ const Master = ({ user }) => {
               <NavLink
                 to="/masters/department"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                  isActive ? activeClass : hoverClass
                 }
               >
                 Department
@@ -60,9 +60,7 @@ const Master = ({ user }) => {
               <NavLink
                 to="/masters/designation"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                  isActive ? activeClass : hoverClass
                 }
               >
                 Designation
@@ -71,9 +69,7 @@ const Master = ({ user }) => {
               <NavLink
                 to="/masters/shift"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                  isActive ? activeClass : hoverClass
                 }
               >
                 Shift
@@ -83,7 +79,7 @@ const Master = ({ user }) => {
               <div className="flex flex-col items-center justify-center cursor-pointer">
                 <div
                   onClick={() => setOpenEmployee(!openEmployee)}
-                  className="flex justify-between items-center cursor-pointer hover:text-[oklch(0.645_0.246_16.439)]"
+                  className={`${hoverClass} flex justify-between items-center cursor-pointer`}
                 >
                   <span>Employee</span>
                   {openEmployee ? (
@@ -98,9 +94,7 @@ const Master = ({ user }) => {
                     <NavLink
                       to="/masters/employee-master"
                       className={({ isActive }) =>
-                        isActive
-                          ? activeClass
-                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                        isActive ? activeClass : hoverClass
                       }
                     >
                       Employee Master
@@ -108,9 +102,7 @@ const Master = ({ user }) => {
                     <NavLink
                       to="/masters/employee-category"
                       className={({ isActive }) =>
-                        isActive
-                          ? activeClass
-                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                        isActive ? activeClass : hoverClass
                       }
                     >
                       Employee Category
@@ -122,9 +114,7 @@ const Master = ({ user }) => {
               <NavLink
                 to="/masters/user-master"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                  isActive ? activeClass : hoverClass
                 }
               >
                 User Master
@@ -133,9 +123,7 @@ const Master = ({ user }) => {
               <NavLink
                 to="/masters/issue-type"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                  isActive ? activeClass : hoverClass
                 }
               >
                 Issue Type
@@ -145,7 +133,7 @@ const Master = ({ user }) => {
               <div className="flex flex-col items-center justify-center cursor-pointer">
                 <div
                   onClick={() => setOpenHoliday(!openHoliday)}
-                  className="flex justify-between items-center cursor-pointer hover:text-[oklch(0.645_0.246_16.439)]"
+                  className={`${hoverClass} flex justify-between items-center cursor-pointer`}
                 >
                   <span>Holiday</span>
                   {openHoliday ? (
@@ -160,9 +148,7 @@ const Master = ({ user }) => {
                     <NavLink
                       to="/masters/holiday-master"
                       className={({ isActive }) =>
-                        isActive
-                          ? activeClass
-                          : "hover:text-[oklch(0.645_0.246_16.439)]"
+                        isActive ? activeClass : hoverClass
                       }
                     >
                       Holiday Master
@@ -174,9 +160,7 @@ const Master = ({ user }) => {
               <NavLink
                 to="/masters/claim-category"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                  isActive ? activeClass : hoverClass
                 }
               >
                 Claim Category
@@ -185,9 +169,7 @@ const Master = ({ user }) => {
               <NavLink
                 to="/masters/leave"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                  isActive ? activeClass : hoverClass
                 }
               >
                 Leave
@@ -196,9 +178,7 @@ const Master = ({ user }) => {
               <NavLink
                 to="/masters/performance-report"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                  isActive ? activeClass : hoverClass
                 }
               >
                 Performance Report
@@ -207,9 +187,7 @@ const Master = ({ user }) => {
               <NavLink
                 to="/masters/performance-dashboard"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                  isActive ? activeClass : hoverClass
                 }
               >
                 Performance Dashboard

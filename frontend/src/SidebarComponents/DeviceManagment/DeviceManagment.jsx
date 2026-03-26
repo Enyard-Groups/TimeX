@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { TbDeviceDesktopFilled } from "react-icons/tb";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 const DeviceManagement = ({ user }) => {
@@ -7,7 +8,11 @@ const DeviceManagement = ({ user }) => {
   const isAdmin = user.role === "admin";
   const isdevicemanagementsActive =
     location.pathname.startsWith("/devicemanagements");
-  const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  // const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  const activeClass =
+    "text-white hover:text-black hover:bg-gray-100 rounded-xl bg-violet-300 p-2";
+  const hoverClass =
+    "text-white hover:text-black hover:bg-gray-100 p-2 rounded-xl";
 
   return (
     <>
@@ -16,18 +21,19 @@ const DeviceManagement = ({ user }) => {
           {/* devicemanagements Main Button */}
           <div
             onClick={() => setOpendevicemanagements(!opendevicemanagements)}
-            className={`flex flex-col justify-center items-center cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
-              isdevicemanagementsActive ? activeClass : ""
+            className={`flex justify-between items-center cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+              isdevicemanagementsActive ? activeClass : hoverClass
             }`}
           >
-            <div className="flex items-center gap-2 font-medium text-lg">
-              <span className="whitespace-nowrap">Device Management</span>
-              {/* {opendevicemanagements ? (
-                <MdKeyboardArrowUp className="text-xl" />
-              ) : (
-                <MdKeyboardArrowDown className="text-xl" />
-              )} */}
+            <div className="flex items-center gap-4 text-[18px]">
+              <TbDeviceDesktopFilled />
+              <span>Device Management</span>
             </div>
+            {opendevicemanagements ? (
+              <MdKeyboardArrowUp className="text-2xl" />
+            ) : (
+              <MdKeyboardArrowDown className="text-2xl" />
+            )}
           </div>
 
           {/* Sub Menu */}
@@ -38,7 +44,7 @@ const DeviceManagement = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Location Group
@@ -49,7 +55,7 @@ const DeviceManagement = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Device Communication
@@ -60,7 +66,7 @@ const DeviceManagement = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Device Management
@@ -71,7 +77,7 @@ const DeviceManagement = ({ user }) => {
                 className={({ isActive }) =>
                   isActive
                     ? activeClass
-                    : "hover:text-[oklch(0.645_0.246_16.439)]"
+                    : hoverClass
                 }
               >
                 Device Model

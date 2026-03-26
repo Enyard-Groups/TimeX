@@ -31,11 +31,14 @@ const Sidebar = ({ user }) => {
   // console.log(user);
 
   const isdashboardActive = location.pathname.startsWith("/dashboard");
-  const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  // const activeClass = "text-[oklch(0.645_0.246_16.439)]";
+  const activeClass = "text-white rounded-xl bg-violet-300 p-2";
+  const hoverClass =
+    "text-white hover:text-black hover:bg-gray-100 p-2 rounded-xl";
 
   return (
     <div
-      className="h-screen overflow-y-auto bg-red-50/50"
+      className="h-screen overflow-y-auto bg-[#00173d] backdrop-blur-md"
       style={{
         // backgroundColor: "oklch(1 0 0)",
         scrollbarWidth: "none",
@@ -46,32 +49,11 @@ const Sidebar = ({ user }) => {
         {/* Logo */}
         <div className="text-2xl font-black tracking-tight text-[oklch(0.147_0.004_49.25)]">
           <Link to="/dashboard">
-            <img src="../timexlogo.png" alt="" height="120px" width="120px" />
+            <img src="../timexlogo.png" className="bg-white" alt="" height="120px" width="120px" />
           </Link>
         </div>
       </div>
 
-      {/* Profile */}
-      <div className="flex justify-center items-start pb-5">
-        <div className="text-center ">
-          <div
-            src="/profile.jpg"
-            alt="Profile"
-            className="w-20 h-20 mt-5 rounded-full flex items-center justify-center font-black shadow-md cursor-pointer transition-all hover:scale-105 bg-[oklch(0.645_0.246_16.439)] text-white object-cover mx-auto mb-4 text-3xl"
-          >
-            {" "}
-            {user?.user_name?.charAt(0)?.toUpperCase() || "U"}
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800">
-              {user?.user_name}
-            </h3>
-            <p className="text-sm text-gray-500">
-              {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
-            </p>
-          </div>
-        </div>
-      </div>
 
       {/* Sidebar Components */}
       <nav className="px-3 pb-8 space-y-2">
@@ -83,9 +65,12 @@ const Sidebar = ({ user }) => {
               style={{ color: "oklch(0.147 0.004 49.25)" }}
             >
               <div
-                className={`mt-5 font-bold text-md ${isdashboardActive ? activeClass : ""}`}
+                className={`mt-5 mb-6 px-3 py-2 rounded-xl text-md transition-all duration-200 ${
+                  isdashboardActive ? activeClass : hoverClass
+                }`}
               >
-                <div className="text-center font-medium text-lg">
+                <div className="flex items-center gap-4 text-[18px] pl-2">
+                  <RxDashboard />
                   <span>
                     <Link to="/dashboard">Dashboard</Link>
                   </span>
@@ -103,11 +88,11 @@ const Sidebar = ({ user }) => {
             </div>
             <button
               onClick={handleLogout}
-              className="w-full flex justify-center cursor-pointer flex flex-row gap-2 my-10 font-bold"
+              className="w-full flex justify-center items-center gap-2 my-10 font-semibold text-blue-100 hover:text-white transition-all"
             >
               <span className="mt-1">Logout</span>
 
-              <span className="text-lg mt-1 bg-[oklch(0.645_0.246_16.439)] rounded-full p-1 text-white">
+              <span className="text-lg mt-1 bg-violet-300 rounded-full p-1 text-white">
                 <IoIosLogOut />
               </span>
             </button>
@@ -138,9 +123,9 @@ const Sidebar = ({ user }) => {
             <div className="absolute bottom-0">
               <button
                 onClick={handleLogout}
-                className="w-full cursor-pointer flex flex-row gap-2 my-10 font-bold"
+                className="w-full flex justify-center items-center gap-2 my-10 font-semibold text-blue-100 hover:text-white transition-all"
               >
-                <span className="text-lg mt-1 bg-red-600 rounded-full p-1 text-white">
+                <span className="text-lg mt-1 bg-violet-300 rounded-full p-1 text-white">
                   <IoIosLogOut />
                 </span>
                 <span className="mt-1">Logout</span>
