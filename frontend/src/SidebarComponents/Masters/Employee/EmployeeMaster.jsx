@@ -28,7 +28,6 @@ const emptyForm = {
   location: "",
   designation: "",
   shift: "",
-  leave_plan: "",
   first_approver: "",
   second_approver: "",
   is_manager: false,
@@ -39,6 +38,8 @@ const emptyForm = {
   department_id: "",
   designation_id: "",
   shift_id: "",
+  leave_plan: [],
+  leave_plan_name: [],
 };
 
 const EmployeeMaster = () => {
@@ -58,7 +59,7 @@ const EmployeeMaster = () => {
   const [designationOptions, setDesignationOptions] = useState([]);
   const [shiftOptions, setShiftOptions] = useState([]);
   const [approverOptions, setApproverOptions] = useState([]);
-
+  const [leavePlanOptions, setLeavePLanOptions] = useState([]);
 
   const [formData, setFormData] = useState(emptyForm);
 
@@ -84,17 +85,18 @@ const EmployeeMaster = () => {
   // ── Fetch dropdown options from backend ───────────────────────────────────
   const fetchDropdowns = async () => {
     try {
-      const [deptRes, desRes, shiftRes, appRes] = await Promise.all([
+      const [deptRes, desRes, shiftRes, appRes, levRes] = await Promise.all([
         axios.get(`${API_BASE}/master/departments`),
         axios.get(`${API_BASE}/master/designation`),
         axios.get(`${API_BASE}/master/shifts`),
         axios.get(`${API_BASE}/users/approvers`, { withCredentials: true }),
+        axios.get(`${API_BASE}/master/leave-types`, { withCredentials: true }),
       ]);
       setDepartmentOptions(deptRes.data || []);
       setDesignationOptions(desRes.data || []);
       setShiftOptions(shiftRes.data || []);
       setApproverOptions(appRes.data || []);
-
+      setLeavePLanOptions(levRes.data || []);
     } catch (error) {
       console.error("Failed to fetch dropdowns", error);
     }
@@ -110,14 +112,24 @@ const EmployeeMaster = () => {
     (x) =>
       (x.full_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()) ||
       (x.location || "").toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      (x.department_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      (x.designation_name || "").toLowerCase().startsWith(searchTerm.toLowerCase())
+      (x.department_name || "")
+        .toLowerCase()
+        .startsWith(searchTerm.toLowerCase()) ||
+      (x.designation_name || "")
+        .toLowerCase()
+        .startsWith(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
   const startIndex = endIndex - entriesPerPage;
-  const currentemployeeMaster = filteredemployeeMaster.slice(startIndex, endIndex);
-  const totalPages = Math.max(1, Math.ceil(filteredemployeeMaster.length / entriesPerPage));
+  const currentemployeeMaster = filteredemployeeMaster.slice(
+    startIndex,
+    endIndex,
+  );
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredemployeeMaster.length / entriesPerPage),
+  );
 
   // ── Handlers ──────────────────────────────────────────────────────────────
   const handleChange = (e) => {
@@ -136,15 +148,20 @@ const EmployeeMaster = () => {
       return;
     }
 
+    const payload = {
+      ...formData,
+      leave_plan: formData.leave_plan.join(","),
+    };
+
     try {
       if (editId) {
-        const res = await axios.put(`${API_BASE}/employee/${editId}`, formData);
+        const res = await axios.put(`${API_BASE}/employee/${editId}`, payload);
         setEmployeeMaster((prev) =>
-          prev.map((emp) => (emp.id === editId ? res.data : emp))
+          prev.map((emp) => (emp.id === editId ? res.data : emp)),
         );
         toast.success("Employee updated");
       } else {
-        const res = await axios.post(`${API_BASE}/employee`, formData);
+        const res = await axios.post(`${API_BASE}/employee`, payload);
         setEmployeeMaster((prev) => [res.data, ...prev]);
         toast.success("Employee added");
       }
@@ -189,7 +206,7 @@ const EmployeeMaster = () => {
           item.full_name,
           item.shift_name || item.shift,
           item.designation_name || item.designation,
-        ].join("\t")
+        ].join("\t"),
       )
       .join("\n");
 
@@ -369,7 +386,9 @@ const EmployeeMaster = () => {
                     key={item.id}
                     className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                   >
-                    <td className="p-2 hidden sm:table-cell">{startIndex + index + 1}</td>
+                    <td className="p-2 hidden sm:table-cell">
+                      {startIndex + index + 1}
+                    </td>
                     <td className="p-2 ">{item.device_enrollment_id}</td>
                     <td className="p-2  hidden md:table-cell">
                       {item.company_enrollment_id}
@@ -378,7 +397,9 @@ const EmployeeMaster = () => {
                       {item.location}
                     </td>
                     <td className="p-2 ">{item.full_name}</td>
-                    <td className="p-2  hidden md:table-cell">{item.shift_name || item.shift}</td>
+                    <td className="p-2  hidden md:table-cell">
+                      {item.shift_name || item.shift}
+                    </td>
                     <td className="p-2 hidden lg:table-cell">
                       {item.designation_name || item.designation}
                     </td>
@@ -387,7 +408,27 @@ const EmployeeMaster = () => {
                         {/* View */}
                         <FaEye
                           onClick={() => {
-                            setFormData(item);
+                            setFormData({
+                              ...item,
+
+                              department_id: item.department_id || "",
+                              designation_id: item.designation_id || "",
+                              shift_id: item.shift_id || "",
+
+                              department_id_name: item.department_name || "",
+                              designation_id_name: item.designation_name || "",
+                              shift_id_name: item.shift_name || "",
+
+                              // convert string → array
+                              leave_plan_name: item.leave_plan
+                                ? item.leave_plan.split(",")
+                                : [],
+
+                              leave_plan: item.leave_plan
+                                ? item.leave_plan.split(",")
+                                : [],
+                            });
+
                             setMode("view");
                             setOpenModal(true);
                           }}
@@ -399,13 +440,25 @@ const EmployeeMaster = () => {
                           onClick={() => {
                             setFormData({
                               ...item,
+
                               department_id: item.department_id || "",
                               designation_id: item.designation_id || "",
                               shift_id: item.shift_id || "",
+
                               department_id_name: item.department_name || "",
                               designation_id_name: item.designation_name || "",
                               shift_id_name: item.shift_name || "",
+
+                              // convert string → array
+                              leave_plan_name: item.leave_plan
+                                ? item.leave_plan.split(",")
+                                : [],
+
+                              leave_plan: item.leave_plan
+                                ? item.leave_plan.split(",")
+                                : [],
                             });
+
                             setEditId(item.id);
                             setMode("edit");
                             setOpenModal(true);
@@ -686,19 +739,22 @@ const EmployeeMaster = () => {
               </div>
 
               {/* Leave Plan */}
-              <div>
-                <SearchDropdown
-                  label="Leave Plan"
-                  name="leave_plan"
-                  value={formData.leave_plan}
-                  options={["Working Days", "Calendar Days"]}
-                  formData={formData}
-                  setFormData={setFormData}
-                  disabled={mode === "view"}
-                  inputStyle={inputStyle}
-                  labelStyle={labelStyle}
-                />
-              </div>
+              <SearchDropdown
+                label="Leave Plan"
+                name="leave_plan"
+                value={formData.leave_plan}
+                displayValue={formData.leave_plan_name}
+                options={leavePlanOptions}
+                labelKey="name"
+                valueKey="name"
+                formData={formData}
+                setFormData={setFormData}
+                labelName="leave_plan_name"
+                disabled={mode === "view"}
+                inputStyle={inputStyle}
+                labelStyle={labelStyle}
+                multiple={true}
+              />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 border-t pt-4">
               {/* First Approver */}
@@ -734,7 +790,6 @@ const EmployeeMaster = () => {
                   labelStyle={labelStyle}
                 />
               </div>
-
 
               {/* Manager */}
               <div className="flex items-center gap-2 mt-6">

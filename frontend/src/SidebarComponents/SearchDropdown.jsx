@@ -4,7 +4,7 @@ import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 const SearchDropdown = ({
   label,
   name,
-  value,
+  value = [],
   displayValue,
   options = [],
   formData,
@@ -12,9 +12,10 @@ const SearchDropdown = ({
   disabled,
   inputStyle,
   labelStyle,
-  labelKey, // If options are objects, which key is the label
-  valueKey, // If options are objects, which key is the value
-  labelName, // The field in formData to store the selected label
+  labelKey,
+  valueKey,
+  labelName,
+  multiple = false,
 }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -27,17 +28,68 @@ const SearchDropdown = ({
     return l && l.toLowerCase().includes(search.toLowerCase());
   });
 
+  //  MULTI + SINGLE HANDLER
+  const handleSelect = (val, lbl) => {
+    if (multiple) {
+      const currentValues = Array.isArray(value) ? value : [];
+      const currentLabels = Array.isArray(formData[labelName || `${name}_name`])
+        ? formData[labelName || `${name}_name`]
+        : [];
+
+      let updatedValues;
+      let updatedLabels;
+
+      if (currentValues.includes(val)) {
+        // remove
+        updatedValues = currentValues.filter((v) => v !== val);
+        updatedLabels = currentLabels.filter((l) => l !== lbl);
+      } else {
+        // add
+        updatedValues = [...currentValues, val];
+        updatedLabels = [...currentLabels, lbl];
+      }
+
+      setFormData({
+        ...formData,
+        [name]: updatedValues,
+        [labelName || `${name}_name`]: updatedLabels,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: val,
+        [labelName || `${name}_name`]: lbl,
+      });
+      setOpen(false);
+    }
+  };
+
+  const isSelected = (val) => {
+    return multiple
+      ? Array.isArray(value) && value.includes(val)
+      : value === val;
+  };
+
   return (
     <div className="relative">
       <label className={labelStyle}>{label}</label>
 
+      {/* Input */}
       <div
         onClick={() => !disabled && setOpen(!open)}
         className={`${inputStyle} ${
           disabled ? "cursor-default" : "cursor-pointer"
         } flex items-center justify-between min-h-[40px]`}
       >
-        <span className="truncate">{displayValue || value || "Select"}</span>
+        <span className="truncate">
+          {multiple
+            ? Array.isArray(formData[labelName || `${name}_name`]) &&
+              formData[labelName || `${name}_name`].length > 0
+              ? formData[labelName || `${name}_name`].join(", ")
+              : "Select"
+            : displayValue || value || "Select"}
+        </span>
+
         {!disabled &&
           (open ? (
             <MdKeyboardArrowUp className="text-xl shrink-0" />
@@ -46,8 +98,10 @@ const SearchDropdown = ({
           ))}
       </div>
 
+      {/* Dropdown */}
       {open && (
         <div className="absolute w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg z-[100]">
+          {/* Search */}
           <input
             placeholder="Search.."
             autoFocus
@@ -56,35 +110,34 @@ const SearchDropdown = ({
             className="w-full px-2 py-1 border-b border-gray-300 outline-none"
           />
 
-          <div
-            className="max-h-48 overflow-y-auto"
-            style={{ scrollbarWidth: "none" }}
-          >
+          {/* Options */}
+          <div className="max-h-48 overflow-y-auto">
             {filtered.length > 0 ? (
-              filtered.map((o, i) => (
-                <div
-                  key={i}
-                  onClick={() => {
-                    const val = getValue(o);
-                    const lbl = getLabel(o);
-                    // Update both the ID and name fields if needed, 
-                    // or just set the ID. Here we set the 'name' field in formData
-                    setFormData({ 
-                      ...formData, 
-                      [name]: val,
-                      // Optionally set a separate field for the label to avoid re-fetching
-                      [labelName || `${name}_name`]: lbl 
-                    });
-                    setOpen(false);
-                    setSearch("");
-                  }}
-                  className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                >
-                  {getLabel(o)}
-                </div>
-              ))
+              filtered.map((o, i) => {
+                const val = getValue(o);
+                const lbl = getLabel(o);
+
+                return (
+                  <div
+                    key={i}
+                    onClick={() => handleSelect(val, lbl)}
+                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2"
+                  >
+                    {multiple && (
+                      <input
+                        type="checkbox"
+                        checked={isSelected(val)}
+                        readOnly
+                      />
+                    )}
+                    <span>{lbl}</span>
+                  </div>
+                );
+              })
             ) : (
-              <div className="px-3 py-2 text-gray-400 italic">No results found</div>
+              <div className="px-3 py-2 text-gray-400 italic">
+                No results found
+              </div>
             )}
           </div>
         </div>

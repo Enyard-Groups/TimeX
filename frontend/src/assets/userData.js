@@ -32,7 +32,7 @@ export const userData = [
     checkin: "09:05:00",
     checkout: "18:05:00",
     locationName: "Mumbai",
-    checkinDevice: "tablet",
+    checkinDevice: "desktop",
     checkoutDevice: "mobile",
   },
   {
@@ -60,7 +60,7 @@ export const userData = [
     checkout: "18:15:00",
     locationName: "Mumbai",
     checkinDevice: "desktop",
-    checkoutDevice: "tablet",
+    checkoutDevice: "desktop",
   },
   {
     enrollmentId: "EMP008",
@@ -77,8 +77,8 @@ export const userData = [
     checkin: "08:45:00",
     checkout: "17:40:00",
     locationName: "Gurgaon",
-    checkinDevice: "tablet",
-    checkoutDevice: "tablet",
+    checkinDevice: "desktop",
+    checkoutDevice: "desktop",
   },
   {
     enrollmentId: "EMP010",

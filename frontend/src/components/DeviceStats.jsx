@@ -2,26 +2,26 @@ import React from "react";
 import Chart from "react-apexcharts";
 
 const DeviceStats = ({ data = [] }) => {
-  //  Count devices
+  // Count devices
   const deviceCount = {
     mobile: 0,
     desktop: 0,
-    tablet: 0,
     biometric: 0,
   };
 
   data.forEach((user) => {
-    deviceCount[user.checkinDevice] =
-      (deviceCount[user.checkinDevice] || 0) + 1;
+    const device = user.checkinDevice;
+    if (Object.prototype.hasOwnProperty.call(deviceCount, device)) {
+      deviceCount[device] += 1;
+    }
   });
 
   const total = data.length || 1;
 
-  //  Convert to %
+  // Convert to %
   const series = [
     Math.round((deviceCount.mobile / total) * 100),
     Math.round((deviceCount.desktop / total) * 100),
-    Math.round((deviceCount.tablet / total) * 100),
     Math.round((deviceCount.biometric / total) * 100),
   ];
 
@@ -29,7 +29,7 @@ const DeviceStats = ({ data = [] }) => {
     chart: {
       type: "donut",
     },
-    labels: ["Mobile", "Desktop", "Tablet", "Biometric"],
+    labels: ["Mobile", "Desktop", "Biometric"],
     legend: {
       show: false,
     },
@@ -42,7 +42,6 @@ const DeviceStats = ({ data = [] }) => {
     colors: [
       "#6366f1", // indigo
       "#3b82f6", // blue
-      "#8b5cf6", // purple
       "#228eb8", // green
     ],
     plotOptions: {
@@ -66,13 +65,12 @@ const DeviceStats = ({ data = [] }) => {
   const deviceList = [
     { name: "Mobile", value: series[0], color: "#6366f1" },
     { name: "Desktop", value: series[1], color: "#3b82f6" },
-    { name: "Tablet", value: series[2], color: "#8b5cf6" },
-    { name: "Biometric", value: series[3], color: "#228eb8" },
+    { name: "Biometric", value: series[2], color: "#228eb8" },
   ];
 
   return (
     <div className="flex justify-center">
-      <div className=" bg-white rounded-xl p-4 h-[380px] w-full max-w-sm">
+      <div className="bg-white rounded-xl p-4 h-[380px] w-full max-w-sm">
         {/* Title */}
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-sm font-semibold text-gray-700">Device</h3>
