@@ -41,7 +41,7 @@ export const createDevice = async (req, res) => {
   try {
     const result = await db.query(
       `INSERT INTO devices
-        (name, company, deviceip, deviceserialno, devicemodel, latitude, longitude,
+        (device_name, company, ip_address, serial_number, device_model, latitude, longitude,
          is_face, is_fingerprint, is_card_no, is_pin_no, is_active)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
        RETURNING *`,

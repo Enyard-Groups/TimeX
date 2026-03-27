@@ -57,6 +57,7 @@ const DeviceManagementSub = () => {
     try {
       const response = await axios.get(`${API_BASE}/device/devices`, { headers: getHeaders() });
       const payload = response?.data?.data ?? response?.data;
+      console.log(payload)
       // Map snake_case booleans back to camelCase for display
       const mapped = (Array.isArray(payload) ? payload : []).map((d) => ({
         ...d,
@@ -65,6 +66,12 @@ const DeviceManagementSub = () => {
         isCardNo: d.is_card_no ?? false,
         isPinNo: d.is_pin_no ?? false,
         isActive: d.is_active ?? false,
+        name:d.device_name ??"",
+        deviceserialno:d.serial_number ??"",
+        deviceip:d.ip_address ??"",
+        company:d.company ??"",
+        devicemodel:d.device_model ??"",
+        
       }));
       setDevicemanagement(mapped);
     } catch (error) {

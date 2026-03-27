@@ -11,7 +11,13 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import axios from "axios";
 import SearchDropdown from "../SearchDropdown";
+
+
+const API_URL = "http://localhost:3000/api/form/facilityComplaint";
+
+
 
 const FacilityComplaintForm = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -21,6 +27,21 @@ const FacilityComplaintForm = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
 
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(API_URL);
+      setRequestData(response.data);
+      console.log(response.data)
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to fetch data");
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const labelStyle =
     "text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block mx-1";
 
@@ -29,17 +50,18 @@ const FacilityComplaintForm = () => {
 
   const defaultFormData = {
     name: "",
-    issueType: "",
+    issue_type: "",
     location: "",
     description: "",
-    safetyConcerns: "",
-    requestedAction: "",
-    date: "",
+    safety_concerns: "",
+    requested_action: "",
+    date_noticed: "",
     urgent: "",
-    attachedFile: null,
+    attached_file: null,
     email: "",
     contact: "",
   };
+  // console.log("Form Data", formData); 
 
   const [formData, setFormData] = useState(defaultFormData);
 
@@ -63,74 +85,62 @@ const FacilityComplaintForm = () => {
   );
 
   // Handle submit
-  const handleSubmit = () => {
-    const newEntry = {
-      id: editId ? editId : Date.now(),
-      ...formData,
-    };
-
-    if (editId) {
-      const updated = requestData.map((item) =>
-        item.id === editId ? { ...item, ...newEntry } : item,
-      );
-
-      setRequestData(updated);
-
-      // Backend version
-      // await axios.put(`/api/manual-entry/${editId}`, newEntry)
-
-      toast.success("Request Updated");
-    } else {
-      const updated = [...requestData, newEntry];
-      setRequestData(updated);
-
-      // Backend version
-      // await axios.post("/api/manual-entry-request", newEntry)
-
-      toast.success("Request Submitted");
+  const handleSubmit = async () => {
+  
+    try {
+      if (editId) {
+        await axios.put(`${API_URL}/${editId}`, formData);
+        toast.success("Request Updated");
+        
+      } else {
+        await axios.post(API_URL, formData);
+        console.log(formData);
+        toast.success("Request Submitted");
+      }
+      setOpenModal(false);
+      setEditId(null);
+      setFormData(defaultFormData);
+      fetchData();
+    } catch (error) {
+      console.error("Error saving data:", error);
+      toast.error("Failed to save data");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData(defaultFormData);
   };
 
   // Handle delete
-  const handleDelete = (id) => {
-    const updated = requestData.filter((v) => v.id !== id);
-
-    setRequestData(
-      updated.map((item) => ({
-        ...item,
-      })),
-    );
-
-    toast.success("Deleted Successfully");
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      toast.success("Deleted Successfully");
+      fetchData();
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      toast.error("Failed to delete data");
+    }
   };
 
   const handleCopy = () => {
     const header = [
-      "Name",
-      "Issue Type ",
-      "Location",
-      "Description",
-      "Safety Concerns",
-      "Requested Action",
-      "Date Noticed",
-      "Urgent",
+      "name",
+      "issue_type ",
+      "location",
+      "description",
+      "safety_concerns",
+      "requested_action",
+      "date_noticed",
+      "urgent",
     ].join("\t");
 
     const rows = requestData
       .map((item) => {
         return [
           item.name,
-          item.issueType,
+          item.issue_type,
           item.location,
           item.description,
-          item.safetyConcerns,
-          item.requestedAction,
-          item.date,
+          item.safety_concerns,
+          item.requested_action,
+          item.date_noticed,
           item.urgent,
         ].join("\t");
       })
@@ -145,12 +155,12 @@ const FacilityComplaintForm = () => {
   const handleExcel = () => {
     const excelData = requestData.map((item) => ({
       Name: item.name,
-      IssueType: item.issueType,
+      IssueType: item.issue_type,
       Location: item.location,
       Description: item.description,
-      SafetyConcerns: item.safetyConcerns,
-      RequestedAction: item.requestedAction,
-      DateNoticed: item.date,
+      SafetyConcerns: item.safety_concerns,
+      RequestedAction: item.requested_action,
+      DateNoticed: item.date_noticed,
       Urgent: item.urgent,
     }));
 
@@ -170,13 +180,13 @@ const FacilityComplaintForm = () => {
     const doc = new jsPDF("landscape");
 
     const tableColumn = [
-      "Name",
-      "Issue Type ",
-      "Location",
-      "Description",
-      "Safety Concerns",
-      "Requested Action",
-      "Date Noticed",
+      "name",
+      "Issue_type ",
+      "location",
+      "description",
+      "Safety_concerns",
+      "Requested_action",
+      "Date_noticed",
       "Urgent",
     ];
 
@@ -185,12 +195,12 @@ const FacilityComplaintForm = () => {
     requestData.forEach((item) => {
       const row = [
         item.name,
-        item.issueType,
+        item.issue_type,
         item.location,
         item.description,
-        item.safetyConcerns,
-        item.requestedAction,
-        item.date,
+        item.safety_concerns,
+        item.requested_action,
+        item.date_noticed,
         item.urgent,
       ];
       tableRows.push(row);
@@ -523,7 +533,7 @@ const FacilityComplaintForm = () => {
                       </label>
                       <SearchDropdown
                         name="issueType"
-                        value={formData.issueType}
+                        value={formData.issue_type}
                         options={[
                           "Electrical",
                           "Plumbing",
@@ -588,7 +598,7 @@ const FacilityComplaintForm = () => {
                       </label>
                       <SearchDropdown
                         name="safetyConcerns"
-                        value={formData.safetyConcerns}
+                        value={formData.safety_concerns}
                         options={["Yes", "No"]}
                         formData={formData}
                         setFormData={setFormData}

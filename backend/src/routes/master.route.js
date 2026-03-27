@@ -14,6 +14,7 @@ import {
   getShifts,
   createShift,
   updateShift,
+  
   deleteShift,
   getHolidays,
   createHoliday,
@@ -38,10 +39,11 @@ import {
   getEmployeeGeofencing,
   assignGeofencingToEmployees,
 
-  // getLocationGroups,
-  // createLocationGroup,
-  // updateLocationGroup,
-  // deleteLocationGroup,
+  getLocationGroups,
+  createLocationGroup,
+  updateLocationGroup,
+  deleteLocationGroup,
+
 } from "../controllers/master.controller.js"
 
 masterRoute.get("/departments",getDepartments);
@@ -82,10 +84,12 @@ masterRoute.delete('/geofencing/:id', deleteGeofencingLocation);
 masterRoute.get('/employee-geofencing', getEmployeeGeofencing);
 masterRoute.post('/employee-geofencing', assignGeofencingToEmployees);
 
-// Location Groups
-// masterRoute.get('/location-groups', getLocationGroups);
-// masterRoute.post('/location-groups', createLocationGroup);
-// masterRoute.put('/location-groups/:id', updateLocationGroup);
-// masterRoute.delete('/location-groups/:id', deleteLocationGroup);
+
+
+
+masterRoute.get('/location-groups', getLocationGroups);
+masterRoute.post('/location-groups', createLocationGroup);
+masterRoute.put('/location-groups/:id', updateLocationGroup);
+masterRoute.delete('/location-groups/:id', deleteLocationGroup);
 
 export default masterRoute;

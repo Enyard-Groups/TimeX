@@ -9,6 +9,7 @@ import employeesRoute from "./routes/employees.route.js";
 import masterRoute from "./routes/master.route.js";
 import visitorRouter from "./routes/visitor.route.js";
 import cors from "cors";
+import formRouter from "./routes/form.route.js";
 
 
 const PORT=process.env.PORT;
@@ -27,7 +28,8 @@ app.use("/api/master",masterRoute);
 app.use("/api/device",deviceRouter);
 app.use("/api/attendence",attendenceRouter);
 app.use("/api/requests",requestRouter);
-app.use("/api/visit",visitorRouter);
+app.use("/api/visitor", visitorRouter);
+app.use("/api/form", formRouter);
 
 
 

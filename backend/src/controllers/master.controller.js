@@ -188,6 +188,7 @@ export const createHoliday = async (req, res) => {
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
+   
     console.log("error in createholidays", error.message);
     res.status(500).json({ message: error.message });
   }
@@ -438,6 +439,77 @@ export const getEmployeeGeofencing = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// ── Location Groups ────────────────────────────────────────────────────────────
+
+export const getLocationGroups = async (req, res) => {
+  try {
+    const result = await db.query(
+      'SELECT * FROM location_groups ORDER BY created_at DESC'
+    );
+    res.json({ data: result.rows });
+  } catch (error) {
+    console.error('Error in getLocationGroups:', error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const createLocationGroup = async (req, res) => {
+  const { group_name, company, description, site_manager, time_keeper } = req.body;
+  if (!group_name || !company || !description || !site_manager || !time_keeper) {
+    return res.status(400).json({ message: 'All fields are required.' });
+  }
+  try {
+    const result = await db.query(
+      `INSERT INTO location_groups (group_name, company, description, site_manager, time_keeper)
+       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [group_name, company, description, site_manager, time_keeper]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error in createLocationGroup:', error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateLocationGroup = async (req, res) => {
+  const { id } = req.params;
+  const { group_name, company, description, site_manager, time_keeper } = req.body;
+  try {
+    const result = await db.query(
+      `UPDATE location_groups
+       SET group_name=$1, company=$2, description=$3, site_manager=$4, time_keeper=$5
+       WHERE id=$6 RETURNING *`,
+      [group_name, company, description, site_manager, time_keeper, id]
+    );
+    if (!result.rows[0]) {
+      return res.status(404).json({ message: 'Location group not found.' });
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error in updateLocationGroup:', error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteLocationGroup = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await db.query(
+      'DELETE FROM location_groups WHERE id=$1 RETURNING id',
+      [id]
+    );
+    if (!result.rows[0]) {
+      return res.status(404).json({ message: 'Location group not found.' });
+    }
+    res.json({ message: 'Location group removed.' });
+  } catch (error) {
+    console.error('Error in deleteLocationGroup:', error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// ── Employee Geofencing ────────────────────────────────────────────────────────
 
 export const assignGeofencingToEmployees = async (req, res) => {
   const { employeeIds, geofencingIds } = req.body; // geofencingIds should be an array

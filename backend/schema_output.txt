@@ -1,0 +1,21 @@
+id:integer
+visitor_name:character varying
+visit_date:date
+visit_time:time without time zone
+created_at:timestamp without time zone
+mobile_no:character varying
+email:character varying
+purpose_of_visit:character varying
+company:character varying
+point_of_contact:character varying
+cicpa_card_no:character varying
+company_code:character varying
+cicpa_expiry_date:date
+id_type:character varying
+id_number:character varying
+nationality:character varying
+id_expiry_date:date
+access_card:character varying
+is_permanent:boolean
+status:character varying
+host_employee_id:integer
