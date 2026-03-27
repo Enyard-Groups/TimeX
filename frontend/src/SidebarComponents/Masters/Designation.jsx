@@ -33,7 +33,6 @@ const Designation = () => {
     description: "",
     isActive: false,
   });
-  
 
   const fetchDesignations = async () => {
     try {
