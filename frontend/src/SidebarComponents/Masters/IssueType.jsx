@@ -43,7 +43,7 @@ const IssueType = () => {
       });
 
       const data = Array.isArray(res.data) ? res.data : [];
-      console.log(data)
+      // console.log(data)
 
       setIssueType(
         data.map((d) => ({
