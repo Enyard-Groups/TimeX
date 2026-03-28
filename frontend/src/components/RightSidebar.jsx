@@ -19,7 +19,7 @@ const RightSidebar = ({ user }) => {
 
   return (
     <div
-      className="overflow-y-auto max-h-[88vh]"
+      className="flex flex-col h-full max-h-[88vh] overflow-y-auto"
       style={{ scrollbarWidth: "none" }}
     >
       {/* Profile */}
@@ -44,20 +44,20 @@ const RightSidebar = ({ user }) => {
         </div>
       </div>
 
-      <div className="px-4 h-full ">
+      <div className="px-4 ">
         <h1 className="text-gray-600 font-medium flex justify-between">
           Notifications <IoNotifications className="text-lg mt-1" />
         </h1>
 
         {notifications.length === 0 ? (
-          <div className="flex items-center justify-center h-[220px] text-md opacity-60 text-[oklch(0.147_0.004_49.25)]">
+          <div className="flex items-center justify-center min-h-[220px] h-full text-md opacity-60 text-[oklch(0.147_0.004_49.25)]">
             No Notifications
           </div>
         ) : (
           notifications.map((item, index) => (
             <div
               key={index}
-              className="p-3 mb-2 rounded-xl bg-[oklch(0.97_0.001_106.424)] hover:bg-[oklch(0.923_0.003_48.717)] h-[220px] transition text-md text-[oklch(0.147_0.004_49.25)]"
+              className="p-3 mb-2 rounded-xl bg-[oklch(0.97_0.001_106.424)] hover:bg-[oklch(0.923_0.003_48.717)] min-h-[220px] h-full transition text-md text-[oklch(0.147_0.004_49.25)]"
             >
               {item.message}
             </div>
@@ -65,20 +65,21 @@ const RightSidebar = ({ user }) => {
         )}
       </div>
 
-      <div className="mb-14 flex justify-between">
-        <button
-          onClick={handleLogout}
-          className="h-fit mt-4 px-3 py-1 cursor-pointer flex flex-row gap-2 rounded-full shadow text-xs"
-        >
-          Logout
-          <span className="text-[15px] bg-[#00173d] rounded-full text-white p-1">
-            <IoIosLogOut />
-          </span>
-        </button>
-        <button className="mt-2 px-3 py-1 cursor-pointer rounded-full shadow text-xs">
-          Change Password
-        </button>
-      </div>
+    <div className="mt-auto mb-10 flex justify-between px-4">
+      <button
+        onClick={handleLogout}
+        className="h-fit mt-4 px-3 py-1 pt-2 cursor-pointer flex flex-row gap-2 rounded-full shadow text-xs"
+      >
+        Logout
+        <span className="text-[15px] bg-[#00173d] rounded-full text-white p-1">
+          <IoIosLogOut />
+        </span>
+      </button>
+
+      <button className="mt-4 px-3 py-1 cursor-pointer rounded-full shadow text-xs">
+        Change Password
+      </button>
+    </div>
     </div>
   );
 };

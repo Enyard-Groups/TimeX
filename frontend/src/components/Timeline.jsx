@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/use-memo */
 import React, { useEffect, useState, useRef, useMemo } from "react";
 
 const Timeline = ({ userData = [] }) => {
@@ -45,7 +44,7 @@ const Timeline = ({ userData = [] }) => {
       }
     });
     return events.sort((a, b) => b.timeSecs - a.timeSecs);
-  }, [userData, now.getHours(), now.getMinutes()]); // Reduced frequency to minutes for sorting logic stability
+  }, [userData, currentSecondsNow]);
 
   // 3. Clock Timer (Updates State every second)
   useEffect(() => {
@@ -65,7 +64,7 @@ const Timeline = ({ userData = [] }) => {
         behavior: "smooth",
       });
     }
-  }, [sortedEvents.length, endHour]);
+  }, [sortedEvents, endHour]);
 
   const getPosition = (seconds) => (seconds / totalSecondsToDisplay) * 100;
   const nowPosition = (currentSecondsNow / totalSecondsToDisplay) * 100;

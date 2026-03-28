@@ -96,7 +96,6 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
   };
 
   const handleWheelYear = (event) => {
-    event.preventDefault();
     const dir = event.deltaY < 0 ? "up" : "down";
     spinYear(dir);
   };
