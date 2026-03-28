@@ -31,7 +31,7 @@ const FacilityComplaintForm = () => {
     try {
       const response = await axios.get(API_URL);
       setRequestData(response.data);
-      console.log(response.data)
+      // console.log(response.data)
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to fetch data");
@@ -353,7 +353,7 @@ const FacilityComplaintForm = () => {
                       <td className="p-2">{item.name}</td>
 
                       <td className="p-2 hidden md:table-cell">
-                        {item.issueType}
+                        {item.issue_type}
                       </td>
 
                       <td className="p-2 hidden xl:table-cell">
@@ -364,14 +364,14 @@ const FacilityComplaintForm = () => {
                       </td>
 
                       <td className="p-2 hidden lg:table-cell">
-                        {item.safetyConcerns}
+                        {item.safety_concerns}
                       </td>
 
                       <td className="p-2 hidden md:table-cell">
-                        {item.requestedAction}
+                        {item.requested_action}
                       </td>
 
-                      <td className="p-2 hidden xl:table-cell">{item.date}</td>
+                      <td className="p-2 hidden xl:table-cell">{item.date_noticed}</td>
 
                       <td className="p-2 hidden lg:table-cell">
                         {item.urgent?"Y":"N"}
@@ -569,7 +569,7 @@ const FacilityComplaintForm = () => {
                       <input
                         type="text"
                         name="date"
-                        value={formData.date}
+                        value={formData.date_noticed}
                         onChange={handleChange}
                         disabled={mode === "view"}
                         className={inputStyle}
@@ -629,7 +629,7 @@ const FacilityComplaintForm = () => {
                       <textarea
                         type="text"
                         name="requestedAction"
-                        value={formData.requestedAction}
+                        value={formData.requested_action}
                         onChange={handleChange}
                         disabled={mode === "view"}
                         className={inputStyle}
@@ -643,7 +643,7 @@ const FacilityComplaintForm = () => {
                       <input
                         type="file"
                         name="attachedFile"
-                        value={formData.attachedFile}
+                        value={formData.attached_file}
                         onChange={handleChange}
                         disabled={mode === "view"}
                         className={inputStyle}

@@ -16,6 +16,8 @@ import SpinnerTimePicker from "../SpinnerTimePicker";
 import SpinnerDatePicker from "../SpinnerDatePicker";
 import SignPad from "./SignPad";
 
+const API_URL = "http://localhost:3000/api/form/incident";
+
 const IncidentAccident = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
@@ -31,52 +33,66 @@ const IncidentAccident = () => {
   const [showTimeSpinner, setShowTimeSpinner] = useState(false);
   const [showTimeSpinner2, setShowTimeSpinner2] = useState(false);
 
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(API_URL);
+      setIncidentData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to fetch data");
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const inputStyle =
     " text-[16px] w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
 
   const labelStyle = " text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block";
 
   const defaultFormData = {
-    dateOfIncident: null,
-    timeOfIncident: null,
+    date_of_incident: null,
+    time_of_incident: null,
     location: "",
     building: "",
-    otherdetails: "",
-    typeofincident: "",
-    personAffected: "",
-    specifyOtherDetails: "",
-    incidentTimeline: "",
-    actionTaken: "",
-    injuryDetails: {
+    other_details: "",
+    type_of_incident: "",
+    person_affected: "",
+    specify_other_details: "",
+    incident_timeline: "",
+    action_taken: "",
+    injury_details: {
       illness: "",
-      nameofperson: "",
+      name_of_person: "",
       age: "",
       gender: "",
       category: "",
       description: "",
-      firstaid: "",
-      takentohospital: "",
-      firstAiderName: "",
-      firstAiderDesignation: "",
-      firstAiderDetail: "",
+      first_aid: "",
+      taken_to_hospital: "",
+      first_aider_name: "",
+      first_aider_designation: "",
+      first_aider_detail: "",
     },
-    msoOcc: {
+    mso_occ: {
       time: null,
       date: null,
-      msoName: "",
-      occStaffName: "",
+      mso_name: "",
+      occ_staff_name: "",
     },
     signature: {
-      reportedBy: "",
-      reporterDesignation: "",
-      filledBy: "",
-      fillerDesignation: "",
-      dateOfFillingForm: null,
+      reported_by: "",
+      reporter_designation: "",
+      filled_by: "",
+      filler_designation: "",
+      date_of_filling_form: null,
     },
-    reportAcknowledge: {
-      assitantName: "",
-      dateTime: null,
-      uploadSign: null,
+    report_acknowledge: {
+      assistant_name: "",
+      date_time: null,
+      upload_sign: null,
     },
     signhere: null,
   };
@@ -129,50 +145,37 @@ const IncidentAccident = () => {
   );
 
   // Handle submit
-  const handleSubmit = () => {
-    const newEntry = {
-      id: editId ? editId : Date.now(),
-      ...formData,
-    };
-
-    if (editId) {
-      const updated = incidentData.map((item) =>
-        item.id === editId ? { ...item, ...newEntry } : item,
-      );
-
-      setIncidentData(updated);
-
-      // Backend version
-      // await axios.put(`/api/manual-entry/${editId}`, newEntry)
-
-      toast.success("Request Updated");
-    } else {
-      const updated = [...incidentData, newEntry];
-      setIncidentData(updated);
-
-      // Backend version
-      // await axios.post("/api/manual-entry-request", newEntry)
-
-      toast.success("Request Submitted");
+  const handleSubmit = async () => {
+    try {
+      if (editId) {
+        await axios.put(`${API_URL}/${editId}`, formData);
+        toast.success("Request Updated");
+      } else {
+        await axios.post(API_URL, formData);
+        toast.success("Request Submitted");
+      }
+      fetchData();
+      setOpenModal(false);
+      setEditId(null);
+      setFormData(defaultFormData);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Failed to submit form");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData(defaultFormData);
   };
 
   // Handle delete
-  const handleDelete = (id) => {
-    const updated = incidentData.filter((v) => v.id !== id);
-
-    setIncidentData(
-      updated.map((item) => ({
-        ...item,
-      })),
-    );
-
-    toast.success("Deleted Successfully");
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this record?")) {
+      try {
+        await axios.delete(`${API_URL}/${id}`);
+        toast.success("Deleted Successfully");
+        fetchData();
+      } catch (error) {
+        console.error("Error deleting record:", error);
+        toast.error("Failed to delete record");
+      }
+    }
   };
 
   const handleCopy = () => {
@@ -180,7 +183,7 @@ const IncidentAccident = () => {
 
     const rows = incidentData
       .map((item) => {
-        return [item.location, item.building, item.dateOfIncident].join("\t");
+        return [item.location, item.building, item.date_of_incident].join("\t");
       })
       .join("\n");
 
@@ -194,7 +197,7 @@ const IncidentAccident = () => {
     const excelData = incidentData.map((item) => ({
       Location: item.location,
       BuildingName: item.building,
-      Date: item.dateOfIncident,
+      Date: item.date_of_incident,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -213,7 +216,7 @@ const IncidentAccident = () => {
     const tableRows = [];
 
     incidentData.forEach((item) => {
-      const row = [item.location, item.building, item.dateOfIncident];
+      const row = [item.location, item.building, item.date_of_incident];
 
       tableRows.push(row);
     });
@@ -342,7 +345,7 @@ const IncidentAccident = () => {
                         {index + 1}
                       </td>
 
-                      <td className="p-2">{item.dateOfIncident}</td>
+                      <td className="p-2">{item.date_of_incident}</td>
 
                       <td className="p-2 hidden md:table-cell">
                         {item.location}
@@ -470,8 +473,8 @@ const IncidentAccident = () => {
                         Date of Incident:{" "}
                       </label>
                       <input
-                        name="dateOfIncident"
-                        value={formData.dateOfIncident || ""}
+                        name="date_of_incident"
+                        value={formData.date_of_incident || ""}
                         onChange={handleChange}
                         onClick={() => setShowDateSpinner(true)}
                         disabled={mode === "view"}
@@ -482,11 +485,11 @@ const IncidentAccident = () => {
                       {showDateSpinner && (
                         <div className="absolute mt-8 ml-8 sm:ml-14 md:ml-16 lg:ml-20 ">
                           <SpinnerDatePicker
-                            value={formData.dateOfIncident}
+                            value={formData.date_of_incident}
                             onChange={(date) =>
                               setFormData((prev) => ({
                                 ...prev,
-                                dateOfIncident: date,
+                                date_of_incident: date,
                               }))
                             }
                             onClose={() => setShowDateSpinner(false)}
@@ -506,20 +509,22 @@ const IncidentAccident = () => {
                         }}
                         disabled={mode === "view"}
                       >
-                        {formData.timeOfIncident
-                          ? formData.timeOfIncident.toLocaleTimeString([], {
-                              hour12: false,
-                            })
+                        {formData.time_of_incident
+                          ? formData.time_of_incident instanceof Date
+                            ? formData.time_of_incident.toLocaleTimeString([], {
+                                hour12: false,
+                              })
+                            : formData.time_of_incident
                           : "HH:MM:SS"}
                       </div>
                       {showTimeSpinner && (
                         <div className="absolute mt-8 ml-8 sm:ml-14 md:ml-16 lg:ml-20 ">
                           <SpinnerTimePicker
-                            value={formData.timeOfIncident}
+                            value={formData.time_of_incident}
                             onChange={(date) =>
                               setFormData((prev) => ({
                                 ...prev,
-                                timeOfIncident: date,
+                                time_of_incident: date,
                               }))
                             }
                             onClose={() => setShowTimeSpinner(false)}
@@ -564,8 +569,8 @@ const IncidentAccident = () => {
                       </label>
                       <input
                         type="text"
-                        name="otherdetails"
-                        value={formData.otherdetails}
+                        name="other_details"
+                        value={formData.other_details}
                         onChange={handleChange}
                         className={inputStyle}
                         disabled={mode === "view"}
@@ -577,8 +582,8 @@ const IncidentAccident = () => {
                       </label>
                       <input
                         type="text"
-                        name="typeofincident"
-                        value={formData.typeofincident}
+                        name="type_of_incident"
+                        value={formData.type_of_incident}
                         onChange={handleChange}
                         className={inputStyle}
                         disabled={mode === "view"}
@@ -596,8 +601,8 @@ const IncidentAccident = () => {
                       </label>
                       <input
                         type="text"
-                        name="personAffected"
-                        value={formData.personAffected}
+                        name="person_affected"
+                        value={formData.person_affected}
                         onChange={handleChange}
                         className={inputStyle}
                         disabled={mode === "view"}
@@ -609,8 +614,8 @@ const IncidentAccident = () => {
                       </label>
                       <input
                         type="text"
-                        name="specifyOtherDetails"
-                        value={formData.specifyOtherDetails}
+                        name="specify_other_details"
+                        value={formData.specify_other_details}
                         onChange={handleChange}
                         className={inputStyle}
                         disabled={mode === "view"}
@@ -629,8 +634,8 @@ const IncidentAccident = () => {
                     below section as per the timeline of occurence of events))
                   </p>
                   <textarea
-                    name="incidentTimeline"
-                    value={formData.incidentTimeline}
+                    name="incident_timeline"
+                    value={formData.incident_timeline}
                     disabled={mode === "view"}
                     onChange={handleChange}
                     className="w-full border border-gray-400 h-[300px] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] p-2 rounded"
@@ -643,8 +648,8 @@ const IncidentAccident = () => {
                     Action Taken At Incident Scene (Details){" "}
                   </h1>
                   <textarea
-                    name="actionTaken"
-                    value={formData.actionTaken}
+                    name="action_taken"
+                    value={formData.action_taken}
                     disabled={mode === "view"}
                     onChange={handleChange}
                     className="w-full mt-2 border border-gray-400 h-[200px] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] p-2 rounded"
@@ -669,8 +674,8 @@ const IncidentAccident = () => {
                         type="radio"
                         name="illness"
                         value="Yes"
-                        checked={formData.injuryDetails.illness === "Yes"}
-                        onChange={(e) => handleChange(e, "injuryDetails")}
+                        checked={formData.injury_details.illness === "Yes"}
+                        onChange={(e) => handleChange(e, "injury_details")}
                       />{" "}
                       Yes
                     </label>
@@ -679,8 +684,8 @@ const IncidentAccident = () => {
                         type="radio"
                         name="illness"
                         value="No"
-                        checked={formData.injuryDetails.illness === "No"}
-                        onChange={(e) => handleChange(e, "injuryDetails")}
+                        checked={formData.injury_details.illness === "No"}
+                        onChange={(e) => handleChange(e, "injury_details")}
                       />{" "}
                       No
                     </label>
@@ -693,10 +698,10 @@ const IncidentAccident = () => {
                         Name of injured/ ill Person
                       </label>
                       <input
-                        name="nameofperson"
-                        value={formData.injuryDetails.nameofperson}
+                        name="name_of_person"
+                        value={formData.injury_details.name_of_person}
                         disabled={mode === "view"}
-                        onChange={(e) => handleChange(e, "injuryDetails")}
+                        onChange={(e) => handleChange(e, "injury_details")}
                         className={inputStyle}
                       />
                     </div>
@@ -704,9 +709,9 @@ const IncidentAccident = () => {
                       <label className={labelStyle}>Age</label>
                       <input
                         name="age"
-                        value={formData.injuryDetails.age}
+                        value={formData.injury_details.age}
                         disabled={mode === "view"}
-                        onChange={(e) => handleChange(e, "injuryDetails")}
+                        onChange={(e) => handleChange(e, "injury_details")}
                         className={inputStyle}
                       />
                     </div>
@@ -719,8 +724,8 @@ const IncidentAccident = () => {
                             type="radio"
                             name="gender"
                             value="M"
-                            checked={formData.injuryDetails.gender === "M"}
-                            onChange={(e) => handleChange(e, "injuryDetails")}
+                            checked={formData.injury_details.gender === "M"}
+                            onChange={(e) => handleChange(e, "injury_details")}
                           />{" "}
                           M
                         </label>
@@ -729,8 +734,8 @@ const IncidentAccident = () => {
                             type="radio"
                             name="gender"
                             value="F"
-                            checked={formData.injuryDetails.gender === "F"}
-                            onChange={(e) => handleChange(e, "injuryDetails")}
+                            checked={formData.injury_details.gender === "F"}
+                            onChange={(e) => handleChange(e, "injury_details")}
                           />{" "}
                           F
                         </label>
@@ -743,20 +748,20 @@ const IncidentAccident = () => {
                         <label>
                           <input
                             type="radio"
-                            name="firstaid"
+                            name="first_aid"
                             value="Yes"
-                            checked={formData.injuryDetails.firstaid === "Yes"}
-                            onChange={(e) => handleChange(e, "injuryDetails")}
+                            checked={formData.injury_details.first_aid === "Yes"}
+                            onChange={(e) => handleChange(e, "injury_details")}
                           />{" "}
                           Yes
                         </label>
                         <label>
                           <input
                             type="radio"
-                            name="firstaid"
+                            name="first_aid"
                             value="No"
-                            checked={formData.injuryDetails.firstaid === "No"}
-                            onChange={(e) => handleChange(e, "injuryDetails")}
+                            checked={formData.injury_details.first_aid === "No"}
+                            onChange={(e) => handleChange(e, "injury_details")}
                           />{" "}
                           No
                         </label>
@@ -770,24 +775,24 @@ const IncidentAccident = () => {
                         <label>
                           <input
                             type="radio"
-                            name="takentohospital"
+                            name="taken_to_hospital"
                             value="Yes"
                             checked={
-                              formData.injuryDetails.takentohospital === "Yes"
+                              formData.injury_details.taken_to_hospital === "Yes"
                             }
-                            onChange={(e) => handleChange(e, "injuryDetails")}
+                            onChange={(e) => handleChange(e, "injury_details")}
                           />{" "}
                           Yes
                         </label>
                         <label>
                           <input
                             type="radio"
-                            name="takentohospital"
+                            name="taken_to_hospital"
                             value="No"
                             checked={
-                              formData.injuryDetails.takentohospital === "No"
+                              formData.injury_details.taken_to_hospital === "No"
                             }
-                            onChange={(e) => handleChange(e, "injuryDetails")}
+                            onChange={(e) => handleChange(e, "injury_details")}
                           />{" "}
                           No
                         </label>
@@ -801,9 +806,9 @@ const IncidentAccident = () => {
                       </label>
                       <input
                         name="category"
-                        value={formData.injuryDetails.category}
+                        value={formData.injury_details.category}
                         disabled={mode === "view"}
-                        onChange={(e) => handleChange(e, "injuryDetails")}
+                        onChange={(e) => handleChange(e, "injury_details")}
                         className={inputStyle}
                       />
                     </div>
@@ -814,9 +819,9 @@ const IncidentAccident = () => {
                       </label>
                       <textarea
                         name="description"
-                        value={formData.injuryDetails.description}
+                        value={formData.injury_details.description}
                         disabled={mode === "view"}
-                        onChange={(e) => handleChange(e, "injuryDetails")}
+                        onChange={(e) => handleChange(e, "injury_details")}
                         className={`${inputStyle}col-span-2`}
                       />
                     </div>
@@ -832,10 +837,10 @@ const IncidentAccident = () => {
                         Name of First Aider :
                       </label>
                       <input
-                        name="firstAiderName"
-                        value={formData.injuryDetails.firstAiderName}
+                        name="first_aider_name"
+                        value={formData.injury_details.first_aider_name}
                         disabled={mode === "view"}
-                        onChange={(e) => handleChange(e, "injuryDetails")}
+                        onChange={(e) => handleChange(e, "injury_details")}
                         className={inputStyle}
                       />
                     </div>
@@ -846,10 +851,10 @@ const IncidentAccident = () => {
                         Designation :
                       </label>
                       <input
-                        name="firstAiderDesignation"
-                        value={formData.injuryDetails.firstAiderDesignation}
+                        name="first_aider_designation"
+                        value={formData.injury_details.first_aider_designation}
                         disabled={mode === "view"}
-                        onChange={(e) => handleChange(e, "injuryDetails")}
+                        onChange={(e) => handleChange(e, "injury_details")}
                         className={inputStyle}
                       />
                     </div>
@@ -860,10 +865,10 @@ const IncidentAccident = () => {
                         Details of First Aid Provided :
                       </label>
                       <input
-                        name="firstAiderDetail"
-                        value={formData.injuryDetails.firstAiderDetail}
+                        name="first_aider_detail"
+                        value={formData.injury_details.first_aider_detail}
                         disabled={mode === "view"}
-                        onChange={(e) => handleChange(e, "injuryDetails")}
+                        onChange={(e) => handleChange(e, "injury_details")}
                         className={inputStyle}
                       />
                     </div>
@@ -890,21 +895,23 @@ const IncidentAccident = () => {
                           setShowTimeSpinner2(true);
                         }}
                       >
-                        {formData.msoOcc.time
-                          ? formData.msoOcc.time.toLocaleTimeString([], {
-                              hour12: false,
-                            })
+                        {formData.mso_occ.time
+                          ? formData.mso_occ.time instanceof Date
+                            ? formData.mso_occ.time.toLocaleTimeString([], {
+                                hour12: false,
+                              })
+                            : formData.mso_occ.time
                           : "HH:MM:SS"}
                       </div>
                       {showTimeSpinner2 && (
                         <SpinnerTimePicker
-                          value={formData.msoOcc.time}
+                          value={formData.mso_occ.time}
                           disabled={mode === "view"}
                           onChange={(time) =>
                             setFormData((prev) => ({
                               ...prev,
-                              msoOcc: {
-                                ...prev.msoOcc,
+                              mso_occ: {
+                                ...prev.mso_occ,
                                 time: time,
                               },
                             }))
@@ -923,8 +930,8 @@ const IncidentAccident = () => {
 
                       <input
                         name="date"
-                        value={formData.msoOcc.date || ""}
-                        onChange={(e) => handleChange(e, "msoOcc")}
+                        value={formData.mso_occ.date || ""}
+                        onChange={(e) => handleChange(e, "mso_occ")}
                         onClick={() => setShowMsoDateSpinner(true)}
                         disabled={mode === "view"}
                         placeholder="dd/mm/yyyy"
@@ -933,12 +940,12 @@ const IncidentAccident = () => {
 
                       {showMsoDateSpinner && (
                         <SpinnerDatePicker
-                          value={formData.msoOcc.date}
+                          value={formData.mso_occ.date}
                           onChange={(date) =>
                             setFormData((prev) => ({
                               ...prev,
-                              msoOcc: {
-                                ...prev.msoOcc,
+                              mso_occ: {
+                                ...prev.mso_occ,
                                 date: date,
                               },
                             }))
@@ -955,10 +962,10 @@ const IncidentAccident = () => {
                         Reported to MSO Name
                       </label>
                       <input
-                        name="msoName"
-                        value={formData.msoOcc.msoName}
+                        name="mso_name"
+                        value={formData.mso_occ.mso_name}
                         disabled={mode === "view"}
-                        onChange={(e) => handleChange(e, "msoOcc")}
+                        onChange={(e) => handleChange(e, "mso_occ")}
                         className={inputStyle}
                       />
                     </div>
@@ -970,10 +977,10 @@ const IncidentAccident = () => {
                         Safecor OCC Staff Name
                       </label>
                       <input
-                        name="occStaffName"
-                        value={formData.msoOcc.occStaffName}
+                        name="occ_staff_name"
+                        value={formData.mso_occ.occ_staff_name}
                         disabled={mode === "view"}
-                        onChange={(e) => handleChange(e, "msoOcc")}
+                        onChange={(e) => handleChange(e, "mso_occ")}
                         className={inputStyle}
                       />
                     </div>
@@ -996,8 +1003,8 @@ const IncidentAccident = () => {
                         Incident Reported By
                       </label>
                       <input
-                        name="reportedBy"
-                        value={formData.signature.reportedBy}
+                        name="reported_by"
+                        value={formData.signature.reported_by}
                         disabled={mode === "view"}
                         onChange={(e) => handleChange(e, "signature")}
                         className={inputStyle}
@@ -1010,8 +1017,8 @@ const IncidentAccident = () => {
                         Designation
                       </label>
                       <input
-                        name="reporterDesignation"
-                        value={formData.signature.reporterDesignation}
+                        name="reporter_designation"
+                        value={formData.signature.reporter_designation}
                         disabled={mode === "view"}
                         onChange={(e) => handleChange(e, "signature")}
                         className={inputStyle}
@@ -1025,8 +1032,8 @@ const IncidentAccident = () => {
                         Form Filled By
                       </label>
                       <input
-                        name="filledBy"
-                        value={formData.signature.filledBy}
+                        name="filled_by"
+                        value={formData.signature.filled_by}
                         disabled={mode === "view"}
                         onChange={(e) => handleChange(e, "signature")}
                         className={inputStyle}
@@ -1040,8 +1047,8 @@ const IncidentAccident = () => {
                         Designation
                       </label>
                       <input
-                        name="fillerDesignation"
-                        value={formData.signature.fillerDesignation}
+                        name="filler_designation"
+                        value={formData.signature.filler_designation}
                         disabled={mode === "view"}
                         onChange={(e) => handleChange(e, "signature")}
                         className={inputStyle}
@@ -1055,8 +1062,8 @@ const IncidentAccident = () => {
                         Date
                       </label>
                       <input
-                        name="dateOfFillingForm"
-                        value={formData.signature.dateOfFillingForm || ""}
+                        name="date_of_filling_form"
+                        value={formData.signature.date_of_filling_form || ""}
                         onChange={(e) => handleChange(e, "signature")}
                         onClick={() => setShowSignatureDateSpinner(true)}
                         disabled={mode === "view"}
@@ -1067,13 +1074,13 @@ const IncidentAccident = () => {
                       {showSignatureDateSpinner && (
                         <div className="absolute mt-8 ml-8 sm:ml-14 md:ml-16 lg:ml-20 ">
                           <SpinnerDatePicker
-                            value={formData.signature.dateOfFillingForm}
+                            value={formData.signature.date_of_filling_form}
                             onChange={(date) =>
                               setFormData((prev) => ({
                                 ...prev,
                                 signature: {
                                   ...prev.signature,
-                                  dateOfFillingForm: date,
+                                  date_of_filling_form: date,
                                 },
                               }))
                             }
@@ -1098,10 +1105,10 @@ const IncidentAccident = () => {
                         MSO/Assistant MSO Name
                       </label>
                       <input
-                        name="assitantName"
-                        value={formData.reportAcknowledge.assitantName}
+                        name="assistant_name"
+                        value={formData.report_acknowledge.assistant_name}
                         disabled={mode === "view"}
-                        onChange={(e) => handleChange(e, "reportAcknowledge")}
+                        onChange={(e) => handleChange(e, "report_acknowledge")}
                         className={inputStyle}
                       />
                     </div>
@@ -1113,7 +1120,7 @@ const IncidentAccident = () => {
                         Signature
                       </label>
                       <input
-                        name="uploadSign"
+                        name="upload_sign"
                         type="file"
                         disabled={mode === "view"}
                         onChange={(e) => {
@@ -1121,9 +1128,9 @@ const IncidentAccident = () => {
 
                           setFormData((prev) => ({
                             ...prev,
-                            reportAcknowledge: {
-                              ...prev.reportAcknowledge,
-                              uploadSign: file,
+                            report_acknowledge: {
+                              ...prev.report_acknowledge,
+                              upload_sign: file,
                             },
                           }));
                         }}
@@ -1138,9 +1145,9 @@ const IncidentAccident = () => {
                         Date
                       </label>
                       <input
-                        name="dateTime"
-                        value={formData.reportAcknowledge.dateTime || ""}
-                        onChange={(e) => handleChange(e, "reportAcknowledge")}
+                        name="date_time"
+                        value={formData.report_acknowledge.date_time || ""}
+                        onChange={(e) => handleChange(e, "report_acknowledge")}
                         onClick={() => setShowAckDateSpinner(true)}
                         disabled={mode === "view"}
                         placeholder="dd/mm/yyyy"
@@ -1150,13 +1157,13 @@ const IncidentAccident = () => {
                       {showDateAckSpinner && (
                         <div className="absolute mt-8 ml-8 sm:ml-14 md:ml-16 lg:ml-20 ">
                           <SpinnerDatePicker
-                            value={formData.reportAcknowledge.dateTime}
+                            value={formData.report_acknowledge.date_time}
                             onChange={(date) =>
                               setFormData((prev) => ({
                                 ...prev,
-                                reportAcknowledge: {
-                                  ...prev.reportAcknowledge,
-                                  dateTime: date,
+                                report_acknowledge: {
+                                  ...prev.report_acknowledge,
+                                  date_time: date,
                                 },
                               }))
                             }

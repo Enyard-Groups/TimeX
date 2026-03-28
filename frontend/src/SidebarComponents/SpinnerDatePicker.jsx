@@ -29,9 +29,14 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
 
   if (value instanceof Date) {
     baseDate = value;
-  } else if (typeof value === "string" && value.includes("/")) {
-    const [d, m, y] = value.split("/");
-    baseDate = new Date(Number(y), Number(m) - 1, Number(d));
+  } else if (typeof value === "string") {
+    if (value.includes("/")) {
+      const [d, m, y] = value.split("/");
+      baseDate = new Date(Number(y), Number(m) - 1, Number(d));
+    } else if (value.includes("-")) {
+      const [y, m, d] = value.split("-");
+      baseDate = new Date(Number(y), Number(m) - 1, Number(d));
+    }
   }
 
   const [day, setDay] = useState(String(baseDate.getDate()).padStart(2, "0"));

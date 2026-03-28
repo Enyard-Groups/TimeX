@@ -11,6 +11,9 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import axios from "axios";
+
+const API_URL = "http://localhost:3000/api/form/staffTraining";
 import SearchDropdown from "../SearchDropdown";
 import SpinnerDatePicker from "../SpinnerDatePicker";
 import SignPad from "./SignPad";
@@ -31,11 +34,11 @@ const StaffTrainingChecklist = () => {
     "text-[16px] w-full border border-[oklch(0.923_0.003_48.717)] bg-white  rounded-md px-3 pt-0.5 text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
 
   const defaultFormData = {
-    employeeName: "",
-    enrollmentId: "",
-    trainerName: "",
+    employee_name: "",
+    enrollment_id: "",
+    trainer_name: "",
     date: null,
-    positionTitle: "",
+    position_title: "",
     location: "",
 
     smokeDetect: "",
@@ -91,6 +94,21 @@ const StaffTrainingChecklist = () => {
   };
 
   const [formData, setFormData] = useState(defaultFormData);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(API_URL);
+      setRequestData(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to fetch data");
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const data = {
     Safety_Familiarisation: [
@@ -252,50 +270,68 @@ const StaffTrainingChecklist = () => {
   );
 
   // Handle submit
-  const handleSubmit = () => {
-    const newEntry = {
-      id: editId ? editId : Date.now(),
-      ...formData,
-    };
+  const handleSubmit = async () => {
+    const coreFields = [
+      "employee_name",
+      "enrollment_id",
+      "trainer_name",
+      "date",
+      "position_title",
+      "location",
+    ];
+    const signatureFields = [
+      "signature",
+      "signature_drawn",
+      "signature2",
+      "signature_drawn2",
+    ];
 
-    if (editId) {
-      const updated = requestData.map((item) =>
-        item.id === editId ? { ...item, ...newEntry } : item,
-      );
+    const payload = {};
+    const training_data = {};
+    const signatures = {};
 
-      setRequestData(updated);
+    Object.keys(formData).forEach((key) => {
+      if (coreFields.includes(key)) {
+        payload[key] = formData[key];
+      } else if (signatureFields.includes(key)) {
+        signatures[key] = formData[key];
+      } else {
+        training_data[key] = formData[key];
+      }
+    });
 
-      // Backend version
-      // await axios.put(`/api/manual-entry/${editId}`, newEntry)
+    payload.training_data = training_data;
+    payload.signatures = signatures;
 
-      toast.success("Request Updated");
-    } else {
-      const updated = [...requestData, newEntry];
-      setRequestData(updated);
+    try {
+      if (editId) {
+        await axios.put(`${API_URL}/${editId}`, payload);
+        toast.success("Request Updated");
+      } else {
+        await axios.post(API_URL, payload);
+        toast.success("Request Submitted");
+      }
 
-      // Backend version
-      // await axios.post("/api/manual-entry-request", newEntry)
-
-      toast.success("Request Submitted");
+      setOpenModal(false);
+      setEditId(null);
+      setFormData(defaultFormData);
+      fetchData();
+    } catch (error) {
+      console.error("Error saving data:", error);
+      toast.error("Failed to save data");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData(defaultFormData);
   };
 
   // Handle delete
-  const handleDelete = (id) => {
-    const updated = requestData.filter((v) => v.id !== id);
-
-    setRequestData(
-      updated.map((item) => ({
-        ...item,
-      })),
-    );
-
-    toast.success("Deleted Successfully");
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      toast.success("Deleted Successfully");
+      fetchData();
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      toast.error("Failed to delete data");
+    }
   };
 
   const handleCopy = () => {
@@ -309,9 +345,9 @@ const StaffTrainingChecklist = () => {
     const rows = requestData
       .map((item) => {
         return [
-          item.employeeName,
-          item.enrollmentId,
-          item.trainerName,
+          item.employee_name,
+          item.enrollment_id,
+          item.trainer_name,
           item.date,
         ].join("\t");
       })
@@ -325,9 +361,9 @@ const StaffTrainingChecklist = () => {
 
   const handleExcel = () => {
     const excelData = requestData.map((item) => ({
-      EmployeeName: item.employeeName,
-      EnrollmentID: item.enrollmentId,
-      TrainerName: item.trainerName,
+      EmployeeName: item.employee_name,
+      EnrollmentID: item.enrollment_id,
+      TrainerName: item.trainer_name,
       Date: item.date,
     }));
 
@@ -357,9 +393,9 @@ const StaffTrainingChecklist = () => {
 
     requestData.forEach((item) => {
       const row = [
-        item.employeeName,
-        item.enrollmentId,
-        item.trainerName,
+        item.employee_name,
+        item.enrollment_id,
+        item.trainer_name,
         item.date,
       ];
 
@@ -494,13 +530,13 @@ const StaffTrainingChecklist = () => {
                         {index + 1}
                       </td>
 
-                      <td className="p-2">{item.employeeName}</td>
+                      <td className="p-2">{item.employee_name}</td>
 
                       <td className="p-2 hidden md:table-cell">
-                        {item.enrollmentId}
+                        {item.enrollment_id}
                       </td>
                       <td className="p-2 hidden md:table-cell">
-                        {item.trainerName}
+                        {item.trainer_name}
                       </td>
 
                       <td className="p-2 hidden lg:table-cell">{item.date}</td>
@@ -511,7 +547,14 @@ const StaffTrainingChecklist = () => {
                           {/* View */}{" "}
                           <FaEye
                             onClick={() => {
-                              setFormData(item);
+                              const flatData = {
+                                ...item,
+                                ...(item.training_data || {}),
+                                ...(item.signatures || {}),
+                              };
+                              delete flatData.training_data;
+                              delete flatData.signatures;
+                              setFormData(flatData);
 
                               setMode("view");
                               setOpenModal(true);
@@ -521,7 +564,14 @@ const StaffTrainingChecklist = () => {
                           {/* Edit */}
                           <FaPen
                             onClick={() => {
-                              setFormData(item);
+                              const flatData = {
+                                ...item,
+                                ...(item.training_data || {}),
+                                ...(item.signatures || {}),
+                              };
+                              delete flatData.training_data;
+                              delete flatData.signatures;
+                              setFormData(flatData);
                               setEditId(item.id);
                               setMode("edit");
                               setOpenModal(true);
@@ -617,8 +667,8 @@ const StaffTrainingChecklist = () => {
                       <label className={labelStyle}>Staff Full Name</label>
                       <div className={inputStyle}>
                         <SearchDropdown
-                          name="employeeName"
-                          value={formData.employeeName}
+                          name="employee_name"
+                          value={formData.employee_name}
                           options={["Employee 1", "Employee 2"]}
                           formData={formData}
                           setFormData={setFormData}
@@ -632,8 +682,8 @@ const StaffTrainingChecklist = () => {
                       <label className={labelStyle}>Staff ID</label>
 
                       <input
-                        name="enrollmentId"
-                        value={formData.enrollmentId}
+                        name="enrollment_id"
+                        value={formData.enrollment_id}
                         onChange={handleChange}
                         className={inputStyle}
                         disabled={mode === "view"}
@@ -645,8 +695,8 @@ const StaffTrainingChecklist = () => {
                       <label className={labelStyle}>Trainer Name</label>
 
                       <input
-                        name="trainerName"
-                        value={formData.trainerName}
+                        name="trainer_name"
+                        value={formData.trainer_name}
                         onChange={handleChange}
                         className={inputStyle}
                         disabled={mode === "view"}

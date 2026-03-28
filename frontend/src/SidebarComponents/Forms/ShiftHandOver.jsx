@@ -14,6 +14,9 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import SpinnerDatePicker from "../SpinnerDatePicker";
 import SignPad from "./SignPad";
 import SpinnerTimePicker from "../SpinnerTimePicker";
+import axios from "axios";
+
+const API_URL = "http://localhost:3000/api/form/shiftHandOver";
 
 const ShiftHandOver = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -29,15 +32,15 @@ const ShiftHandOver = () => {
   const labelStyle = "text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block";
 
   const defaultFormData = {
-    schoolname: "",
-    timeIn: null,
-    timeOut: null,
+    school_name: "",
+    time_in: null,
+    time_out: null,
     date: null,
 
-    guardOut: "",
-    guardIn: "",
-    idOut: "",
-    idIn: "",
+    guard_out: "",
+    guard_in: "",
+    id_out: "",
+    id_in: "",
     securityRemark: "",
     maintenanceRemark: "",
     staffIssueRemark: "",
@@ -50,13 +53,33 @@ const ShiftHandOver = () => {
     tourSystem: "",
     dutyMobile: "",
     keys: "",
-    preparedBySign: null,
+    prepared_by_sign: null,
     preparedBySign_drawn: null,
-    acknowlegedBySign: null,
+    acknowledged_by_sign: null,
     acknowlegedBySign_drawn: null,
   };
 
   const [formData, setFormData] = useState(defaultFormData);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(API_URL);
+      // Backend returns date/time as strings, need to convert to Date objects for pickers
+      const data = response.data.map((item) => ({
+        ...item,
+        time_in: item.time_in ? new Date(`1970-01-01T${item.time_in}`) : null,
+        time_out: item.time_out ? new Date(`1970-01-01T${item.time_out}`) : null,
+      }));
+      setRequestData(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to fetch data");
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const detailsFields = [
     {
@@ -113,44 +136,79 @@ const ShiftHandOver = () => {
   );
 
   // Handle submit
-  const handleSubmit = () => {
-    const newEntry = {
-      id: editId ? editId : Date.now(),
-      ...formData,
-    };
+  const handleSubmit = async () => {
+    const coreFields = [
+      "school_name",
+      "time_in",
+      "time_out",
+      "date",
+      "guard_out",
+      "guard_in",
+      "id_out",
+      "id_in",
+      "prepared_by_sign",
+      "acknowledged_by_sign",
+    ];
 
-    if (editId) {
-      const updated = requestData.map((item) =>
-        item.id === editId ? { ...item, ...newEntry } : item,
-      );
+    const remarkFields = [
+      "securityRemark",
+      "maintenanceRemark",
+      "staffIssueRemark",
+      "lostFoundRemark",
+      "proceduresRemark",
+      "managementRemark",
+      "damageRemark",
+      "interestRemark",
+    ];
 
-      setRequestData(updated);
+    const equipmentFields = ["radios", "tourSystem", "dutyMobile", "keys"];
 
-      toast.success("Request Updated");
-    } else {
-      const updated = [...requestData, newEntry];
-      setRequestData(updated);
+    const payload = {};
+    const remarks = {};
+    const equipment_status = {};
 
-      toast.success("Request Submitted");
+    Object.keys(formData).forEach((key) => {
+      if (coreFields.includes(key)) {
+        payload[key] = formData[key];
+      } else if (remarkFields.includes(key)) {
+        remarks[key] = formData[key];
+      } else if (equipmentFields.includes(key)) {
+        equipment_status[key] = formData[key];
+      }
+    });
+
+    payload.remarks = remarks;
+    payload.equipment_status = equipment_status;
+
+    try {
+      if (editId) {
+        await axios.put(`${API_URL}/${editId}`, payload);
+        toast.success("Request Updated");
+      } else {
+        await axios.post(API_URL, payload);
+        toast.success("Request Submitted");
+      }
+
+      setOpenModal(false);
+      setEditId(null);
+      setFormData(defaultFormData);
+      fetchData();
+    } catch (error) {
+      console.error("Error saving data:", error);
+      toast.error("Failed to save data");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData(defaultFormData);
   };
 
   // Handle delete
-  const handleDelete = (id) => {
-    const updated = requestData.filter((v) => v.id !== id);
-
-    setRequestData(
-      updated.map((item) => ({
-        ...item,
-      })),
-    );
-
-    toast.success("Deleted Successfully");
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      toast.success("Deleted Successfully");
+      fetchData();
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      toast.error("Failed to delete data");
+    }
   };
 
   const handleCopy = () => {
@@ -158,9 +216,12 @@ const ShiftHandOver = () => {
 
     const rows = requestData
       .map((item) => {
-        return [item.schoolname, item.timeIn, item.timeOut, item.date].join(
-          "\t",
-        );
+        return [
+          item.school_name,
+          item.time_in ? item.time_in.toLocaleTimeString() : "",
+          item.time_out ? item.time_out.toLocaleTimeString() : "",
+          item.date,
+        ].join("\t");
       })
       .join("\n");
 
@@ -172,9 +233,9 @@ const ShiftHandOver = () => {
 
   const handleExcel = () => {
     const excelData = requestData.map((item) => ({
-      SchoolName: item.schoolname,
-      TimeIn: item.timeIn,
-      TimeOut: item.timeOut,
+      SchoolName: item.school_name,
+      TimeIn: item.time_in ? item.time_in.toLocaleTimeString() : "",
+      TimeOut: item.time_out ? item.time_out.toLocaleTimeString() : "",
       Date: item.date,
     }));
 
@@ -194,7 +255,12 @@ const ShiftHandOver = () => {
     const tableRows = [];
 
     requestData.forEach((item) => {
-      const row = [item.schoolname, item.timeIn, item.timeOut, item.date];
+      const row = [
+        item.school_name,
+        item.time_in ? item.time_in.toLocaleTimeString() : "",
+        item.time_out ? item.time_out.toLocaleTimeString() : "",
+        item.date,
+      ];
 
       tableRows.push(row);
     });
@@ -327,13 +393,13 @@ const ShiftHandOver = () => {
                         {index + 1}
                       </td>
 
-                      <td className="p-2">{item.schoolname}</td>
+                      <td className="p-2">{item.school_name}</td>
 
                       <td className="p-2 hidden md:table-cell">
-                        {item.timeIn}
+                        {item.time_in ? item.time_in.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : ""}
                       </td>
                       <td className="p-2 hidden md:table-cell">
-                        {item.timeOut}
+                        {item.time_out ? item.time_out.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : ""}
                       </td>
 
                       <td className="p-2 hidden lg:table-cell">{item.date}</td>
@@ -344,7 +410,14 @@ const ShiftHandOver = () => {
                           {/* View */}{" "}
                           <FaEye
                             onClick={() => {
-                              setFormData(item);
+                              const flatData = {
+                                ...item,
+                                ...(item.remarks || {}),
+                                ...(item.equipment_status || {}),
+                              };
+                              delete flatData.remarks;
+                              delete flatData.equipment_status;
+                              setFormData(flatData);
 
                               setMode("view");
                               setOpenModal(true);
@@ -354,7 +427,14 @@ const ShiftHandOver = () => {
                           {/* Edit */}
                           <FaPen
                             onClick={() => {
-                              setFormData(item);
+                              const flatData = {
+                                ...item,
+                                ...(item.remarks || {}),
+                                ...(item.equipment_status || {}),
+                              };
+                              delete flatData.remarks;
+                              delete flatData.equipment_status;
+                              setFormData(flatData);
                               setEditId(item.id);
                               setMode("edit");
                               setOpenModal(true);
@@ -452,8 +532,8 @@ const ShiftHandOver = () => {
                       </label>
                       <input
                         type="text"
-                        name="schoolname"
-                        value={formData.schoolname}
+                        name="school_name"
+                        value={formData.school_name}
                         onChange={handleChange}
                         disabled={mode === "view"}
                         className="border border-gray-300 px-2 w-30 sm:w-40 mt-1 mx-1   focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
@@ -514,17 +594,19 @@ const ShiftHandOver = () => {
                               }
                             }}
                           >
-                            {formData.timeOut
-                              ? formData.timeOut.toLocaleTimeString([], {
+                            {formData.time_out
+                              ? formData.time_out.toLocaleTimeString([], {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
                                   hour12: false,
                                 })
                               : "HH:MM:SS"}
                           </div>
                           {showOutTimePicker && (
                             <SpinnerTimePicker
-                              value={formData.timeOut}
+                              value={formData.time_out}
                               onChange={(date) =>
-                                setFormData({ ...formData, timeOut: date })
+                                setFormData({ ...formData, time_out: date })
                               }
                               onClose={() => setShowOutTimePicker(false)}
                             />
@@ -539,17 +621,19 @@ const ShiftHandOver = () => {
                               }
                             }}
                           >
-                            {formData.timeIn
-                              ? formData.timeIn.toLocaleTimeString([], {
+                            {formData.time_in
+                              ? formData.time_in.toLocaleTimeString([], {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
                                   hour12: false,
                                 })
                               : "HH:MM:SS"}
                           </div>
                           {showInTimePicker && (
                             <SpinnerTimePicker
-                              value={formData.timeIn}
+                              value={formData.time_in}
                               onChange={(date) =>
-                                setFormData({ ...formData, timeIn: date })
+                                setFormData({ ...formData, time_in: date })
                               }
                               onClose={() => setShowInTimePicker(false)}
                             />
@@ -563,8 +647,8 @@ const ShiftHandOver = () => {
                         <td className="border border-gray-400">
                           <input
                             type="text"
-                            name="guardOut"
-                            value={formData.guardOut}
+                            name="guard_out"
+                            value={formData.guard_out}
                             onChange={handleChange}
                             disabled={mode === "view"}
                             className="w-full p-1  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
@@ -573,8 +657,8 @@ const ShiftHandOver = () => {
                         <td className="border border-gray-400">
                           <input
                             type="text"
-                            name="guardIn"
-                            value={formData.guardIn}
+                            name="guard_in"
+                            value={formData.guard_in}
                             onChange={handleChange}
                             disabled={mode === "view"}
                             className="w-full p-1  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
@@ -588,8 +672,8 @@ const ShiftHandOver = () => {
                         <td className="border border-gray-400">
                           <input
                             type="number"
-                            name="idOut"
-                            value={formData.idOut}
+                            name="id_out"
+                            value={formData.id_out}
                             onChange={handleChange}
                             disabled={mode === "view"}
                             className="w-full p-1  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
@@ -599,8 +683,8 @@ const ShiftHandOver = () => {
                         <td className="border border-gray-400">
                           <input
                             type="number"
-                            name="idIn"
-                            value={formData.idIn}
+                            name="id_in"
+                            value={formData.id_in}
                             onChange={handleChange}
                             disabled={mode === "view"}
                             className="w-full p-1  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
@@ -681,11 +765,11 @@ const ShiftHandOver = () => {
                       <div className="flex flex-col">
                         <input
                           type="file"
-                          name="preparedBySign"
+                          name="prepared_by_sign"
                           onChange={(e) =>
                             setFormData((prev) => ({
                               ...prev,
-                              preparedBySign: e.target.files[0],
+                              prepared_by_sign: e.target.files[0],
                             }))
                           }
                           className="border border-gray-400 p-1 w-[200px]"
@@ -693,7 +777,7 @@ const ShiftHandOver = () => {
                         />
                         <SignPad
                           fieldName="preparedBySign_drawn"
-                          name="preparedBySign"
+                          name="prepared_by_sign"
                           formData={formData}
                           setFormData={setFormData}
                           mode={mode}
@@ -707,11 +791,11 @@ const ShiftHandOver = () => {
                       <div className="flex flex-col">
                         <input
                           type="file"
-                          name="acknowlegedBySign"
+                          name="acknowledged_by_sign"
                           onChange={(e) =>
                             setFormData((prev) => ({
                               ...prev,
-                              acknowlegedBySign: e.target.files[0],
+                              acknowledged_by_sign: e.target.files[0],
                             }))
                           }
                           className="border border-gray-400 p-1 w-[200px]"
@@ -719,7 +803,7 @@ const ShiftHandOver = () => {
                         />
                         <SignPad
                           fieldName="acknowlegedBySign_drawn"
-                          name="acknowlegedBySign"
+                          name="acknowledged_by_sign"
                           formData={formData}
                           setFormData={setFormData}
                           mode={mode}

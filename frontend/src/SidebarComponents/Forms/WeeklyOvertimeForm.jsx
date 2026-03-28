@@ -15,6 +15,9 @@ import SpinnerDatePicker from "../SpinnerDatePicker";
 import SignPad from "./SignPad";
 import SpinnerTimePicker from "../SpinnerTimePicker";
 import SearchDropdown from "../SearchDropdown";
+import axios from "axios";
+
+const API_URL = "http://localhost:3000/api/form/weeklyOvertime";
 
 const WeeklyOvertimeForm = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -36,13 +39,13 @@ const WeeklyOvertimeForm = () => {
     "text-[16px] w-full border border-[oklch(0.923_0.003_48.717)] bg-white  rounded-md px-3 py-1 pt-0.5 text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
 
   const defaultFormData = {
-    employeeName: "",
+    employee_name: "",
     designation: "",
-    enrollmentId: "",
-    siteName: "",
-    restDay: false,
-    shiftExtension: false,
-    overtimeDetails: [
+    enrollment_id: "",
+    site_name: "",
+    rest_day: false,
+    shift_extension: false,
+    overtime_details: [
       {
         day: "",
         date: null,
@@ -52,24 +55,40 @@ const WeeklyOvertimeForm = () => {
         reason: "",
       },
     ],
-    checkerName: "",
-    checkerSignature: null,
-    checkerSignature_drawn: null,
-    checkedDate: null,
+    checker_name: "",
+    checker_signature: null,
+    checker_signature_drawn: null,
+    checked_date: null,
 
-    approverName: "",
-    approverSignature: null,
-    approverSignature_drawn: null,
-    approvedDate: null,
+    approver_name: "",
+    approver_signature: null,
+    approver_signature_drawn: null,
+    approved_date: null,
 
-    verifiedBy: "",
-    verifierName: "",
-    verifierSignature: null,
-    verifierSignature_drawn: null,
-    verifiedDate: null,
+    verifier_details: {
+      verified_by: "",
+      verifier_name: "",
+      verifier_signature: null,
+      verifier_signature_drawn: null,
+      verified_date: null,
+    },
   };
 
   const [formData, setFormData] = useState(defaultFormData);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(API_URL);
+      setRequestData(response.data);
+    } catch (error) {
+      console.error("Error fetching weekly overtime data:", error);
+      toast.error("Failed to load data");
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const getTimeDiff = (startTime, endTime) => {
     const [ih, im, is] = startTime.split(":").map(Number);
@@ -93,21 +112,27 @@ const WeeklyOvertimeForm = () => {
 
   const handleRowChange = (index, field, value) => {
     setFormData((prev) => {
-      const updatedRows = [...prev.overtimeDetails];
+      const updatedRows = [...prev.overtime_details];
 
       updatedRows[index][field] = value;
 
-      const start = new Date(updatedRows[index].startTime);
-      const end = new Date(updatedRows[index].endTime);
+      const startTime = updatedRows[index].startTime;
+      const endTime = updatedRows[index].endTime;
 
-      updatedRows[index].totalHours = getTimeDiff(
-        start.toLocaleTimeString(),
-        end.toLocaleTimeString(),
-      );
+      if (startTime && endTime) {
+        const startStr = startTime instanceof Date 
+          ? startTime.toLocaleTimeString([], { hour12: false }) 
+          : startTime;
+        const endStr = endTime instanceof Date 
+          ? endTime.toLocaleTimeString([], { hour12: false }) 
+          : endTime;
+        
+        updatedRows[index].totalHours = getTimeDiff(startStr, endStr);
+      }
 
       return {
         ...prev,
-        overtimeDetails: updatedRows,
+        overtime_details: updatedRows,
       };
     });
   };
@@ -115,8 +140,8 @@ const WeeklyOvertimeForm = () => {
   const addRow = () => {
     setFormData((prev) => ({
       ...prev,
-      overtimeDetails: [
-        ...prev.overtimeDetails,
+      overtime_details: [
+        ...prev.overtime_details,
         {
           day: "",
           date: null,
@@ -132,7 +157,7 @@ const WeeklyOvertimeForm = () => {
   const deleteRow = (index) => {
     setFormData((prev) => ({
       ...prev,
-      overtimeDetails: prev.overtimeDetails.filter((_, i) => i !== index),
+      overtime_details: prev.overtime_details.filter((_, i) => i !== index),
     }));
   };
 
@@ -182,50 +207,37 @@ const WeeklyOvertimeForm = () => {
   );
 
   // Handle submit
-  const handleSubmit = () => {
-    const newEntry = {
-      id: editId ? editId : Date.now(),
-      ...formData,
-    };
-
-    if (editId) {
-      const updated = requestData.map((item) =>
-        item.id === editId ? { ...item, ...newEntry } : item,
-      );
-
-      setRequestData(updated);
-
-      // Backend version
-      // await axios.put(`/api/manual-entry/${editId}`, newEntry)
-
-      toast.success("Request Updated");
-    } else {
-      const updated = [...requestData, newEntry];
-      setRequestData(updated);
-
-      // Backend version
-      // await axios.post("/api/manual-entry-request", newEntry)
-
-      toast.success("Request Submitted");
+  const handleSubmit = async () => {
+    try {
+      if (editId) {
+        await axios.put(`${API_URL}/${editId}`, formData);
+        toast.success("Request Updated");
+      } else {
+        await axios.post(API_URL, formData);
+        toast.success("Request Submitted");
+      }
+      fetchData();
+      setOpenModal(false);
+      setEditId(null);
+      setFormData(defaultFormData);
+    } catch (error) {
+      console.error("Error submitting weekly overtime:", error);
+      toast.error("Failed to submit form");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData(defaultFormData);
   };
 
   // Handle delete
-  const handleDelete = (id) => {
-    const updated = requestData.filter((v) => v.id !== id);
-
-    setRequestData(
-      updated.map((item) => ({
-        ...item,
-      })),
-    );
-
-    toast.success("Deleted Successfully");
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this record?")) {
+      try {
+        await axios.delete(`${API_URL}/${id}`);
+        toast.success("Deleted Successfully");
+        fetchData();
+      } catch (error) {
+        console.error("Error deleting record:", error);
+        toast.error("Failed to delete record");
+      }
+    }
   };
 
   const handleCopy = () => {
@@ -233,7 +245,7 @@ const WeeklyOvertimeForm = () => {
 
     const rows = requestData
       .map((item) => {
-        return [item.employeeName, item.enrollmentId, item.designation].join(
+        return [item.employee_name, item.enrollment_id, item.designation].join(
           "\t",
         );
       })
@@ -247,8 +259,8 @@ const WeeklyOvertimeForm = () => {
 
   const handleExcel = () => {
     const excelData = requestData.map((item) => ({
-      EmployeeName: item.employeeName,
-      EnrollmentID: item.enrollmentId,
+      EmployeeName: item.employee_name,
+      EnrollmentID: item.enrollment_id,
       Designation: item.designation,
     }));
 
@@ -268,7 +280,7 @@ const WeeklyOvertimeForm = () => {
     const tableRows = [];
 
     requestData.forEach((item) => {
-      const row = [item.employeeName, item.enrollmentId, item.designation];
+      const row = [item.employee_name, item.enrollment_id, item.designation];
 
       tableRows.push(row);
     });
@@ -397,10 +409,10 @@ const WeeklyOvertimeForm = () => {
                         {index + 1}
                       </td>
 
-                      <td className="p-2">{item.employeeName}</td>
+                      <td className="p-2">{item.employee_name}</td>
 
                       <td className="p-2 hidden md:table-cell">
-                        {item.enrollmentId}
+                        {item.enrollment_id}
                       </td>
 
                       <td className="p-2 hidden md:table-cell">
@@ -521,8 +533,8 @@ const WeeklyOvertimeForm = () => {
                       </label>
                       <div className={inputStyle}>
                         <SearchDropdown
-                          name="employeeName"
-                          value={formData.employeeName}
+                          name="employee_name"
+                          value={formData.employee_name}
                           options={["Employee 1", "Employee 2"]}
                           formData={formData}
                           setFormData={setFormData}
@@ -538,8 +550,8 @@ const WeeklyOvertimeForm = () => {
                       </label>
                       <input
                         type="text"
-                        name="enrollmentId"
-                        value={formData.enrollmentId}
+                        name="enrollment_id"
+                        value={formData.enrollment_id}
                         onChange={handleChange}
                         disabled={mode === "view"}
                         className={inputStyle}
@@ -552,8 +564,8 @@ const WeeklyOvertimeForm = () => {
                       </label>
                       <input
                         type="text"
-                        name="siteName"
-                        value={formData.siteName}
+                        name="site_name"
+                        value={formData.site_name}
                         onChange={handleChange}
                         disabled={mode === "view"}
                         className={inputStyle}
@@ -601,8 +613,8 @@ const WeeklyOvertimeForm = () => {
                         <span>Rest Day:</span>
                         <input
                           type="checkbox"
-                          name="restDay"
-                          checked={formData.restDay}
+                          name="rest_day"
+                          checked={formData.rest_day}
                           onChange={handleChange}
                           disabled={mode === "view"}
                         />
@@ -612,8 +624,8 @@ const WeeklyOvertimeForm = () => {
                         <span>Shift Extension:</span>
                         <input
                           type="checkbox"
-                          name="shiftExtension"
-                          checked={formData.shiftExtension}
+                          name="shift_extension"
+                          checked={formData.shift_extension}
                           onChange={handleChange}
                           disabled={mode === "view"}
                         />
@@ -635,7 +647,7 @@ const WeeklyOvertimeForm = () => {
                       </thead>
 
                       <tbody>
-                        {formData.overtimeDetails.map((row, index) => (
+                        {formData.overtime_details.map((row, index) => (
                           <tr
                             key={index}
                             className="text-center border-b border-gray-300"
@@ -693,9 +705,11 @@ const WeeklyOvertimeForm = () => {
                                 }}
                               >
                                 {row.startTime
-                                  ? row.startTime.toLocaleTimeString([], {
-                                      hour12: false,
-                                    })
+                                  ? row.startTime instanceof Date
+                                    ? row.startTime.toLocaleTimeString([], {
+                                        hour12: false,
+                                      })
+                                    : row.startTime
                                   : "HH:MM:SS"}
                               </div>
                               {activeInTimeIndex === index && (
@@ -719,9 +733,11 @@ const WeeklyOvertimeForm = () => {
                                 }}
                               >
                                 {row.endTime
-                                  ? row.endTime.toLocaleTimeString([], {
-                                      hour12: false,
-                                    })
+                                  ? row.endTime instanceof Date
+                                    ? row.endTime.toLocaleTimeString([], {
+                                        hour12: false,
+                                      })
+                                    : row.endTime
                                   : "HH:MM:SS"}
                               </div>
                               {activeOutTimeIndex === index && (
@@ -765,7 +781,7 @@ const WeeklyOvertimeForm = () => {
                                 className="bg-red-500 text-white px-2 py-1 rounded"
                                 disabled={mode === "view"}
                               >
-                                ✕
+                                Delete
                               </button>
                             </td>
                           </tr>
@@ -795,9 +811,9 @@ const WeeklyOvertimeForm = () => {
                         <div>
                           <label className={labelStyle}> Name</label>
                           <input
-                            name="checkerName"
+                            name="checker_name"
                             onChange={handleChange}
-                            value={formData.checkerName}
+                            value={formData.checker_name}
                             disabled={mode === "view"}
                             className={inputStyle}
                             placeholder="Name"
@@ -809,19 +825,19 @@ const WeeklyOvertimeForm = () => {
                           <div className="flex flex-col">
                             <input
                               type="file"
-                              name="checkerSignature"
+                              name="checker_signature"
                               onChange={(e) =>
                                 setFormData((prev) => ({
                                   ...prev,
-                                  checkerSignature: e.target.files[0],
+                                  checker_signature: e.target.files[0],
                                 }))
                               }
                               className={inputStyle}
                               disabled={mode === "view"}
                             />
                             <SignPad
-                              fieldName="checkerSignature_drawn"
-                              name="checkerSignature"
+                              fieldName="checker_signature_drawn"
+                              name="checker_signature"
                               formData={formData}
                               setFormData={setFormData}
                               mode={mode}
@@ -832,8 +848,8 @@ const WeeklyOvertimeForm = () => {
                         <div className="relative">
                           <label className={labelStyle}>Date</label>
                           <input
-                            name="checkedDate"
-                            value={formData.checkedDate || ""}
+                            name="checked_date"
+                            value={formData.checked_date || ""}
                             onChange={handleChange}
                             onClick={() => setShowCheckedDateSpinner(true)}
                             disabled={mode === "view"}
@@ -844,11 +860,11 @@ const WeeklyOvertimeForm = () => {
                           {showCheckedDateSpinner && (
                             <div className="absolute">
                               <SpinnerDatePicker
-                                value={formData.checkedDate}
+                                value={formData.checked_date}
                                 onChange={(date) =>
                                   setFormData((prev) => ({
                                     ...prev,
-                                    checkedDate: date,
+                                    checked_date: date,
                                   }))
                                 }
                                 onClose={() => setShowCheckedDateSpinner(false)}
@@ -867,9 +883,9 @@ const WeeklyOvertimeForm = () => {
                         <div>
                           <label className={labelStyle}> Name</label>
                           <input
-                            name="approverName"
+                            name="approver_name"
                             onChange={handleChange}
-                            value={formData.approverName}
+                            value={formData.approver_name}
                             disabled={mode === "view"}
                             className={inputStyle}
                             placeholder="Name"
@@ -881,19 +897,19 @@ const WeeklyOvertimeForm = () => {
                           <div className="flex flex-col">
                             <input
                               type="file"
-                              name="approverSignature"
+                              name="approver_signature"
                               onChange={(e) =>
                                 setFormData((prev) => ({
                                   ...prev,
-                                  approverSignature: e.target.files[0],
+                                  approver_signature: e.target.files[0],
                                 }))
                               }
                               className={inputStyle}
                               disabled={mode === "view"}
                             />
                             <SignPad
-                              fieldName="approverSignature_drawn"
-                              name="approverSignature"
+                              fieldName="approver_signature_drawn"
+                              name="approver_signature"
                               formData={formData}
                               setFormData={setFormData}
                               mode={mode}
@@ -904,8 +920,8 @@ const WeeklyOvertimeForm = () => {
                         <div className="relative">
                           <label className={labelStyle}>Date</label>
                           <input
-                            name="approvedDate"
-                            value={formData.approvedDate || ""}
+                            name="approved_date"
+                            value={formData.approved_date || ""}
                             onChange={handleChange}
                             onClick={() => setShowApprovedDatePicker(true)}
                             disabled={mode === "view"}
@@ -916,11 +932,11 @@ const WeeklyOvertimeForm = () => {
                           {showApprovedDatePicker && (
                             <div className="absolute">
                               <SpinnerDatePicker
-                                value={formData.approvedDate}
+                                value={formData.approved_date}
                                 onChange={(date) =>
                                   setFormData((prev) => ({
                                     ...prev,
-                                    approvedDate: date,
+                                    approved_date: date,
                                   }))
                                 }
                                 onClose={() => setShowApprovedDatePicker(false)}
@@ -941,9 +957,17 @@ const WeeklyOvertimeForm = () => {
                         <label className={labelStyle}> Verified By</label>
 
                         <input
-                          name="verifiedBy"
-                          onChange={handleChange}
-                          value={formData.verifiedBy}
+                          name="verified_by"
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              verifier_details: {
+                                ...prev.verifier_details,
+                                verified_by: e.target.value,
+                              },
+                            }))
+                          }
+                          value={formData.verifier_details?.verified_by || ""}
                           disabled={mode === "view"}
                           className={inputStyle}
                           placeholder="Verified By"
@@ -953,9 +977,17 @@ const WeeklyOvertimeForm = () => {
                       <div>
                         <label className={labelStyle}> Name</label>
                         <input
-                          name="verifierName"
-                          onChange={handleChange}
-                          value={formData.verifierName}
+                          name="verifier_name"
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              verifier_details: {
+                                ...prev.verifier_details,
+                                verifier_name: e.target.value,
+                              },
+                            }))
+                          }
+                          value={formData.verifier_details?.verifier_name || ""}
                           disabled={mode === "view"}
                           className={inputStyle}
                           placeholder="Name"
@@ -965,9 +997,9 @@ const WeeklyOvertimeForm = () => {
                       <div className="relative">
                         <label className={labelStyle}>Date</label>
                         <input
-                          name="verifiedDate"
-                          value={formData.verifiedDate || ""}
-                          onChange={handleChange}
+                          name="verified_date"
+                          value={formData.verifier_details?.verified_date || ""}
+                          readOnly
                           onClick={() => setShowVerifiedDatePicker(true)}
                           disabled={mode === "view"}
                           placeholder="dd/mm/yyyy"
@@ -977,11 +1009,14 @@ const WeeklyOvertimeForm = () => {
                         {showVerifiedDatePicker && (
                           <div className="absolute">
                             <SpinnerDatePicker
-                              value={formData.verifiedDate}
+                              value={formData.verifier_details?.verified_date}
                               onChange={(date) =>
                                 setFormData((prev) => ({
                                   ...prev,
-                                  verifiedDate: date,
+                                  verifier_details: {
+                                    ...prev.verifier_details,
+                                    verified_date: date,
+                                  },
                                 }))
                               }
                               onClose={() => setShowVerifiedDatePicker(false)}
@@ -995,19 +1030,22 @@ const WeeklyOvertimeForm = () => {
                         <div className="flex flex-col">
                           <input
                             type="file"
-                            name="verifierSignature"
+                            name="verifier_signature"
                             onChange={(e) =>
                               setFormData((prev) => ({
                                 ...prev,
-                                verifierSignature: e.target.files[0],
+                                verifier_details: {
+                                  ...prev.verifier_details,
+                                  verifier_signature: e.target.files[0],
+                                },
                               }))
                             }
                             className={inputStyle}
                             disabled={mode === "view"}
                           />
                           <SignPad
-                            fieldName="verifierSignature_drawn"
-                            name="verifierSignature"
+                            fieldName="verifier_signature_drawn"
+                            name="verifier_signature"
                             formData={formData}
                             setFormData={setFormData}
                             mode={mode}

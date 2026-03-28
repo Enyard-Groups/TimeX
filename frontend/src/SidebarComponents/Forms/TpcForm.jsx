@@ -11,6 +11,9 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import axios from "axios";
+
+const API_URL = "http://localhost:3000/api/form/tpcForm";
 import SearchDropdown from "../SearchDropdown";
 import SpinnerDatePicker from "../SpinnerDatePicker";
 import SignPad from "./SignPad";
@@ -32,18 +35,32 @@ const TpcForm = () => {
     "text-[16px] w-full border border-[oklch(0.923_0.003_48.717)] bg-white  rounded-md px-3 pt-0.5 text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
 
   const defaultFormData = {
-    employeeName: "",
+    employee_name: "",
     location: "",
-    enrollmentId: "",
+    enrollment_id: "",
     mobile: "",
     date: "",
     comments: "",
-    throughPerson: "",
+    through_person: "",
     signature: "",
     signature_drawn: "",
   };
 
   const [formData, setFormData] = useState(defaultFormData);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(API_URL);
+      setRequestData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to fetch data");
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -66,50 +83,36 @@ const TpcForm = () => {
   );
 
   // Handle submit
-  const handleSubmit = () => {
-    const newEntry = {
-      id: editId ? editId : Date.now(),
-      ...formData,
-    };
+  const handleSubmit = async () => {
+    try {
+      if (editId) {
+        await axios.put(`${API_URL}/${editId}`, formData);
+        toast.success("Request Updated");
+      } else {
+        await axios.post(API_URL, formData);
+        toast.success("Request Submitted");
+      }
 
-    if (editId) {
-      const updated = requestData.map((item) =>
-        item.id === editId ? { ...item, ...newEntry } : item,
-      );
-
-      setRequestData(updated);
-
-      // Backend version
-      // await axios.put(`/api/manual-entry/${editId}`, newEntry)
-
-      toast.success("Request Updated");
-    } else {
-      const updated = [...requestData, newEntry];
-      setRequestData(updated);
-
-      // Backend version
-      // await axios.post("/api/manual-entry-request", newEntry)
-
-      toast.success("Request Submitted");
+      setOpenModal(false);
+      setEditId(null);
+      setFormData(defaultFormData);
+      fetchData();
+    } catch (error) {
+      console.error("Error saving data:", error);
+      toast.error("Failed to save data");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData(defaultFormData);
   };
 
   // Handle delete
-  const handleDelete = (id) => {
-    const updated = requestData.filter((v) => v.id !== id);
-
-    setRequestData(
-      updated.map((item) => ({
-        ...item,
-      })),
-    );
-
-    toast.success("Deleted Successfully");
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      toast.success("Deleted Successfully");
+      fetchData();
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      toast.error("Failed to delete data");
+    }
   };
 
   const handleCopy = () => {
@@ -117,7 +120,7 @@ const TpcForm = () => {
 
     const rows = requestData
       .map((item) => {
-        return [item.employeeName, item.location, item.enrollmentId].join("\t");
+        return [item.employee_name, item.location, item.enrollment_id].join("\t");
       })
       .join("\n");
 
@@ -129,8 +132,8 @@ const TpcForm = () => {
 
   const handleExcel = () => {
     const excelData = requestData.map((item) => ({
-      EmployeeName: item.employeeName,
-      EnrollmentID: item.enrollmentId,
+      EmployeeName: item.employee_name,
+      EnrollmentID: item.enrollment_id,
       Location: item.location,
     }));
 
@@ -150,7 +153,7 @@ const TpcForm = () => {
     const tableRows = [];
 
     requestData.forEach((item) => {
-      const row = [item.employeeName, item.enrollmentId, item.location];
+      const row = [item.employee_name, item.enrollment_id, item.location];
 
       tableRows.push(row);
     });
@@ -279,14 +282,14 @@ const TpcForm = () => {
                         {index + 1}
                       </td>
 
-                      <td className="p-2">{item.employeeName}</td>
+                      <td className="p-2">{item.employee_name}</td>
 
                       <td className="p-2 hidden md:table-cell">
                         {item.location}
                       </td>
 
                       <td className="p-2 hidden md:table-cell">
-                        {item.enrollmentId}
+                        {item.enrollment_id}
                       </td>
 
                       <td className="p-2 flex flex-row space-x-3 justify-center whitespace-nowrap">
@@ -409,8 +412,8 @@ const TpcForm = () => {
                             <label className={labelStyle}> Name</label>
                             <div className={inputStyle}>
                               <SearchDropdown
-                                name="employeeName"
-                                value={formData.employeeName}
+                                name="employee_name"
+                                value={formData.employee_name}
                                 options={["Employee 1", "Employee 2"]}
                                 formData={formData}
                                 setFormData={setFormData}
@@ -424,8 +427,8 @@ const TpcForm = () => {
                             <label className={labelStyle}>ID</label>
 
                             <input
-                              name="enrollmentId"
-                              value={formData.enrollmentId}
+                              name="enrollment_id"
+                              value={formData.enrollment_id}
                               onChange={handleChange}
                               className={inputStyle}
                               disabled={mode === "view"}
@@ -504,8 +507,8 @@ const TpcForm = () => {
                     </label>
                     <div className={inputStyle}>
                       <SearchDropdown
-                        name="throughPerson"
-                        value={formData.throughPerson}
+                        name="through_person"
+                        value={formData.through_person}
                         options={["Employee 1", "Employee 2"]}
                         formData={formData}
                         setFormData={setFormData}

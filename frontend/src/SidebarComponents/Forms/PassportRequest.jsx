@@ -13,6 +13,9 @@ import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import SpinnerDatePicker from "../SpinnerDatePicker";
 import SignPad from "./SignPad";
+import axios from "axios";
+
+const API_URL = "http://localhost:3000/api/form/passportRequest";
 
 const PassportRequest = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -27,19 +30,37 @@ const PassportRequest = () => {
   const labelStyle = "text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block";
 
   const defaultFormData = {
-    employee: "",
-    enrollmentId: "",
-    passportPurpose: "",
-    date: null,
-    returnDate: null,
-    date2: null,
-    signature: null,
+    employee_name: "",
+    enrollment_id: "",
+    department: "",
+    position_title: "",
+    mobile: "",
+    passport_number: "",
+    request_date: null,
+    expected_return_date: "",
+    reason_for_request: "",
+    agreement: false,
+    employee_signature: null,
     signature_drawn: null,
-    officerSign: null,
+    mso_signature: null,
     officerSign_drawn: null,
   };
 
   const [formData, setFormData] = useState(defaultFormData);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(API_URL);
+      setRequestData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to fetch data");
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -62,50 +83,36 @@ const PassportRequest = () => {
   );
 
   // Handle submit
-  const handleSubmit = () => {
-    const newEntry = {
-      id: editId ? editId : Date.now(),
-      ...formData,
-    };
+  const handleSubmit = async () => {
+    try {
+      if (editId) {
+        await axios.put(`${API_URL}/${editId}`, formData);
+        toast.success("Request Updated");
+      } else {
+        await axios.post(API_URL, formData);
+        toast.success("Request Submitted");
+      }
 
-    if (editId) {
-      const updated = requestData.map((item) =>
-        item.id === editId ? { ...item, ...newEntry } : item,
-      );
-
-      setRequestData(updated);
-
-      // Backend version
-      // await axios.put(`/api/manual-entry/${editId}`, newEntry)
-
-      toast.success("Request Updated");
-    } else {
-      const updated = [...requestData, newEntry];
-      setRequestData(updated);
-
-      // Backend version
-      // await axios.post("/api/manual-entry-request", newEntry)
-
-      toast.success("Request Submitted");
+      setOpenModal(false);
+      setEditId(null);
+      setFormData(defaultFormData);
+      fetchData();
+    } catch (error) {
+      console.error("Error saving data:", error);
+      toast.error("Failed to save data");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData(defaultFormData);
   };
 
   // Handle delete
-  const handleDelete = (id) => {
-    const updated = requestData.filter((v) => v.id !== id);
-
-    setRequestData(
-      updated.map((item) => ({
-        ...item,
-      })),
-    );
-
-    toast.success("Deleted Successfully");
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      toast.success("Deleted Successfully");
+      fetchData();
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      toast.error("Failed to delete data");
+    }
   };
 
   const handleCopy = () => {
@@ -119,10 +126,10 @@ const PassportRequest = () => {
     const rows = requestData
       .map((item) => {
         return [
-          item.employee,
-          item.date,
-          item.enrollmentId,
-          item.passportPurpose,
+          item.employee_name,
+          item.request_date,
+          item.enrollment_id,
+          item.reason_for_request,
         ].join("\t");
       })
       .join("\n");
@@ -135,10 +142,10 @@ const PassportRequest = () => {
 
   const handleExcel = () => {
     const excelData = requestData.map((item) => ({
-      Employee: item.employee,
-      Date: item.date,
-      EnrollmentId: item.enrollmentId,
-      PassportPurpose: item.passportPurpose,
+      Employee: item.employee_name,
+      Date: item.request_date,
+      EnrollmentId: item.enrollment_id,
+      PassportPurpose: item.reason_for_request,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -163,10 +170,10 @@ const PassportRequest = () => {
 
     requestData.forEach((item) => {
       const row = [
-        item.employee,
-        item.date,
-        item.enrollmentId,
-        item.passportPurpose,
+        item.employee_name,
+        item.request_date,
+        item.enrollment_id,
+        item.reason_for_request,
       ];
 
       tableRows.push(row);
@@ -300,16 +307,16 @@ const PassportRequest = () => {
                         {index + 1}
                       </td>
 
-                      <td className="p-2">{item.employee}</td>
+                      <td className="p-2">{item.employee_name}</td>
 
                       <td className="p-2 hidden md:table-cell">
-                        {item.enrollmentId}
+                        {item.enrollment_id}
                       </td>
                       <td className="p-2 hidden lg:table-cell">
-                        {item.passportPurpose}
+                        {item.reason_for_request}
                       </td>
 
-                      <td className="p-2 hidden md:table-cell">{item.date}</td>
+                      <td className="p-2 hidden md:table-cell">{item.request_date}</td>
 
                       <td className="p-2 flex flex-row space-x-3 justify-center whitespace-nowrap">
                         {" "}
@@ -421,8 +428,8 @@ const PassportRequest = () => {
                   <div className="flex flex-row gap-3 mt-4">
                     <label className={`mt-2 ${labelStyle}`}>Date:</label>
                     <input
-                      name="date"
-                      value={formData.date || ""}
+                      name="request_date"
+                      value={formData.request_date || ""}
                       onChange={handleChange}
                       onClick={() => setShowDateSpinner(true)}
                       disabled={mode === "view"}
@@ -433,11 +440,11 @@ const PassportRequest = () => {
                     {showDateSpinner && (
                       <div className="absolute mt-10 ml-8 sm:ml-14 md:ml-16 lg:ml-20  ">
                         <SpinnerDatePicker
-                          value={formData.date}
+                          value={formData.request_date}
                           onChange={(date) =>
                             setFormData((prev) => ({
                               ...prev,
-                              date: date,
+                              request_date: date,
                             }))
                           }
                           onClose={() => setShowDateSpinner(false)}
@@ -460,8 +467,8 @@ const PassportRequest = () => {
                       purpose of
                       <input
                         type="text"
-                        name="passportPurpose"
-                        value={formData.passportPurpose}
+                        name="reason_for_request"
+                        value={formData.reason_for_request}
                         onChange={handleChange}
                         disabled={mode === "view"}
                         className="border border-gray-300 rounded px-2 w-40 mt-1 mx-1 rounded  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
@@ -470,21 +477,64 @@ const PassportRequest = () => {
                     <p>
                       I will return the passport to you latest by
                       <input
-                        name="returnDate"
-                        value={formData.returnDate}
+                        name="expected_return_date"
+                        value={formData.expected_return_date}
                         onChange={handleChange}
                         disabled={mode === "view"}
                         className="border border-gray-300 rounded px-2 w-32 mt-1 mx-1 rounded  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
                       />
                     </p>
                   </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 border-t pt-4">
+                    <div className="flex flex-col">
+                      <label>Department:</label>
+                      <input
+                        name="department"
+                        value={formData.department}
+                        onChange={handleChange}
+                        disabled={mode === "view"}
+                        className="border border-gray-300 rounded px-2 w-full mt-1 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <label>Position Title:</label>
+                      <input
+                        name="position_title"
+                        value={formData.position_title}
+                        onChange={handleChange}
+                        disabled={mode === "view"}
+                        className="border border-gray-300 rounded px-2 w-full mt-1 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <label>Mobile Number:</label>
+                      <input
+                        name="mobile"
+                        value={formData.mobile}
+                        onChange={handleChange}
+                        disabled={mode === "view"}
+                        className="border border-gray-300 rounded px-2 w-full mt-1 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <label>Passport Number:</label>
+                      <input
+                        name="passport_number"
+                        value={formData.passport_number}
+                        onChange={handleChange}
+                        disabled={mode === "view"}
+                        className="border border-gray-300 rounded px-2 w-full mt-1 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+                      />
+                    </div>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2">
                     <div className="grid  grid-cols-1  sm:grid-cols-2 gap-4 mt-4">
                       <div className="flex flex-col">
                         <label>Name:</label>
                         <input
-                          name="employee"
-                          value={formData.employee}
+                          name="employee_name"
+                          value={formData.employee_name}
                           onChange={handleChange}
                           disabled={mode === "view"}
                           className="border border-gray-300 rounded px-2 w-32 mt-1 rounded  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
@@ -493,8 +543,8 @@ const PassportRequest = () => {
                       <div className="flex flex-col">
                         <label>ID #:</label>
                         <input
-                          name="enrollmentId"
-                          value={formData.enrollmentId}
+                          name="enrollment_id"
+                          value={formData.enrollment_id}
                           onChange={handleChange}
                           disabled={mode === "view"}
                           className="border border-gray-300 rounded px-2 w-32 mt-1 rounded  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
@@ -506,11 +556,11 @@ const PassportRequest = () => {
                         <label>Signature</label>
                         <input
                           type="file"
-                          name="signature"
+                          name="employee_signature"
                           onChange={(e) =>
                             setFormData((prev) => ({
                               ...prev,
-                              signature: e.target.files[0],
+                              employee_signature: e.target.files[0],
                             }))
                           }
                           className="border border-gray-400 p-1 w-[180px]"
@@ -518,7 +568,7 @@ const PassportRequest = () => {
                         />
                         <SignPad
                           fieldName="signature_drawn"
-                          name="signature"
+                          name="employee_signature"
                           formData={formData}
                           setFormData={setFormData}
                           mode={mode}
@@ -526,31 +576,17 @@ const PassportRequest = () => {
                       </div>
 
                       <div className="flex flex-col">
-                        <label className={labelStyle}>Date</label>
-                        <input
-                          name="date2"
-                          value={formData.date2 || ""}
-                          onChange={handleChange}
-                          onClick={() => setShowDate2Spinner(true)}
-                          disabled={mode === "view"}
-                          placeholder="dd/mm/yyyy"
-                          className="w-fit border border-gray-300 px-2 rounded focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                        />
-
-                        {showDate2Spinner && (
-                          <div className="absolute mt-10 ml-8 sm:ml-14 md:ml-16 lg:ml-20  ">
-                            <SpinnerDatePicker
-                              value={formData.date2}
-                              onChange={(date) =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  date2: date,
-                                }))
-                              }
-                              onClose={() => setShowDateSpinner(false)}
-                            />
-                          </div>
-                        )}
+                        <label className="flex items-center gap-2 mt-4 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            name="agreement"
+                            checked={formData.agreement}
+                            onChange={handleChange}
+                            disabled={mode === "view"}
+                            className="w-4 h-4 accent-[oklch(0.645_0.246_16.439)]"
+                          />
+                          <span className="text-sm">I agree to the terms and conditions</span>
+                        </label>
                       </div>
                     </div>
                   </div>
@@ -560,11 +596,11 @@ const PassportRequest = () => {
                     <div className="flex flex-col">
                       <input
                         type="file"
-                        name="officerSign"
+                        name="mso_signature"
                         onChange={(e) =>
                           setFormData((prev) => ({
                             ...prev,
-                            officerSign: e.target.files[0],
+                            mso_signature: e.target.files[0],
                           }))
                         }
                         className="border border-gray-400 p-1 w-[200px]"
@@ -572,7 +608,7 @@ const PassportRequest = () => {
                       />
                       <SignPad
                         fieldName="officerSign_drawn"
-                        name="officerSign"
+                        name="mso_signature"
                         formData={formData}
                         setFormData={setFormData}
                         mode={mode}

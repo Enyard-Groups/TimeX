@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 
 export default function SpinnerTimePicker({ value, onChange, onClose }) {
-  let baseTime = value instanceof Date ? value : new Date();
+  let baseTime = new Date();
+  if (value instanceof Date) {
+    baseTime = value;
+  } else if (typeof value === "string" && value.includes(":")) {
+    const [h, m, s] = value.split(":");
+    baseTime.setHours(Number(h), Number(m), Number(s || 0), 0);
+  }
 
   const [hour, setHour] = useState(
     String(baseTime.getHours()).padStart(2, "0"),

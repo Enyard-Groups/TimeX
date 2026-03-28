@@ -11,12 +11,15 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import axios from "axios";
 import SearchDropdown from "../SearchDropdown";
 import SpinnerDatePicker from "../SpinnerDatePicker";
 import SignPad from "./SignPad";
 import SpinnerTimePicker from "../SpinnerTimePicker";
 
-const StaffTrainingChecklist = () => {
+const API_URL = "http://localhost:3000/api/form/patrollingChecklist";
+
+const PatrollingChecklist = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState([]);
@@ -25,8 +28,22 @@ const StaffTrainingChecklist = () => {
   const [editId, setEditId] = useState(null);
   const [showDateSpinner, setShowDateSpinner] = useState(false);
   const [showInTimePicker, setShowInTimePicker] = useState(false);
-  const [viewRow, setViewRow] = useState(null);
   const [openViewModal, setOpenViewModal] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(API_URL);
+      setRequestData(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to fetch data");
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const labelStyle = "text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 w-1/2";
 
@@ -35,31 +52,31 @@ const StaffTrainingChecklist = () => {
 
   const defaultFormData = {
     name: "",
-    staffId: "",
-    schoolName: "",
-    shiftTiming: null,
-    date: null,
+    staff_id: "",
+    school_name: "",
+    shift_timing: "",
+    date: "",
 
     section: "",
     taskList: "",
 
-    unattendedOk: false,
-    unattendedReportedTo: "",
+    unattended_ok: false,
+    unattended_reported_to: "",
 
-    hazardousOk: false,
-    hazardousReportedTo: "",
+    hazardous_ok: false,
+    hazardous_reported_to: "",
 
-    iasOk: false,
-    iasReportedTo: "",
+    ias_ok: false,
+    ias_reported_to: "",
 
-    gemsAssetsOk: false,
-    gemsAssetsReportedTo: "",
+    gems_assets_ok: false,
+    gems_assets_reported_to: "",
 
-    vehicleParkingOk: false,
-    vehicleParkingReportedTo: "",
+    vehicle_parking_ok: false,
+    vehicle_parking_reported_to: "",
 
-    ptwOk: false,
-    ptwReportedTo: "",
+    ptw_ok: false,
+    ptw_reported_to: "",
 
     rows: [],
 
@@ -90,44 +107,36 @@ const StaffTrainingChecklist = () => {
   );
 
   // Handle submit
-  const handleSubmit = () => {
-    const newEntry = {
-      id: editId ? editId : Date.now(),
-      ...formData,
-    };
+  const handleSubmit = async () => {
+    try {
+      if (editId) {
+        await axios.put(`${API_URL}/${editId}`, formData);
+        toast.success("Request Updated");
+      } else {
+        await axios.post(API_URL, formData);
+        toast.success("Request Submitted");
+      }
 
-    if (editId) {
-      const updated = requestData.map((item) =>
-        item.id === editId ? { ...item, ...newEntry } : item,
-      );
-
-      setRequestData(updated);
-
-      toast.success("Request Updated");
-    } else {
-      const updated = [...requestData, newEntry];
-      setRequestData(updated);
-
-      toast.success("Request Submitted");
+      setOpenModal(false);
+      setEditId(null);
+      setFormData(defaultFormData);
+      fetchData();
+    } catch (error) {
+      console.error("Error saving data:", error);
+      toast.error("Failed to save data");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData(defaultFormData);
   };
 
   // Handle delete
-  const handleDelete = (id) => {
-    const updated = requestData.filter((v) => v.id !== id);
-
-    setRequestData(
-      updated.map((item) => ({
-        ...item,
-      })),
-    );
-
-    toast.success("Deleted Successfully");
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      toast.success("Deleted Successfully");
+      fetchData();
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      toast.error("Failed to delete data");
+    }
   };
 
   const handleAddRow = () => {
@@ -135,23 +144,23 @@ const StaffTrainingChecklist = () => {
       section: formData.section,
       taskList: formData.taskList,
 
-      unattendedOk: formData.unattendedOk,
-      unattendedReportedTo: formData.unattendedReportedTo,
+      unattended_ok: formData.unattended_ok,
+      unattended_reported_to: formData.unattended_reported_to,
 
-      hazardousOk: formData.hazardousOk,
-      hazardousReportedTo: formData.hazardousReportedTo,
+      hazardous_ok: formData.hazardous_ok,
+      hazardous_reported_to: formData.hazardous_reported_to,
 
-      iasOk: formData.iasOk,
-      iasReportedTo: formData.iasReportedTo,
+      ias_ok: formData.ias_ok,
+      ias_reported_to: formData.ias_reported_to,
 
-      gemsAssetsOk: formData.gemsAssetsOk,
-      gemsAssetsReportedTo: formData.gemsAssetsReportedTo,
+      gems_assets_ok: formData.gems_assets_ok,
+      gems_assets_reported_to: formData.gems_assets_reported_to,
 
-      vehicleParkingOk: formData.vehicleParkingOk,
-      vehicleParkingReportedTo: formData.vehicleParkingReportedTo,
+      vehicle_parking_ok: formData.vehicle_parking_ok,
+      vehicle_parking_reported_to: formData.vehicle_parking_reported_to,
 
-      ptwOk: formData.ptwOk,
-      ptwReportedTo: formData.ptwReportedTo,
+      ptw_ok: formData.ptw_ok,
+      ptw_reported_to: formData.ptw_reported_to,
     };
 
     setFormData((prev) => ({
@@ -165,31 +174,31 @@ const StaffTrainingChecklist = () => {
       ...prev,
       section: "",
       taskList: "",
-      unattendedOk: false,
-      unattendedReportedTo: "",
-      hazardousOk: false,
-      hazardousReportedTo: "",
-      iasOk: false,
-      iasReportedTo: "",
-      gemsAssetsOk: false,
-      gemsAssetsReportedTo: "",
-      vehicleParkingOk: false,
-      vehicleParkingReportedTo: "",
-      ptwOk: false,
-      ptwReportedTo: "",
+      unattended_ok: false,
+      unattended_reported_to: "",
+      hazardous_ok: false,
+      hazardous_reported_to: "",
+      ias_ok: false,
+      ias_reported_to: "",
+      gems_assets_ok: false,
+      gems_assets_reported_to: "",
+      vehicle_parking_ok: false,
+      vehicle_parking_reported_to: "",
+      ptw_ok: false,
+      ptw_reported_to: "",
     }));
   };
 
   const handleCopy = () => {
-    const header = ["Name", "StaffId", "SchoolName", "ShiftTiming"].join("\t");
+    const header = ["Name", "Staff Id", "School Name", "Shift Timing"].join("\t");
 
     const rows = requestData
       .map((item) => {
         return [
           item.name,
-          item.staffId,
-          item.schoolName,
-          item.shiftTiming,
+          item.staff_id,
+          item.school_name,
+          item.shift_timing,
         ].join("\t");
       })
       .join("\n");
@@ -203,9 +212,9 @@ const StaffTrainingChecklist = () => {
   const handleExcel = () => {
     const excelData = requestData.map((item) => ({
       Name: item.name,
-      StaffId: item.staffId,
-      SchoolName: item.schoolName,
-      ShiftTiming: item.shiftTiming,
+      Staff_Id: item.staff_id,
+      School_Name: item.school_name,
+      Shift_Timing: item.shift_timing,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -223,12 +232,12 @@ const StaffTrainingChecklist = () => {
   const handlePDF = () => {
     const doc = new jsPDF("landscape");
 
-    const tableColumn = ["Name", "StaffId", "SchoolName", "ShiftTiming"];
+    const tableColumn = ["Name", "Staff Id", "School Name", "Shift Timing"];
 
     const tableRows = [];
 
     requestData.forEach((item) => {
-      const row = [item.name, item.staffId, item.schoolName, item.shiftTiming];
+      const row = [item.name, item.staff_id, item.school_name, item.shift_timing];
 
       tableRows.push(row);
     });
@@ -364,14 +373,14 @@ const StaffTrainingChecklist = () => {
                       <td className="p-2">{item.name}</td>
 
                       <td className="p-2 hidden md:table-cell">
-                        {item.staffId}
+                        {item.staff_id}
                       </td>
                       <td className="p-2 hidden md:table-cell">
-                        {item.schoolName}
+                        {item.school_name}
                       </td>
 
                       <td className="p-2 hidden lg:table-cell">
-                        {item.shiftTiming}
+                        {item.shift_timing}
                       </td>
 
                       <td className="p-2 flex flex-row space-x-3 justify-center whitespace-nowrap">
@@ -501,8 +510,8 @@ const StaffTrainingChecklist = () => {
                       <label className={labelStyle}>Staff ID</label>
 
                       <input
-                        name="staffId"
-                        value={formData.staffId}
+                        name="staff_id"
+                        value={formData.staff_id}
                         onChange={handleChange}
                         className={inputStyle}
                         disabled={mode === "view"}
@@ -513,8 +522,8 @@ const StaffTrainingChecklist = () => {
                       <label className={labelStyle}>School Name</label>
 
                       <input
-                        name="schoolName"
-                        value={formData.schoolName}
+                        name="school_name"
+                        value={formData.school_name}
                         onChange={handleChange}
                         className={inputStyle}
                         disabled={mode === "view"}
@@ -531,17 +540,19 @@ const StaffTrainingChecklist = () => {
                           }
                         }}
                       >
-                        {formData.shiftTiming
-                          ? formData.shiftTiming.toLocaleTimeString([], {
-                              hour12: false,
-                            })
+                        {formData.shift_timing
+                          ? formData.shift_timing instanceof Date
+                            ? formData.shift_timing.toLocaleTimeString([], {
+                                hour12: false,
+                              })
+                            : formData.shift_timing
                           : "HH:MM:SS"}
                       </div>
                       {showInTimePicker && (
                         <SpinnerTimePicker
-                          value={formData.shiftTiming}
+                          value={formData.shift_timing}
                           onChange={(date) =>
-                            setFormData({ ...formData, shiftTiming: date })
+                            setFormData({ ...formData, shift_timing: date })
                           }
                           onClose={() => setShowInTimePicker(false)}
                         />
@@ -633,8 +644,8 @@ const StaffTrainingChecklist = () => {
                           <label className={labelStyle}>Unattended OK</label>
                           <input
                             type="checkbox"
-                            name="unattendedOk"
-                            checked={formData.unattendedOk}
+                            name="unattended_ok"
+                            checked={formData.unattended_ok}
                             onChange={handleChange}
                             className="pt-1"
                           />
@@ -645,8 +656,8 @@ const StaffTrainingChecklist = () => {
                             Unattended Reported to OCC
                           </label>
                           <input
-                            name="unattendedReportedTo"
-                            value={formData.unattendedReportedTo}
+                            name="unattended_reported_to"
+                            value={formData.unattended_reported_to}
                             onChange={handleChange}
                             className={`mt-2 ${inputStyle}`}
                           />
@@ -658,8 +669,8 @@ const StaffTrainingChecklist = () => {
                           </label>
                           <input
                             type="checkbox"
-                            name="hazardousOk"
-                            checked={formData.hazardousOk}
+                            name="hazardous_ok"
+                            checked={formData.hazardous_ok}
                             onChange={handleChange}
                           />
                         </div>
@@ -669,8 +680,8 @@ const StaffTrainingChecklist = () => {
                             Hazardous Reported to OCC
                           </label>
                           <input
-                            name="hazardousReportedTo"
-                            value={formData.hazardousReportedTo}
+                            name="hazardous_reported_to"
+                            value={formData.hazardous_reported_to}
                             onChange={handleChange}
                             className={`mt-2 ${inputStyle}`}
                           />
@@ -680,8 +691,8 @@ const StaffTrainingChecklist = () => {
                           <label className={labelStyle}>IAS OK</label>
                           <input
                             type="checkbox"
-                            name="iasOk"
-                            checked={formData.iasOk}
+                            name="ias_ok"
+                            checked={formData.ias_ok}
                             onChange={handleChange}
                             className="pt-1"
                           />
@@ -692,8 +703,8 @@ const StaffTrainingChecklist = () => {
                             IAS Reported to OCC
                           </label>
                           <input
-                            name="iasReportedTo"
-                            value={formData.iasReportedTo}
+                            name="ias_reported_to"
+                            value={formData.ias_reported_to}
                             onChange={handleChange}
                             className={`mt-2 ${inputStyle}`}
                           />
@@ -705,8 +716,8 @@ const StaffTrainingChecklist = () => {
                           </label>
                           <input
                             type="checkbox"
-                            name="gemsAssetsOk"
-                            checked={formData.gemsAssetsOk}
+                            name="gems_assets_ok"
+                            checked={formData.gems_assets_ok}
                             onChange={handleChange}
                           />
                         </div>
@@ -716,8 +727,8 @@ const StaffTrainingChecklist = () => {
                             Gems Assets Reported to OCC
                           </label>
                           <input
-                            name="gemsAssetsReportedTo"
-                            value={formData.gemsAssetsReportedTo}
+                            name="gems_assets_reported_to"
+                            value={formData.gems_assets_reported_to}
                             onChange={handleChange}
                             className={`mt-2 ${inputStyle}`}
                           />
@@ -729,8 +740,8 @@ const StaffTrainingChecklist = () => {
                           </label>
                           <input
                             type="checkbox"
-                            name="vehicleParkingOk"
-                            checked={formData.vehicleParkingOk}
+                            name="vehicle_parking_ok"
+                            checked={formData.vehicle_parking_ok}
                             onChange={handleChange}
                             className="pt-1"
                           />
@@ -741,8 +752,8 @@ const StaffTrainingChecklist = () => {
                             Vehicle Parking Reported to OCC
                           </label>
                           <input
-                            name="vehicleParkingReportedTo"
-                            value={formData.vehicleParkingReportedTo}
+                            name="vehicle_parking_reported_to"
+                            value={formData.vehicle_parking_reported_to}
                             onChange={handleChange}
                             className={`mt-2 ${inputStyle}`}
                           />
@@ -752,8 +763,8 @@ const StaffTrainingChecklist = () => {
                           <label className={`mt-4 ${labelStyle}`}>PTW OK</label>
                           <input
                             type="checkbox"
-                            name="ptwOk"
-                            checked={formData.ptwOk}
+                            name="ptw_ok"
+                            checked={formData.ptw_ok}
                             onChange={handleChange}
                           />
                         </div>
@@ -763,8 +774,8 @@ const StaffTrainingChecklist = () => {
                             PTW Reported to OCC
                           </label>
                           <input
-                            name="ptwReportedTo"
-                            value={formData.ptwReportedTo}
+                            name="ptw_reported_to"
+                            value={formData.ptw_reported_to}
                             onChange={handleChange}
                             className={`mt-2 ${inputStyle}`}
                           />
@@ -869,45 +880,45 @@ const StaffTrainingChecklist = () => {
 
                               {/* Hidden on small */}
                               <td className="hidden xl:table-cell">
-                                {row.unattendedOk ? "OK" : "-"}
+                                {row.unattended_ok ? "OK" : "-"}
                               </td>
                               <td className="hidden xl:table-cell">
-                                {row.unattendedReportedTo}
-                              </td>
-
-                              <td className="hidden xl:table-cell">
-                                {row.hazardousOk ? "OK" : "-"}
-                              </td>
-                              <td className="hidden xl:table-cell">
-                                {row.hazardousReportedTo}
+                                {row.unattended_reported_to}
                               </td>
 
                               <td className="hidden xl:table-cell">
-                                {row.iasOk ? "OK" : "-"}
+                                {row.hazardous_ok ? "OK" : "-"}
                               </td>
                               <td className="hidden xl:table-cell">
-                                {row.iasReportedTo}
-                              </td>
-
-                              <td className="hidden xl:table-cell">
-                                {row.gemsAssetsOk ? "OK" : "-"}
-                              </td>
-                              <td className="hidden xl:table-cell">
-                                {row.gemsAssetsReportedTo}
+                                {row.hazardous_reported_to}
                               </td>
 
                               <td className="hidden xl:table-cell">
-                                {row.vehicleParkingOk ? "OK" : "-"}
+                                {row.ias_ok ? "OK" : "-"}
                               </td>
                               <td className="hidden xl:table-cell">
-                                {row.vehicleParkingReportedTo}
+                                {row.ias_reported_to}
                               </td>
 
                               <td className="hidden xl:table-cell">
-                                {row.ptwOk ? "OK" : "-"}
+                                {row.gems_assets_ok ? "OK" : "-"}
                               </td>
                               <td className="hidden xl:table-cell">
-                                {row.ptwReportedTo}
+                                {row.gems_assets_reported_to}
+                              </td>
+
+                              <td className="hidden xl:table-cell">
+                                {row.vehicle_parking_ok ? "OK" : "-"}
+                              </td>
+                              <td className="hidden xl:table-cell">
+                                {row.vehicle_parking_reported_to}
+                              </td>
+
+                              <td className="hidden xl:table-cell">
+                                {row.ptw_ok ? "OK" : "-"}
+                              </td>
+                              <td className="hidden xl:table-cell">
+                                {row.ptw_reported_to}
                               </td>
 
                               {/* Action */}
@@ -942,48 +953,48 @@ const StaffTrainingChecklist = () => {
 
                           <p>
                             <b>Unattended:</b>{" "}
-                            {viewRow.unattendedOk ? "OK" : "-"}
+                            {viewRow.unattended_ok ? "OK" : "-"}
                           </p>
                           <p>
                             <b>Unattended OCC:</b>{" "}
-                            {viewRow.unattendedReportedTo}
+                            {viewRow.unattended_reported_to}
                           </p>
 
                           <p>
-                            <b>Hazardous:</b> {viewRow.hazardousOk ? "OK" : "-"}
+                            <b>Hazardous:</b> {viewRow.hazardous_ok ? "OK" : "-"}
                           </p>
                           <p>
-                            <b>Hazardous OCC:</b> {viewRow.hazardousReportedTo}
-                          </p>
-
-                          <p>
-                            <b>IAS:</b> {viewRow.iasOk ? "OK" : "-"}
-                          </p>
-                          <p>
-                            <b>IAS OCC:</b> {viewRow.iasReportedTo}
+                            <b>Hazardous OCC:</b> {viewRow.hazardous_reported_to}
                           </p>
 
                           <p>
-                            <b>Gems:</b> {viewRow.gemsAssetsOk ? "OK" : "-"}
+                            <b>IAS:</b> {viewRow.ias_ok ? "OK" : "-"}
                           </p>
                           <p>
-                            <b>Gems OCC:</b> {viewRow.gemsAssetsReportedTo}
+                            <b>IAS OCC:</b> {viewRow.ias_reported_to}
+                          </p>
+
+                          <p>
+                            <b>Gems:</b> {viewRow.gems_assets_ok ? "OK" : "-"}
+                          </p>
+                          <p>
+                            <b>Gems OCC:</b> {viewRow.gems_assets_reported_to}
                           </p>
 
                           <p>
                             <b>Vehicle:</b>{" "}
-                            {viewRow.vehicleParkingOk ? "OK" : "-"}
+                            {viewRow.vehicle_parking_ok ? "OK" : "-"}
                           </p>
                           <p>
                             <b>Vehicle OCC:</b>{" "}
-                            {viewRow.vehicleParkingReportedTo}
+                            {viewRow.vehicle_parking_reported_to}
                           </p>
 
                           <p>
-                            <b>PTW:</b> {viewRow.ptwOk ? "OK" : "-"}
+                            <b>PTW:</b> {viewRow.ptw_ok ? "OK" : "-"}
                           </p>
                           <p>
-                            <b>PTW OCC:</b> {viewRow.ptwReportedTo}
+                            <b>PTW OCC:</b> {viewRow.ptw_reported_to}
                           </p>
                         </div>
 
@@ -1051,4 +1062,4 @@ const StaffTrainingChecklist = () => {
   );
 };
 
-export default StaffTrainingChecklist;
+export default PatrollingChecklist;
