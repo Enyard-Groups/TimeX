@@ -14,6 +14,9 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../SearchDropdown";
 import SpinnerDatePicker from "../SpinnerDatePicker";
 import SignPad from "./SignPad";
+import axios from "axios";
+
+const API_URL= "http://localhost:3000/api/form/optRequest";
 
 const OptOutRequestForm = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -30,7 +33,7 @@ const OptOutRequestForm = () => {
 
   const defaultFormData = {
     employee: "",
-    enrollmentId: "",
+    enrollment_id: "",
     designation: "",
     date: null,
     accommodation: false,
@@ -65,6 +68,20 @@ const OptOutRequestForm = () => {
   const [formData, setFormData] = useState(defaultFormData);
   console.log(formData);
 
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(API_URL);
+      setRequestData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to fetch data");
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -85,51 +102,37 @@ const OptOutRequestForm = () => {
     Math.ceil(requestData.length / entriesPerPage),
   );
 
-  // Handle submit
-  const handleSubmit = () => {
-    const newEntry = {
-      id: editId ? editId : Date.now(),
-      ...formData,
-    };
+    // Handle submit
+  const handleSubmit = async () => {
+    try {
+      if (editId) {
+        await axios.put(`${API_URL}/${editId}`, formData);
+        toast.success("Request Updated");
+      } else {
+        await axios.post(API_URL, formData);
+        toast.success("Request Submitted");
+      }
 
-    if (editId) {
-      const updated = requestData.map((item) =>
-        item.id === editId ? { ...item, ...newEntry } : item,
-      );
-
-      setRequestData(updated);
-
-      // Backend version
-      // await axios.put(`/api/manual-entry/${editId}`, newEntry)
-
-      toast.success("Request Updated");
-    } else {
-      const updated = [...requestData, newEntry];
-      setRequestData(updated);
-
-      // Backend version
-      // await axios.post("/api/manual-entry-request", newEntry)
-
-      toast.success("Request Submitted");
+      setOpenModal(false);
+      setEditId(null);
+      setFormData(defaultFormData);
+      fetchData();
+    } catch (error) {
+      console.error("Error saving data:", error);
+      toast.error("Failed to save data");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData(defaultFormData);
   };
 
-  // Handle delete
-  const handleDelete = (id) => {
-    const updated = requestData.filter((v) => v.id !== id);
-
-    setRequestData(
-      updated.map((item) => ({
-        ...item,
-      })),
-    );
-
-    toast.success("Deleted Successfully");
+   // Handle delete
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      toast.success("Deleted Successfully");
+      fetchData();
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      toast.error("Failed to delete data");
+    }
   };
 
   const handleCopy = () => {
@@ -142,7 +145,7 @@ const OptOutRequestForm = () => {
         return [
           item.employee,
           item.date,
-          item.enrollmentId,
+          item.enrollment_id,
           item.designation,
         ].join("\t");
       })
@@ -158,7 +161,7 @@ const OptOutRequestForm = () => {
     const excelData = requestData.map((item) => ({
       Employee: item.employee,
       Date: item.date,
-      EnrollmentId: item.enrollmentId,
+      EnrollmentId: item.enrollment_id,
       Designation: item.designation,
     }));
 
@@ -181,7 +184,7 @@ const OptOutRequestForm = () => {
       const row = [
         item.employee,
         item.date,
-        item.enrollmentId,
+        item.enrollment_id,
         item.designation,
       ];
 
@@ -319,7 +322,7 @@ const OptOutRequestForm = () => {
                       <td className="p-2">{item.employee}</td>
 
                       <td className="p-2 hidden md:table-cell">
-                        {item.enrollmentId}
+                        {item.enrollment_id}
                       </td>
                       <td className="p-2 hidden lg:table-cell">
                         {item.designation}

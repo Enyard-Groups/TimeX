@@ -179,7 +179,7 @@ export const deleteLeaveApplication = async (req, res) => {
 
 export const getOptRequest = async (req, res) => {
     try {
-        const result = await db.query('SELECT * FROM opt_request ORDER BY created_at DESC');
+        const result = await db.query('SELECT * FROM opt_out_request ORDER BY created_at DESC');
         res.json(result.rows);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -187,28 +187,73 @@ export const getOptRequest = async (req, res) => {
 };
 
 export const createOptRequest = async (req, res) => {
-    const { name, email, contact, optType, startDate, endDate, description, safetyConcerns, urgent, requestedAction, attachedFile } = req.body;
+    const { 
+        employee, enrollment_id, designation, date, 
+        accommodation, transportation, effective_from, 
+        house_allowance, transportation_allowance,
+        house_no, street_name, building_name, area, country, zip_pin_code, landmark,
+        emergency_contact, contact_no, relation, 
+        emergency_contact2, contact_no2, relation2,
+        name_sign, approvedBy, concurredBy,
+        name_sign_drawn, approvedBy_drawn, concurredBy_drawn
+    } = req.body;
+
+    const address_details = { house_no, street_name, building_name, area, country, zip_pin_code, landmark };
+    const emergency_contacts = { emergency_contact, contact_no, relation, emergency_contact2, contact_no2, relation2 };
+    const signatures = { name_sign, approvedBy, concurredBy, name_sign_drawn, approvedBy_drawn, concurredBy_drawn };
+
     try {
         const result = await db.query(
-            'INSERT INTO opt_request (name, email, contact, opt_type, start_date, end_date, description, safety_concerns, urgent, requested_action, attached_file) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
-            [name, email, contact, optType, startDate, endDate, description, safetyConcerns, urgent, requestedAction, attachedFile]
+            'INSERT INTO opt_out_request (employee, enrollment_id, designation, date, accommodation, transportation, effective_from, house_allowance, transportation_allowance, address_details, emergency_contacts, signatures) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *',
+            [
+                employee, enrollment_id, designation, formatToPostgresDate(date), 
+                accommodation, transportation, formatToPostgresDate(effective_from), 
+                house_allowance, transportation_allowance,
+                JSON.stringify(address_details),
+                JSON.stringify(emergency_contacts),
+                JSON.stringify(signatures)
+            ]
         );
         res.status(201).json(result.rows[0]);
     } catch (error) {
+        console.error("Error in createOptRequest:", error.message);
         res.status(500).json({ message: error.message });
     }
 };
 
 export const updateOptRequest = async (req, res) => {
     const { id } = req.params;
-    const { name, email, contact, optType, startDate, endDate, description, safetyConcerns, urgent, requestedAction, attachedFile } = req.body;
+    const { 
+        employee, enrollment_id, designation, date, 
+        accommodation, transportation, effective_from, 
+        house_allowance, transportation_allowance,
+        house_no, street_name, building_name, area, country, zip_pin_code, landmark,
+        emergency_contact, contact_no, relation, 
+        emergency_contact2, contact_no2, relation2,
+        name_sign, approvedBy, concurredBy,
+        name_sign_drawn, approvedBy_drawn, concurredBy_drawn
+    } = req.body;
+
+    const address_details = { house_no, street_name, building_name, area, country, zip_pin_code, landmark };
+    const emergency_contacts = { emergency_contact, contact_no, relation, emergency_contact2, contact_no2, relation2 };
+    const signatures = { name_sign, approvedBy, concurredBy, name_sign_drawn, approvedBy_drawn, concurredBy_drawn };
+
     try {
         const result = await db.query(
-            'UPDATE opt_request SET name=$1, email=$2, contact=$3, opt_type=$4, start_date=$5, end_date=$6, description=$7, safety_concerns=$8, urgent=$9, requested_action=$10, attached_file=$11 WHERE id=$12 RETURNING *',
-            [name, email, contact, optType, startDate, endDate, description, safetyConcerns, urgent, requestedAction, attachedFile, id]
+            'UPDATE opt_out_request SET employee=$1, enrollment_id=$2, designation=$3, date=$4, accommodation=$5, transportation=$6, effective_from=$7, house_allowance=$8, transportation_allowance=$9, address_details=$10, emergency_contacts=$11, signatures=$12 WHERE id=$13 RETURNING *',
+            [
+                employee, enrollment_id, designation, formatToPostgresDate(date), 
+                accommodation, transportation, formatToPostgresDate(effective_from), 
+                house_allowance, transportation_allowance,
+                JSON.stringify(address_details),
+                JSON.stringify(emergency_contacts),
+                JSON.stringify(signatures),
+                id
+            ]
         );
         res.json(result.rows[0]);
     } catch (error) {
+        console.error("Error in updateOptRequest:", error.message);
         res.status(500).json({ message: error.message });
     }
 };
@@ -216,12 +261,12 @@ export const updateOptRequest = async (req, res) => {
 export const deleteOptRequest = async (req, res) => {
     const { id } = req.params;
     try {
-        await db.query('DELETE FROM opt_request WHERE id = $1', [id]);
+        await db.query('DELETE FROM opt_out_request WHERE id = $1', [id]);
         res.json({ message: 'OPT request removed' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-};  
+};
 
 
 export const getPassportRequest = async (req, res) => {
@@ -243,7 +288,6 @@ export const createPassportRequest = async (req, res) => {
         res.status(201).json(result.rows[0]);
     } catch (error) {
         res.status(500).json({ message: error.message });
-        console.log("error in createpassportRequest:",error.message);
     }
 };
 

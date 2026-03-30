@@ -36,7 +36,7 @@ const PassportRequest = () => {
     position_title: "",
     mobile: "",
     passport_number: "",
-    request_date: null,
+    request_date: "",
     expected_return_date: "",
     reason_for_request: "",
     agreement: false,
