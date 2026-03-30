@@ -39,7 +39,7 @@ const Sidebar = ({ user }) => {
   return (
     <div className="h-screen flex flex-col bg-[#0f172a]">
       {/* TOP */}
-      <div className="flex justify-center items-center py-4 mt-2">
+      <div className=" pl-10 py-4 mt-2">
         <Link to="/dashboard">
           <img
             src="../timexlogo.png"
@@ -53,13 +53,13 @@ const Sidebar = ({ user }) => {
 
       {/* MIDDLE (Scrollable Area) */}
       <div
-        className="flex-1 overflow-y-auto px-3 space-y-5 "
+        className="flex-1 overflow-y-auto px-3 space-y-5"
         style={{ scrollbarWidth: "none" }}
       >
         {isAdmin ? (
           <>
             <div
-              className={`mt-5 mb-5 px-1.5 py-2 rounded-xl text-md transition-all ${
+              className={`mt-3 mb-5 px-1.5 py-2 rounded-xl text-md transition-all ${
                 isdashboardActive ? activeClass : hoverClass
               }`}
             >
@@ -99,15 +99,15 @@ const Sidebar = ({ user }) => {
       </div>
 
       {/* BOTTOM */}
-      <div className="p-4">
+      <div className="p-4 mt-4">
         <button
           onClick={handleLogout}
-          className="w-full flex justify-center items-center gap-2 font-semibold text-blue-100 hover:text-white transition-all"
+          className="w-full flex pl-2 items-center gap-2 font-semibold text-blue-100 hover:text-white transition-all"
         >
-          <span>Logout</span>
           <span className="text-lg bg-[#1E3A8A] rounded-full p-1 text-white">
             <IoIosLogOut />
           </span>
+          <span>Logout</span>
         </button>
       </div>
     </div>
