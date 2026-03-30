@@ -3,9 +3,13 @@ import { Navigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import AdminDashboard from "./AdminDashboard";
 import EmployeeDashboard from "./EmployeeDashboard";
+import { useState } from "react";
+import Footer from "../components/Footer";
 
 const Dashboard = () => {
   const { user, isAuthenticated } = useSelector((state) => state);
+
+  const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />;
@@ -14,21 +18,38 @@ const Dashboard = () => {
   const isAdmin = user.role === "admin";
 
   return (
-    <div
-      className="min-h-screen bg-[#00173d] pt-1"
-      style={{
-        scrollbarWidth: "none",
-      }}
-    >
-      <Navbar user={user} />
+    <div className="h-screen bg-[#00173d] flex flex-col overflow-hidden">
+      {/* Navbar */}
+      <Navbar
+        rightSidebarOpen={rightSidebarOpen}
+        setRightSidebarOpen={setRightSidebarOpen}
+      />
 
-      <main className="bg-white px-6 rounded-t-3xl mb-12 lg:ml-60 pt-4 mt-2 ">
-        {isAdmin ? (
-          <AdminDashboard user={user} />
-        ) : (
-          <EmployeeDashboard user={user} />
-        )}
-      </main>
+      {/* Main Wrapper */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Content Area */}
+        <main
+          className={`bg-white px-6 pt-4 mt-3 mb-12 lg:ml-64 rounded-tl-3xl transition-all duration-300 flex-1 overflow-hidden ${
+            rightSidebarOpen ? "lg:mr-64" : "mr-0 rounded-tr-3xl"
+          }`}
+        >
+          {/* SCROLL ONLY HERE */}
+          <div
+            className="h-full overflow-y-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
+            {isAdmin ? (
+              <AdminDashboard user={user} />
+            ) : (
+              <EmployeeDashboard user={user} />
+            )}
+          </div>
+        </main>
+      </div>
+
+      <Footer
+        rightSidebarOpen={rightSidebarOpen}
+      />
     </div>
   );
 };

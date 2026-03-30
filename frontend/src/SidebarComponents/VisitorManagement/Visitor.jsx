@@ -21,7 +21,7 @@ const Visitor = ({ user }) => {
           {/* Visitor Main Button */}
           <div
             onClick={() => setOpenVisitor(!openVisitor)}
-            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded pl-4 ${
               isvisitorActive ? activeClass : hoverClass
             }`}
           >
@@ -38,13 +38,11 @@ const Visitor = ({ user }) => {
 
           {/* Sub Menu */}
           {openVisitor && (
-            <div className="mt-2 flex flex-col items-center text-center gap-2 text-lg space-y-2">
+            <div className="mt-2 flex flex-col pl-10 gap-2 text-md ">
               <NavLink
                 to="/visitor/visitor-booking"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : hoverClass
+                  isActive ? activeClass : hoverClass
                 }
               >
                 Visitor Booking
@@ -53,9 +51,7 @@ const Visitor = ({ user }) => {
               <NavLink
                 to="/visitor/card-detach"
                 className={({ isActive }) =>
-                  isActive
-                    ? activeClass
-                    : hoverClass
+                  isActive ? activeClass : hoverClass
                 }
               >
                 Card Detach

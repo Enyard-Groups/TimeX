@@ -21,7 +21,7 @@ const Requests = ({ user }) => {
           {/* Requests Main Button */}
           <div
             onClick={() => setOpenRequests(!openRequests)}
-            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+            className={`flex items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded pl-4 ${
               isrequestsActive ? activeClass : hoverClass
             }`}
           >
@@ -38,7 +38,7 @@ const Requests = ({ user }) => {
 
           {/* Sub Menu */}
           {openRequests && (
-            <div className="mt-2 flex flex-col items-center text-center gap-2 text-lg space-y-2">
+            <div className="mt-2 flex flex-col pl-10 gap-2 text-md ">
               <NavLink
                 to="/requests/mannual-entry-req"
                 className={({ isActive }) =>

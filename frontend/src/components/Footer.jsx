@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-const Footer = () => {
+const Footer = ({ rightSidebarOpen}) => {
   const currentYear = new Date().getFullYear();
   const { user } = useSelector((state) => state);
 
@@ -12,7 +12,7 @@ const Footer = () => {
     <>
       {user && (
         <div
-          className="fixed bottom-0 right-0 left-0 lg:left-64 z-50 h-12 border-t flex items-center justify-center transition-all duration-300"
+          className={`fixed bottom-0 right-0 left-0 lg:left-64 z-30 lg:z-50 h-12 border-t flex items-center justify-center transition-all duration-300 ${rightSidebarOpen ? "lg:mr-64" : "mr-0"}`}
           style={{
             backgroundColor: "white",
             borderColor: "oklch(0.923 0.003 48.717)",

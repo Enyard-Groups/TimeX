@@ -39,7 +39,7 @@ const Master = ({ user }) => {
           </div>
           {/* Sub Menu */}
           {openMasters && (
-            <div className="mt-2 flex flex-col items-center text-center gap-2 text-lg space-y-2 ">
+            <div className="mt-2 flex flex-col pl-10 gap-2 text-md">
               <NavLink
                 to="/masters/companies"
                 className={({ isActive }) =>
@@ -76,7 +76,7 @@ const Master = ({ user }) => {
               </NavLink>
 
               {/* EMPLOYEE DROPDOWN */}
-              <div className="flex flex-col items-center justify-center cursor-pointer">
+              <div className="flex flex-col  cursor-pointer">
                 <div
                   onClick={() => setOpenEmployee(!openEmployee)}
                   className={`${hoverClass} flex justify-between items-center cursor-pointer`}
@@ -130,7 +130,7 @@ const Master = ({ user }) => {
               </NavLink>
 
               {/* HOLIDAY DROPDOWN */}
-              <div className="flex flex-col items-center justify-center cursor-pointer">
+              <div className="flex flex-col cursor-pointer">
                 <div
                   onClick={() => setOpenHoliday(!openHoliday)}
                   className={`${hoverClass} flex justify-between items-center cursor-pointer`}

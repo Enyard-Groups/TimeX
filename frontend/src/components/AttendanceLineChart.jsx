@@ -172,28 +172,30 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
     <div className="py-4 bg-white rounded-xl">
       {/*  Filter Buttons */}
       <div className="sm:flex sm:justify-between">
-        <h3 className="text-sm font-semibold text-gray-700 ml-5 mb-3">Attendance Overview</h3>
+        <h3 className="text-[16px] font-semibold text-gray-700 ml-5 mb-3">
+          Attendance Overview
+        </h3>
         <div className="flex sm:gap-2 mb-3 px-3">
-        {[
-          { label: "7D", value: "7d" },
-          { label: "15D", value: "15d" },
-          { label: "1M", value: "1m" },
-          { label: "1Y", value: "1y" },
-          { label: "3Y", value: "3y" },
-        ].map((btn) => (
-          <button
-            key={btn.value}
-            onClick={() => setRange(btn.value)}
-            className={`px-3 py-1 text-xs rounded-lg transition-all ${
-              range === btn.value
-                ? "bg-[#042b6a] text-white shadow-md"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
-          >
-            {btn.label}
-          </button>
-        ))}
-      </div>
+          {[
+            { label: "7D", value: "7d" },
+            { label: "15D", value: "15d" },
+            { label: "1M", value: "1m" },
+            { label: "1Y", value: "1y" },
+            { label: "3Y", value: "3y" },
+          ].map((btn) => (
+            <button
+              key={btn.value}
+              onClick={() => setRange(btn.value)}
+              className={`px-3 py-1 text-xs rounded-lg transition-all ${
+                range === btn.value
+                  ? "bg-[#042b6a] text-white shadow-md"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {btn.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/*  Optional warning */}

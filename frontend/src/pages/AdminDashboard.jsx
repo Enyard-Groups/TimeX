@@ -96,22 +96,30 @@ const AdminDashboard = ({ user }) => {
 
   return (
     <>
-      <div className="mb-10 pt-10 sm:pt-0 flex flex-wrap">
-        <h2 className="text-2xl  pl-8 font-bold tracking-tight mr-20">
-          Welcome back,{" "}
-          <span className="bg-clip-text font-bold text-transparent bg-blue-900">
-            {user?.user_name || "User"}
-          </span>
-        </h2>
-
-        <div className="flex border border-gray-200 items-center rounded-xl px-3 mx-2  py-2 w-full max-w-[300px] shadow-md md:mr-20">
-          {/* Input */}
-          <input
-            type="text"
-            placeholder="Search..."
-            className="bg-transparent outline-none px-3 text-sm text-white  placeholder-gray-400 w-full"
-          />
+      <div className="md:flex md:items-center justify-between w-full mb-4">
+        {/* LEFT - Welcome */}
+        <div className="flex-1 flex justify-center md:justify-start text-center mt-10 sm:mt-0 md:pl-10 lg:pl-0 md:whitespace-nowrap md:mr-10">
+          <h2 className="text-2xl font-bold tracking-tight">
+            Welcome back,{" "}
+            <span className="bg-clip-text font-bold text-transparent bg-blue-900">
+              {user?.user_name || "User"}
+            </span>
+          </h2>
         </div>
+
+        {/* CENTER - Search */}
+        <div className="flex-1 flex justify-center my-2 md:my-0">
+          <div className="flex items-center border border-gray-200 rounded-xl px-3 py-2 w-full max-w-[300px] shadow-md">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="bg-transparent outline-none text-sm w-full placeholder-gray-400"
+            />
+          </div>
+        </div>
+
+        {/* RIGHT - Icon */}
+        <div className="flex-1 flex justify-end"></div>
       </div>
 
       {/* Today Attendance */}
@@ -145,10 +153,10 @@ const AdminDashboard = ({ user }) => {
         </div>
       </div>
 
-      <div className="  mt-6 items-start">
-        {/* Recent Actvity */}
+      <div className="my-6 items-start">
+        {/* Timeline Actvity */}
         <div
-          className=" bg-white rounded shadow-md p-4 overflow-x-auto  border border-gray-200"
+          className="bg-white rounded shadow-md p-4 overflow-x-auto  border border-gray-200"
           style={{ scrollbarWidth: "none" }}
         >
           <Timeline userData={userData} />
