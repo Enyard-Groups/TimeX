@@ -7,12 +7,16 @@ import { IoIosLogOut } from "react-icons/io";
 import { logout } from "../action";
 import { useNavigate } from "react-router-dom";
 import RightSidebar from "./RightSidebar";
+import { useLocation } from "react-router-dom";
 
 export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
   const user = useSelector((state) => state.user);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const sidebarRef = useRef(null);
+  const location = useLocation();
+
+  const isDashboard = location.pathname === "/dashboard";
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -49,28 +53,30 @@ export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
       </button>
 
       {/* RIGHT ICONS */}
-      <div className="flex flex-row absolute top-7 right-4 z-50 gap-2">
-        <button
-          onClick={handleLogout}
-          className="text-[18px] bg-[#00173d] rounded-full text-white p-1.5"
-        >
-          <IoIosLogOut />
-        </button>
+      {isDashboard && (
+        <div className="flex flex-row absolute top-7 right-4 z-50 gap-2">
+          <button
+            onClick={handleLogout}
+            className="text-[18px] bg-[#0f172a] rounded-full text-white p-1.5"
+          >
+            <IoIosLogOut />
+          </button>
 
-        <button
-          onClick={() => setRightSidebarOpen(true)}
-          className="text-[18px] bg-blue-950 rounded-full text-white p-1.5"
-        >
-          <IoMdNotificationsOutline />
-        </button>
+          <button
+            onClick={() => setRightSidebarOpen(true)}
+            className="text-[18px] bg-[#0f172a] rounded-full text-white p-1.5"
+          >
+            <IoMdNotificationsOutline />
+          </button>
 
-        <div
-          onClick={() => setRightSidebarOpen(true)}
-          className="py-1 px-2.5 bg-blue-950 rounded-full text-white cursor-pointer"
-        >
-          {user?.user_name?.charAt(0).toUpperCase()}
+          <div
+            onClick={() => setRightSidebarOpen(true)}
+            className="py-1 px-2.5 bg-[#0f172a] rounded-full text-white cursor-pointer"
+          >
+            {user?.user_name?.charAt(0).toUpperCase()}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* RIGHT SIDEBAR */}
       <aside
@@ -81,7 +87,12 @@ export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
         <div className="p-4 h-full flex flex-col">
           <div className="flex justify-between mb-4">
             <h1 className="text-gray-600 font-medium">Notifications</h1>
-            <button onClick={() => setRightSidebarOpen(false)} className="cursor-pointer">✕</button>
+            <button
+              onClick={() => setRightSidebarOpen(false)}
+              className="cursor-pointer"
+            >
+              ✕
+            </button>
           </div>
 
           <RightSidebar user={user} />
@@ -97,7 +108,10 @@ export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
       >
         <Sidebar user={user} />
       </aside>
- 
+
+      <Footer
+        rightSidebarOpen={rightSidebarOpen}
+      />
     </>
   );
 }

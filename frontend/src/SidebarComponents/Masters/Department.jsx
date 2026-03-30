@@ -71,10 +71,10 @@ const Department = () => {
   }, []);
 
   const inputStyle =
-    "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-lg py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+    "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-[17px] py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[#2563EB]";
 
   const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
+    "text-[17px] font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const filtereddepartment = department.filter(
     (x) =>
@@ -152,9 +152,13 @@ const Department = () => {
 
         toast.success("Data updated");
       } else {
-        const res = await axios.post(`${API_BASE}/master/departments`, payload, {
-          headers,
-        });
+        const res = await axios.post(
+          `${API_BASE}/master/departments`,
+          payload,
+          {
+            headers,
+          },
+        );
 
         const created = {
           id: res.data.id,
@@ -203,7 +207,9 @@ const Department = () => {
       toast.success("Department deleted");
     } catch (error) {
       console.error("Failed to delete department", error);
-      toast.error(error.response?.data?.message || "Unable to delete department");
+      toast.error(
+        error.response?.data?.message || "Unable to delete department",
+      );
     }
   };
 
@@ -289,7 +295,7 @@ const Department = () => {
       <div className="mb-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap">
             <FaAngleRight />
             Masters
             <FaAngleRight />
@@ -297,6 +303,20 @@ const Department = () => {
               Department
             </div>
           </h1>
+          <div
+            className=" border border-gray-200 rounded-xl px-3 py-2 w-full bg-white max-w-[300px]"
+            style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.05)" }}
+          >
+            <input
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className=" bg-transparent outline-none text-sm w-full placeholder-gray-400"
+            />
+          </div>
           {!openModal && (
             <button
               onClick={() => {
@@ -311,14 +331,14 @@ const Department = () => {
                 });
                 setOpenModal(true);
               }}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-4 py-2 rounded-md whitespace-nowrap "
             >
               + Add New
             </button>
           )}
         </div>
 
-        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6 ">
+        <div className="mt-6 rounded-2xl p-6 backdrop-blur-lg bg-white/50 border border-white/30 shadow-[0_8px_32px_rgba(31,38,135,0.2)]">
           {/* Top Controls */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
             <div>
@@ -329,7 +349,7 @@ const Department = () => {
                   setEntriesPerPage(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
+                className="border rounded-full px-1 border-[#2563EB]"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -340,15 +360,6 @@ const Department = () => {
             </div>
 
             <div className="flex flex-wrap gap-2 items-center justify-center">
-              <input
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-              />
               <div className="flex">
                 <button
                   onClick={handleCopy}
@@ -359,7 +370,7 @@ const Department = () => {
 
                 <button
                   onClick={handleExcel}
-                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
+                  className="text-xl px-3 py-1 cursor-pointer text-green-800"
                 >
                   <FaFileExcel />
                 </button>
@@ -375,29 +386,26 @@ const Department = () => {
           </div>
 
           {/* Table */}
-          <div
-            className="overflow-x-auto min-h-[250px]"
-            style={{ scrollbarWidth: "none" }}
-          >
+          <div className="rounded-xl bg-white overflow-x-auto min-h-[250px] backdrop-blur-xl border border-white/20">
             <table className="w-full text-lg border-collapse ">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
+              <thead className="sticky top-0 z-10 bg-gradient-to-b from-[#2563EB] via-[#3B82F6] to-[#1D4ED8] text-white shadow-md">
                 <tr>
-                  <th className="p-2 font-semibold hidden sm:table-cell">
+                  <th className="p-2 font-normal hidden sm:table-cell">
                     SL.NO
                   </th>
-                  <th className="p-2 font-semibold whitespace-nowrap">
+                  <th className="p-2 font-normal whitespace-nowrap">
                     Department Name
                   </th>
-                  <th className="p-2 font-semibold whitespace-nowrap hidden sm:table-cell">
+                  <th className="p-2 font-normal whitespace-nowrap hidden sm:table-cell">
                     Department Code
                   </th>
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="p-2 font-normal hidden md:table-cell">
                     Company
                   </th>
-                  <th className="p-2 font-semibold hidden lg:table-cell">
+                  <th className="p-2 font-normal hidden lg:table-cell">
                     Active
                   </th>
-                  <th className="p-2 font-semibold">Action</th>
+                  <th className="p-2 font-normal">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -411,7 +419,7 @@ const Department = () => {
                   currentdepartment.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                      className="text-center backdrop-blur-md transition-all duration-300 even:bg-blue-50/80"
                     >
                       <td className="p-2 hidden sm:table-cell">{index + 1}</td>
                       <td className="p-2">{item.name}</td>
@@ -431,7 +439,7 @@ const Department = () => {
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
+                            className="inline text-blue-500 cursor-pointer text-[17px]"
                           />
 
                           {/* Edit */}
@@ -442,13 +450,13 @@ const Department = () => {
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="inline text-green-500 cursor-pointer text-lg"
+                            className="inline text-green-800 cursor-pointer text-[17px]"
                           />
 
                           {/* Delete */}
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="inline text-red-500 cursor-pointer text-xl"
+                            className="inline text-red-600 cursor-pointer text-xl"
                           />
                         </div>
                       </td>
@@ -518,7 +526,7 @@ const Department = () => {
               <div className="flex justify-end">
                 <RxCross2
                   onClick={() => setOpenModal(false)}
-                  className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
+                  className="text-[#1D4ED8] text-[17px] cursor-pointer"
                 />
               </div>
 
@@ -609,7 +617,7 @@ const Department = () => {
                 <div className="flex justify-end mt-10">
                   <button
                     onClick={handleSubmit}
-                    className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+                    className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-8 py-2 rounded-md"
                   >
                     Save
                   </button>

@@ -32,12 +32,12 @@ const Sidebar = ({ user }) => {
 
   const isdashboardActive = location.pathname.startsWith("/dashboard");
 
-  const activeClass = "text-white rounded-xl bg-violet-300 p-2";
+  const activeClass = "text-white rounded-xl bg-[#1E3A8A] p-2";
   const hoverClass =
     "text-white hover:text-black hover:bg-gray-100 p-2 rounded-xl";
 
   return (
-    <div className="h-screen flex flex-col bg-[#00173d]">
+    <div className="h-screen flex flex-col bg-[#0f172a]">
       {/* 🔹 TOP (Fixed Logo) */}
       <div className="flex justify-center items-center py-4">
         <Link to="/dashboard">
@@ -105,7 +105,7 @@ const Sidebar = ({ user }) => {
           className="w-full flex justify-center items-center gap-2 font-semibold text-blue-100 hover:text-white transition-all"
         >
           <span>Logout</span>
-          <span className="text-lg bg-violet-300 rounded-full p-1 text-white">
+          <span className="text-lg bg-[#1E3A8A] rounded-full p-1 text-white">
             <IoIosLogOut />
           </span>
         </button>

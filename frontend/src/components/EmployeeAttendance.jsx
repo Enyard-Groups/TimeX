@@ -16,29 +16,57 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
       value: present,
       icon: <UserCheck size={18} />,
       dataKey: "presentToday",
-      gradient: ["#ede9fe", "#8b5cf6", "#5b21b6"], // lavender → deep purple
-      
-      bg: "bg-purple-50",
+      color: "#2563EB",
+      bg: "bg-[#DBEAFE]",
     },
     {
       title: "Absent",
       value: absent,
       icon: <UserX size={18} />,
       dataKey: "absent",
-      gradient: ["#dbeafe", "#3b82f6", "#1e3a8a"], // light blue → navy
-      bg: "bg-blue-50",
+      color: "#EF4444",
+      bg: "bg-[#FEE2E2]",
     },
     {
       title: "Leave",
       value: leave,
       icon: <Calendar size={18} />,
       dataKey: "leave",
-      gradient: ["#e0f2fe", "#6366f1", "#312e81"], // soft blue → indigo
-      bg: "bg-indigo-50",
+      color: "#06B6D4",
+      bg: "bg-[#E0F2FE]",
     },
   ];
 
+  // const stats = [
+  //   {
+  //     title: "Present",
+  //     value: present,
+  //     icon: <UserCheck size={18} />,
+  //     dataKey: "presentToday",
+  //     gradient: ["#ede9fe", "#8b5cf6", "#5b21b6"], // lavender → deep purple
+
+  //     bg: "bg-purple-50",
+  //   },
+  //   {
+  //     title: "Absent",
+  //     value: absent,
+  //     icon: <UserX size={18} />,
+  //     dataKey: "absent",
+  //     gradient: ["#dbeafe", "#3b82f6", "#1e3a8a"], // light blue → navy
+  //     bg: "bg-blue-50",
+  //   },
+  //   {
+  //     title: "Leave",
+  //     value: leave,
+  //     icon: <Calendar size={18} />,
+  //     dataKey: "leave",
+  //     gradient: ["#e0f2fe", "#6366f1", "#312e81"], // soft blue → indigo
+  //     bg: "bg-indigo-50",
+  //   },
+  // ];
+
   // Limit to last 7 days + dynamic values
+
   const chartData = attendanceData.slice(-7).map((d) => ({
     ...d,
     absent: (d.totalEmployees || 0) - (d.presentToday || 0),
@@ -64,54 +92,20 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
             <div className="flex-1 h-[80px] px-2">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
-                  <defs>
-                    {/* Multi-color Line Gradient */}
-                    <linearGradient
-                      id={`line-${index}`}
-                      x1="0"
-                      y1="0"
-                      x2="1"
-                      y2="0"
-                    >
-                      <stop offset="0%" stopColor={item.gradient[0]} />
-                      <stop offset="50%" stopColor={item.gradient[1]} />
-                      <stop offset="100%" stopColor={item.gradient[2]} />
-                    </linearGradient>
-
-                    {/* Soft Area Gradient */}
-                    <linearGradient
-                      id={`area-${index}`}
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop
-                        offset="0%"
-                        stopColor={item.gradient[1]}
-                        stopOpacity={0.3}
-                      />
-                      <stop
-                        offset="100%"
-                        stopColor={item.gradient[2]}
-                        stopOpacity={0}
-                      />
-                    </linearGradient>
-                  </defs>
-
-                  {/* Area (adds modern feel) */}
+                  {/* Area (solid color with opacity) */}
                   <Area
                     type="monotone"
                     dataKey={item.dataKey}
                     stroke="none"
-                    fill={`url(#area-${index})`}
+                    fill={item.color}
+                    fillOpacity={0.15}
                   />
 
                   {/* Line */}
                   <Line
                     type="monotone"
                     dataKey={item.dataKey}
-                    stroke={`url(#line-${index})`}
+                    stroke={item.color}
                     strokeWidth={3}
                     dot={false}
                     activeDot={{ r: 5 }}
@@ -134,14 +128,14 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
                             cx={cx}
                             cy={cy}
                             r={8}
-                            fill={item.gradient[1]}
+                            fill={item.color}
                             opacity={0.15}
                           />
                           <circle
                             cx={cx}
                             cy={cy}
                             r={4.5}
-                            fill={item.gradient[1]}
+                            fill={item.color}
                             stroke="#fff"
                             strokeWidth={2}
                           />

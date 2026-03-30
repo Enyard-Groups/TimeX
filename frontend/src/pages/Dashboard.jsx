@@ -4,7 +4,6 @@ import Navbar from "../components/Navbar";
 import AdminDashboard from "./AdminDashboard";
 import EmployeeDashboard from "./EmployeeDashboard";
 import { useState } from "react";
-import Footer from "../components/Footer";
 
 const Dashboard = () => {
   const { user, isAuthenticated } = useSelector((state) => state);
@@ -18,7 +17,7 @@ const Dashboard = () => {
   const isAdmin = user.role === "admin";
 
   return (
-    <div className="h-screen bg-[#00173d] flex flex-col overflow-hidden">
+    <div className="h-screen bg-[#0f172a] flex flex-col overflow-hidden">
       {/* Navbar */}
       <Navbar
         rightSidebarOpen={rightSidebarOpen}
@@ -47,9 +46,7 @@ const Dashboard = () => {
         </main>
       </div>
 
-      <Footer
-        rightSidebarOpen={rightSidebarOpen}
-      />
+      
     </div>
   );
 };

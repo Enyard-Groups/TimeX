@@ -153,14 +153,16 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
       },
     },
 
-    colors: ["#8061c9", "#1f7dff", "#274bcd"],
+    // colors: ["#8061c9", "#1f7dff", "#274bcd"],
+    colors: ["#2563EB", "#EF4444", "#06B6D4"],
 
     fill: {
       type: "gradient",
       gradient: {
         shade: "light",
         type: "vertical",
-        gradientToColors: ["#dbeafe", "#ede9fe", "#e0f2fe"],
+        // gradientToColors: ["#dbeafe", "#ede9fe", "#e0f2fe"],
+        gradientToColors: ["#DBEAFE", "#FEE2E2", "#E0F2FE"], // match bg colors
         opacityFrom: 0.7,
         opacityTo: 0.05,
         stops: [0, 100],

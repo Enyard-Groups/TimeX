@@ -99,11 +99,12 @@ const AdminDashboard = ({ user }) => {
       <div className="md:flex md:items-center justify-between w-full mb-4">
         {/* LEFT - Welcome */}
         <div className="flex-1 flex justify-center md:justify-start text-center mt-10 sm:mt-0 md:pl-10 lg:pl-0 md:whitespace-nowrap md:mr-10">
-          <h2 className="text-2xl font-bold tracking-tight">
-            Welcome back,{" "}
+          <h2 className="text-2xl font-bold tracking-tight text-[#0f172a]">
+            Dashboard
+            {/* Welcome back,{" "}
             <span className="bg-clip-text font-bold text-transparent bg-blue-900">
               {user?.user_name || "User"}
-            </span>
+            </span> */}
           </h2>
         </div>
 

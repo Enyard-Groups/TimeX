@@ -18,7 +18,7 @@ const Reports = ({ user }) => {
   const isreportsActive = location.pathname.startsWith("/reports");
   // const activeClass = "text-[oklch(0.645_0.246_16.439)]";
   const activeClass =
-    "text-white hover:text-black hover:bg-gray-100 rounded-xl bg-violet-300 p-2";
+    "text-white hover:text-black hover:bg-gray-100 rounded-xl bg-[#1E3A8A] p-2";
   const hoverClass =
     "text-white hover:text-black hover:bg-gray-100 p-2 rounded-xl";
 

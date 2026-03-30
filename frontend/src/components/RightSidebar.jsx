@@ -28,7 +28,7 @@ const RightSidebar = ({ user }) => {
           <div
             src="/profile.jpg"
             alt="Profile"
-            className="w-20 h-20 mt-5 rounded-full flex items-center justify-center font-black shadow-md cursor-pointer transition-all hover:scale-105 bg-[#003386] text-white object-cover mb-4 text-3xl"
+            className="w-20 h-20 mt-5 rounded-full flex items-center justify-center font-black shadow-md cursor-pointer transition-all hover:scale-105 bg-[#0f172a] text-white object-cover mb-4 text-3xl"
           >
             {" "}
             {user?.user_name?.charAt(0)?.toUpperCase() || "U"}
@@ -65,21 +65,21 @@ const RightSidebar = ({ user }) => {
         )}
       </div>
 
-    <div className="fixed bottom-0 mb-5 flex justify-between px-4 gap-4">
-      <button
-        onClick={handleLogout}
-        className="h-fit px-3 pt-2 mt-1 py-0.5 cursor-pointer flex flex-row gap-2 rounded-full shadow text-xs"
-      >
-        Logout
-        <span className="text-[15px] bg-[#00173d] rounded-full text-white p-1">
-          <IoIosLogOut />
-        </span>
-      </button>
+      <div className="fixed bottom-0 mb-5 flex justify-between px-4 gap-4">
+        <button
+          onClick={handleLogout}
+          className="h-fit px-3 mt-2 py-0.5 cursor-pointer flex flex-row gap-2 rounded-full shadow text-xs"
+        >
+          <span className="pt-1">Logout</span>
+          <span className="text-[15px] bg-[#00173d] rounded-full text-white p-1">
+            <IoIosLogOut />
+          </span>
+        </button>
 
-      <button className="px-3 mt-1 py-0.5 cursor-pointer rounded-full shadow text-xs">
-        Change Password
-      </button>
-    </div>
+        <button className="px-3 mt-1 py-0.5 cursor-pointer rounded-full shadow text-xs">
+          Change Password
+        </button>
+      </div>
     </div>
   );
 };
