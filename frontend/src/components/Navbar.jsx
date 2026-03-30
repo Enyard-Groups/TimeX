@@ -53,7 +53,7 @@ export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
       </button>
 
       {/* RIGHT ICONS */}
-      {isDashboard && (
+      {isDashboard && !sidebarOpen && (
         <div className="flex flex-row absolute top-7 right-4 z-50 gap-2">
           <button
             onClick={handleLogout}
@@ -106,12 +106,18 @@ export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
           sidebarOpen ? "translate-x-0 w-64" : "-translate-x-full"
         } lg:translate-x-0 lg:w-64 z-40 bg-white`}
       >
+        <div className="absolute right-5 top-4 text-white">
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="cursor-pointer"
+          >
+            ✕
+          </button>
+        </div>
         <Sidebar user={user} />
       </aside>
 
-      <Footer
-        rightSidebarOpen={rightSidebarOpen}
-      />
+      <Footer rightSidebarOpen={rightSidebarOpen} />
     </>
   );
 }
