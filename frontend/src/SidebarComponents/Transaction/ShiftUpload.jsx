@@ -135,14 +135,14 @@ const ShiftUpload = () => {
   return (
     <div className="mb-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 pt-1.5 text-lg font-semibold flex-wrap mb-6">
+      <div className="sm:flex sm:justify-between">
+        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
           <FaAngleRight />
           Transaction
           <FaAngleRight />
           Shift Upload
         </h1>
-      </div>                       
+      </div>
 
       <div className="bg-[oklch(1_0_0)] p-6 rounded-xl shadow-sm border border-[oklch(0.923_0.003_48.717)]">
         {/* Filters */}
@@ -195,9 +195,7 @@ const ShiftUpload = () => {
             {showToSpinner && (
               <SpinnerDatePicker
                 value={formData.topunch}
-                onChange={(date) =>
-                  setFormData({ ...formData, topunch: date })
-                }
+                onChange={(date) => setFormData({ ...formData, topunch: date })}
                 onClose={() => setShowToSpinner(false)}
               />
             )}

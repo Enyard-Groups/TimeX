@@ -296,8 +296,8 @@ const WeeklyOvertimeForm = () => {
   return (
     <div className="mb-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+       <div className="sm:flex sm:justify-between">
+          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
           <FaAngleRight />
           Forms
           <FaAngleRight />
@@ -306,6 +306,7 @@ const WeeklyOvertimeForm = () => {
           </div>
         </h1>
         {!openModal && (
+          <div className="flex justify-end">
           <button
             onClick={() => (
               setMode(""),
@@ -317,6 +318,7 @@ const WeeklyOvertimeForm = () => {
           >
             + Add New
           </button>
+          </div>
         )}
       </div>
 

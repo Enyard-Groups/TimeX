@@ -190,7 +190,9 @@ const PatrollingChecklist = () => {
   };
 
   const handleCopy = () => {
-    const header = ["Name", "Staff Id", "School Name", "Shift Timing"].join("\t");
+    const header = ["Name", "Staff Id", "School Name", "Shift Timing"].join(
+      "\t",
+    );
 
     const rows = requestData
       .map((item) => {
@@ -237,7 +239,12 @@ const PatrollingChecklist = () => {
     const tableRows = [];
 
     requestData.forEach((item) => {
-      const row = [item.name, item.staff_id, item.school_name, item.shift_timing];
+      const row = [
+        item.name,
+        item.staff_id,
+        item.school_name,
+        item.shift_timing,
+      ];
 
       tableRows.push(row);
     });
@@ -253,8 +260,8 @@ const PatrollingChecklist = () => {
   return (
     <div className="mb-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+      <div className="sm:flex sm:justify-between">
+        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
           <FaAngleRight />
           Forms
           <FaAngleRight />
@@ -263,17 +270,19 @@ const PatrollingChecklist = () => {
           </div>
         </h1>
         {!openModal && (
-          <button
-            onClick={() => (
-              setMode(""),
-              setEditId(null),
-              setFormData(defaultFormData),
-              setOpenModal(true)
-            )}
-            className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
-          >
-            + Add New
-          </button>
+          <div className="flex justify-end">
+            <button
+              onClick={() => (
+                setMode(""),
+                setEditId(null),
+                setFormData(defaultFormData),
+                setOpenModal(true)
+              )}
+              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+            >
+              + Add New
+            </button>
+          </div>
         )}
       </div>
 
@@ -961,10 +970,12 @@ const PatrollingChecklist = () => {
                           </p>
 
                           <p>
-                            <b>Hazardous:</b> {viewRow.hazardous_ok ? "OK" : "-"}
+                            <b>Hazardous:</b>{" "}
+                            {viewRow.hazardous_ok ? "OK" : "-"}
                           </p>
                           <p>
-                            <b>Hazardous OCC:</b> {viewRow.hazardous_reported_to}
+                            <b>Hazardous OCC:</b>{" "}
+                            {viewRow.hazardous_reported_to}
                           </p>
 
                           <p>

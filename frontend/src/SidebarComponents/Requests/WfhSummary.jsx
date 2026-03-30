@@ -37,17 +37,30 @@ const WfhSummary = () => {
 
   const filteredData = wfhData.filter(
     (item) =>
-      (item.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (item.idNo || "").toLowerCase().includes(searchTerm.toLowerCase())
+      (item.employee_name || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      (item.idNo || "").toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
   const startIndex = endIndex - entriesPerPage;
   const currentData = filteredData.slice(startIndex, endIndex);
-  const totalPages = Math.max(1, Math.ceil(filteredData.length / entriesPerPage));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredData.length / entriesPerPage),
+  );
 
   const handleCopy = () => {
-    const header = ["ID No", "Employee", "From Date", "To Date", "Days", "Applied On", "Status"].join("\t");
+    const header = [
+      "ID No",
+      "Employee",
+      "From Date",
+      "To Date",
+      "Days",
+      "Applied On",
+      "Status",
+    ].join("\t");
     const rows = filteredData
       .map((item) =>
         [
@@ -58,7 +71,7 @@ const WfhSummary = () => {
           item.number_of_days,
           new Date(item.created_at).toLocaleDateString(),
           item.status,
-        ].join("\t")
+        ].join("\t"),
       )
       .join("\n");
     navigator.clipboard.writeText(`${header}\n${rows}`);
@@ -85,7 +98,17 @@ const WfhSummary = () => {
   const handlePDF = () => {
     const doc = new jsPDF("landscape");
     autoTable(doc, {
-      head: [["ID No", "Employee", "From Date", "To Date", "Days", "Applied On", "Status"]],
+      head: [
+        [
+          "ID No",
+          "Employee",
+          "From Date",
+          "To Date",
+          "Days",
+          "Applied On",
+          "Status",
+        ],
+      ],
       body: filteredData.map((item) => [
         item.idNo,
         item.employee_name,
@@ -102,8 +125,8 @@ const WfhSummary = () => {
 
   return (
     <div className="mb-6">
-      <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-lg font-semibold">
+      <div className="sm:flex sm:justify-between">
+        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
           <FaAngleRight />
           Requests
           <FaAngleRight />
@@ -141,13 +164,22 @@ const WfhSummary = () => {
               className="shadow-sm px-3 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
             />
             <div className="flex">
-              <button onClick={handleCopy} className="text-xl px-3 py-1 text-gray-800">
+              <button
+                onClick={handleCopy}
+                className="text-xl px-3 py-1 text-gray-800"
+              >
                 <GoCopy />
               </button>
-              <button onClick={handleExcel} className="text-xl px-3 py-1 text-green-700">
+              <button
+                onClick={handleExcel}
+                className="text-xl px-3 py-1 text-green-700"
+              >
                 <FaFileExcel />
               </button>
-              <button onClick={handlePDF} className="text-xl px-3 py-1 text-red-600">
+              <button
+                onClick={handlePDF}
+                className="text-xl px-3 py-1 text-red-600"
+              >
                 <FaFilePdf />
               </button>
             </div>
@@ -163,7 +195,9 @@ const WfhSummary = () => {
                 <th className="py-2 px-6 font-semibold">From Date</th>
                 <th className="py-2 px-6 font-semibold">To Date</th>
                 <th className="py-2 px-6 font-semibold">Days</th>
-                <th className="py-2 px-6 font-semibold text-center">Applied On</th>
+                <th className="py-2 px-6 font-semibold text-center">
+                  Applied On
+                </th>
                 <th className="py-2 px-6 font-semibold">Status</th>
               </tr>
             </thead>
@@ -187,19 +221,23 @@ const WfhSummary = () => {
                     className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                   >
                     <td className="py-2 px-6">{item.idNo}</td>
-                    <td className="py-2 px-6 font-medium">{item.employee_name}</td>
+                    <td className="py-2 px-6 font-medium">
+                      {item.employee_name}
+                    </td>
                     <td className="py-2 px-6">{item.start_date}</td>
                     <td className="py-2 px-6">{item.end_date}</td>
                     <td className="py-2 px-6">{item.number_of_days}</td>
-                    <td className="py-2 px-6">{new Date(item.created_at).toLocaleDateString()}</td>
+                    <td className="py-2 px-6">
+                      {new Date(item.created_at).toLocaleDateString()}
+                    </td>
                     <td className="py-2 px-6">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${
                           item.status === "Approved"
                             ? "bg-green-100 text-green-700"
                             : item.status === "Rejected"
-                            ? "bg-red-100 text-red-700"
-                            : "bg-yellow-100 text-yellow-700"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-yellow-100 text-yellow-700"
                         }`}
                       >
                         {item.status}
@@ -215,7 +253,8 @@ const WfhSummary = () => {
         <div className="flex justify-between items-center mt-4 text-sm">
           <span>
             Showing {filteredData.length === 0 ? "0" : startIndex + 1} to{" "}
-            {Math.min(endIndex, filteredData.length)} of {filteredData.length} entries
+            {Math.min(endIndex, filteredData.length)} of {filteredData.length}{" "}
+            entries
           </span>
           <div className="flex space-x-1">
             <button

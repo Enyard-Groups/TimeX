@@ -14,10 +14,7 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import axios from "axios";
 import SearchDropdown from "../SearchDropdown";
 
-
 const API_URL = "http://localhost:3000/api/form/facilityComplaint";
-
-
 
 const FacilityComplaintForm = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -61,7 +58,7 @@ const FacilityComplaintForm = () => {
     email: "",
     contact: "",
   };
-  // console.log("Form Data", formData); 
+  // console.log("Form Data", formData);
 
   const [formData, setFormData] = useState(defaultFormData);
 
@@ -86,12 +83,10 @@ const FacilityComplaintForm = () => {
 
   // Handle submit
   const handleSubmit = async () => {
-  
     try {
       if (editId) {
         await axios.put(`${API_URL}/${editId}`, formData);
         toast.success("Request Updated");
-        
       } else {
         await axios.post(API_URL, formData);
         console.log(formData);
@@ -217,8 +212,8 @@ const FacilityComplaintForm = () => {
   return (
     <div className="mb-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+      <div className="sm:flex sm:justify-between">
+        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
           <FaAngleRight />
           Forms
           <FaAngleRight />
@@ -227,17 +222,19 @@ const FacilityComplaintForm = () => {
           </div>
         </h1>
         {!openModal && (
-          <button
-            onClick={() => (
-              setMode(""),
-              setEditId(null),
-              setFormData(defaultFormData),
-              setOpenModal(true)
-            )}
-            className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
-          >
-            + Add New
-          </button>
+          <div className="flex justify-end">
+            <button
+              onClick={() => (
+                setMode(""),
+                setEditId(null),
+                setFormData(defaultFormData),
+                setOpenModal(true)
+              )}
+              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+            >
+              + Add New
+            </button>
+          </div>
         )}
       </div>
 
@@ -371,10 +368,12 @@ const FacilityComplaintForm = () => {
                         {item.requested_action}
                       </td>
 
-                      <td className="p-2 hidden xl:table-cell">{item.date_noticed}</td>
+                      <td className="p-2 hidden xl:table-cell">
+                        {item.date_noticed}
+                      </td>
 
                       <td className="p-2 hidden lg:table-cell">
-                        {item.urgent?"Y":"N"}
+                        {item.urgent ? "Y" : "N"}
                       </td>
 
                       <td className="p-2 flex flex-row space-x-3 justify-center whitespace-nowrap">

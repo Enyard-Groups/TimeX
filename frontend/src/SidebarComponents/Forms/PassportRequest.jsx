@@ -190,8 +190,8 @@ const PassportRequest = () => {
   return (
     <div className="mb-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+      <div className="sm:flex sm:justify-between">
+        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
           <FaAngleRight />
           Forms
           <FaAngleRight />
@@ -200,17 +200,19 @@ const PassportRequest = () => {
           </div>
         </h1>
         {!openModal && (
-          <button
-            onClick={() => (
-              setMode(""),
-              setEditId(null),
-              setFormData(defaultFormData),
-              setOpenModal(true)
-            )}
-            className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
-          >
-            + Add New
-          </button>
+          <div className="flex justify-end">
+            <button
+              onClick={() => (
+                setMode(""),
+                setEditId(null),
+                setFormData(defaultFormData),
+                setOpenModal(true)
+              )}
+              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+            >
+              + Add New
+            </button>
+          </div>
         )}
       </div>
 
@@ -316,7 +318,9 @@ const PassportRequest = () => {
                         {item.reason_for_request}
                       </td>
 
-                      <td className="p-2 hidden md:table-cell">{item.request_date}</td>
+                      <td className="p-2 hidden md:table-cell">
+                        {item.request_date}
+                      </td>
 
                       <td className="p-2 flex flex-row space-x-3 justify-center whitespace-nowrap">
                         {" "}
@@ -585,7 +589,9 @@ const PassportRequest = () => {
                             disabled={mode === "view"}
                             className="w-4 h-4 accent-[oklch(0.645_0.246_16.439)]"
                           />
-                          <span className="text-sm">I agree to the terms and conditions</span>
+                          <span className="text-sm">
+                            I agree to the terms and conditions
+                          </span>
                         </label>
                       </div>
                     </div>

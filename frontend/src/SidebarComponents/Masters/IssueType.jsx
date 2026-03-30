@@ -147,9 +147,13 @@ const IssueType = () => {
 
         toast.success("Data updated");
       } else {
-        const res = await axios.post(`${API_BASE}/master/issue-types`, payload, {
-          headers,
-        });
+        const res = await axios.post(
+          `${API_BASE}/master/issue-types`,
+          payload,
+          {
+            headers,
+          },
+        );
 
         const created = {
           id: res.data.id,
@@ -196,7 +200,9 @@ const IssueType = () => {
       toast.success("Issue Type deleted");
     } catch (error) {
       console.error("Failed to delete issue type", error);
-      toast.error(error.response?.data?.message || "Unable to delete issue type");
+      toast.error(
+        error.response?.data?.message || "Unable to delete issue type",
+      );
     }
   };
 
@@ -281,8 +287,8 @@ const IssueType = () => {
     <>
       <div className="mb-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+        <div className="sm:flex sm:justify-between">
+          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
             <FaAngleRight />
             Masters
             <FaAngleRight />
@@ -291,22 +297,24 @@ const IssueType = () => {
             </div>
           </h1>
           {!openModal && (
-            <button
-              onClick={() => (
-                setMode(""),
-                setEditId(null),
-                setFormData({
-                  name: "",
-                  code: "",
-                  description: "",
-                  isActive: false,
-                }),
-                setOpenModal(true)
-              )}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
-            >
-              + Add New
-            </button>
+            <div className="flex justify-end">
+              <button
+                onClick={() => (
+                  setMode(""),
+                  setEditId(null),
+                  setFormData({
+                    name: "",
+                    code: "",
+                    description: "",
+                    isActive: false,
+                  }),
+                  setOpenModal(true)
+                )}
+                className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              >
+                + Add New
+              </button>
+            </div>
           )}
         </div>
 

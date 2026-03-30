@@ -9,7 +9,7 @@ const TransactionRoute = ({ user }) => {
   return (
     <div>
       <Navbar user={user} />
-      <div className="lg:ml-60 py-12 px-4 md:px-5 lg:pl-10 min-h-screen">
+      <div className="lg:ml-60 pt-8 pb-12 px-4 md:px-5 lg:pl-10 min-h-screen">
         <Routes>
           <Route path="monitoring" element={<Monitoring />} />
           <Route path="shift-planner" element={<ShiftPlanner />} />

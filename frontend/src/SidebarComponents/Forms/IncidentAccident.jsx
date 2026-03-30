@@ -232,8 +232,8 @@ const IncidentAccident = () => {
   return (
     <div className="mb-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+      <div className="sm:flex sm:justify-between">
+        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
           <FaAngleRight />
           Forms
           <FaAngleRight />
@@ -242,17 +242,19 @@ const IncidentAccident = () => {
           </div>
         </h1>
         {!openModal && (
-          <button
-            onClick={() => (
-              setMode(""),
-              setEditId(null),
-              setFormData(defaultFormData),
-              setOpenModal(true)
-            )}
-            className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
-          >
-            + Add New
-          </button>
+          <div className="flex justify-end">
+            <button
+              onClick={() => (
+                setMode(""),
+                setEditId(null),
+                setFormData(defaultFormData),
+                setOpenModal(true)
+              )}
+              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+            >
+              + Add New
+            </button>
+          </div>
         )}
       </div>
 
@@ -750,7 +752,9 @@ const IncidentAccident = () => {
                             type="radio"
                             name="first_aid"
                             value="Yes"
-                            checked={formData.injury_details.first_aid === "Yes"}
+                            checked={
+                              formData.injury_details.first_aid === "Yes"
+                            }
                             onChange={(e) => handleChange(e, "injury_details")}
                           />{" "}
                           Yes
@@ -778,7 +782,8 @@ const IncidentAccident = () => {
                             name="taken_to_hospital"
                             value="Yes"
                             checked={
-                              formData.injury_details.taken_to_hospital === "Yes"
+                              formData.injury_details.taken_to_hospital ===
+                              "Yes"
                             }
                             onChange={(e) => handleChange(e, "injury_details")}
                           />{" "}

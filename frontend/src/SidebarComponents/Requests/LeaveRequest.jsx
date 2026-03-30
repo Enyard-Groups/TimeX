@@ -188,14 +188,34 @@ const LeaveRequest = () => {
 
     try {
       if (editId) {
-        const res = await axios.put(`${API_BASE}/requests/leave/${editId}`, formData);
+        const res = await axios.put(
+          `${API_BASE}/requests/leave/${editId}`,
+          formData,
+        );
         setLeave((prev) =>
-          prev.map((item) => (item.id === editId ? { ...item, ...res.data, employee_name: employeeOptions.find(e => e.id === employee_id)?.full_name } : item))
+          prev.map((item) =>
+            item.id === editId
+              ? {
+                  ...item,
+                  ...res.data,
+                  employee_name: employeeOptions.find(
+                    (e) => e.id === employee_id,
+                  )?.full_name,
+                }
+              : item,
+          ),
         );
         toast.success("Updated Successfully");
       } else {
         const res = await axios.post(`${API_BASE}/requests/leave`, formData);
-        setLeave((prev) => [{ ...res.data, employee_name: employeeOptions.find(e => e.id === employee_id)?.full_name }, ...prev]);
+        setLeave((prev) => [
+          {
+            ...res.data,
+            employee_name: employeeOptions.find((e) => e.id === employee_id)
+              ?.full_name,
+          },
+          ...prev,
+        ]);
         toast.success("Submitted Successfully");
       }
 
@@ -309,8 +329,8 @@ const LeaveRequest = () => {
     <>
       <div className="mb-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+        <div className="sm:flex sm:justify-between">
+          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
             <FaAngleRight />
             Requests
             <FaAngleRight />
@@ -319,17 +339,19 @@ const LeaveRequest = () => {
             </div>
           </h1>
           {!openModal && (
-            <button
-              onClick={() => (
-                setMode(""),
-                setEditId(null),
-                setFormData(emptyForm),
-                setOpenModal(true)
-              )}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
-            >
-              + Add New
-            </button>
+            <div className="flex justify-end">
+              <button
+                onClick={() => (
+                  setMode(""),
+                  setEditId(null),
+                  setFormData(emptyForm),
+                  setOpenModal(true)
+                )}
+                className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              >
+                + Add New
+              </button>
+            </div>
           )}
         </div>
 

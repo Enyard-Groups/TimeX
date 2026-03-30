@@ -83,10 +83,9 @@ const LocationGroup = () => {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       };
 
-      const response = await axios.get(
-        `${API_BASE}/master/location-groups`,
-        { headers },
-      );
+      const response = await axios.get(`${API_BASE}/master/location-groups`, {
+        headers,
+      });
 
       // API shape varies across projects: handle both `{ data: [...] }` and `[...]`.
       const payload = response?.data?.data ?? response?.data;
@@ -103,9 +102,16 @@ const LocationGroup = () => {
   }, []);
 
   const handleSubmit = async () => {
-    const { group_name, company, description, site_manager, time_keeper } = formData;
+    const { group_name, company, description, site_manager, time_keeper } =
+      formData;
 
-    if (!group_name || !company || !description || !site_manager || !time_keeper) {
+    if (
+      !group_name ||
+      !company ||
+      !description ||
+      !site_manager ||
+      !time_keeper
+    ) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -117,22 +123,40 @@ const LocationGroup = () => {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       };
 
-      const payload = { group_name, description, time_keeper, site_manager, company };
+      const payload = {
+        group_name,
+        description,
+        time_keeper,
+        site_manager,
+        company,
+      };
 
       if (editId) {
         console.log("Saving location group (PUT)", { editId, payload });
-        await axios.put(`${API_BASE}/master/location-groups/${editId}`, payload, { headers });
+        await axios.put(
+          `${API_BASE}/master/location-groups/${editId}`,
+          payload,
+          { headers },
+        );
         toast.success("Data updated");
       } else {
         console.log("Saving location group (POST)", { payload });
-        await axios.post(`${API_BASE}/master/location-groups`, payload, { headers });
+        await axios.post(`${API_BASE}/master/location-groups`, payload, {
+          headers,
+        });
         toast.success("Data Added");
       }
 
       await fetchLocationGroups();
       setOpenModal(false);
       setEditId(null);
-      setFormData({ group_name: "", company: "", description: "", site_manager: "", time_keeper: "" });
+      setFormData({
+        group_name: "",
+        company: "",
+        description: "",
+        site_manager: "",
+        time_keeper: "",
+      });
     } catch (error) {
       console.error("Failed to save location group", error);
       const message =
@@ -140,7 +164,9 @@ const LocationGroup = () => {
         error?.response?.data ??
         error?.message ??
         "Failed to save data";
-      toast.error(typeof message === "string" ? message : JSON.stringify(message));
+      toast.error(
+        typeof message === "string" ? message : JSON.stringify(message),
+      );
     }
   };
   const handleCopy = () => {
@@ -165,7 +191,7 @@ const LocationGroup = () => {
     const data = filteredlocationGroup.map((d, i) => ({
       "SL.NO": i + 1,
       "Location Group Name": d.group_name,
-      "Description": d.description,
+      Description: d.description,
       "Time Keeper Name": d.time_keeper,
       "Site Manager Name": d.site_manager,
       Company: d.company,
@@ -211,8 +237,8 @@ const LocationGroup = () => {
   return (
     <div className="mb-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+      <div className="sm:flex sm:justify-between">
+        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
           <FaAngleRight />
           Device Management
           <FaAngleRight />
@@ -221,23 +247,25 @@ const LocationGroup = () => {
           </div>
         </h1>
         {!openModal && (
-          <button
-            onClick={() => (
-              setMode(""),
-              setEditId(null),
-              setFormData({
-                group_name: "",
-                company: "",
-                description: "",
-                site_manager: "",
-                time_keeper: "",
-              }),
-              setOpenModal(true)
-            )}
-            className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
-          >
-            + Add New
-          </button>
+          <div className="flex justify-end">
+            <button
+              onClick={() => (
+                setMode(""),
+                setEditId(null),
+                setFormData({
+                  group_name: "",
+                  company: "",
+                  description: "",
+                  site_manager: "",
+                  time_keeper: "",
+                }),
+                setOpenModal(true)
+              )}
+              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+            >
+              + Add New
+            </button>
+          </div>
         )}
       </div>
 
@@ -306,26 +334,20 @@ const LocationGroup = () => {
               <tr>
                 <th className="p-2 font-semibold hidden sm:table-cell">
                   SL.NO
-                </th>+
-
+                </th>
                 <th className="p-2 font-semibold ">Location Group Name</th>
-
                 <th className="p-2 font-semibold hidden lg:table-cell">
                   Location Group Description
                 </th>
-
                 <th className="p-2 font-semibold hidden md:table-cell">
                   Time Keeper Name
                 </th>
-
                 <th className="p-2 font-semibold hidden lg:table-cell">
                   Site Manager Name
                 </th>
-
                 <th className="p-2 font-semibold hidden xl:table-cell">
                   Company
                 </th>
-
                 <th className="py-2 px-6 font-semibold">Action</th>
               </tr>
             </thead>

@@ -118,8 +118,8 @@ const AttendanceSummary = () => {
     <>
       <div className="mb-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+        <div className="sm:flex sm:justify-between">
+          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
             <FaAngleRight />
             Reports
             <FaAngleRight />
@@ -330,9 +330,9 @@ const AttendanceSummary = () => {
               className="overflow-x-auto min-h-[250px]"
               style={{ scrollbarWidth: "none" }}
             >
-               <h1 className="text-[oklch(0.577_0.245_27.325)] text-xl mb-4 text-center">
-                  Attendance Summary
-                </h1>
+              <h1 className="text-[oklch(0.577_0.245_27.325)] text-xl mb-4 text-center">
+                Attendance Summary
+              </h1>
               <table className="w-full text-lg border-collapse">
                 <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                   <tr>

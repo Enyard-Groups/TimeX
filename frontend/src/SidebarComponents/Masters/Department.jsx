@@ -294,8 +294,8 @@ const Department = () => {
     <>
       <div className="mb-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap">
+        <div className="sm:flex sm:justify-between">
+          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
             <FaAngleRight />
             Masters
             <FaAngleRight />
@@ -303,7 +303,7 @@ const Department = () => {
               Department
             </div>
           </h1>
-          <div
+          {/* <div
             className=" border border-gray-200 rounded-xl px-3 py-2 w-full bg-white max-w-[300px]"
             style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.05)" }}
           >
@@ -316,25 +316,28 @@ const Department = () => {
               }}
               className=" bg-transparent outline-none text-sm w-full placeholder-gray-400"
             />
-          </div>
+          </div> */}
+
           {!openModal && (
-            <button
-              onClick={() => {
-                setMode("");
-                setEditId(null);
-                setFormData({
-                  company: "",
-                  name: "",
-                  code: "",
-                  description: "",
-                  isActive: false,
-                });
-                setOpenModal(true);
-              }}
-              className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-4 py-2 rounded-md whitespace-nowrap "
-            >
-              + Add New
-            </button>
+            <div className="flex justify-end">
+              <button
+                onClick={() => {
+                  setMode("");
+                  setEditId(null);
+                  setFormData({
+                    company: "",
+                    name: "",
+                    code: "",
+                    description: "",
+                    isActive: false,
+                  });
+                  setOpenModal(true);
+                }}
+                className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-4 py-2 rounded-md whitespace-nowrap "
+              >
+                + Add New
+              </button>
+            </div>
           )}
         </div>
 
@@ -360,6 +363,15 @@ const Department = () => {
             </div>
 
             <div className="flex flex-wrap gap-2 items-center justify-center">
+              <input
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+              />
               <div className="flex">
                 <button
                   onClick={handleCopy}
