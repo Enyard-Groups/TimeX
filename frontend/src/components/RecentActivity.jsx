@@ -7,7 +7,14 @@ const deviceStyles = {
   biometric: "bg-violet-50 text-violet-600",
 };
 
-const RecentActivity = ({ userData }) => {
+// Convert HH:MM:SS → seconds
+const timeToSeconds = (time) => {
+  if (!time) return 0;
+  const [h = 0, m = 0, s = 0] = time.split(":").map(Number);
+  return h * 3600 + m * 60 + s;
+};
+
+const RecentActivity = ({ userData = [] }) => {
   const [currentTime, setCurrentTime] = useState("");
 
   useEffect(() => {
@@ -16,28 +23,22 @@ const RecentActivity = ({ userData }) => {
       setCurrentTime(now.toTimeString().slice(0, 8));
     };
 
-    updateTime(); 
-
-    const interval = setInterval(updateTime, 1000); 
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
 
     return () => clearInterval(interval);
   }, []);
 
+  const currentSeconds = timeToSeconds(currentTime);
+
   const getLatestTime = (user) => {
-    return user.checkout || user.checkin || "00:00:00";
+    const checkin = timeToSeconds(user?.checkin);
+    const checkout = timeToSeconds(user?.checkout);
+    return checkout > checkin ? checkout : checkin;
   };
 
-  const filteredUsers = userData.filter((user) => {
-    const latestTime = getLatestTime(user);
-    return latestTime <= currentTime;
-  });
-
-  const sortedUsers = [...filteredUsers]
-    .sort((a, b) => {
-      const timeA = getLatestTime(a);
-      const timeB = getLatestTime(b);
-      return timeB.localeCompare(timeA);
-    })
+  const sortedUsers = [...userData]
+    .sort((a, b) => getLatestTime(b) - getLatestTime(a))
     .slice(0, 5);
 
   return (
@@ -55,7 +56,10 @@ const RecentActivity = ({ userData }) => {
 
         <tbody>
           {sortedUsers.map((user) => {
-            const isCheckout = !!user.checkout;
+            const checkinSec = timeToSeconds(user.checkin);
+            const checkoutSec = timeToSeconds(user.checkout);
+
+            const isCheckout = checkoutSec > checkinSec;
 
             const device = isCheckout
               ? user.checkoutDevice
@@ -64,6 +68,9 @@ const RecentActivity = ({ userData }) => {
             const location = isCheckout
               ? user.checkoutLocation
               : user.checkinLocation;
+
+            const showCheckout =
+              user.checkout && checkoutSec <= currentSeconds;
 
             return (
               <tr
@@ -74,13 +81,13 @@ const RecentActivity = ({ userData }) => {
                   <div className="flex items-center gap-3">
                     <div className="hidden sm:block">
                       <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#002259] text-white font-semibold shadow-sm">
-                        {user.name.charAt(0).toUpperCase()}
+                        {user?.name?.charAt(0)?.toUpperCase() || "U"}
                       </div>
                     </div>
 
                     <div>
                       <p className="font-medium text-gray-800 leading-none">
-                        {user.name}
+                        {user?.name || "Unknown"}
                       </p>
                       <p className="text-sm text-gray-400">
                         ID: {user.enrollmentId}
@@ -97,7 +104,7 @@ const RecentActivity = ({ userData }) => {
 
                 <td className="p-2 text-center">
                   <span className="px-2 py-1 text-sm font-medium rounded-full bg-[#e3f6f7] text-gray-700">
-                    {user.checkout || "--"}
+                    {showCheckout ? user.checkout : "--"}
                   </span>
                 </td>
 
@@ -105,7 +112,7 @@ const RecentActivity = ({ userData }) => {
                   {device ? (
                     <span
                       className={`text-sm px-2 py-1 rounded-full ${
-                        deviceStyles[device]
+                        deviceStyles[device] || "bg-gray-100 text-gray-600"
                       }`}
                     >
                       {device.charAt(0).toUpperCase() + device.slice(1)}
@@ -118,7 +125,7 @@ const RecentActivity = ({ userData }) => {
                 <td className="p-2 text-center">
                   {location ? (
                     <span className="text-sm text-gray-700">
-                      {location.lat} , {location.lng}
+                      {location?.lat ?? "--"} , {location?.lng ?? "--"}
                     </span>
                   ) : (
                     "--"
