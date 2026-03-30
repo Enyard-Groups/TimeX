@@ -24,7 +24,7 @@ const ReportsRoute = ({ user }) => {
   return (
     <div>
       <Navbar user={user} />
-      <div className="lg:ml-56 mt-6 py-12 px-4 md:px-5 lg:pl-10 min-h-screen">
+      <div className="lg:ml-60 pt-8 pb-12 px-4 md:px-5 lg:pl-10 min-h-screen">
         <Routes>
           <Route path="employee-report" element={<EmployeeReport />} />
           <Route path="mannual-entry-status" element={<MannualEntryStatus />} />

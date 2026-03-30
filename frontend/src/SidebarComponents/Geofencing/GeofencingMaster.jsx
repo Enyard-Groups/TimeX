@@ -91,7 +91,7 @@ const GeofencingMaster = () => {
           latitude: d.latitude || "",
           longitude: d.longitude || "",
           searchradius: d.radius || "",
-        }))
+        })),
       );
     } catch (error) {
       console.error("Failed to fetch geofencing locations", error);
@@ -189,7 +189,7 @@ const GeofencingMaster = () => {
         const res = await axios.put(
           `${API_BASE}/master/geofencing/${editId}`,
           payload,
-          { headers: getHeaders() }
+          { headers: getHeaders() },
         );
 
         const updated = {
@@ -201,16 +201,14 @@ const GeofencingMaster = () => {
         };
 
         setLocation((prev) =>
-          prev.map((item) => (item.id === editId ? updated : item))
+          prev.map((item) => (item.id === editId ? updated : item)),
         );
 
         toast.success("Data updated");
       } else {
-        const res = await axios.post(
-          `${API_BASE}/master/geofencing`,
-          payload,
-          { headers: getHeaders() }
-        );
+        const res = await axios.post(`${API_BASE}/master/geofencing`, payload, {
+          headers: getHeaders(),
+        });
 
         const created = {
           id: res.data.id,
@@ -237,7 +235,7 @@ const GeofencingMaster = () => {
     } catch (error) {
       console.error("Failed to save geofencing location", error);
       toast.error(
-        error.response?.data?.message || "Unable to save geofencing location"
+        error.response?.data?.message || "Unable to save geofencing location",
       );
     }
   };
@@ -300,8 +298,8 @@ const GeofencingMaster = () => {
     <>
       <div className="mb-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+        <div className="sm:flex sm:justify-between">
+          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
             <FaAngleRight />
             Geofencing
             <FaAngleRight />
@@ -310,22 +308,24 @@ const GeofencingMaster = () => {
             </div>
           </h1>
           {!openModal && (
-            <button
-              onClick={() => (
-                setMode(""),
-                setEditId(null),
-                setFormData({
-                  name: "",
-                  latitude: "",
-                  longitude: "",
-                  searchradius: "",
-                }),
-                setOpenModal(true)
-              )}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
-            >
-              + Add New
-            </button>
+            <div className="flex justify-end">
+              <button
+                onClick={() => (
+                  setMode(""),
+                  setEditId(null),
+                  setFormData({
+                    name: "",
+                    latitude: "",
+                    longitude: "",
+                    searchradius: "",
+                  }),
+                  setOpenModal(true)
+                )}
+                className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              >
+                + Add New
+              </button>
+            </div>
           )}
         </div>
 
@@ -472,20 +472,20 @@ const GeofencingMaster = () => {
                               try {
                                 await axios.delete(
                                   `${API_BASE}/master/geofencing/${item.id}`,
-                                  { headers: getHeaders() }
+                                  { headers: getHeaders() },
                                 );
                                 setLocation((prev) =>
-                                  prev.filter((v) => v.id !== item.id)
+                                  prev.filter((v) => v.id !== item.id),
                                 );
                                 toast.success("Location deleted");
                               } catch (error) {
                                 console.error(
                                   "Failed to delete geofencing location",
-                                  error
+                                  error,
                                 );
                                 toast.error(
                                   error.response?.data?.message ||
-                                    "Unable to delete geofencing location"
+                                    "Unable to delete geofencing location",
                                 );
                               }
                             }}

@@ -240,8 +240,8 @@ const Monitoring = () => {
   return (
     <div className="mb-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 pt-1.5 text-lg font-semibold flex-wrap mb-6">
+      <div className="sm:flex sm:justify-between">
+        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
           <FaAngleRight />
           Transaction
           <FaAngleRight />
@@ -458,13 +458,17 @@ const Monitoring = () => {
 
                 <th className="py-2 px-6 font-semibold">Employee</th>
 
-                <th className="py-2 px-6 font-semibold  hidden sm:table-cell">Date</th>
+                <th className="py-2 px-6 font-semibold  hidden sm:table-cell">
+                  Date
+                </th>
 
                 <th className="py-2 px-6 font-semibold hidden lg:table-cell">
                   Day
                 </th>
 
-                <th className="py-2 px-6 font-semibold hidden lg:table-cell">Login</th>
+                <th className="py-2 px-6 font-semibold hidden lg:table-cell">
+                  Login
+                </th>
 
                 <th className="py-2 px-6 font-semibold hidden lg:table-cell">
                   Logout

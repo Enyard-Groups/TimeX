@@ -7,7 +7,14 @@ const deviceStyles = {
   biometric: "bg-violet-50 text-violet-600",
 };
 
-const RecentActivity = ({ userData }) => {
+// Convert HH:MM:SS → seconds
+const timeToSeconds = (time) => {
+  if (!time) return 0;
+  const [h = 0, m = 0, s = 0] = time.split(":").map(Number);
+  return h * 3600 + m * 60 + s;
+};
+
+const RecentActivity = ({ userData = [] }) => {
   const [currentTime, setCurrentTime] = useState("");
 
   useEffect(() => {
@@ -16,28 +23,37 @@ const RecentActivity = ({ userData }) => {
       setCurrentTime(now.toTimeString().slice(0, 8));
     };
 
-    updateTime(); 
-
-    const interval = setInterval(updateTime, 1000); 
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
 
     return () => clearInterval(interval);
   }, []);
 
-  const getLatestTime = (user) => {
-    return user.checkout || user.checkin || "00:00:00";
-  };
+  const currentSeconds = timeToSeconds(currentTime);
 
-  const filteredUsers = userData.filter((user) => {
-    const latestTime = getLatestTime(user);
-    return latestTime <= currentTime;
+  //  FILTER BASED ON TIME (IMPORTANT)
+  const activeUsers = userData.filter((user) => {
+    const checkinSec = timeToSeconds(user.checkin);
+    return checkinSec <= currentSeconds; // only show when checkin time reached
   });
 
-  const sortedUsers = [...filteredUsers]
-    .sort((a, b) => {
-      const timeA = getLatestTime(a);
-      const timeB = getLatestTime(b);
-      return timeB.localeCompare(timeA);
-    })
+  // GET LATEST EVENT TIME
+  const getLatestTime = (user) => {
+    const checkin = timeToSeconds(user?.checkin);
+    const checkout = timeToSeconds(user?.checkout);
+
+    // if checkout happened → use checkout
+    if (user.checkout && checkout <= currentSeconds) {
+      return checkout;
+    }
+
+    // else use checkin
+    return checkin;
+  };
+
+  //  SORT + LIMIT
+  const sortedUsers = [...activeUsers]
+    .sort((a, b) => getLatestTime(b) - getLatestTime(a))
     .slice(0, 5);
 
   return (
@@ -54,79 +70,92 @@ const RecentActivity = ({ userData }) => {
         </thead>
 
         <tbody>
-          {sortedUsers.map((user) => {
-            const isCheckout = !!user.checkout;
+          {sortedUsers.length === 0 ? (
+            <tr>
+              <td colSpan="5">
+                <div className="flex items-center justify-center h-32 text-gray-400 text-sm">
+                  No Recent Activity
+                </div>
+              </td>
+            </tr>
+          ) : (
+            sortedUsers.map((user) => {
+              const checkinSec = timeToSeconds(user.checkin);
+              const checkoutSec = timeToSeconds(user.checkout);
 
-            const device = isCheckout
-              ? user.checkoutDevice
-              : user.checkinDevice;
+              const isCheckout = user.checkout && checkoutSec <= currentSeconds;
 
-            const location = isCheckout
-              ? user.checkoutLocation
-              : user.checkinLocation;
+              const device = isCheckout
+                ? user.checkoutDevice
+                : user.checkinDevice;
 
-            return (
-              <tr
-                key={user.enrollmentId}
-                className="border-b border-gray-100 hover:bg-gray-50 transition"
-              >
-                <td className="p-2">
-                  <div className="flex items-center gap-3">
-                    <div className="hidden sm:block">
-                      <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#002259] text-white font-semibold shadow-sm">
-                        {user.name.charAt(0).toUpperCase()}
+              const location = isCheckout
+                ? user.checkoutLocation
+                : user.checkinLocation;
+
+              return (
+                <tr
+                  key={user.enrollmentId}
+                  className="border-b border-gray-100 hover:bg-gray-50 transition"
+                >
+                  <td className="p-2">
+                    <div className="flex items-center gap-3">
+                      <div className="hidden sm:block">
+                        <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#002259] text-white font-semibold shadow-sm">
+                          {user?.name?.charAt(0)?.toUpperCase() || "U"}
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="font-medium text-gray-800 leading-none">
+                          {user?.name || "Unknown"}
+                        </p>
+                        <p className="text-sm text-gray-400">
+                          ID: {user.enrollmentId}
+                        </p>
                       </div>
                     </div>
+                  </td>
 
-                    <div>
-                      <p className="font-medium text-gray-800 leading-none">
-                        {user.name}
-                      </p>
-                      <p className="text-sm text-gray-400">
-                        ID: {user.enrollmentId}
-                      </p>
-                    </div>
-                  </div>
-                </td>
-
-                <td className="p-2 text-center">
-                  <span className="px-2 py-1 text-sm font-medium rounded-full bg-[#e3e9f7] text-gray-700">
-                    {user.checkin || "--"}
-                  </span>
-                </td>
-
-                <td className="p-2 text-center">
-                  <span className="px-2 py-1 text-sm font-medium rounded-full bg-[#e3f6f7] text-gray-700">
-                    {user.checkout || "--"}
-                  </span>
-                </td>
-
-                <td className="p-2 text-center">
-                  {device ? (
-                    <span
-                      className={`text-sm px-2 py-1 rounded-full ${
-                        deviceStyles[device]
-                      }`}
-                    >
-                      {device.charAt(0).toUpperCase() + device.slice(1)}
+                  <td className="p-2 text-center">
+                    <span className="px-2 py-1 text-sm font-medium rounded-full bg-[#e3e9f7] text-gray-700">
+                      {user.checkin || "--"}
                     </span>
-                  ) : (
-                    "--"
-                  )}
-                </td>
+                  </td>
 
-                <td className="p-2 text-center">
-                  {location ? (
-                    <span className="text-sm text-gray-700">
-                      {location.lat} , {location.lng}
+                  <td className="p-2 text-center">
+                    <span className="px-2 py-1 text-sm font-medium rounded-full bg-[#e3f6f7] text-gray-700">
+                      {isCheckout ? user.checkout : "--"}
                     </span>
-                  ) : (
-                    "--"
-                  )}
-                </td>
-              </tr>
-            );
-          })}
+                  </td>
+
+                  <td className="p-2 text-center">
+                    {device ? (
+                      <span
+                        className={`text-sm px-2 py-1 rounded-full ${
+                          deviceStyles[device] || "bg-gray-100 text-gray-600"
+                        }`}
+                      >
+                        {device.charAt(0).toUpperCase() + device.slice(1)}
+                      </span>
+                    ) : (
+                      "--"
+                    )}
+                  </td>
+
+                  <td className="p-2 text-center">
+                    {location ? (
+                      <span className="text-sm text-gray-700">
+                        {location?.lat ?? "--"} , {location?.lng ?? "--"}
+                      </span>
+                    ) : (
+                      "--"
+                    )}
+                  </td>
+                </tr>
+              );
+            })
+          )}
         </tbody>
       </table>
     </div>

@@ -57,8 +57,8 @@ const WfhApproval = () => {
 
       setRequests((prev) =>
         prev.map((item) =>
-          item.id === id ? { ...item, status: value } : item
-        )
+          item.id === id ? { ...item, status: value } : item,
+        ),
       );
       toast.success(`Request ${value}`);
     } catch (error) {
@@ -99,8 +99,8 @@ const WfhApproval = () => {
 
       setRequests((prev) =>
         prev.map((item) =>
-          selectedIds.includes(item.id) ? { ...item, status: value } : item
-        )
+          selectedIds.includes(item.id) ? { ...item, status: value } : item,
+        ),
       );
       setSelectedIds([]);
       toast.success(`Bulk ${value}`);
@@ -112,7 +112,7 @@ const WfhApproval = () => {
   const pending = requests.filter((r) => r.status === "Pending");
 
   const filteredData = pending.filter((x) =>
-    (x.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase())
+    (x.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -129,8 +129,8 @@ const WfhApproval = () => {
   return (
     <div className="mb-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+      <div className="sm:flex sm:justify-between">
+        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
           <FaAngleRight />
           Approvals
           <FaAngleRight />

@@ -42,7 +42,7 @@ const CardDetach = () => {
     id_expiry_date: "",
     access_card: "",
     is_permanent: false,
-    status: "booked"
+    status: "booked",
   });
 
   const API_BASE = "http://localhost:3000/api";
@@ -57,7 +57,9 @@ const CardDetach = () => {
 
   const fetchVisitors = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/visitor/booking`, { headers: getHeaders() });
+      const response = await axios.get(`${API_BASE}/visitor/booking`, {
+        headers: getHeaders(),
+      });
       const payload = response?.data?.data ?? response?.data;
       const mapped = (Array.isArray(payload) ? payload : []).map((v) => ({
         ...v,
@@ -138,7 +140,9 @@ const CardDetach = () => {
   };
 
   const filteredVisitors = visitors.filter((visitor) =>
-    (visitor.visitor_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
+    (visitor.visitor_name || "")
+      .toLowerCase()
+      .startsWith(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -214,10 +218,14 @@ const CardDetach = () => {
 
     try {
       if (editId) {
-        await axios.put(`${API_BASE}/visitor/booking/${editId}`, payload, { headers: getHeaders() });
+        await axios.put(`${API_BASE}/visitor/booking/${editId}`, payload, {
+          headers: getHeaders(),
+        });
         toast.success("Data updated");
       } else {
-        await axios.post(`${API_BASE}/visitor/booking`, payload, { headers: getHeaders() });
+        await axios.post(`${API_BASE}/visitor/booking`, payload, {
+          headers: getHeaders(),
+        });
         toast.success("Data Added");
       }
       await fetchVisitors();
@@ -240,7 +248,7 @@ const CardDetach = () => {
         id_expiry_date: "",
         access_card: "",
         is_permanent: false,
-        status: "booked"
+        status: "booked",
       });
     } catch (error) {
       console.error("Failed to save visitor", error);
@@ -252,7 +260,11 @@ const CardDetach = () => {
     if (!window.confirm("Are you sure you want to detach this card?")) return;
     try {
       // Detach logic: set status to 'checked-out' or 'completed' and clear access_card
-      await axios.put(`${API_BASE}/visitor/booking/${id}`, { status: 'checked-out', access_card: '' }, { headers: getHeaders() });
+      await axios.put(
+        `${API_BASE}/visitor/booking/${id}`,
+        { status: "checked-out", access_card: "" },
+        { headers: getHeaders() },
+      );
       toast.success("Card detached successfully");
       await fetchVisitors();
     } catch (error) {
@@ -262,9 +274,12 @@ const CardDetach = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this booking?")) return;
+    if (!window.confirm("Are you sure you want to delete this booking?"))
+      return;
     try {
-      await axios.delete(`${API_BASE}/visitor/booking/${id}`, { headers: getHeaders() });
+      await axios.delete(`${API_BASE}/visitor/booking/${id}`, {
+        headers: getHeaders(),
+      });
       toast.success("Booking removed");
       await fetchVisitors();
     } catch (error) {
@@ -357,8 +372,8 @@ const CardDetach = () => {
     <>
       <div className="mb-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+        <div className="sm:flex sm:justify-between">
+          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
             <FaAngleRight />
             Visitor
             <FaAngleRight />
@@ -367,12 +382,14 @@ const CardDetach = () => {
             </div>
           </h1>
           {!openModal && (
-            <button
-              onClick={() => setOpenModal(true)}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
-            >
-              + Add New
-            </button>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setOpenModal(true)}
+                className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              >
+                + Add New
+              </button>
+            </div>
           )}
         </div>
 
@@ -489,25 +506,29 @@ const CardDetach = () => {
                         {item.point_of_contact}
                       </td>
                       <td className="py-2 px-6 whitespace-nowrap">
-                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          item.status === 'booked' ? 'bg-blue-100 text-blue-800' : 
-                          item.status === 'checked-out' ? 'bg-gray-100 text-gray-800' : 
-                          'bg-green-100 text-green-800'
-                        }`}>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                            item.status === "booked"
+                              ? "bg-blue-100 text-blue-800"
+                              : item.status === "checked-out"
+                                ? "bg-gray-100 text-gray-800"
+                                : "bg-green-100 text-green-800"
+                          }`}
+                        >
                           {item.status}
                         </span>
                       </td>
                       <td className="py-2 px-6">
                         <div className="flex flex-row space-x-3 justify-center ">
                           {/* Detach */}
-                          {item.status === 'booked' && item.access_card && (
-                             <button 
-                               onClick={() => handleDetach(item.id)}
-                               title="Detach Card"
-                               className="text-orange-500 hover:text-orange-700"
-                             >
-                               Det.
-                             </button>
+                          {item.status === "booked" && item.access_card && (
+                            <button
+                              onClick={() => handleDetach(item.id)}
+                              title="Detach Card"
+                              className="text-orange-500 hover:text-orange-700"
+                            >
+                              Det.
+                            </button>
                           )}
                           {/* View */}
                           <FaEye

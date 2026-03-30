@@ -49,9 +49,7 @@ const Leave = () => {
     leaves: d.total_leaves ?? "",
     description: d.description || "",
     isActive:
-      d.is_active === true ||
-      d.is_active === "true" ||
-      d.is_active === 1,
+      d.is_active === true || d.is_active === "true" || d.is_active === 1,
   });
 
   const fetchLeaveTypes = async () => {
@@ -126,17 +124,17 @@ const Leave = () => {
         const res = await axios.put(
           `${API_BASE}/master/leave-types/${editId}`,
           payload,
-          { headers: getHeaders() }
+          { headers: getHeaders() },
         );
         setLeave((prev) =>
-          prev.map((item) => (item.id === editId ? mapRow(res.data) : item))
+          prev.map((item) => (item.id === editId ? mapRow(res.data) : item)),
         );
         toast.success("Data updated");
       } else {
         const res = await axios.post(
           `${API_BASE}/master/leave-types`,
           payload,
-          { headers: getHeaders() }
+          { headers: getHeaders() },
         );
         setLeave((prev) => [mapRow(res.data), ...prev]);
         toast.success("Data Added");
@@ -238,8 +236,8 @@ const Leave = () => {
     <>
       <div className="mb-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+        <div className="sm:flex sm:justify-between">
+          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
             <FaAngleRight />
             Masters
             <FaAngleRight />
@@ -248,24 +246,26 @@ const Leave = () => {
             </div>
           </h1>
           {!openModal && (
-            <button
-              onClick={() => (
-                setMode(""),
-                setEditId(null),
-                setFormData({
-                  company: "",
-                  name: "",
-                  code: "",
-                  description: "",
-                  leaves: "",
-                  isActive: false,
-                }),
-                setOpenModal(true)
-              )}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
-            >
-              + Add New
-            </button>
+            <div className="flex justify-end">
+              <button
+                onClick={() => (
+                  setMode(""),
+                  setEditId(null),
+                  setFormData({
+                    company: "",
+                    name: "",
+                    code: "",
+                    description: "",
+                    leaves: "",
+                    isActive: false,
+                  }),
+                  setOpenModal(true)
+                )}
+                className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              >
+                + Add New
+              </button>
+            </div>
           )}
         </div>
 
@@ -409,17 +409,20 @@ const Leave = () => {
                               try {
                                 await axios.delete(
                                   `${API_BASE}/master/leave-types/${item.id}`,
-                                  { headers: getHeaders() }
+                                  { headers: getHeaders() },
                                 );
                                 setLeave((prev) =>
-                                  prev.filter((v) => v.id !== item.id)
+                                  prev.filter((v) => v.id !== item.id),
                                 );
                                 toast.success("Leave type deleted");
                               } catch (error) {
-                                console.error("Failed to delete leave type", error);
+                                console.error(
+                                  "Failed to delete leave type",
+                                  error,
+                                );
                                 toast.error(
                                   error.response?.data?.message ||
-                                    "Unable to delete leave type"
+                                    "Unable to delete leave type",
                                 );
                               }
                             }}

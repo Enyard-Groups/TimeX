@@ -52,19 +52,26 @@ const Timeline = ({ userData = [] }) => {
     return () => clearInterval(timer);
   }, []);
 
-  // 4. Scroll Logic (Triggers on entry changes or hour transitions)
+  // 4. Scroll Logic
+  const prevEventCount = useRef(0);
   useEffect(() => {
-    if (scrollRef.current) {
+    if (!scrollRef.current) return;
+
+    const currentCount = sortedEvents.length;
+
+    //  Only scroll if new event added
+    if (currentCount > prevEventCount.current) {
       const scrollPosition =
         (currentSecondsNow / totalSecondsToDisplay) * timelineWidth - 250;
 
-      // Using scrollTo with behavior smooth for a better UX when new entries appear
       scrollRef.current.scrollTo({
         left: Math.max(0, scrollPosition),
         behavior: "smooth",
       });
     }
-  }, [sortedEvents, endHour]);
+
+    prevEventCount.current = currentCount;
+  }, [sortedEvents]); // only depends on events
 
   const getPosition = (seconds) => (seconds / totalSecondsToDisplay) * 100;
   const nowPosition = (currentSecondsNow / totalSecondsToDisplay) * 100;

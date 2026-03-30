@@ -434,8 +434,8 @@ const UserMaster = () => {
     <>
       <div className="mb-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="flex items-center gap-2 text-lg font-semibold">
+        <div className="sm:flex sm:justify-between">
+          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
             <FaAngleRight /> Masters <FaAngleRight />
             <div onClick={() => setOpenModal(false)} className="cursor-pointer">
               User Master
@@ -443,25 +443,27 @@ const UserMaster = () => {
           </h1>
 
           {!openModal && (
-            <button
-              onClick={() => (
-                setMode(""),
-                setEditId(null),
-                setFormData({
-                  userName: "",
-                  empname: "",
-                  enrollmentId: "",
-                  company: "",
-                  password: "",
-                  active: false,
-                  role: "User",
-                }),
-                setOpenModal(true)
-              )}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
-            >
-              + Add New
-            </button>
+            <div className="flex justify-end">
+              <button
+                onClick={() => (
+                  setMode(""),
+                  setEditId(null),
+                  setFormData({
+                    userName: "",
+                    empname: "",
+                    enrollmentId: "",
+                    company: "",
+                    password: "",
+                    active: false,
+                    role: "User",
+                  }),
+                  setOpenModal(true)
+                )}
+                className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              >
+                + Add New
+              </button>
+            </div>
           )}
         </div>
 
@@ -821,7 +823,14 @@ const UserMaster = () => {
                     }
                     name="role"
                     value={formData.role}
-                    options={["admin", "employee","hr","manager","approver","supervisor"]}
+                    options={[
+                      "admin",
+                      "employee",
+                      "hr",
+                      "manager",
+                      "approver",
+                      "supervisor",
+                    ]}
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}

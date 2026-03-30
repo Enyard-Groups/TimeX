@@ -126,7 +126,9 @@ const VisitorBooking = () => {
 
   const fetchVisitors = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/visitor/booking`, { headers: getHeaders() });
+      const response = await axios.get(`${API_BASE}/visitor/booking`, {
+        headers: getHeaders(),
+      });
       const payload = response?.data?.data ?? response?.data;
       // Map backend fields to frontend state format if necessary
       const mapped = (Array.isArray(payload) ? payload : []).map((v) => ({
@@ -149,9 +151,10 @@ const VisitorBooking = () => {
   }, []);
 
   const filteredVisitors = visitors.filter((visitor) =>
-    (visitor.visitor_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
+    (visitor.visitor_name || "")
+      .toLowerCase()
+      .startsWith(searchTerm.toLowerCase()),
   );
-
 
   const endIndex = currentPage * entriesPerPage;
 
@@ -214,10 +217,14 @@ const VisitorBooking = () => {
 
     try {
       if (editId) {
-        await axios.put(`${API_BASE}/visitor/booking/${editId}`, payload, { headers: getHeaders() });
+        await axios.put(`${API_BASE}/visitor/booking/${editId}`, payload, {
+          headers: getHeaders(),
+        });
         toast.success("Data updated");
       } else {
-        await axios.post(`${API_BASE}/visitor/booking`, payload, { headers: getHeaders() });
+        await axios.post(`${API_BASE}/visitor/booking`, payload, {
+          headers: getHeaders(),
+        });
         toast.success("Data Added");
       }
       await fetchVisitors();
@@ -251,9 +258,12 @@ const VisitorBooking = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this booking?")) return;
+    if (!window.confirm("Are you sure you want to delete this booking?"))
+      return;
     try {
-      await axios.delete(`${API_BASE}/visitor/booking/${id}`, { headers: getHeaders() });
+      await axios.delete(`${API_BASE}/visitor/booking/${id}`, {
+        headers: getHeaders(),
+      });
       toast.success("Booking removed");
       await fetchVisitors();
     } catch (error) {
@@ -261,7 +271,6 @@ const VisitorBooking = () => {
       toast.error("Failed to delete booking");
     }
   };
-
 
   const handleCopy = () => {
     const header =
@@ -338,8 +347,8 @@ const VisitorBooking = () => {
     <>
       <div className="mb-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+        <div className="sm:flex sm:justify-between">
+          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
             <FaAngleRight />
             Visitor
             <FaAngleRight />
@@ -348,12 +357,14 @@ const VisitorBooking = () => {
             </div>
           </h1>
           {!openModal && (
-            <button
-              onClick={() => setOpenModal(true)}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
-            >
-              + Add New
-            </button>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setOpenModal(true)}
+                className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              >
+                + Add New
+              </button>
+            </div>
           )}
         </div>
 
@@ -502,7 +513,6 @@ const VisitorBooking = () => {
                             onClick={() => handleDelete(item.id)}
                             className="inline text-red-500 cursor-pointer text-xl"
                           />
-
                         </div>
                       </td>
                     </tr>

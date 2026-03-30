@@ -157,9 +157,13 @@ const Designation = () => {
 
         toast.success("Data updated");
       } else {
-        const res = await axios.post(`${API_BASE}/master/designation`, payload, {
-          headers,
-        });
+        const res = await axios.post(
+          `${API_BASE}/master/designation`,
+          payload,
+          {
+            headers,
+          },
+        );
 
         const created = {
           id: res.data.id,
@@ -193,7 +197,9 @@ const Designation = () => {
       });
     } catch (error) {
       console.error("Failed to save designation", error);
-      toast.error(error.response?.data?.message || "Unable to save designation");
+      toast.error(
+        error.response?.data?.message || "Unable to save designation",
+      );
     }
   };
 
@@ -210,7 +216,9 @@ const Designation = () => {
       toast.success("Designation deleted");
     } catch (error) {
       console.error("Failed to delete designation", error);
-      toast.error(error.response?.data?.message || "Unable to delete designation");
+      toast.error(
+        error.response?.data?.message || "Unable to delete designation",
+      );
     }
   };
 
@@ -300,8 +308,8 @@ const Designation = () => {
     <>
       <div className="mb-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+        <div className="sm:flex sm:justify-between">
+          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
             <FaAngleRight />
             Masters
             <FaAngleRight />
@@ -310,24 +318,26 @@ const Designation = () => {
             </div>
           </h1>
           {!openModal && (
-            <button
-              onClick={() => (
-                setMode(""),
-                setEditId(null),
-                setFormData({
-                  company: "",
-                  name: "",
-                  code: "",
-                  department: "",
-                  description: "",
-                  isActive: false,
-                }),
-                setOpenModal(true)
-              )}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
-            >
-              + Add New
-            </button>
+            <div className="flex justify-end">
+              <button
+                onClick={() => (
+                  setMode(""),
+                  setEditId(null),
+                  setFormData({
+                    company: "",
+                    name: "",
+                    code: "",
+                    department: "",
+                    description: "",
+                    isActive: false,
+                  }),
+                  setOpenModal(true)
+                )}
+                className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              >
+                + Add New
+              </button>
+            </div>
           )}
         </div>
 

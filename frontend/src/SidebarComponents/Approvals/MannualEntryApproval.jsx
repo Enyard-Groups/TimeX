@@ -120,11 +120,13 @@ const MannualEntryApproval = () => {
 
   return (
     <div className="mb-6">
-      <div className="flex items-center gap-2 text-lg font-semibold">
-        <FaAngleRight />
-        Requests
-        <FaAngleRight />
-        Mannual Entry Approval
+      <div className="sm:flex sm:justify-between">
+        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
+          <FaAngleRight />
+          Requests
+          <FaAngleRight />
+          Mannual Entry Approval
+        </h1>
       </div>
 
       <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">

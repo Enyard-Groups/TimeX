@@ -52,8 +52,12 @@ const ClaimCategory = () => {
           name: d.name || "",
           company: d.company || "",
           description: d.description || "",
-          isAttachment: d.is_attachment === true || d.is_attachment === "true" || d.is_attachment === 1,
-          isActive: d.is_active === true || d.is_active === "true" || d.is_active === 1,
+          isAttachment:
+            d.is_attachment === true ||
+            d.is_attachment === "true" ||
+            d.is_attachment === 1,
+          isActive:
+            d.is_active === true || d.is_active === "true" || d.is_active === 1,
         })),
       );
     } catch (error) {
@@ -123,11 +127,17 @@ const ClaimCategory = () => {
 
       if (editId) {
         // Update existing claim category
-        await axios.put(`${API_BASE}/master/claim-categories/${editId}`, payload, { headers });
+        await axios.put(
+          `${API_BASE}/master/claim-categories/${editId}`,
+          payload,
+          { headers },
+        );
         toast.success("Claim category updated successfully");
       } else {
         // Create new claim category
-        await axios.post(`${API_BASE}/master/claim-categories`, payload, { headers });
+        await axios.post(`${API_BASE}/master/claim-categories`, payload, {
+          headers,
+        });
         toast.success("Claim category created successfully");
       }
 
@@ -235,8 +245,8 @@ const ClaimCategory = () => {
     <>
       <div className="mb-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+        <div className="sm:flex sm:justify-between">
+          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
             <FaAngleRight />
             Masters
             <FaAngleRight />
@@ -245,23 +255,25 @@ const ClaimCategory = () => {
             </div>
           </h1>
           {!openModal && (
-            <button
-              onClick={() => (
-                setMode(""),
-                setEditId(null),
-                setFormData({
-                  company: "",
-                  name: "",
-                  description: "",
-                  isAttachment: false,
-                  isActive: false,
-                }),
-                setOpenModal(true)
-              )}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
-            >
-              + Add New
-            </button>
+            <div className="flex justify-end">
+              <button
+                onClick={() => (
+                  setMode(""),
+                  setEditId(null),
+                  setFormData({
+                    company: "",
+                    name: "",
+                    description: "",
+                    isAttachment: false,
+                    isActive: false,
+                  }),
+                  setOpenModal(true)
+                )}
+                className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              >
+                + Add New
+              </button>
+            </div>
           )}
         </div>
 
@@ -407,13 +419,23 @@ const ClaimCategory = () => {
                                 const token = localStorage.getItem("token");
                                 const headers = {
                                   "Content-Type": "application/json",
-                                  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                                  ...(token
+                                    ? { Authorization: `Bearer ${token}` }
+                                    : {}),
                                 };
-                                await axios.delete(`${API_BASE}/master/claim-categories/${item.id}`, { headers });
-                                toast.success("Claim category deleted successfully");
+                                await axios.delete(
+                                  `${API_BASE}/master/claim-categories/${item.id}`,
+                                  { headers },
+                                );
+                                toast.success(
+                                  "Claim category deleted successfully",
+                                );
                                 fetchClaimCategories();
                               } catch (error) {
-                                console.error("Failed to delete claim category", error);
+                                console.error(
+                                  "Failed to delete claim category",
+                                  error,
+                                );
                                 toast.error("Failed to delete claim category");
                               }
                             }}

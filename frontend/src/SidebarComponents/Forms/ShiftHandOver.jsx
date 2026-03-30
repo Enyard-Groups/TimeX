@@ -68,7 +68,9 @@ const ShiftHandOver = () => {
       const data = response.data.map((item) => ({
         ...item,
         time_in: item.time_in ? new Date(`1970-01-01T${item.time_in}`) : null,
-        time_out: item.time_out ? new Date(`1970-01-01T${item.time_out}`) : null,
+        time_out: item.time_out
+          ? new Date(`1970-01-01T${item.time_out}`)
+          : null,
       }));
       setRequestData(data);
     } catch (error) {
@@ -276,8 +278,8 @@ const ShiftHandOver = () => {
   return (
     <div className="mb-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-lg font-semibold flex-wrap">
+      <div className="sm:flex sm:justify-between">
+        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
           <FaAngleRight />
           Forms
           <FaAngleRight />
@@ -286,17 +288,19 @@ const ShiftHandOver = () => {
           </div>
         </h1>
         {!openModal && (
-          <button
-            onClick={() => (
-              setMode(""),
-              setEditId(null),
-              setFormData(defaultFormData),
-              setOpenModal(true)
-            )}
-            className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md  whitespace-nowrap"
-          >
-            + Add New
-          </button>
+          <div className="flex justify-end">
+            <button
+              onClick={() => (
+                setMode(""),
+                setEditId(null),
+                setFormData(defaultFormData),
+                setOpenModal(true)
+              )}
+              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md  whitespace-nowrap"
+            >
+              + Add New
+            </button>
+          </div>
         )}
       </div>
 
@@ -396,10 +400,22 @@ const ShiftHandOver = () => {
                       <td className="p-2">{item.school_name}</td>
 
                       <td className="p-2 hidden md:table-cell">
-                        {item.time_in ? item.time_in.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : ""}
+                        {item.time_in
+                          ? item.time_in.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            })
+                          : ""}
                       </td>
                       <td className="p-2 hidden md:table-cell">
-                        {item.time_out ? item.time_out.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : ""}
+                        {item.time_out
+                          ? item.time_out.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            })
+                          : ""}
                       </td>
 
                       <td className="p-2 hidden lg:table-cell">{item.date}</td>

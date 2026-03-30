@@ -9,8 +9,8 @@ const ShiftPlanner = () => {
   return (
     <div className="mb-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 pt-1.5 text-lg font-semibold flex-wrap mb-6">
+      <div className="sm:flex sm:justify-between">
+        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
           <FaAngleRight />
           Transaction
           <FaAngleRight />
@@ -28,7 +28,7 @@ const ShiftPlanner = () => {
             activeTab === "calendar"
               ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
               : "text-[oklch(0.45_0.004_49.25)]"
-          }`}                      
+          }`}
           >
             Calendar View
           </button>

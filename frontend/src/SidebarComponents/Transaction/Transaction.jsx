@@ -10,7 +10,7 @@ const Transaction = ({ user }) => {
   const istransactionActive = location.pathname.startsWith("/transaction");
   // const activeClass = "text-[oklch(0.645_0.246_16.439)]";
   const activeClass =
-    "text-white hover:text-black hover:bg-gray-100 rounded-xl bg-violet-300 p-2";
+    "text-white hover:text-black hover:bg-gray-100 rounded-xl bg-[#1E3A8A] p-2";
   const hoverClass =
     "text-white hover:text-black hover:bg-gray-100 p-2 rounded-xl";
 
@@ -21,7 +21,7 @@ const Transaction = ({ user }) => {
           {/* Transaction Main Button */}
           <div
             onClick={() => setOpenTransaction(!openTransaction)}
-            className={`flex justify-between items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded ${
+            className={`flex justify-between items-center justify-between cursor-pointer text-md p-2 hover:bg-gray-200 rounded pl-4 ${
               istransactionActive ? activeClass : hoverClass
             }`}
           >
@@ -38,7 +38,7 @@ const Transaction = ({ user }) => {
 
           {/* Sub Menu */}
           {openTransaction && (
-            <div className="mt-2 flex flex-col items-center text-center gap-2 text-lg space-y-2">
+            <div className="mt-2 flex flex-col pl-10 gap-2 text-md ">
               <NavLink
                 to="/transaction/monitoring"
                 className={({ isActive }) =>
