@@ -59,7 +59,7 @@ const Sidebar = ({ user }) => {
         {isAdmin ? (
           <>
             <div
-              className={`mt-3 mb-5 px-1.5 py-2 rounded-xl text-md transition-all ${
+              className={`mt-0.5 mb-5 px-1.5 py-2 rounded-xl text-md transition-all ${
                 isdashboardActive ? activeClass : hoverClass
               }`}
             >
@@ -102,7 +102,7 @@ const Sidebar = ({ user }) => {
       <div className="p-4 mt-4">
         <button
           onClick={handleLogout}
-          className="w-full flex pl-2 items-center gap-2 font-semibold text-blue-100 hover:text-white transition-all"
+          className="w-full flex pl-2 items-center gap-2 font-semibold text-blue-100 hover:text-white transition-all gap-3"
         >
           <span className="text-lg bg-[#1E3A8A] rounded-full p-1 text-white">
             <IoIosLogOut />
