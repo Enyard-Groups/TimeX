@@ -44,7 +44,7 @@ const Timeline = ({ userData = [] }) => {
       }
     });
     return events.sort((a, b) => b.timeSecs - a.timeSecs);
-  }, [userData, currentSecondsNow]);
+  }, [userData]);
 
   // 3. Clock Timer (Updates State every second)
   useEffect(() => {
