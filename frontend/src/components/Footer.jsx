@@ -4,10 +4,6 @@ import { useSelector } from "react-redux";
 const Footer = ({ rightSidebarOpen}) => {
   const currentYear = new Date().getFullYear();
   const { user } = useSelector((state) => state);
-
-  // Note: Adjust 'ml-64' or 'left-64' to match your actual sidebar width
-  // If your sidebar is 250px, use left-[250px]
-
   return (
     <>
       {user && (

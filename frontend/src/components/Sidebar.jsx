@@ -38,8 +38,8 @@ const Sidebar = ({ user }) => {
 
   return (
     <div className="h-screen flex flex-col bg-[#0f172a]">
-      {/* 🔹 TOP (Fixed Logo) */}
-      <div className="flex justify-center items-center py-4">
+      {/* TOP */}
+      <div className="flex justify-center items-center py-4 mt-2">
         <Link to="/dashboard">
           <img
             src="../timexlogo.png"
@@ -51,7 +51,7 @@ const Sidebar = ({ user }) => {
         </Link>
       </div>
 
-      {/* 🔹 MIDDLE (Scrollable Area) */}
+      {/* MIDDLE (Scrollable Area) */}
       <div
         className="flex-1 overflow-y-auto px-3 space-y-5 "
         style={{ scrollbarWidth: "none" }}
@@ -98,7 +98,7 @@ const Sidebar = ({ user }) => {
         )}
       </div>
 
-      {/* 🔹 BOTTOM (Fixed Logout) */}
+      {/* BOTTOM */}
       <div className="p-4">
         <button
           onClick={handleLogout}

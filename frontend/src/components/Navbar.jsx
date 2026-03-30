@@ -106,7 +106,7 @@ export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
           sidebarOpen ? "translate-x-0 w-64" : "-translate-x-full"
         } lg:translate-x-0 lg:w-64 z-40 bg-white`}
       >
-        <div className="absolute right-5 top-4 text-white">
+        <div className="lg:hidden absolute left-5 top-4 text-white text-lg font-bold ">
           <button
             onClick={() => setSidebarOpen(false)}
             className="cursor-pointer"
