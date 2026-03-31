@@ -1,14 +1,51 @@
 import React from "react";
 import { Users, UserCheck, UserX, Calendar } from "lucide-react";
-import { LineChart, Line, ResponsiveContainer, Area } from "recharts";
+import {
+  LineChart,
+  Line,
+  ResponsiveContainer,
+  Area,
+  AreaChart,
+} from "recharts";
+
+// helper  function to calculate percentage change
+function getPercentChange(current, prev) {
+  if (!prev || prev === 0) return 0;
+  const change = ((current - prev) / prev) * 100;
+  return Math.min(100, Math.max(-100, change));
+}
+
+function TrendBadge({ pct }) {
+  const isUp = pct >= 0;
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "1px",
+        color: isUp ? "#2da45b" : "#d62b2b",
+        fontSize: "11px",
+        fontWeight: 500,
+        borderRadius: "999px",
+      }}
+    >
+      {isUp ? "↑" : "↓"} {Math.abs(pct).toFixed(1)}%
+    </span>
+  );
+}
 
 const EmployeeAttendance = ({ attendanceData = [] }) => {
   const latest = attendanceData?.[attendanceData.length - 1] || {};
 
   const total = Number(latest?.totalEmployees) || 0;
   const present = Number(latest?.presentToday) || 0;
-  const absent = Math.max(0, total - present);
   const leave = Number(latest?.leave) || 0;
+  const absent = Math.max(0, total - (present + leave));
+
+  const prevData = attendanceData?.[attendanceData.length - 2] || {};
+  const prevPresent = Number(prevData?.presentToday) || 0;
+  const prevAbsent = Math.max(0, (prevData?.totalEmployees || 0) - prevPresent);
+  const prevLeave = Number(prevData?.leave) || 0;
 
   const stats = [
     {
@@ -18,6 +55,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
       dataKey: "presentToday",
       color: "#2563EB",
       bg: "bg-[#DBEAFE]",
+      pct: getPercentChange(present, prevPresent),
     },
     {
       title: "Absent",
@@ -26,6 +64,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
       dataKey: "absent",
       color: "#EF4444",
       bg: "bg-[#FEE2E2]",
+      pct: getPercentChange(absent, prevAbsent),
     },
     {
       title: "Leave",
@@ -34,6 +73,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
       dataKey: "leave",
       color: "#06B6D4",
       bg: "bg-[#E0F2FE]",
+      pct: getPercentChange(leave, prevLeave),
     },
   ];
 
@@ -78,50 +118,69 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
         {stats.map((item, index) => (
           <div
             key={index}
-            className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex items-center justify-between overflow-hidden"
+            className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex items-center justify-between overflow-hidden relative h-[100px] border border-gray-200"
           >
+            <h3 className="text-xl font-bold text-gray-800 absolute top-1 left-26">
+              {item.value}
+            </h3>
+            <div className="absolute top-1 right-1">
+              <TrendBadge pct={item.pct} />
+              <p className="text-xs text-gray-500">this week</p>
+            </div>
+
             {/* Left Info */}
             <div
-              className={`${item.bg} px-4 py-6 flex flex-col justify-center items-center min-w-[90px]`}
+              className={`${item.bg} h-full flex flex-col justify-center items-center min-w-[90px]`}
             >
-              <span className="text-xs text-gray-500">{item.title}</span>
-              <h3 className="text-xl font-bold text-gray-800">{item.value}</h3>
+              <span className="text-sm text-gray-500">{item.title}</span>
             </div>
 
             {/* Chart */}
-            <div className="flex-1 h-[80px] px-2">
+            <div className="flex-1 h-[80px] px-2 pt-10">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData}>
-                  {/* Area (solid color with opacity) */}
+                <AreaChart data={chartData}>
+                  <defs>
+                    {/* Shadow fill gradient top to bottom */}
+                    <linearGradient
+                      id={`shadowGrad-${item.dataKey}`}
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="0%"
+                        stopColor={item.color}
+                        stopOpacity={0.25}
+                      />
+                      <stop
+                        offset="100%"
+                        stopColor={item.color}
+                        stopOpacity={0}
+                      />
+                    </linearGradient>
+                  </defs>
+
+                  {/* Line + shadow area */}
                   <Area
                     type="monotone"
                     dataKey={item.dataKey}
-                    stroke="none"
-                    fill={item.color}
-                    fillOpacity={0.15}
-                  />
-
-                  {/* Line */}
-                  <Line
-                    type="monotone"
-                    dataKey={item.dataKey}
                     stroke={item.color}
-                    strokeWidth={3}
+                    strokeWidth={2.5}
+                    fill={`url(#shadowGrad-${item.dataKey})`}
                     dot={false}
-                    activeDot={{ r: 5 }}
+                    activeDot={{ r: 5, fill: item.color }}
                   />
 
-                  {/* Last Point Highlight */}
+                  {/* Dot highlight */}
                   <Line
                     type="monotone"
                     dataKey={item.dataKey}
                     stroke="transparent"
                     dot={(props) => {
                       const { cx, cy, index: i } = props;
-                      const isLast = i === chartData.length - 1;
-
-                      if (!isLast) return null;
-
+                      const isTarget = i === chartData.length - 3;
+                      if (!isTarget) return null;
                       return (
                         <>
                           <circle
@@ -143,7 +202,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
                       );
                     }}
                   />
-                </LineChart>
+                </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
