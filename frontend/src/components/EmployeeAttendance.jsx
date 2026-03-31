@@ -136,7 +136,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
             </div>
 
             {/* Chart */}
-            <div className="flex-1 h-[80px] px-2 pt-10">
+            <div className="flex-1 h-[80px] pt-10">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData}>
                   <defs>
