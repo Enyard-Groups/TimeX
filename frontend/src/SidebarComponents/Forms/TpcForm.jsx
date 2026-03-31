@@ -42,8 +42,10 @@ const TpcForm = () => {
     date: "",
     comments: "",
     through_person: "",
-    signature: "",
-    signature_drawn: "",
+    signatureMode: "",
+    signaturePreview: null,
+    signature: null,
+    signature_drawn: null,
   };
 
   const [formData, setFormData] = useState(defaultFormData);
@@ -536,30 +538,151 @@ const TpcForm = () => {
                     />
                   </div>
 
-                  <div className="sm:flex sm:flex-row gap-2 mt-3 gap-2">
-                    <label className="whitespace-nowrap text-md text-[oklch(0.147_0.004_49.25)] my-1 w-1/6">
-                      Signature
-                    </label>
+                  <div className=" gap-2 mt-3 gap-2">
                     <div className="flex flex-col">
-                      <input
-                        type="file"
-                        name="signature"
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            signature: e.target.files[0],
-                          }))
-                        }
-                        className="border border-gray-400 p-1 w-[200px]"
-                        disabled={mode === "view"}
-                      />
-                      <SignPad
-                        fieldName="signature_drawn"
-                        name="signature"
-                        formData={formData}
-                        setFormData={setFormData}
-                        mode={mode}
-                      />
+                      <label className="whitespace-nowrap text-md text-[oklch(0.147_0.004_49.25)] my-1">
+                        Signature
+                      </label>
+
+                      {/* Toggle Tabs */}
+                      {mode !== "view" && (
+                        <div className="flex gap-2 mb-4 mt-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                signatureMode: "upload",
+                              }))
+                            }
+                            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                              formData.signatureMode === "upload"
+                                ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                            }`}
+                          >
+                            Upload
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                signatureMode: "draw",
+                              }))
+                            }
+                            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                              formData.signatureMode === "draw"
+                                ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                            }`}
+                          >
+                            Sign Here
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Upload Area */}
+                      {formData.signatureMode === "upload" && (
+                        <div>
+                          <input
+                            type="file"
+                            id="signatureUpload"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  signature: file,
+                                  signaturePreview: URL.createObjectURL(file),
+                                }));
+                              }
+                            }}
+                          />
+
+                          {/* Drag & Drop */}
+                          {mode !== "view" && (
+                            <label
+                              htmlFor="signatureUpload"
+                              onDragOver={(e) => e.preventDefault()}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                const file = e.dataTransfer.files[0];
+                                if (file && file.type.startsWith("image/")) {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    signature: file,
+                                    signaturePreview: URL.createObjectURL(file),
+                                  }));
+                                }
+                              }}
+                              className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                            >
+                              <svg
+                                className="w-8 h-8 text-gray-400 mb-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={1.5}
+                                  d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                                />
+                              </svg>
+                              <p className="text-sm text-gray-500">
+                                Drag & drop or{" "}
+                                <span className="text-[#0f172a] font-medium underline">
+                                  browse
+                                </span>
+                              </p>
+                              <p className="text-xs text-gray-400 mt-1">
+                                PNG, JPG, SVG supported
+                              </p>
+                            </label>
+                          )}
+
+                          {/* Preview */}
+                          {formData.signaturePreview && (
+                            <div className="mt-4 flex items-center gap-3">
+                              <img
+                                src={formData.signaturePreview}
+                                alt="Signature Preview"
+                                className="h-16 border rounded bg-white p-2 shadow-sm"
+                              />
+                              {mode !== "view" && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      signature: null,
+                                      signaturePreview: null,
+                                    }))
+                                  }
+                                  className="text-xs text-red-500 hover:underline"
+                                >
+                                  Remove
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Draw Area */}
+                      {formData.signatureMode === "draw" && (
+                        <SignPad
+                          fieldName="signature_drawn"
+                          formData={formData}
+                          setFormData={setFormData}
+                          mode={mode}
+                        />
+                      )}
                     </div>
                   </div>
 
