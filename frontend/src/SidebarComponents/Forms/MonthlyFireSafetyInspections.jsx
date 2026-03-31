@@ -158,9 +158,10 @@ const MonthlyFireSafetyInspections = () => {
         targetDate: "",
       },
     ],
+    signatureMode: "",
     signature: null,
-    signaturePreview: null,
     signhere: null,
+    signaturePreview: null,
   };
   const [formData, setFormData] = useState(defaultFormData);
 
@@ -496,9 +497,9 @@ const MonthlyFireSafetyInspections = () => {
 
   // Handle submit
   const handleSubmit = () => {
-    const { employee, location, createdDate, signature } = formData;
+    const { employee, location, createdDate, signature, signhere } = formData;
 
-    if (!employee || !location || !createdDate || !signature) {
+    if (!employee || !location || !createdDate || (!signature && !signhere)) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -1105,67 +1106,158 @@ const MonthlyFireSafetyInspections = () => {
                     </table>
                   </div>
 
-                  {/* Signature  */}
+                  {/* Signature */}
                   <div className="mt-6">
-                    <label className="block text-sm font-medium mb-2">
-                      Signature :
-                    </label>
-
-                    <div className="flex items-center gap-3 border rounded-md px-3 py-2 w-full max-w-md bg-gray-50">
-                      {/* Hidden File Input */}
-                      <input
-                        type="file"
-                        id="signatureUpload"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files[0];
-
-                          if (file) {
-                            setFormData({
-                              ...formData,
-                              signature: file,
-                              signaturePreview: URL.createObjectURL(file),
-                            });
-                          }
-                        }}
-                      />
-
-                      {/* Button */}
-                      <label
-                        htmlFor="signatureUpload"
-                        className="cursor-pointer bg-white border px-3 py-1 rounded shadow-sm hover:bg-gray-100"
-                      >
-                        Choose File
-                      </label>
-
-                      {/* File Name */}
-                      <span className="text-gray-600 text-sm truncate">
-                        {formData.signature
-                          ? formData.signature.name
-                          : "No file chosen"}
-                      </span>
-                    </div>
-
-                    {formData.signaturePreview && (
-                      <div className="mt-4">
-                        <p className="text-sm mb-1 text-gray-600">Preview:</p>
-
-                        <img
-                          src={formData.signaturePreview}
-                          alt="Signature Preview"
-                          className="h-24 border rounded bg-white p-2 shadow-sm"
-                        />
+                    {/* Toggle Tabs */}
+                    {mode !== "view" && (
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        <label className="block text-sm font-medium">
+                          Signature :
+                        </label>
+                        <div className="space-x-1 space-y-1">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setFormData({
+                                ...formData,
+                                signatureMode: "upload",
+                              })
+                            }
+                            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                              formData.signatureMode === "upload"
+                                ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                            }`}
+                          >
+                            Upload
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setFormData({
+                                ...formData,
+                                signatureMode: "draw",
+                              })
+                            }
+                            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                              formData.signatureMode === "draw"
+                                ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                            }`}
+                          >
+                            Sign Here
+                          </button>
+                        </div>
                       </div>
                     )}
+
+                    {mode === "view" && (
+                      <label className="block text-sm font-medium mb-2">
+                        Signature :
+                      </label>
+                    )}
+
+                    {/* Upload Area */}
+                    {formData.signatureMode === "upload" && (
+                      <div>
+                        <input
+                          type="file"
+                          id="signatureUpload"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              setFormData({
+                                ...formData,
+                                signature: file,
+                                signaturePreview: URL.createObjectURL(file),
+                              });
+                            }
+                          }}
+                        />
+
+                        {/* Drag & Drop Zone */}
+                        {mode !== "view" && (
+                          <label
+                            htmlFor="signatureUpload"
+                            onDragOver={(e) => e.preventDefault()}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              const file = e.dataTransfer.files[0];
+                              if (file && file.type.startsWith("image/")) {
+                                setFormData({
+                                  ...formData,
+                                  signature: file,
+                                  signaturePreview: URL.createObjectURL(file),
+                                });
+                              }
+                            }}
+                            className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                          >
+                            <svg
+                              className="w-8 h-8 text-gray-400 mb-2"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                              />
+                            </svg>
+                            <p className="text-sm text-gray-500">
+                              Drag & drop or{" "}
+                              <span className="text-[#0f172a] font-medium underline">
+                                browse
+                              </span>
+                            </p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              PNG, JPG, SVG supported
+                            </p>
+                          </label>
+                        )}
+
+                        {/* Preview */}
+                        {formData.signaturePreview && (
+                          <div className="mt-4 flex items-center gap-3">
+                            <img
+                              src={formData.signaturePreview}
+                              alt="Signature Preview"
+                              className="h-16 border rounded bg-white p-2 shadow-sm"
+                            />
+                            {mode !== "view" && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setFormData({
+                                    ...formData,
+                                    signature: null,
+                                    signaturePreview: null,
+                                  })
+                                }
+                                className="text-xs text-red-500 hover:underline"
+                              >
+                                Remove
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Draw Area */}
+                    {formData.signatureMode === "draw" && (
+                      <SignPad
+                        fieldName="signhere"
+                        formData={formData}
+                        setFormData={setFormData}
+                        mode={mode}
+                      />
+                    )}
                   </div>
-                  <h1 className="mt-2">Sign Here:</h1>
-                  <SignPad
-                    fieldName="signhere"
-                    formData={formData}
-                    setFormData={setFormData}
-                    mode={mode}
-                  />
 
                   {/* Save */}
                   {mode !== "view" && (

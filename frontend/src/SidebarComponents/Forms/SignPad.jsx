@@ -1,11 +1,14 @@
 import SignatureCanvas from "react-signature-canvas";
 import { useRef } from "react";
+
 const SignPad = ({ fieldName, name, formData, setFormData, mode }) => {
   const sigRef = useRef();
+
   const handleClear = () => {
     sigRef.current.clear();
     setFormData((prev) => ({ ...prev, [fieldName]: null }));
   };
+
   const handleSave = () => {
     if (!sigRef.current.isEmpty()) {
       const dataURL = sigRef.current.toDataURL();
@@ -14,48 +17,67 @@ const SignPad = ({ fieldName, name, formData, setFormData, mode }) => {
   };
 
   return (
-    <div className="mt-2 ">
-      {formData[fieldName] ? (
-        <img
-          src={formData[fieldName]}
-          alt="signature"
-          className="w-[230px] h-[150px] border mt-2"
-        />
-      ) : formData[name] ? (
-        <img
-          src={URL.createObjectURL(formData[name])}
-          alt="uploaded"
-          className="w-[230px] h-[150px] border mt-2"
-        />
-      ) : (
-        <div className="border border-gray-400 w-[180px] h-[100px] mt-2">
-          <SignatureCanvas
-            penColor="black"
-            canvasProps={{ width: 180, height: 100 }}
-            ref={sigRef}
+    <div className="mt-2">
+      {/* View mode — show saved signature only */}
+      {mode === "view" ? (
+        formData[fieldName] ? (
+          <img
+            src={formData[fieldName]}
+            alt="signature"
+            className="w-[230px] h-[150px] border mt-2"
           />
-        </div>
-      )}
-      {mode !== "view" && (
-        <div className="flex gap-2 mt-2">
-          {" "}
-          <button
-            onClick={handleClear}
-            className="border border-red-600 px-2 py-1 rounded text-red-600"
-          >
-            {" "}
-            Clear{" "}
-          </button>{" "}
-          <button
-            onClick={handleSave}
-            className="bg-gray-500 text-white px-3 py-1 rounded"
-          >
-            {" "}
-            Save{" "}
-          </button>{" "}
-        </div>
+        ) : formData[name] ? (
+          <img
+            src={URL.createObjectURL(formData[name])}
+            alt="uploaded"
+            className="w-[230px] h-[150px] border mt-2"
+          />
+        ) : (
+          <p className="text-sm text-gray-400 mt-2">No signature provided</p>
+        )
+      ) : (
+        /* Edit/Add mode — show canvas or saved image */
+        <>
+          {formData[fieldName] ? (
+            <img
+              src={formData[fieldName]}
+              alt="signature"
+              className="w-[230px] h-[150px] border mt-2"
+            />
+          ) : formData[name] ? (
+            <img
+              src={URL.createObjectURL(formData[name])}
+              alt="uploaded"
+              className="w-[230px] h-[150px] border mt-2"
+            />
+          ) : (
+            <div className="border border-gray-400 w-[180px] h-[100px] mt-2">
+              <SignatureCanvas
+                penColor="black"
+                canvasProps={{ width: 180, height: 100 }}
+                ref={sigRef}
+              />
+            </div>
+          )}
+
+          <div className="flex gap-2 mt-2">
+            <button
+              onClick={handleClear}
+              className="border border-red-600 px-2 py-1 rounded text-red-600"
+            >
+              Clear
+            </button>
+            <button
+              onClick={handleSave}
+              className="bg-gray-500 text-white px-3 py-1 rounded"
+            >
+              Save
+            </button>
+          </div>
+        </>
       )}
     </div>
   );
 };
+
 export default SignPad;
