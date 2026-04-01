@@ -111,13 +111,13 @@ const AdminDashboard = ({ user }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 items-start">
         {/* Line Chart */}
         <div
-          className="md:col-span-2 bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200"
+          className="md:col-span-2 bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200 min-h-[425px]"
           style={{ scrollbarWidth: "none" }}
         >
           <AttendanceLineChart attendanceData={attendanceData} />
         </div>
         <div
-          className=" bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200"
+          className=" bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200 min-h-[425px]"
           style={{ scrollbarWidth: "none" }}
         >
           <DeviceStats data={userData} />

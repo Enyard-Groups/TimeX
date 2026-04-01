@@ -56,7 +56,6 @@ export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
       </button>
 
       {/* RIGHT ICONS */}
-      {/* RIGHT ICONS */}
       {isDashboard && (
         <div
           className={`flex flex-row absolute top-7 right-4 z-50 gap-2 
@@ -87,13 +86,12 @@ export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
 
       {/* RIGHT SIDEBAR */}
       <aside
-        className={`fixed top-3 right-0 h-full w-72 bg-white shadow-xl z-50 transform transition-transform duration-300 ${
+        className={`fixed top-3 right-0 h-full w-72 bg-white shadow-xl border-l border-gray-200 z-50 transform transition-transform duration-300 ${
           rightSidebarOpen ? "translate-x-0 rounded-tr-3xl" : "translate-x-full"
         }`}
       >
         <div className="p-4 h-full flex flex-col">
-          <div className="flex justify-between mb-4">
-            <h1 className="text-gray-600 font-medium">Notifications</h1>
+          <div className="flex justify-end mb-4">
             <button
               onClick={() => setRightSidebarOpen(false)}
               className="cursor-pointer"

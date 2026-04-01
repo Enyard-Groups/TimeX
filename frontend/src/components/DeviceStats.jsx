@@ -47,7 +47,7 @@ const DeviceStats = ({ data = [] }) => {
     plotOptions: {
       pie: {
         donut: {
-          size: "80%",
+          size: "65%",
           labels: {
             show: true,
             total: {
