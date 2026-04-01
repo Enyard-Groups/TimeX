@@ -11,7 +11,7 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
-import SearchDropdown from "../SearchDropdown";
+import axios from "axios";
 import SpinnerTimePicker from "../SpinnerTimePicker";
 import SpinnerDatePicker from "../SpinnerDatePicker";
 import SignPad from "./SignPad";
@@ -92,9 +92,11 @@ const IncidentAccident = () => {
     report_acknowledge: {
       assistant_name: "",
       date_time: null,
-      upload_sign: null,
     },
+    signatureMode: "",
+    upload_sign: null,
     signhere: null,
+    signaturePreview: null,
   };
 
   const [formData, setFormData] = useState(defaultFormData);
@@ -1103,89 +1105,213 @@ const IncidentAccident = () => {
                 </h1>
                 <div className="border border-gray-400 rounded p-4 mb-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex flex-row mt-2">
-                      <label
-                        className={`${labelStyle} sm:whitespace-nowrap mr-2 w-1/2`}
-                      >
-                        MSO/Assistant MSO Name
-                      </label>
-                      <input
-                        name="assistant_name"
-                        value={formData.report_acknowledge.assistant_name}
-                        disabled={mode === "view"}
-                        onChange={(e) => handleChange(e, "report_acknowledge")}
-                        className={inputStyle}
-                      />
+                    <div>
+                      <div className="flex flex-row mt-2">
+                        <label className={`${labelStyle} mr-2 w-1/2`}>
+                          MSO/Assistant MSO Name
+                        </label>
+                        <input
+                          name="assistant_name"
+                          value={formData.report_acknowledge.assistant_name}
+                          disabled={mode === "view"}
+                          onChange={(e) =>
+                            handleChange(e, "report_acknowledge")
+                          }
+                          className={inputStyle}
+                        />
+                      </div>
+
+                      <div className="flex flex-row mt-2">
+                        <label
+                          className={`${labelStyle} whitespace-nowrap mr-2 w-1/2`}
+                        >
+                          Date
+                        </label>
+                        <input
+                          name="date_time"
+                          value={formData.report_acknowledge.date_time || ""}
+                          onChange={(e) =>
+                            handleChange(e, "report_acknowledge")
+                          }
+                          onClick={() => setShowAckDateSpinner(true)}
+                          disabled={mode === "view"}
+                          placeholder="dd/mm/yyyy"
+                          className={`${inputStyle} h-10`}
+                        />
+
+                        {showDateAckSpinner && (
+                          <div className="absolute mt-8 ml-8 sm:ml-14 md:ml-16 lg:ml-20 ">
+                            <SpinnerDatePicker
+                              value={formData.report_acknowledge.date_time}
+                              onChange={(date) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  report_acknowledge: {
+                                    ...prev.report_acknowledge,
+                                    date_time: date,
+                                  },
+                                }))
+                              }
+                              onClose={() => setShowAckDateSpinner(false)}
+                            />
+                          </div>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="flex flex-row mt-2">
-                      <label
-                        className={`${labelStyle} whitespace-nowrap mr-2 w-1/2`}
-                      >
-                        Signature
-                      </label>
-                      <input
-                        name="upload_sign"
-                        type="file"
-                        disabled={mode === "view"}
-                        onChange={(e) => {
-                          const file = e.target.files[0];
+                    <div>
+                      <div className="mt-6">
+                        {/* Toggle Tabs */}
+                        {mode !== "view" && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            <label className="block text-sm font-medium mb-2">
+                              Signature :
+                            </label>
+                            <div className="space-x-1 space-y-1">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setFormData({
+                                    ...formData,
+                                    signatureMode: "upload",
+                                  })
+                                }
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.signatureMode === "upload"
+                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                Upload
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setFormData({
+                                    ...formData,
+                                    signatureMode: "draw",
+                                  })
+                                }
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.signatureMode === "draw"
+                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                Sign Here
+                              </button>
+                            </div>
+                          </div>
+                        )}
 
-                          setFormData((prev) => ({
-                            ...prev,
-                            report_acknowledge: {
-                              ...prev.report_acknowledge,
-                              upload_sign: file,
-                            },
-                          }));
-                        }}
-                        className={inputStyle}
-                      />
-                    </div>
+                        {mode === "view" && (
+                          <label className="block text-sm font-medium mb-2">
+                            Signature :
+                          </label>
+                        )}
 
-                    <div className="flex flex-row mt-2">
-                      <label
-                        className={`${labelStyle} whitespace-nowrap mr-2 w-1/2`}
-                      >
-                        Date
-                      </label>
-                      <input
-                        name="date_time"
-                        value={formData.report_acknowledge.date_time || ""}
-                        onChange={(e) => handleChange(e, "report_acknowledge")}
-                        onClick={() => setShowAckDateSpinner(true)}
-                        disabled={mode === "view"}
-                        placeholder="dd/mm/yyyy"
-                        className={`${inputStyle} h-10`}
-                      />
+                        {/* Upload Area */}
+                        {formData.signatureMode === "upload" && (
+                          <div>
+                            <input
+                              type="file"
+                              id="signatureUpload"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file) {
+                                  setFormData({
+                                    ...formData,
+                                    upload_sign: file,
+                                    signaturePreview: URL.createObjectURL(file),
+                                  });
+                                }
+                              }}
+                            />
 
-                      {showDateAckSpinner && (
-                        <div className="absolute mt-8 ml-8 sm:ml-14 md:ml-16 lg:ml-20 ">
-                          <SpinnerDatePicker
-                            value={formData.report_acknowledge.date_time}
-                            onChange={(date) =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                report_acknowledge: {
-                                  ...prev.report_acknowledge,
-                                  date_time: date,
-                                },
-                              }))
-                            }
-                            onClose={() => setShowAckDateSpinner(false)}
+                            {/* Drag & Drop Zone */}
+                            {mode !== "view" && (
+                              <label
+                                htmlFor="signatureUpload"
+                                onDragOver={(e) => e.preventDefault()}
+                                onDrop={(e) => {
+                                  e.preventDefault();
+                                  const file = e.dataTransfer.files[0];
+                                  if (file && file.type.startsWith("image/")) {
+                                    setFormData({
+                                      ...formData,
+                                      upload_sign: file,
+                                      signaturePreview:
+                                        URL.createObjectURL(file),
+                                    });
+                                  }
+                                }}
+                                className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                              >
+                                <svg
+                                  className="w-8 h-8 text-gray-400 mb-2"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={1.5}
+                                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                                  />
+                                </svg>
+                                <p className="text-sm text-gray-500">
+                                  Drag & drop or{" "}
+                                  <span className="text-[#0f172a] font-medium underline">
+                                    browse
+                                  </span>
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  PNG, JPG, SVG supported
+                                </p>
+                              </label>
+                            )}
+
+                            {/* Preview */}
+                            {formData.signaturePreview && (
+                              <div className="mt-4 flex items-center gap-3">
+                                <img
+                                  src={formData.signaturePreview}
+                                  alt="Signature Preview"
+                                  className="h-16 border rounded bg-white p-2 shadow-sm"
+                                />
+                                {mode !== "view" && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setFormData({
+                                        ...formData,
+                                        upload_sign: null,
+                                        signaturePreview: null,
+                                      })
+                                    }
+                                    className="text-xs text-red-500 hover:underline"
+                                  >
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Draw Area */}
+                        {formData.signatureMode === "draw" && (
+                          <SignPad
+                            fieldName="signhere"
+                            formData={formData}
+                            setFormData={setFormData}
+                            mode={mode}
                           />
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="sm:flex sm:flex-row">
-                      <h1 className="mt-3 w-1/3 text-[16px]">Sign Here:</h1>
-                      <SignPad
-                        fieldName="signhere"
-                        formData={formData}
-                        setFormData={setFormData}
-                        mode={mode}
-                      />
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

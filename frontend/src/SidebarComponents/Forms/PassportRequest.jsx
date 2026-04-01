@@ -40,9 +40,15 @@ const PassportRequest = () => {
     expected_return_date: "",
     reason_for_request: "",
     agreement: false,
+
+    employeeSignatureMode: "upload",
     employee_signature: null,
+    employeeSignaturePreview: null,
     signature_drawn: null,
+
+    msoSignatureMode: "upload",
     mso_signature: null,
+    msoSignaturePreview: null,
     officerSign_drawn: null,
   };
 
@@ -541,7 +547,7 @@ const PassportRequest = () => {
                           value={formData.employee_name}
                           onChange={handleChange}
                           disabled={mode === "view"}
-                          className="border border-gray-300 rounded px-2 w-32 mt-1 rounded  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
+                          className="border border-gray-300 rounded px-2 sm:w-36 mt-1 rounded  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
                         />
                       </div>
                       <div className="flex flex-col">
@@ -551,32 +557,162 @@ const PassportRequest = () => {
                           value={formData.enrollment_id}
                           onChange={handleChange}
                           disabled={mode === "view"}
-                          className="border border-gray-300 rounded px-2 w-32 mt-1 rounded  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
+                          className="border border-gray-300 rounded px-2 sm:w-36 mt-1 rounded  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
                         />
                       </div>
                     </div>
                     <div className="grid grid-cols-1  sm:grid-cols-2 gap-8 mt-4">
                       <div className="flex flex-col">
-                        <label>Signature</label>
-                        <input
-                          type="file"
-                          name="employee_signature"
-                          onChange={(e) =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              employee_signature: e.target.files[0],
-                            }))
-                          }
-                          className="border border-gray-400 p-1 w-[180px]"
-                          disabled={mode === "view"}
-                        />
-                        <SignPad
-                          fieldName="signature_drawn"
-                          name="employee_signature"
-                          formData={formData}
-                          setFormData={setFormData}
-                          mode={mode}
-                        />
+                        {/* Toggle Tabs — hidden in view mode */}
+                        {mode !== "view" && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            <label className="block text-sm font-medium mt-1">
+                              Signature :
+                            </label>
+                            <div className="space-x-1 space-y-1">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    employeeSignatureMode: "upload",
+                                  }))
+                                }
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.employeeSignatureMode === "upload"
+                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                Upload
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    employeeSignatureMode: "draw",
+                                  }))
+                                }
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.employeeSignatureMode === "draw"
+                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                Sign Here
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                        {mode === "view" && (
+                          <label className="block text-sm font-medium mb-2">
+                            Signature :
+                          </label>
+                        )}
+
+                        {/* Upload Area */}
+                        {formData.employeeSignatureMode === "upload" && (
+                          <div>
+                            <input
+                              type="file"
+                              id="employeeSignatureUpload"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file) {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    employee_signature: file,
+                                    employeeSignaturePreview:
+                                      URL.createObjectURL(file),
+                                  }));
+                                }
+                              }}
+                            />
+
+                            {/* Drag & Drop Zone */}
+                            {mode !== "view" && (
+                              <label
+                                htmlFor="employeeSignatureUpload"
+                                onDragOver={(e) => e.preventDefault()}
+                                onDrop={(e) => {
+                                  e.preventDefault();
+                                  const file = e.dataTransfer.files[0];
+                                  if (file && file.type.startsWith("image/")) {
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      employee_signature: file,
+                                      employeeSignaturePreview:
+                                        URL.createObjectURL(file),
+                                    }));
+                                  }
+                                }}
+                                className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                              >
+                                <svg
+                                  className="w-8 h-8 text-gray-400 mb-2"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={1.5}
+                                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                                  />
+                                </svg>
+                                <p className="text-sm text-gray-500">
+                                  Drag & drop or{" "}
+                                  <span className="text-[#0f172a] font-medium underline">
+                                    browse
+                                  </span>
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  PNG, JPG, SVG supported
+                                </p>
+                              </label>
+                            )}
+
+                            {/* Preview */}
+                            {formData.employeeSignaturePreview && (
+                              <div className="mt-4 flex items-center gap-3">
+                                <img
+                                  src={formData.employeeSignaturePreview}
+                                  alt="Signature Preview"
+                                  className="h-16 border rounded bg-white p-2 shadow-sm"
+                                />
+                                {mode !== "view" && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        employee_signature: null,
+                                        employeeSignaturePreview: null,
+                                      }))
+                                    }
+                                    className="text-xs text-red-500 hover:underline"
+                                  >
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Draw Area */}
+                        {formData.employeeSignatureMode === "draw" && (
+                          <SignPad
+                            fieldName="signature_drawn"
+                            formData={formData}
+                            setFormData={setFormData}
+                            mode={mode}
+                          />
+                        )}
                       </div>
 
                       <div className="flex flex-col">
@@ -599,26 +735,157 @@ const PassportRequest = () => {
 
                   <div className="grid grid-cols-1  sm:grid-cols-2 mt-6">
                     <h1>Signature of Administration Officer</h1>
-                    <div className="flex flex-col">
-                      <input
-                        type="file"
-                        name="mso_signature"
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            mso_signature: e.target.files[0],
-                          }))
-                        }
-                        className="border border-gray-400 p-1 w-[200px]"
-                        disabled={mode === "view"}
-                      />
-                      <SignPad
-                        fieldName="officerSign_drawn"
-                        name="mso_signature"
-                        formData={formData}
-                        setFormData={setFormData}
-                        mode={mode}
-                      />
+                    <div className="flex flex-col mt-4">
+                      {/* Toggle Tabs — hidden in view mode */}
+                      {mode !== "view" && (
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          <label className="block text-sm font-medium mt-1">
+                            Signature :
+                          </label>
+                          <div className="space-x-1 space-y-1">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  msoSignatureMode: "upload",
+                                }))
+                              }
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.msoSignatureMode === "upload"
+                                  ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              Upload
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  msoSignatureMode: "draw",
+                                }))
+                              }
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.msoSignatureMode === "draw"
+                                  ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              Sign Here
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      {mode === "view" && (
+                        <label className="block text-sm font-medium mb-2">
+                          Signature :
+                        </label>
+                      )}
+
+                      {/* Upload Area */}
+                      {formData.msoSignatureMode === "upload" && (
+                        <div>
+                          <input
+                            type="file"
+                            id="msoSignatureUpload"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  mso_signature: file,
+                                  msoSignaturePreview:
+                                    URL.createObjectURL(file),
+                                }));
+                              }
+                            }}
+                          />
+
+                          {/* Drag & Drop Zone */}
+                          {mode !== "view" && (
+                            <label
+                              htmlFor="msoSignatureUpload"
+                              onDragOver={(e) => e.preventDefault()}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                const file = e.dataTransfer.files[0];
+                                if (file && file.type.startsWith("image/")) {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    mso_signature: file,
+                                    msoSignaturePreview:
+                                      URL.createObjectURL(file),
+                                  }));
+                                }
+                              }}
+                              className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                            >
+                              <svg
+                                className="w-8 h-8 text-gray-400 mb-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={1.5}
+                                  d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                                />
+                              </svg>
+                              <p className="text-sm text-gray-500">
+                                Drag & drop or{" "}
+                                <span className="text-[#0f172a] font-medium underline">
+                                  browse
+                                </span>
+                              </p>
+                              <p className="text-xs text-gray-400 mt-1">
+                                PNG, JPG, SVG supported
+                              </p>
+                            </label>
+                          )}
+
+                          {/* Preview */}
+                          {formData.msoSignaturePreview && (
+                            <div className="mt-4 flex items-center gap-3">
+                              <img
+                                src={formData.msoSignaturePreview}
+                                alt="Signature Preview"
+                                className="h-16 border rounded bg-white p-2 shadow-sm"
+                              />
+                              {mode !== "view" && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      mso_signature: null,
+                                      msoSignaturePreview: null,
+                                    }))
+                                  }
+                                  className="text-xs text-red-500 hover:underline"
+                                >
+                                  Remove
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Draw Area */}
+                      {formData.msoSignatureMode === "draw" && (
+                        <SignPad
+                          fieldName="officerSign_drawn"
+                          formData={formData}
+                          setFormData={setFormData}
+                          mode={mode}
+                        />
+                      )}
                     </div>
                   </div>
 

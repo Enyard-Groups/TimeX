@@ -24,66 +24,46 @@ const AdminDashboard = ({ user }) => {
         //   headers,
         // });
 
+        function getWeekDates(offset = 0) {
+          const today = new Date();
+
+          const day = today.getDay();
+          const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+
+          const monday = new Date(today.setDate(diff + offset * 7));
+
+          const week = [];
+          for (let i = 0; i < 7; i++) {
+            const d = new Date(monday);
+            d.setDate(monday.getDate() + i);
+            week.push(d.toISOString().split("T")[0]);
+          }
+
+          return week;
+        }
+
+        function generateData(dates) {
+          return dates.map((date) => ({
+            date,
+            totalEmployees: 120,
+            presentToday: Math.floor(Math.random() * 40) + 70,
+            leave: Math.floor(Math.random() * 10),
+            earlyin: Math.floor(Math.random() * 20),
+            latein: Math.floor(Math.random() * 7),
+          }));
+        }
+
+        // Combine both weeks into ONE array
+        const allDates = [
+          ...getWeekDates(-1), // previous week
+          ...getWeekDates(0), // current week
+        ];
+
         const res = {
-          data: [
-            {
-              date: "2026-03-17",
-              totalEmployees: 120,
-              presentToday: 95,
-              leave: 1,
-              earlyin: 15,
-              latein: 4,
-            },
-            {
-              date: "2026-03-18",
-              totalEmployees: 120,
-              presentToday: 89,
-              leave: 6,
-              earlyin: 12,
-              latein: 3,
-            },
-            {
-              date: "2026-03-19",
-              totalEmployees: 120,
-              presentToday: 50,
-              leave: 5,
-              earlyin: 10,
-              latein: 5,
-            },
-            {
-              date: "2026-03-20",
-              totalEmployees: 120,
-              presentToday: 110,
-              leave: 7,
-              earlyin: 14,
-              latein: 2,
-            },
-            {
-              date: "2026-03-21",
-              totalEmployees: 120,
-              presentToday: 88,
-              leave: 7,
-              earlyin: 9,
-              latein: 6,
-            },
-            {
-              date: "2026-03-22",
-              totalEmployees: 120,
-              presentToday: 115,
-              leave: 7,
-              earlyin: 16,
-              latein: 3,
-            },
-            {
-              date: "2026-03-23",
-              totalEmployees: 120,
-              presentToday: 98,
-              leave: 10,
-              earlyin: 14,
-              latein: 5,
-            },
-          ],
+          data: generateData(allDates),
         };
+
+        console.log(res.data);
 
         setAttendanceData(res.data);
       } catch (error) {
@@ -131,13 +111,13 @@ const AdminDashboard = ({ user }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 items-start">
         {/* Line Chart */}
         <div
-          className="md:col-span-2 bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200"
+          className="md:col-span-2 bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200 min-h-[425px]"
           style={{ scrollbarWidth: "none" }}
         >
           <AttendanceLineChart attendanceData={attendanceData} />
         </div>
         <div
-          className=" bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200"
+          className=" bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200 min-h-[425px]"
           style={{ scrollbarWidth: "none" }}
         >
           <DeviceStats data={userData} />

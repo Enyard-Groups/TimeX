@@ -65,7 +65,7 @@ const RightSidebar = ({ user }) => {
         )}
       </div>
 
-      <div className="fixed bottom-0 mb-5 flex justify-between px-4 gap-4">
+      <div className="fixed bottom-0 mb-6 mt-1 flex justify-between px-4 gap-4 border-t border-gray-200">
         <button
           onClick={handleLogout}
           className="h-fit px-3 mt-2 py-0.5 cursor-pointer flex flex-row gap-2 rounded-full shadow text-xs"

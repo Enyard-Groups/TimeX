@@ -28,8 +28,8 @@ const Dashboard = () => {
       <div className="flex-1 flex overflow-hidden">
         {/* Content Area */}
         <main
-          className={`bg-white px-6 pt-4 mt-3 mb-12 lg:ml-64 rounded-tl-3xl transition-all duration-300 flex-1 overflow-hidden ${
-            rightSidebarOpen ? "lg:mr-64" : "mr-0 rounded-tr-3xl"
+          className={` bg-white px-6 pt-4 mt-3 mb-12 lg:ml-64 rounded-tl-3xl transition-all duration-300 flex-1 overflow-hidden ${
+            rightSidebarOpen ? "lg:mr-72" : "mr-0 rounded-tr-3xl"
           }`}
         >
           {/* SCROLL ONLY HERE */}
@@ -45,8 +45,6 @@ const Dashboard = () => {
           </div>
         </main>
       </div>
-
-      
     </div>
   );
 };

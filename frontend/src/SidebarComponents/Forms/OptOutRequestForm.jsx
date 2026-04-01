@@ -16,7 +16,7 @@ import SpinnerDatePicker from "../SpinnerDatePicker";
 import SignPad from "./SignPad";
 import axios from "axios";
 
-const API_URL= "http://localhost:3000/api/form/optRequest";
+const API_URL = "http://localhost:3000/api/form/optRequest";
 
 const OptOutRequestForm = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -55,18 +55,23 @@ const OptOutRequestForm = () => {
     contactNo2: "",
     relation2: "",
 
+    nameSignMode: "",
     name_sign: null,
+    nameSignPreview: null,
     name_sign_drawn: null,
 
+    approvedByMode: "",
     approvedBy: null,
     approvedBy_drawn: null,
+    approvedByPreview: null,
 
+    concurredByMode: "",
     concurredBy: null,
     concurredBy_drawn: null,
+    concurredByPreview: null,
   };
 
   const [formData, setFormData] = useState(defaultFormData);
-  console.log(formData);
 
   const fetchData = async () => {
     try {
@@ -102,7 +107,7 @@ const OptOutRequestForm = () => {
     Math.ceil(requestData.length / entriesPerPage),
   );
 
-    // Handle submit
+  // Handle submit
   const handleSubmit = async () => {
     try {
       if (editId) {
@@ -123,7 +128,7 @@ const OptOutRequestForm = () => {
     }
   };
 
-   // Handle delete
+  // Handle delete
   const handleDelete = async (id) => {
     try {
       await axios.delete(`${API_URL}/${id}`);
@@ -801,52 +806,319 @@ const OptOutRequestForm = () => {
                   <div className="md:flex md:justify-between ">
                     <div className="flex justify-center mt-6">
                       <div>
-                        <input
-                          type="file"
-                          name="name_sign"
-                          onChange={(e) =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              name_sign: e.target.files[0],
-                            }))
-                          }
-                          disabled={mode === "view"}
-                          className="border border-gray-400 p-2 w-[230px]"
-                        />
-                        <SignPad
-                          fieldName="name_sign_drawn"
-                          name="name_sign"
-                          formData={formData}
-                          setFormData={setFormData}
-                          mode={mode}
-                        />
-                        <label className={`${labelStyle} text-center`}>
+                        {/* Toggle Tabs — hidden in view mode */}
+                        {mode !== "view" && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            <label className="block text-sm font-medium mt-1">
+                              Signature :
+                            </label>
+                            <div className="space-x-1 space-y-1">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    nameSignMode: "upload",
+                                  }))
+                                }
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.nameSignMode === "upload"
+                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                Upload
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    nameSignMode: "draw",
+                                  }))
+                                }
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.nameSignMode === "draw"
+                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                Sign Here
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                        {mode === "view" && (
+                          <label className="block text-sm font-medium mb-2">
+                            Signature :
+                          </label>
+                        )}
+
+                        {/* Upload Area */}
+                        {formData.nameSignMode === "upload" && (
+                          <div>
+                            <input
+                              type="file"
+                              id="nameSignUpload"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file) {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    name_sign: file,
+                                    nameSignPreview: URL.createObjectURL(file),
+                                  }));
+                                }
+                              }}
+                            />
+
+                            {/* Drag & Drop Zone */}
+                            {mode !== "view" && (
+                              <label
+                                htmlFor="nameSignUpload"
+                                onDragOver={(e) => e.preventDefault()}
+                                onDrop={(e) => {
+                                  e.preventDefault();
+                                  const file = e.dataTransfer.files[0];
+                                  if (file && file.type.startsWith("image/")) {
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      name_sign: file,
+                                      nameSignPreview:
+                                        URL.createObjectURL(file),
+                                    }));
+                                  }
+                                }}
+                                className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                              >
+                                <svg
+                                  className="w-8 h-8 text-gray-400 mb-2"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={1.5}
+                                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                                  />
+                                </svg>
+                                <p className="text-sm text-gray-500">
+                                  Drag & drop or{" "}
+                                  <span className="text-[#0f172a] font-medium underline">
+                                    browse
+                                  </span>
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  PNG, JPG, SVG supported
+                                </p>
+                              </label>
+                            )}
+
+                            {/* Preview */}
+                            {formData.nameSignPreview && (
+                              <div className="mt-4 flex items-center gap-3">
+                                <img
+                                  src={formData.nameSignPreview}
+                                  alt="Signature Preview"
+                                  className="h-16 border rounded bg-white p-2 shadow-sm"
+                                />
+                                {mode !== "view" && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        name_sign: null,
+                                        nameSignPreview: null,
+                                      }))
+                                    }
+                                    className="text-xs text-red-500 hover:underline"
+                                  >
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Draw Area */}
+                        {formData.nameSignMode === "draw" && (
+                          <SignPad
+                            fieldName="name_sign_drawn"
+                            formData={formData}
+                            setFormData={setFormData}
+                            mode={mode}
+                          />
+                        )}
+
+                        <label
+                          className={`${labelStyle} text-center mt-2 block`}
+                        >
                           Name and Signature
                         </label>
                       </div>
                     </div>
                     <div className="flex justify-center mt-6">
                       <div>
-                        <input
-                          type="file"
-                          name="approvedBy"
-                          onChange={(e) =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              approvedBy: e.target.files[0],
-                            }))
-                          }
-                          className="border border-gray-400 p-2 w-[230px]"
-                          disabled={mode === "view"}
-                        />
-                        <SignPad
-                          fieldName="approvedBy_drawn"
-                          name="approvedBy"
-                          formData={formData}
-                          setFormData={setFormData}
-                          mode={mode}
-                        />
-                        <label className={`${labelStyle} text-center`}>
+                        {/* Toggle Tabs — hidden in view mode */}
+                        {mode !== "view" && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            <label className="block text-sm font-medium mt-1">
+                              Signature :
+                            </label>
+                            <div className="space-x-1 space-y-1">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    approvedByMode: "upload",
+                                  }))
+                                }
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.approvedByMode === "upload"
+                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                Upload
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    approvedByMode: "draw",
+                                  }))
+                                }
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.approvedByMode === "draw"
+                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                Sign Here
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                        {mode === "view" && (
+                          <label className="block text-sm font-medium mb-2">
+                            Signature :
+                          </label>
+                        )}
+
+                        {/* Upload Area */}
+                        {formData.approvedByMode === "upload" && (
+                          <div>
+                            <input
+                              type="file"
+                              id="approvedByUpload"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file) {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    approvedBy: file,
+                                    approvedByPreview:
+                                      URL.createObjectURL(file),
+                                  }));
+                                }
+                              }}
+                            />
+
+                            {/* Drag & Drop Zone */}
+                            {mode !== "view" && (
+                              <label
+                                htmlFor="approvedByUpload"
+                                onDragOver={(e) => e.preventDefault()}
+                                onDrop={(e) => {
+                                  e.preventDefault();
+                                  const file = e.dataTransfer.files[0];
+                                  if (file && file.type.startsWith("image/")) {
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      approvedBy: file,
+                                      approvedByPreview:
+                                        URL.createObjectURL(file),
+                                    }));
+                                  }
+                                }}
+                                className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                              >
+                                <svg
+                                  className="w-8 h-8 text-gray-400 mb-2"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={1.5}
+                                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                                  />
+                                </svg>
+                                <p className="text-sm text-gray-500">
+                                  Drag & drop or{" "}
+                                  <span className="text-[#0f172a] font-medium underline">
+                                    browse
+                                  </span>
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  PNG, JPG, SVG supported
+                                </p>
+                              </label>
+                            )}
+
+                            {/* Preview */}
+                            {formData.approvedByPreview && (
+                              <div className="mt-4 flex items-center gap-3">
+                                <img
+                                  src={formData.approvedByPreview}
+                                  alt="Signature Preview"
+                                  className="h-16 border rounded bg-white p-2 shadow-sm"
+                                />
+                                {mode !== "view" && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        approvedBy: null,
+                                        approvedByPreview: null,
+                                      }))
+                                    }
+                                    className="text-xs text-red-500 hover:underline"
+                                  >
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Draw Area */}
+                        {formData.approvedByMode === "draw" && (
+                          <SignPad
+                            fieldName="approvedBy_drawn"
+                            formData={formData}
+                            setFormData={setFormData}
+                            mode={mode}
+                          />
+                        )}
+
+                        <label
+                          className={`${labelStyle} text-center mt-2 block`}
+                        >
                           Approved by <br /> Human Resources Officer
                         </label>
                       </div>
@@ -854,26 +1126,157 @@ const OptOutRequestForm = () => {
                   </div>
                   <div className="flex justify-center mt-6">
                     <div>
-                      <input
-                        type="file"
-                        name="concurredBy"
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            concurredBy: e.target.files[0],
-                          }))
-                        }
-                        className="border border-gray-400 p-2 w-[230px]"
-                        disabled={mode === "view"}
-                      />
-                      <SignPad
-                        fieldName="concurredBy_drawn"
-                        name="concurredBy"
-                        formData={formData}
-                        setFormData={setFormData}
-                        mode={mode}
-                      />
-                      <label className={`${labelStyle} text-center`}>
+                      {/* Toggle Tabs — hidden in view mode */}
+                      {mode !== "view" && (
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          <label className="block text-sm font-medium mt-1">
+                            Signature :
+                          </label>
+                          <div className="space-x-1 space-y-1">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  concurredByMode: "upload",
+                                }))
+                              }
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.concurredByMode === "upload"
+                                  ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              Upload
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  concurredByMode: "draw",
+                                }))
+                              }
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.concurredByMode === "draw"
+                                  ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              Sign Here
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      {mode === "view" && (
+                        <label className="block text-sm font-medium mb-2">
+                          Signature :
+                        </label>
+                      )}
+
+                      {/* Upload Area */}
+                      {formData.concurredByMode === "upload" && (
+                        <div>
+                          <input
+                            type="file"
+                            id="concurredByUpload"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  concurredBy: file,
+                                  concurredByPreview: URL.createObjectURL(file),
+                                }));
+                              }
+                            }}
+                          />
+
+                          {/* Drag & Drop Zone */}
+                          {mode !== "view" && (
+                            <label
+                              htmlFor="concurredByUpload"
+                              onDragOver={(e) => e.preventDefault()}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                const file = e.dataTransfer.files[0];
+                                if (file && file.type.startsWith("image/")) {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    concurredBy: file,
+                                    concurredByPreview:
+                                      URL.createObjectURL(file),
+                                  }));
+                                }
+                              }}
+                              className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                            >
+                              <svg
+                                className="w-8 h-8 text-gray-400 mb-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={1.5}
+                                  d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                                />
+                              </svg>
+                              <p className="text-sm text-gray-500">
+                                Drag & drop or{" "}
+                                <span className="text-[#0f172a] font-medium underline">
+                                  browse
+                                </span>
+                              </p>
+                              <p className="text-xs text-gray-400 mt-1">
+                                PNG, JPG, SVG supported
+                              </p>
+                            </label>
+                          )}
+
+                          {/* Preview */}
+                          {formData.concurredByPreview && (
+                            <div className="mt-4 flex items-center gap-3">
+                              <img
+                                src={formData.concurredByPreview}
+                                alt="Signature Preview"
+                                className="h-16 border rounded bg-white p-2 shadow-sm"
+                              />
+                              {mode !== "view" && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      concurredBy: null,
+                                      concurredByPreview: null,
+                                    }))
+                                  }
+                                  className="text-xs text-red-500 hover:underline"
+                                >
+                                  Remove
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Draw Area */}
+                      {formData.concurredByMode === "draw" && (
+                        <SignPad
+                          fieldName="concurredBy_drawn"
+                          formData={formData}
+                          setFormData={setFormData}
+                          mode={mode}
+                        />
+                      )}
+
+                      <label className={`${labelStyle} text-center mt-2 block`}>
                         Concurred by <br /> Managing Director
                       </label>
                     </div>
