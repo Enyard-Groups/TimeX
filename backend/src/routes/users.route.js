@@ -7,9 +7,9 @@ const userRouter=express.Router();
 
 userRouter.post("/login", login);
 userRouter.get("/approvers", getApprovers);
-userRouter.get("/",protectRoute,authorizeRoles("hr","admin"),getUsers);
+userRouter.get("/",getUsers);
 
-userRouter.post("/", protectRoute,authorizeRoles("hr","admin"),createUser);
+userRouter.post("/",createUser);
 userRouter.put("/:id",protectRoute,authorizeRoles("hr","admin"),updateUser);
 userRouter.delete("/:id", protectRoute,authorizeRoles("hr","admin"),deleteUser);
 

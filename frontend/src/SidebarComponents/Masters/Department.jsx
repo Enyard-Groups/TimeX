@@ -24,6 +24,7 @@ const Department = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [companyOptions, setCompanyOptions] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     company: "",
@@ -31,6 +32,7 @@ const Department = () => {
     description: "",
     isActive: false,
   });
+
 
   const fetchDepartments = async () => {
     try {
@@ -66,9 +68,20 @@ const Department = () => {
     }
   };
 
+  const fetchCompanies = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/companies`);
+      setCompanyOptions(res.data || []);
+    } catch (error) {
+      console.error("Failed to fetch companies", error);
+    }
+  };
+
   useEffect(() => {
     fetchDepartments();
+    fetchCompanies();
   }, []);
+
 
   const inputStyle =
     "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-[17px] py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[#2563EB]";
@@ -80,7 +93,8 @@ const Department = () => {
     (x) =>
       x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
       x.code.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
+      (x.company_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
+
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -228,7 +242,7 @@ const Department = () => {
           index + 1,
           item.name,
           item.code,
-          item.company,
+          item.company_name || item.company,
           item.isActive ? "Y" : "N",
         ].join("\t"),
       )
@@ -245,7 +259,7 @@ const Department = () => {
       "SL.NO": index + 1,
       "Department Name": item.name,
       "Department Code": item.code,
-      Company: item.company,
+      Company: item.company_name || item.company,
       Active: item.isActive ? "Y" : "N",
     }));
 
@@ -275,7 +289,7 @@ const Department = () => {
         index + 1,
         item.name,
         item.code,
-        item.company,
+        item.company_name || item.company,
         item.isActive ? "Y" : "N",
       ];
 
@@ -437,7 +451,7 @@ const Department = () => {
                       <td className="p-2">{item.name}</td>
                       <td className="p-2 hidden sm:table-cell">{item.code}</td>
                       <td className="p-2 hidden md:table-cell">
-                        {item.company}
+                        {item.company_name || item.company}
                       </td>
                       <td className="p-2 hidden lg:table-cell">
                         {item.isActive ? "Y" : "N"}
@@ -590,7 +604,10 @@ const Department = () => {
                     }
                     name="company"
                     value={formData.company}
-                    options={["Company 1", "Company 2"]}
+                    displayValue={formData.company_name}
+                    options={companyOptions}
+                    labelKey="name"
+                    valueKey="id"
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}

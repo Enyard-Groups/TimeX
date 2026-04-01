@@ -14,6 +14,8 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../SearchDropdown";
 import { MdDeleteForever } from "react-icons/md";
 
+const API_BASE = "http://localhost:3000/api";
+
 const Companies = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
@@ -22,12 +24,14 @@ const Companies = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     code: "",
     description: "",
-    isActive: false,
+    is_active: false,
   });
+
 
   const inputStyle =
     "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-lg py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -37,9 +41,10 @@ const Companies = () => {
 
   const filteredcompany = company.filter(
     (x) =>
-      x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.code.toLowerCase().startsWith(searchTerm.toLowerCase()),
+      (x.name || "").toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      (x.code || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
+
 
   const endIndex = currentPage * entriesPerPage;
 
@@ -52,13 +57,22 @@ const Companies = () => {
     Math.ceil(filteredcompany.length / entriesPerPage),
   );
 
-  useEffect(() => {
-    const storedData = localStorage.getItem("companies");
-
-    if (storedData) {
-      setCompany(JSON.parse(storedData));
+  const fetchCompanies = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`${API_BASE}/companies`);
+      setCompany(res.data);
+    } catch (error) {
+      toast.error("Failed to load companies");
+    } finally {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    fetchCompanies();
   }, []);
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -69,56 +83,51 @@ const Companies = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    const { name, code, description, isActive } = formData;
+  const handleSubmit = async () => {
+    const { name, code, description, is_active } = formData;
 
     if (!name || !code) {
       toast.error("Please fill all required fields");
       return;
     }
 
-    let updatedCompany;
+    try {
+      if (editId) {
+        const res = await axios.put(`${API_BASE}/companies/${editId}`, formData);
+        setCompany((prev) =>
+          prev.map((emp) => (emp.id === editId ? res.data : emp)),
+        );
+        toast.success("Data updated");
+      } else {
+        const res = await axios.post(`${API_BASE}/companies`, formData);
+        setCompany((prev) => [res.data, ...prev]);
+        toast.success("Data Added");
+      }
 
-    if (editId) {
-      updatedCompany = company.map((emp) =>
-        emp.id === editId ? { ...emp, ...formData } : emp,
-      );
-
-      toast.success("Data updated");
-    } else {
-      const newcompany = {
-        id: Date.now(),
-        name,
-        code,
-        description,
-        isActive,
-      };
-
-      updatedCompany = [...company, newcompany];
-
-      toast.success("Data Added");
+      setOpenModal(false);
+      setEditId(null);
+      setFormData({
+        name: "",
+        code: "",
+        description: "",
+        is_active: false,
+      });
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Operation failed");
     }
-
-    setCompany(updatedCompany);
-    localStorage.setItem("companies", JSON.stringify(updatedCompany));
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData({
-      name: "",
-      code: "",
-      description: "",
-      isActive: false,
-    });
   };
 
-  const handleDelete = (id) => {
-    const updated = company.filter((v) => v.id !== id);
 
-    setCompany(updated);
-    localStorage.setItem("companies", JSON.stringify(updated));
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_BASE}/companies/${id}`);
+      setCompany((prev) => prev.filter((v) => v.id !== id));
+      toast.success("Company deleted");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Delete failed");
+    }
   };
+
 
   const handleCopy = () => {
     const header = ["SL.NO", "Company Name", "Company Code", "Active"].join(
@@ -127,7 +136,8 @@ const Companies = () => {
 
     const rows = filteredcompany
       .map((item, index) =>
-        [index + 1, item.name, item.code, item.isActive ? "Y" : "N"].join("\t"),
+        [index + 1, item.name, item.code, item.is_active ? "Y" : "N"].join("\t"),
+
       )
       .join("\n");
 
@@ -142,7 +152,8 @@ const Companies = () => {
       "SL.NO": index + 1,
       "Company Name": item.name,
       "Company Code": item.code,
-      Active: item.isActive ? "Y" : "N",
+      Active: item.is_active ? "Y" : "N",
+
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -161,7 +172,8 @@ const Companies = () => {
     const tableRows = [];
 
     filteredcompany.forEach((item, index) => {
-      const row = [index + 1, item.name, item.code, item.isActive ? "Y" : "N"];
+      const row = [index + 1, item.name, item.code, item.is_active ? "Y" : "N"];
+
 
       tableRows.push(row);
     });
@@ -198,8 +210,9 @@ const Companies = () => {
                     name: "",
                     code: "",
                     description: "",
-                    isActive: false,
+                    is_active: false,
                   });
+
                   setOpenModal(true);
                 }}
                 className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
@@ -290,7 +303,14 @@ const Companies = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentcompany.length === 0 ? (
+                {loading ? (
+                  <tr>
+                    <td colSpan="6" className="sm:text-center p-10 text-gray-400">
+                      Loading...
+                    </td>
+                  </tr>
+                ) : currentcompany.length === 0 ? (
+
                   <tr>
                     <td colSpan="6" className="sm:text-center p-10">
                       No Data Available
@@ -306,7 +326,8 @@ const Companies = () => {
                       <td className="p-2">{item.name}</td>
                       <td className="p-2 hidden sm:table-cell">{item.code}</td>
                       <td className="p-2 hidden lg:table-cell">
-                        {item.isActive ? "Y" : "N"}
+                        {item.is_active ? "Y" : "N"}
+
                       </td>
                       <td className="p-2">
                         <div className="flex flex-row space-x-3 justify-center ">
@@ -464,8 +485,8 @@ const Companies = () => {
                   <label className={labelStyle}>Active</label>
                   <input
                     type="checkbox"
-                    name="isActive"
-                    checked={formData.isActive}
+                    name="is_active"
+                    checked={formData.is_active}
                     onChange={handleChange}
                     disabled={mode === "view"}
                   />

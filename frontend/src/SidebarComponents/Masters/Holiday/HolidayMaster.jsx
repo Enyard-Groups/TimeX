@@ -28,55 +28,33 @@ const HolidayMaster = () => {
   const [showHstartSpinner, setShowHstartSpinner] = useState(false);
   const [showHendSpinner, setShowHendSpinner] = useState(false);
 
+  const [companyOptions, setCompanyOptions] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     code: "",
     holidaystart: null,
     holidayend: null,
     company: "",
+    company_name: "",
     location: "",
     isActive: false,
   });
 
-  const fetchHolidays = async () => {
+
+  const fetchCompanies = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const headers = {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      };
-
-      const res = await axios.get(`${API_BASE}/master/holidays`, {
-        headers,
-      });
-
-      const data = Array.isArray(res.data) ? res.data : [];
-
-      setHolidayMaster(
-        data.map((d) => ({
-          id: d.id,
-          name: d.name || "",
-          code: d.code || "",
-          holidaystart: d.holidaystart || "",
-          holidayend: d.holidayend || "",
-          company: d.company || "",
-          location: d.location || "",
-          isActive:
-            d.is_active === true ||
-            d.is_active === "true" ||
-            d.is_active === 1 ||
-            d.isActive === true,
-        })),
-      );
+      const res = await axios.get(`${API_BASE}/companies`);
+      setCompanyOptions(res.data || []);
     } catch (error) {
-      console.error("Failed to fetch holidays", error);
-      toast.error("Unable to load holidays");
+      console.error("Failed to fetch companies", error);
     }
   };
 
   useEffect(() => {
     fetchHolidays();
+    fetchCompanies();
   }, []);
+
 
   const inputStyle =
     "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -87,7 +65,9 @@ const HolidayMaster = () => {
   const filteredholidayMaster = holidayMaster.filter(
     (x) =>
       x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.location.toLowerCase().startsWith(searchTerm.toLowerCase()),
+      x.location.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      (x.company_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
+
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -186,6 +166,7 @@ const HolidayMaster = () => {
       holidaystart: null,
       holidayend: null,
       company: "",
+      company_name: "",
       location: "",
       isActive: false,
     });
@@ -211,7 +192,7 @@ const HolidayMaster = () => {
           item.name,
           item.holidaystart,
           item.holidayend,
-          item.company,
+          item.company_name || item.company,
           item.location,
           item.isActive ? "Y" : "N",
         ].join("\t"),
@@ -232,7 +213,7 @@ const HolidayMaster = () => {
       HolidayStart: item.holidaystart,
       HolidayEnd: item.holidayend,
       Location: item.location,
-      Company: item.company,
+      Company: item.company_name || item.company,
       Active: item.isActive ? "Y" : "N",
     }));
 
@@ -267,7 +248,7 @@ const HolidayMaster = () => {
         item.name,
         item.holidaystart,
         item.holidayend,
-        item.company,
+        item.company_name || item.company,
         item.location,
         item.isActive ? "Y" : "N",
       ];
@@ -307,6 +288,7 @@ const HolidayMaster = () => {
                   holidaystart: null,
                   holidayend: null,
                   company: "",
+                  company_name: "",
                   location: "",
                   isActive: false,
                 }),
@@ -443,7 +425,9 @@ const HolidayMaster = () => {
                       {item.holidayend ? item.holidayend : ""}
                     </td>
 
-                    <td className="p-2 hidden lg:table-cell">{item.company}</td>
+                    <td className="p-2 hidden lg:table-cell">
+                      {item.company_name || item.company}
+                    </td>
 
                     <td className="p-2 hidden xl:table-cell">
                       {item.location}
@@ -610,7 +594,10 @@ const HolidayMaster = () => {
                   label="Company"
                   name="company"
                   value={formData.company}
-                  options={["Company 1", "Company 2", "Company 3"]}
+                  displayValue={formData.company_name}
+                  options={companyOptions}
+                  labelKey="name"
+                  valueKey="id"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}

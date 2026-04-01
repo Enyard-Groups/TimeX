@@ -5,9 +5,16 @@ import db from "../lib/db.js";
 
 export const getUsers = async (req, res) => {
   try {
-    const result = await db.query('SELECT * FROM users ORDER BY created_at DESC');
+    const result = await db.query(`
+      SELECT u.id, u.user_name, u.emp_name, u.enrollment_id, u.company as company_id, 
+             u.role, u.active, u.created_at, c.name as company_name
+      FROM users u
+      LEFT JOIN companies c ON u.company = CAST(c.id AS TEXT)
+      ORDER BY u.created_at DESC
+    `);
   
     return res.status(200).json(result.rows);
+
   } catch (error) {
     console.log("Error in getusers :",error.message);
     return res.status(500).json({ message: "internal server error" });
@@ -61,8 +68,14 @@ export const login=async(req,res)=>{
   
 
     // Find user by email in PostgreSQL
-    const query = "SELECT * FROM users WHERE user_name = $1";
+    const query = `
+      SELECT u.*, c.name as company_name
+      FROM users u
+      LEFT JOIN companies c ON u.company = CAST(c.id AS TEXT)
+      WHERE u.user_name = $1
+    `;
     const result = await db.query(query, [user_name]);
+
 
    
     

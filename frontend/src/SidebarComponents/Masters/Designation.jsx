@@ -25,14 +25,17 @@ const Designation = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
 
+  const [companyOptions, setCompanyOptions] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     company: "",
+    company_name: "",
     code: "",
     department: "",
     description: "",
     isActive: false,
   });
+
 
   const fetchDesignations = async () => {
     try {
@@ -54,6 +57,7 @@ const Designation = () => {
           name: d.name || "",
           code: d.code || "",
           company: d.company || "",
+          company_name: d.company_name || "",
           department: d.department || "",
           description: d.description || "",
           isActive:
@@ -69,9 +73,20 @@ const Designation = () => {
     }
   };
 
+  const fetchCompanies = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/companies`);
+      setCompanyOptions(res.data || []);
+    } catch (error) {
+      console.error("Failed to fetch companies", error);
+    }
+  };
+
   useEffect(() => {
     fetchDesignations();
+    fetchCompanies();
   }, []);
+
 
   const inputStyle =
     "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -83,7 +98,8 @@ const Designation = () => {
     (x) =>
       x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
       x.code.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
+      (x.company_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
+
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -142,6 +158,7 @@ const Designation = () => {
           name: res.data.name || "",
           code: res.data.code || "",
           company: res.data.company || "",
+          company_name: res.data.company_name || "",
           department: res.data.department || "",
           description: res.data.description || "",
           isActive:
@@ -170,6 +187,7 @@ const Designation = () => {
           name: res.data.name || "",
           code: res.data.code || "",
           company: res.data.company || "",
+          company_name: res.data.company_name || "",
           department: res.data.department || "",
           description: res.data.description || "",
           isActive:
@@ -189,6 +207,7 @@ const Designation = () => {
 
       setFormData({
         company: "",
+        company_name: "",
         name: "",
         code: "",
         department: "",
@@ -238,7 +257,7 @@ const Designation = () => {
           index + 1,
           item.name,
           item.code,
-          item.company,
+          item.company_name || item.company,
           item.department,
           item.isActive ? "Y" : "N",
         ].join("\t"),
@@ -256,7 +275,7 @@ const Designation = () => {
       "SL.NO": index + 1,
       "Designation Name": item.name,
       "Designation Code": item.code,
-      Company: item.company,
+      Company: item.company_name || item.company,
       "Department Name": item.department,
       Active: item.isActive ? "Y" : "N",
     }));
@@ -288,7 +307,7 @@ const Designation = () => {
         index + 1,
         item.name,
         item.code,
-        item.company,
+        item.company_name || item.company,
         item.department,
         item.isActive ? "Y" : "N",
       ];
@@ -325,6 +344,7 @@ const Designation = () => {
                   setEditId(null),
                   setFormData({
                     company: "",
+                    company_name: "",
                     name: "",
                     code: "",
                     department: "",
@@ -449,7 +469,7 @@ const Designation = () => {
                       <td className="p-2 hidden md:table-cell">{item.code}</td>
 
                       <td className="p-2 hidden lg:table-cell">
-                        {item.company}
+                        {item.company_name || item.company}
                       </td>
 
                       <td className="p-2 hidden md:table-cell">
@@ -608,7 +628,10 @@ const Designation = () => {
                     }
                     name="company"
                     value={formData.company}
-                    options={["Company 1", "Company 2"]}
+                    displayValue={formData.company_name}
+                    options={companyOptions}
+                    labelKey="name"
+                    valueKey="id"
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}

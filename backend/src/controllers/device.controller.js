@@ -75,7 +75,7 @@ export const updateDevice = async (req, res) => {
   try {
     const result = await db.query(
       `UPDATE devices
-       SET name=$1, company=$2, deviceip=$3, deviceserialno=$4, devicemodel=$5,
+       SET device_name=$1, company=$2, ip_address=$3, serial_number=$4, device_model=$5,
            latitude=$6, longitude=$7,
            is_face=$8, is_fingerprint=$9, is_card_no=$10, is_pin_no=$11, is_active=$12
        WHERE id=$13

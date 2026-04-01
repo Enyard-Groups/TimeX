@@ -27,14 +27,17 @@ const Shift = () => {
   const [editId, setEditId] = useState(null);
   const [showInTimePicker, setShowInTimePicker] = useState(false);
   const [showOutTimePicker, setShowOutTimePicker] = useState(false);
+  const [companyOptions, setCompanyOptions] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     company: "",
+    company_name: "",
     code: "",
     intime: null,
     outtime: null,
     isActive: false,
   });
+
 
   const formatTime = (value) => {
     if (!value) return null;
@@ -80,6 +83,7 @@ const Shift = () => {
           name: d.shift_name || "",
           code: d.shift_code || "",
           company: d.company || "",
+          company_name: d.company_name || "",
           intime: parseTime(d.start_time),
           outtime: parseTime(d.end_time),
           isActive:
@@ -95,9 +99,20 @@ const Shift = () => {
     }
   };
 
+  const fetchCompanies = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/companies`);
+      setCompanyOptions(res.data || []);
+    } catch (error) {
+      console.error("Failed to fetch companies", error);
+    }
+  };
+
   useEffect(() => {
     fetchShifts();
+    fetchCompanies();
   }, []);
+
 
   const inputStyle =
     "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -109,7 +124,8 @@ const Shift = () => {
     (x) =>
       x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
       x.code.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
+      (x.company_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
+
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -173,6 +189,7 @@ const Shift = () => {
           name: res.data.shift_name || "",
           code: res.data.shift_code || "",
           company: res.data.company || "",
+          company_name: res.data.company_name || "",
           intime: parseTime(res.data.start_time),
           outtime: parseTime(res.data.end_time),
           isActive:
@@ -197,6 +214,7 @@ const Shift = () => {
           name: res.data.shift_name || "",
           code: res.data.shift_code || "",
           company: res.data.company || "",
+          company_name: res.data.company_name || "",
           intime: parseTime(res.data.start_time),
           outtime: parseTime(res.data.end_time),
           isActive:
@@ -216,6 +234,7 @@ const Shift = () => {
 
       setFormData({
         company: "",
+        company_name: "",
         name: "",
         code: "",
         intime: null,
@@ -252,6 +271,7 @@ const Shift = () => {
       "Shift Code",
       "InTime",
       "OutTime",
+      "Company",
       "Active",
     ].join("\t");
 
@@ -271,6 +291,7 @@ const Shift = () => {
                 hour12: false,
               })
             : "",
+          item.company_name || item.company,
           item.isActive ? "Y" : "N",
         ].join("\t");
       })
@@ -297,6 +318,7 @@ const Shift = () => {
             hour12: false,
           })
         : "",
+      Company: item.company_name || item.company,
       Active: item.isActive ? "Y" : "N",
     }));
 
@@ -317,6 +339,7 @@ const Shift = () => {
       "Shift Code",
       "InTime",
       "OutTime",
+      "Company",
       "Active",
     ];
 
@@ -337,6 +360,7 @@ const Shift = () => {
               hour12: false,
             })
           : "",
+        item.company_name || item.company,
         item.isActive ? "Y" : "N",
       ];
 
@@ -372,6 +396,7 @@ const Shift = () => {
                   setEditId(null),
                   setFormData({
                     company: "",
+                    company_name: "",
                     name: "",
                     code: "",
                     intime: null,
@@ -470,6 +495,10 @@ const Shift = () => {
                   </th>
 
                   <th className="p-2 font-semibold hidden lg:table-cell">
+                    Company
+                  </th>
+
+                  <th className="p-2 font-semibold hidden lg:table-cell">
                     Active
                   </th>
 
@@ -509,6 +538,10 @@ const Shift = () => {
                               hour12: false,
                             })
                           : ""}
+                      </td>
+
+                      <td className="p-2 hidden lg:table-cell">
+                        {item.company_name || item.company}
                       </td>
 
                       <td className="p-2 hidden lg:table-cell">
@@ -729,7 +762,10 @@ const Shift = () => {
                     }
                     name="company"
                     value={formData.company}
-                    options={["Company 1", "Company 2"]}
+                    displayValue={formData.company_name}
+                    options={companyOptions}
+                    labelKey="name"
+                    valueKey="id"
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
