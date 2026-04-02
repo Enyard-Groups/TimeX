@@ -60,6 +60,8 @@ const EmployeeMaster = () => {
   const [shiftOptions, setShiftOptions] = useState([]);
   const [approverOptions, setApproverOptions] = useState([]);
   const [leavePlanOptions, setLeavePLanOptions] = useState([]);
+  const [companyOptions, setCompanyOptions] = useState([]);
+
 
   const [formData, setFormData] = useState(emptyForm);
 
@@ -91,12 +93,15 @@ const EmployeeMaster = () => {
         axios.get(`${API_BASE}/master/shifts`),
         axios.get(`${API_BASE}/users/approvers`, { withCredentials: true }),
         axios.get(`${API_BASE}/master/leave-types`, { withCredentials: true }),
+        axios.get(`${API_BASE}/companies`),
       ]);
       setDepartmentOptions(deptRes.data || []);
       setDesignationOptions(desRes.data || []);
       setShiftOptions(shiftRes.data || []);
       setApproverOptions(appRes.data || []);
       setLeavePLanOptions(levRes.data || []);
+      setCompanyOptions(compRes.data || []);
+
     } catch (error) {
       console.error("Failed to fetch dropdowns", error);
     }
@@ -117,8 +122,10 @@ const EmployeeMaster = () => {
         .startsWith(searchTerm.toLowerCase()) ||
       (x.designation_name || "")
         .toLowerCase()
-        .startsWith(searchTerm.toLowerCase()),
+        .startsWith(searchTerm.toLowerCase()) ||
+      (x.company_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
+
 
   const endIndex = currentPage * entriesPerPage;
   const startIndex = endIndex - entriesPerPage;
@@ -206,7 +213,9 @@ const EmployeeMaster = () => {
           item.full_name,
           item.shift_name || item.shift,
           item.designation_name || item.designation,
+          item.company_name || item.company,
         ].join("\t"),
+
       )
       .join("\n");
 
@@ -223,7 +232,9 @@ const EmployeeMaster = () => {
       "Full Name": item.full_name,
       Shift: item.shift_name || item.shift,
       Designation: item.designation_name || item.designation,
+      Company: item.company_name || item.company,
     }));
+
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     const workbook = XLSX.utils.book_new();
@@ -250,7 +261,9 @@ const EmployeeMaster = () => {
       item.full_name,
       item.shift_name || item.shift,
       item.designation_name || item.designation,
+      item.company_name || item.company,
     ]);
+
 
     autoTable(doc, { head: [tableColumn], body: tableRows });
     doc.save("EmployeeMaster.pdf");
@@ -366,7 +379,11 @@ const EmployeeMaster = () => {
                 <th className="p-2 font-semibold hidden lg:table-cell">
                   Designation
                 </th>
+                <th className="p-2 font-semibold hidden lg:table-cell">
+                  Company
+                </th>
                 <th className="p-2 font-semibold">Action</th>
+
               </tr>
             </thead>
             <tbody>
@@ -405,7 +422,11 @@ const EmployeeMaster = () => {
                     <td className="p-2 hidden lg:table-cell">
                       {item.designation_name || item.designation}
                     </td>
+                    <td className="p-2 hidden lg:table-cell">
+                      {item.company_name || item.company}
+                    </td>
                     <td className="p-2">
+
                       <div className="flex flex-row space-x-3 justify-center ">
                         {/* View */}
                         <FaEye
@@ -420,6 +441,8 @@ const EmployeeMaster = () => {
                               department_id_name: item.department_name || "",
                               designation_id_name: item.designation_name || "",
                               shift_id_name: item.shift_name || "",
+                              company_name: item.company_name || "",
+
 
                               // convert string → array
                               leave_plan_name: item.leave_plan
@@ -450,6 +473,8 @@ const EmployeeMaster = () => {
                               department_id_name: item.department_name || "",
                               designation_id_name: item.designation_name || "",
                               shift_id_name: item.shift_name || "",
+                              company_name: item.company_name || "",
+
 
                               // convert string → array
                               leave_plan_name: item.leave_plan
@@ -655,13 +680,17 @@ const EmployeeMaster = () => {
                   label="Company"
                   name="company"
                   value={formData.company}
-                  options={["Company 1", "Company 2"]}
+                  displayValue={formData.company_name}
+                  options={companyOptions}
+                  labelKey="name"
+                  valueKey="id"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
                   inputStyle={inputStyle}
                   labelStyle={labelStyle}
                 />
+
               </div>
 
               {/* Location */}

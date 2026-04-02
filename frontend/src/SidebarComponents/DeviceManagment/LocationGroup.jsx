@@ -147,6 +147,8 @@ const LocationGroup = () => {
         toast.success("Data Added");
       }
 
+
+
       await fetchLocationGroups();
       setOpenModal(false);
       setEditId(null);
@@ -167,6 +169,23 @@ const LocationGroup = () => {
       toast.error(
         typeof message === "string" ? message : JSON.stringify(message),
       );
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
+      await axios.delete(`${API_BASE}/master/location-groups/${id}`, { headers });
+      toast.success("Deleted Successfully");
+      fetchLocationGroups();
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      toast.error("Failed to delete data");
     }
   };
   const handleCopy = () => {
@@ -422,15 +441,7 @@ const LocationGroup = () => {
 
                         {/* Delete */}
                         <MdDeleteForever
-                          onClick={() =>
-                            setLocationGroup(
-                              locationGroup.filter(
-                                (v) =>
-                                  getLocationGroupId(v) !==
-                                  getLocationGroupId(item),
-                              ),
-                            )
-                          }
+                          onClick={() => handleDelete(getLocationGroupId(item))}
                           className="inline text-red-500 cursor-pointer text-xl"
                         />
                       </div>

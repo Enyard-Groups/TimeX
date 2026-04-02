@@ -8,13 +8,16 @@ export const getEmployees = async (req, res) => {
       `SELECT e.*, 
               d.name as department_name, 
               ds.name as designation_name, 
-              s.shift_name 
+              s.shift_name,
+              c.name as company_name
        FROM employees e
        LEFT JOIN departments d ON e.department_id = d.id
        LEFT JOIN designations ds ON e.designation_id = ds.id
        LEFT JOIN shifts s ON e.shift_id = s.id
+       LEFT JOIN companies c ON e.company = CAST(c.id AS TEXT)
        ORDER BY e.created_at DESC`
     );
+
 
     res.json(result.rows);
   } catch (error) {

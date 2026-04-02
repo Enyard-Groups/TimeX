@@ -4,8 +4,14 @@ import db from "../lib/db.js";
 
 export const getDepartments = async (req, res) => {
   try {
-    const result = await db.query('SELECT * FROM departments ORDER BY created_at DESC');
+    const result = await db.query(`
+      SELECT d.*, c.name as company_name
+      FROM departments d
+      LEFT JOIN companies c ON d.company = CAST(c.id AS TEXT)
+      ORDER BY d.created_at DESC
+    `);
     res.json(result.rows);
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -13,6 +19,7 @@ export const getDepartments = async (req, res) => {
 
 export const createDepartment = async (req, res) => {
   const { name, code, company, description, is_active } = req.body;
+  console.log(req.body);
   try {
     const result = await db.query(
       'INSERT INTO departments (name, code, company, description, is_active) VALUES ($1, $2, $3, $4, $5) RETURNING *',
@@ -21,6 +28,7 @@ export const createDepartment = async (req, res) => {
     res.status(201).json(result.rows[0]);
   } catch (error) {
     res.status(500).json({ message: error.message });
+    console.log("error in createDepartment", error.message);  
   }
 };
 
@@ -50,33 +58,40 @@ export const deleteDepartment = async (req, res) => {
 
 export const getDesignations = async (req, res) => {
   try {
-    const result = await db.query('SELECT * FROM designations ORDER BY created_at DESC');
+    const result = await db.query(`
+      SELECT ds.*, c.name as company_name
+      FROM designations ds
+      LEFT JOIN companies c ON ds.company = CAST(c.id AS TEXT)
+      ORDER BY ds.created_at DESC
+    `);
     res.json(result.rows);
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
 export const createDesignation = async (req, res) => {
-  const { name, code, company, description, is_active } = req.body;
+  const { name, code, company, department, description, is_active } = req.body;
   try {
     const result = await db.query(
-      'INSERT INTO designations (name, code, company, description, is_active) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [name, code, company, description, is_active]
+      'INSERT INTO designations (name, code, company,  department, description, is_active) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [name, code, company, department, description, is_active]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
     res.status(500).json({ message: error.message });
+    console.log("error in createDesignation", error.message);
   }
 };
 
 export const updateDesignation = async (req, res) => {
   const { id } = req.params;
-  const { name, code, company, description, is_active } = req.body;
+  const { name, code, company, department,  description, is_active } = req.body;
   try {
     const result = await db.query(
       'UPDATE designations SET name=$1, code=$2, company=$3, description=$4, is_active=$5 WHERE id=$6 RETURNING *',
-      [name, code, company, description, is_active, id]
+      [name, code, company,department, description, is_active, id]
     );
     res.json(result.rows[0]);
   } catch (error) {
@@ -144,7 +159,13 @@ export const updateShift = async (req, res) => {
 
 export const getHolidays = async (req, res) => {
   try {
-    const result = await db.query('SELECT id, name, code, holidaystart, holidayend, company, location, is_active FROM holidays ORDER BY created_at DESC');
+    const result = await db.query(`
+      SELECT h.*, c.name as company_name
+      FROM holidays h
+      LEFT JOIN companies c ON h.company = CAST(c.id AS TEXT)
+      ORDER BY h.created_at DESC
+    `);
+
 
     // Format dates back to dd/mm/yyyy for frontend
     const formatDate = (date) => {
@@ -232,8 +253,14 @@ export const deleteHoliday = async (req, res) => {
 
 export const getClaimCategories = async (req, res) => {
   try {
-    const result = await db.query('SELECT * FROM claim_categories ORDER BY created_at DESC');
+    const result = await db.query(`
+      SELECT cc.*, c.name as company_name
+      FROM claim_categories cc
+      LEFT JOIN companies c ON cc.company = CAST(c.id AS TEXT)
+      ORDER BY cc.created_at DESC
+    `);
     res.json(result.rows);
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -327,8 +354,14 @@ export const deleteIssueType = async (req, res) => {
 
 export const getLeaveTypes = async (req, res) => {
   try {
-    const result = await db.query('SELECT * FROM leave_types ORDER BY created_at DESC');
+    const result = await db.query(`
+      SELECT lt.*, c.name as company_name
+      FROM leave_types lt
+      LEFT JOIN companies c ON lt.company = CAST(c.id AS TEXT)
+      ORDER BY lt.created_at DESC
+    `);
     res.json(result.rows);
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -444,10 +477,14 @@ export const getEmployeeGeofencing = async (req, res) => {
 
 export const getLocationGroups = async (req, res) => {
   try {
-    const result = await db.query(
-      'SELECT * FROM location_groups ORDER BY created_at DESC'
-    );
+    const result = await db.query(`
+      SELECT lg.*, c.name as company_name
+      FROM location_groups lg
+      LEFT JOIN companies c ON lg.company = CAST(c.id AS TEXT)
+      ORDER BY lg.created_at DESC
+    `);
     res.json({ data: result.rows });
+
   } catch (error) {
     console.error('Error in getLocationGroups:', error.message);
     res.status(500).json({ message: error.message });

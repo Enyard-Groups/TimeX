@@ -24,14 +24,17 @@ const Leave = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [companyOptions, setCompanyOptions] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     company: "",
+    company_name: "",
     code: "",
     description: "",
     leaves: "",
     isActive: false,
   });
+
 
   const getHeaders = () => {
     const token = localStorage.getItem("token");
@@ -46,6 +49,7 @@ const Leave = () => {
     name: d.name || "",
     code: d.code || "",
     company: d.company || "",
+    company_name: d.company_name || "",
     leaves: d.total_leaves ?? "",
     description: d.description || "",
     isActive:
@@ -65,8 +69,18 @@ const Leave = () => {
     }
   };
 
+  const fetchCompanies = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/companies`);
+      setCompanyOptions(res.data || []);
+    } catch (error) {
+      console.error("Failed to fetch companies", error);
+    }
+  };
+
   useEffect(() => {
     fetchLeaveTypes();
+    fetchCompanies();
   }, []);
 
   const inputStyle =
@@ -79,7 +93,8 @@ const Leave = () => {
     (x) =>
       x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
       x.code.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
+      (x.company_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
+
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -144,6 +159,7 @@ const Leave = () => {
       setEditId(null);
       setFormData({
         company: "",
+        company_name: "",
         name: "",
         code: "",
         description: "",
@@ -170,7 +186,7 @@ const Leave = () => {
           index + 1,
           item.name,
           item.code,
-          item.company,
+          item.company_name || item.company,
           item.isActive ? "Y" : "N",
         ].join("\t"),
       )
@@ -187,7 +203,7 @@ const Leave = () => {
       "SL.NO": index + 1,
       Name: item.name,
       "LeaveType Code": item.code,
-      Company: item.company,
+      Company: item.company_name || item.company,
       Active: item.isActive ? "Y" : "N",
     }));
 
@@ -217,7 +233,7 @@ const Leave = () => {
         index + 1,
         item.name,
         item.code,
-        item.company,
+        item.company_name || item.company,
         item.isActive ? "Y" : "N",
       ];
 
@@ -253,6 +269,7 @@ const Leave = () => {
                   setEditId(null),
                   setFormData({
                     company: "",
+                    company_name: "",
                     name: "",
                     code: "",
                     description: "",
@@ -373,7 +390,7 @@ const Leave = () => {
                       <td className="p-2 ">{item.name}</td>
 
                       <td className="p-2 hidden md:table-cell">
-                        {item.company}
+                        {item.company_name || item.company}
                       </td>
 
                       <td className="p-2 hidden lg:table-cell">
@@ -538,7 +555,10 @@ const Leave = () => {
                     label="Company"
                     name="company"
                     value={formData.company}
-                    options={["Company 1", "Company 2", "Company 3"]}
+                    displayValue={formData.company_name}
+                    options={companyOptions}
+                    labelKey="name"
+                    valueKey="id"
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}

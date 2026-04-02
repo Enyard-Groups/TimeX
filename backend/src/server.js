@@ -10,6 +10,8 @@ import masterRoute from "./routes/master.route.js";
 import visitorRouter from "./routes/visitor.route.js";
 import cors from "cors";
 import formRouter from "./routes/form.route.js";
+import companiesRouter from "./routes/companies.route.js";
+
 
 
 const PORT=process.env.PORT;
@@ -30,6 +32,8 @@ app.use("/api/attendence",attendenceRouter);
 app.use("/api/requests",requestRouter);
 app.use("/api/visitor", visitorRouter);
 app.use("/api/form", formRouter);
+app.use("/api/companies", companiesRouter);
+
 
 
 
