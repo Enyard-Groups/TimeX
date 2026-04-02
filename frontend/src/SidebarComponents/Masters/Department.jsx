@@ -33,7 +33,6 @@ const Department = () => {
     isActive: false,
   });
 
-
   const fetchDepartments = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -82,7 +81,6 @@ const Department = () => {
     fetchCompanies();
   }, []);
 
-
   const inputStyle =
     "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-[17px] py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[#2563EB]";
 
@@ -94,7 +92,6 @@ const Department = () => {
       x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
       x.code.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
       (x.company_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
-
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -607,7 +604,7 @@ const Department = () => {
                     displayValue={formData.company_name}
                     options={companyOptions}
                     labelKey="name"
-                    valueKey="id"
+                    valueKey="name"
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}

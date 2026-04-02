@@ -25,9 +25,12 @@ const Designation = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
 
+  const [companyOptions, setCompanyOptions] = useState([]);
+  const [departmentOptions, setDepartmentOptions] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     company: "",
+    company_name: "",
     code: "",
     department: "",
     description: "",
@@ -54,6 +57,7 @@ const Designation = () => {
           name: d.name || "",
           code: d.code || "",
           company: d.company || "",
+          company_name: d.company_name || "",
           department: d.department || "",
           description: d.description || "",
           isActive:
@@ -69,21 +73,44 @@ const Designation = () => {
     }
   };
 
+  const fetchDepartments = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+      const res = await axios.get(`${API_BASE}/master/departments`, {
+        headers,
+      });
+
+      const data = Array.isArray(res.data) ? res.data : [];
+      setDepartmentOptions(data || []);
+    } catch (error) {
+      console.error("Failed to fetch departments", error);
+    }
+  };
+
+  const fetchCompanies = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/companies`);
+      setCompanyOptions(res.data || []);
+    } catch (error) {
+      console.error("Failed to fetch companies", error);
+    }
+  };
+
   useEffect(() => {
     fetchDesignations();
+    fetchCompanies();
+    fetchDepartments();
   }, []);
-
-  const inputStyle =
-    "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
-
-  const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
-
+  
   const filtereddesignation = designation.filter(
     (x) =>
       x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
       x.code.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
+      (x.company_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -111,7 +138,7 @@ const Designation = () => {
 
     if (!name || !company || !code || !department) {
       toast.error("Please fill all required fields");
-      return; // stop execution
+      return;
     }
 
     const payload = {
@@ -142,6 +169,7 @@ const Designation = () => {
           name: res.data.name || "",
           code: res.data.code || "",
           company: res.data.company || "",
+          company_name: res.data.company_name || "",
           department: res.data.department || "",
           description: res.data.description || "",
           isActive:
@@ -170,6 +198,7 @@ const Designation = () => {
           name: res.data.name || "",
           code: res.data.code || "",
           company: res.data.company || "",
+          company_name: res.data.company_name || "",
           department: res.data.department || "",
           description: res.data.description || "",
           isActive:
@@ -189,6 +218,7 @@ const Designation = () => {
 
       setFormData({
         company: "",
+        company_name: "",
         name: "",
         code: "",
         department: "",
@@ -238,7 +268,7 @@ const Designation = () => {
           index + 1,
           item.name,
           item.code,
-          item.company,
+          item.company_name || item.company,
           item.department,
           item.isActive ? "Y" : "N",
         ].join("\t"),
@@ -256,7 +286,7 @@ const Designation = () => {
       "SL.NO": index + 1,
       "Designation Name": item.name,
       "Designation Code": item.code,
-      Company: item.company,
+      Company: item.company_name || item.company,
       "Department Name": item.department,
       Active: item.isActive ? "Y" : "N",
     }));
@@ -288,7 +318,7 @@ const Designation = () => {
         index + 1,
         item.name,
         item.code,
-        item.company,
+        item.company_name || item.company,
         item.department,
         item.isActive ? "Y" : "N",
       ];
@@ -307,13 +337,16 @@ const Designation = () => {
   return (
     <>
       <div className="mb-6">
-        {/* Header */}
-        <div className="sm:flex sm:justify-between">
-          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-            <FaAngleRight />
-            Masters
-            <FaAngleRight />
-            <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+          <h1 className="flex items-center gap-2 h-[30px] text-lg font-bold text-gray-900">
+            <FaAngleRight className="text-blue-500 text-base" />
+            <span className="text-gray-600">Masters</span>
+            <FaAngleRight className="text-blue-500 text-base" />
+            <div
+              onClick={() => setOpenModal(false)}
+              className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+            >
               Designation
             </div>
           </h1>
@@ -333,7 +366,7 @@ const Designation = () => {
                   }),
                   setOpenModal(true)
                 )}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+                className="w-full bg-gradient-to-r from-blue-500 via-blue-600 to-cyan-600 hover:from-blue-600 hover:via-blue-700 hover:to-cyan-700 text-white font-semibold px-6 py-2.5 rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap border border-blue-400/30"
               >
                 + Add New
               </button>
@@ -341,153 +374,203 @@ const Designation = () => {
           )}
         </div>
 
-        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6">
-          {/* Top Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <div>
-              <label className="mr-2 text-md">Show</label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="ml-2 text-md">entries</span>
-            </div>
-            <div className="flex flex-wrap gap-2 items-center justify-center">
-              <input
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-              />
-              <div className="flex">
-                <button
-                  onClick={handleCopy}
-                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+        {/* Main Container */}
+        <div className="bg-gradient-to-br from-white via-slate-50 to-blue-50/30 rounded-3xl overflow-hidden border border-blue-100/50 shadow-2xl backdrop-blur-sm">
+          {/* Top Controls Bar */}
+          <div className="p-6 bg-gradient-to-r from-slate-50/80 to-blue-50/50 border-b border-blue-100/40">
+            <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-3">
+                <label className="text-sm font-semibold text-gray-700">
+                  Display
+                </label>
+                <select
+                  value={entriesPerPage}
+                  onChange={(e) => {
+                    setEntriesPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-white border-2 border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm font-medium cursor-pointer hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 transition-all shadow-sm"
                 >
-                  <GoCopy />
-                </button>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+                <span className="text-sm font-medium text-gray-700">
+                  entries
+                </span>
+              </div>
 
-                <button
-                  onClick={handleExcel}
-                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
-                >
-                  <FaFileExcel />
-                </button>
+              <div className="flex flex-wrap gap-3 items-center justify-center w-full lg:w-auto">
+                <input
+                  placeholder="Search designation..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="w-full sm:w-56 bg-white border-2 border-blue-200 text-gray-900 px-4 py-2.5 rounded-lg text-sm placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 focus:bg-white transition-all shadow-sm"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopy}
+                    className="bg-white hover:bg-slate-50 border-2 border-gray-200 text-gray-700 hover:text-gray-900 p-2.5 rounded-lg transition-all hover:border-gray-300 shadow-sm"
+                    title="Copy to clipboard"
+                  >
+                    <GoCopy className="text-lg" />
+                  </button>
 
-                <button
-                  onClick={handlePDF}
-                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
-                >
-                  <FaFilePdf />
-                </button>
+                  <button
+                    onClick={handleExcel}
+                    className="bg-white hover:bg-green-50 border-2 border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all hover:border-green-300 shadow-sm"
+                    title="Export to Excel"
+                  >
+                    <FaFileExcel className="text-lg" />
+                  </button>
+
+                  <button
+                    onClick={handlePDF}
+                    className="bg-white hover:bg-red-50 border-2 border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all hover:border-red-300 shadow-sm"
+                    title="Export to PDF"
+                  >
+                    <FaFilePdf className="text-lg" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Table */}
-          <div
-            className="overflow-x-auto min-h-[250px]"
-            style={{ scrollbarWidth: "none" }}
-          >
-            <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="p-2 font-semibold hidden sm:table-cell">
+          {/* Table Container */}
+          <div className="overflow-x-auto min-h-[350px]">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gradient-to-r from-blue-100 via-blue-50 to-blue-100 border-b-2 border-blue-200/60">
+                  <th className="px-6 py-4 text-center font-bold text-blue-900 hidden sm:table-cell">
                     SL.NO
                   </th>
-
-                  <th className="p-2 font-semibold ">Designation Name</th>
-
-                  <th className="p-2 font-semibold  hidden md:table-cell">
-                    Designation Code
+                  <th className="px-6 py-4 text-center font-bold text-blue-900">
+                    Designation
                   </th>
-
-                  <th className="p-2 font-semibold hidden lg:table-cell">
+                  <th className="px-6 py-4 text-center font-bold text-blue-900 hidden md:table-cell">
+                    Code
+                  </th>
+                  <th className="px-6 py-4 text-center font-bold text-blue-900 hidden xl:table-cell">
                     Company
                   </th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
-                    Department Name
+                  <th className="px-6 py-4 text-center font-bold text-blue-900 hidden xl:table-cell">
+                    Department
                   </th>
-
-                  <th className="p-2 font-semibold hidden lg:table-cell">
-                    Active
+                  <th className="px-6 py-4 text-center font-bold text-blue-900 hidden lg:table-cell">
+                    Status
                   </th>
-
-                  <th className="p-2 font-semibold">Action</th>
+                  <th className="px-6 py-4 text-center font-bold text-blue-900">
+                    Actions
+                  </th>
                 </tr>
               </thead>
+
               <tbody>
                 {currentdesignation.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="sm:text-center p-10">
-                      No Data Available
+                    <td colSpan="7" className="px-6 py-16 text-center">
+                      <div className="flex flex-col items-center gap-4">
+                        <div className="text-5xl opacity-30">📋</div>
+                        <p className="text-gray-400 text-lg font-medium">
+                          No Designations Found
+                        </p>
+                        <p className="text-gray-300 text-sm">
+                          Add a new designation to get started
+                        </p>
+                      </div>
                     </td>
                   </tr>
                 ) : (
                   currentdesignation.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                      className="border-b border-blue-100/40 bg-white/60 hover:bg-blue-50 even:bg-slate-50/40 text-[15px] hover:-translate-y-0.5 transition-all duration-300"
                     >
-                      <td className="p-2 hidden sm:table-cell">{index + 1}</td>
-
-                      <td className="p-2">{item.name}</td>
-
-                      <td className="p-2 hidden md:table-cell">{item.code}</td>
-
-                      <td className="p-2 hidden lg:table-cell">
-                        {item.company}
+                      {/* SL NO (fix for pagination if needed) */}
+                      <td className="px-6 py-2 text-center hidden sm:table-cell">
+                        {index + 1}
                       </td>
 
-                      <td className="p-2 hidden md:table-cell">
-                        {item.department}
+                      {/* Name */}
+                      <td className="px-6 py-2 text-center">
+                        {item.name || "-"}
                       </td>
 
-                      <td className="p-2 hidden lg:table-cell">
-                        {item.isActive ? "Y" : "N"}
+                      {/* Code */}
+                      <td className="px-6 py-2 text-center hidden md:table-cell">
+                        {item.code || "-"}
                       </td>
 
-                      <td className="p-2">
-                        <div className="flex flex-row space-x-3 justify-center ">
+                      {/* Company */}
+                      <td className="px-6 py-2 text-center hidden xl:table-cell">
+                        {item.company_name || item.company || "-"}
+                      </td>
+
+                      {/* Department */}
+                      <td className="px-6 py-2 text-center hidden xl:table-cell">
+                        {item.department || "-"}
+                      </td>
+
+                      {/* Status */}
+                      <td className="px-6 py-2 text-center hidden lg:table-cell">
+                        <span
+                          className={`px-4 py-1.5 rounded-full font-semibold border ${
+                            item.isActive
+                              ? "bg-green-100 text-green-700 border-green-300"
+                              : "bg-gray-100 text-gray-700 border-gray-300"
+                          }`}
+                        >
+                          {item.isActive ? "✓ Active" : "○ Inactive"}
+                        </span>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-2 text-center">
+                        <div className="flex justify-center gap-2">
                           {/* View */}
-                          <FaEye
+                          <button
                             onClick={() => {
-                              setFormData(item);
+                              setFormData({
+                                ...item,
+                                isActive:
+                                  item.isActive ?? item.is_active ?? false,
+                              });
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />
+                            className="p-2 text-blue-500 bg-blue-100 hover:bg-blue-200 rounded-lg transition hover:scale-110"
+                          >
+                            <FaEye />
+                          </button>
 
                           {/* Edit */}
-                          <FaPen
+                          <button
                             onClick={() => {
-                              setFormData(item);
+                              setFormData({
+                                ...item,
+                                isActive:
+                                  item.isActive ?? item.is_active ?? false,
+                              });
                               setEditId(item.id);
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="inline text-green-500 cursor-pointer text-lg"
-                          />
+                            className="p-2 text-blue-500 bg-blue-100 hover:bg-blue-200 rounded-lg transition hover:scale-110"
+                          >
+                            <FaPen />
+                          </button>
 
                           {/* Delete */}
-                          <MdDeleteForever
+                          <button
                             onClick={() => handleDelete(item.id)}
-                            className="inline text-red-500 cursor-pointer text-xl"
-                          />
+                            className="p-2 text-red-500 bg-red-100 hover:bg-red-200 rounded-lg transition hover:scale-110"
+                          >
+                            <MdDeleteForever />
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -497,45 +580,57 @@ const Designation = () => {
             </table>
           </div>
 
-          {/* Pagination */}
-          <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-            <span>
-              Showing {filtereddesignation.length === 0 ? "0" : startIndex + 1}{" "}
-              to {Math.min(endIndex, filtereddesignation.length)} of{" "}
-              {filtereddesignation.length} entries
+          {/* Pagination Section */}
+          <div className="p-6 bg-gradient-to-r from-slate-50/80 to-blue-50/50 border-t border-blue-100/40 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <span className="text-sm text-gray-600 font-medium">
+              Showing{" "}
+              <span className="text-gray-900 font-bold">
+                {filtereddesignation.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
+              to{" "}
+              <span className="text-gray-900 font-bold">
+                {Math.min(endIndex, filtereddesignation.length)}
+              </span>{" "}
+              of{" "}
+              <span className="text-gray-900 font-bold">
+                {filtereddesignation.length}
+              </span>{" "}
+              entries
             </span>
 
-            <div className="flex flex-row space-x-1">
+            <div className="flex gap-2">
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-white hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-blue-200 text-blue-600 hover:text-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:border-blue-400"
               >
                 First
               </button>
 
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-white hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-blue-200 text-blue-600 p-2 rounded-lg transition-all hover:border-blue-400"
               >
                 <GrPrevious />
               </button>
 
-              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+              <div className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 border-2 border-blue-400 rounded-lg text-white font-bold min-w-[50px] text-center shadow-lg">
+                {currentPage}
+              </div>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-white hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-blue-200 text-blue-600 p-2 rounded-lg transition-all hover:border-blue-400"
               >
                 <GrNext />
               </button>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-white hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-blue-200 text-blue-600 hover:text-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:border-blue-400"
               >
                 Last
               </button>
@@ -543,62 +638,68 @@ const Designation = () => {
           </div>
         </div>
 
+        {/* Modal */}
         {openModal && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md p-4 overflow-y-auto"
             style={{ scrollbarWidth: "none" }}
           >
             <div
-              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+              className="bg-gradient-to-br from-white via-slate-50 to-blue-50 rounded-3xl shadow-2xl border border-blue-200/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8"
               style={{ scrollbarWidth: "none" }}
             >
-              {/* Close */}
-              <div className="flex justify-end">
-                <RxCross2
+              {/* Close Button */}
+              <div className="flex justify-end mb-6">
+                <button
                   onClick={() => setOpenModal(false)}
-                  className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-                />
+                  className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-lg transition"
+                >
+                  <RxCross2 className="text-2xl" />
+                </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8">
+                {mode === "view"
+                  ? "View Designation"
+                  : mode === "edit"
+                    ? "Edit Designation"
+                    : "Add New Designation"}
+              </h2>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                {/* Name Field */}
                 <div>
-                  <label className={labelStyle}>
-                    Name
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
+                  <label className="text-sm font-bold text-gray-700 mb-2 block">
+                    Designation Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    placeholder="Name"
-                    className={inputStyle}
+                    placeholder="Enter designation name"
+                    className="w-full bg-white border-2 border-blue-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
                     required
                   />
                 </div>
 
+                {/* Code Field */}
                 <div>
-                  <label className={labelStyle}>
-                    Code
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
+                  <label className="text-sm font-bold text-gray-700 mb-2 block">
+                    Code <span className="text-red-500">*</span>
                   </label>
                   <input
                     name="code"
                     value={formData.code}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    placeholder="Code"
-                    className={inputStyle}
+                    placeholder="Enter code"
+                    className="w-full bg-white border-2 border-blue-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
                     required
                   />
                 </div>
 
+                {/* Company Field */}
                 <div>
                   <SearchDropdown
                     label={
@@ -608,14 +709,19 @@ const Designation = () => {
                     }
                     name="company"
                     value={formData.company}
-                    options={["Company 1", "Company 2"]}
+                    displayValue={formData.company_name}
+                    options={companyOptions}
+                    labelKey="name"
+                    valueKey="name"
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
-                    inputStyle={inputStyle}
-                    labelStyle={labelStyle}
+                    inputStyle="w-full bg-white border-2 border-blue-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
+                    labelStyle="text-sm font-bold text-gray-700 mb-2 block"
                   />
                 </div>
+
+                {/* Department Field */}
                 <div>
                   <SearchDropdown
                     label={
@@ -625,53 +731,63 @@ const Designation = () => {
                     }
                     name="department"
                     value={formData.department}
-                    options={[
-                      "Treasury And Markets",
-                      "IT",
-                      "Human Resources",
-                      "Banking Division",
-                      "Commercial / SME Banking",
-                    ]}
+                    displayValue={formData.department}
+                    options={departmentOptions}
+                    labelKey="name"
+                    valueKey="name"
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
-                    inputStyle={inputStyle}
-                    labelStyle={labelStyle}
+                    inputStyle="w-full bg-white border-2 border-blue-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
+                    labelStyle="text-sm font-bold text-gray-700 mb-2 block"
                   />
                 </div>
-                <div>
-                  <label className={labelStyle}>Description</label>
+
+                {/* Description Field */}
+                <div className="sm:col-span-2">
+                  <label className="text-sm font-bold text-gray-700 mb-2 block">
+                    Description
+                  </label>
                   <input
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    placeholder="Description"
-                    className={inputStyle}
-                    required
+                    placeholder="Enter description"
+                    className="w-full bg-white border-2 border-blue-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
                   />
                 </div>
 
-                <div className="flex items-center gap-2 mt-6">
-                  <label className={labelStyle}>Active</label>
+                {/* Active Checkbox */}
+                <div className="flex items-center gap-3 bg-blue-50/50 px-4 py-3 rounded-xl border border-blue-100">
                   <input
                     type="checkbox"
                     name="isActive"
                     checked={formData.isActive}
                     onChange={handleChange}
                     disabled={mode === "view"}
+                    className="w-5 h-5 cursor-pointer accent-blue-500 disabled:cursor-not-allowed"
                   />
+                  <label className="text-gray-700 font-semibold cursor-pointer">
+                    Mark as Active
+                  </label>
                 </div>
               </div>
 
-              {/* Save */}
+              {/* Action Buttons */}
               {mode !== "view" && (
-                <div className="flex justify-end mt-10">
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={() => setOpenModal(false)}
+                    className="px-6 py-2.5 rounded-lg border-2 border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-50 font-semibold transition-all"
+                  >
+                    Cancel
+                  </button>
                   <button
                     onClick={handleSubmit}
-                    className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+                    className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-600 hover:from-blue-600 hover:via-blue-700 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 border border-blue-400/30"
                   >
-                    Save
+                    Save Designation
                   </button>
                 </div>
               )}
