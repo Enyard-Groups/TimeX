@@ -9,45 +9,57 @@ const ShiftPlanner = () => {
   return (
     <div className="mb-6">
       {/* Header */}
-      <div className="sm:flex sm:justify-between">
-        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-          <FaAngleRight />
-          Transaction
-          <FaAngleRight />
-          Shift PLanner
+      <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+        <h1 className="flex items-center gap-2 h-[30px] text-lg font-semibold text-gray-800">
+          <FaAngleRight className="text-blue-500 text-base" />
+          <span className="text-gray-500">Transaction</span>
+          <FaAngleRight className="text-blue-500 text-base" />
+          <span className="text-blue-600">Shift Planner</span>
         </h1>
       </div>
 
-      <div className="bg-[oklch(1_0_0)] p-6 rounded-xl shadow-sm border border-[oklch(0.923_0.003_48.717)]">
+      {/* Container */}
+      <div
+        className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-y-auto border border-blue-100/50 shadow-xl h-full"
+        style={{ scrollbarWidth: "none" }}
+      >
         {/* Tabs */}
-        <div className="flex gap-10 border-b border-[oklch(0.923_0.003_48.717)] mb-6">
+        <div className="flex gap-6 px-6 pt-6 border-b border-blue-100/30">
           <button
             onClick={() => setActiveTab("calendar")}
-            className={`pb-3 text-lg font-medium transition-all
+            className={`pb-3 text-[16px] font-semibold transition-all relative
           ${
             activeTab === "calendar"
-              ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
-              : "text-[oklch(0.45_0.004_49.25)]"
+              ? "text-blue-600"
+              : "text-gray-500 hover:text-blue-500"
           }`}
           >
             Calendar View
+            {activeTab === "calendar" && (
+              <div className="absolute left-0 bottom-0 w-full h-[2px] bg-blue-500 rounded-full" />
+            )}
           </button>
 
           <button
             onClick={() => setActiveTab("employee")}
-            className={`pb-3 text-lg font-medium transition-all
+            className={`pb-3 text-[16px] font-semibold transition-all relative
           ${
             activeTab === "employee"
-              ? "text-[oklch(0.645_0.246_16.439)] border-b-2 border-[oklch(0.645_0.246_16.439)]"
-              : "text-[oklch(0.45_0.004_49.25)]"
+              ? "text-blue-600"
+              : "text-gray-500 hover:text-blue-500"
           }`}
           >
             Employee View
+            {activeTab === "employee" && (
+              <div className="absolute left-0 bottom-0 w-full h-[2px] bg-blue-500 rounded-full" />
+            )}
           </button>
         </div>
 
-        {/* Tab Content */}
-        {activeTab === "calendar" ? <CalenderView /> : <EmployeeView />}
+        {/* Content */}
+        <div className="p-6">
+          {activeTab === "calendar" ? <CalenderView /> : <EmployeeView />}
+        </div>
       </div>
     </div>
   );
