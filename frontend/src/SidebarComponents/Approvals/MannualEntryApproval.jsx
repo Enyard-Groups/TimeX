@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import toast from "react-hot-toast";
 import { FaAngleRight } from "react-icons/fa6";
 import { GrNext, GrPrevious } from "react-icons/gr";
 import { FaEye } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
+
+const API_BASE = "http://localhost:3000/api";
 
 const MannualEntryApproval = () => {
   const [requests, setRequests] = useState([]);
@@ -13,46 +16,57 @@ const MannualEntryApproval = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  const fetchPendingManualRequests = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`${API_BASE}/requests/manual?status=Pending`);
+      setRequests(res.data);
+    } catch (error) {
+      console.error("Failed to fetch pending manual entry requests", error);
+      toast.error("Failed to load manual entry requests");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const stored =
-      JSON.parse(localStorage.getItem("mannualEntryRequests")) || [];
-    setRequests(stored);
+    fetchPendingManualRequests();
   }, []);
 
   const inputStyle =
-    "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+    "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
 
   const labelStyle =
     "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
-  // Single Approve/ Reject
-  const updateStatus = (id, value) => {
-    const updated = requests.map((item) => {
-      if (item.id === id) {
-        if (value === "Approved") {
-          return {
-            ...item,
-            status: "Approved",
-          };
-        }
+  // Single Approve / Reject
+  const updateStatus = async (id, value) => {
+    const item = requests.find((r) => r.id === id);
+    if (!item) return;
 
-        if (value === "Rejected") {
-          return {
-            ...item,
-            status: "Rejected",
-          };
-        }
-      }
+    const payload = {
+      status: value,
+      rejectedreason:
+        value === "Rejected" ? item.rejectedreason || "Rejected" : "-",
+    };
 
-      return item;
-    });
+    try {
+      await axios.put(`${API_BASE}/requests/manual/${id}`, payload);
+      setRequests((prev) => prev.filter((r) => r.id !== id));
+      toast.success(`Request ${value}`);
+    } catch (error) {
+      toast.error(error?.response?.data?.error || "Update failed");
+    }
+  };
 
-    setRequests(updated);
-
-    localStorage.setItem("mannualEntryRequests", JSON.stringify(updated));
-
-    toast.success(`Request ${value}`);
+  const handleRejectedReason = (id, text) => {
+    setRequests((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, rejectedreason: text } : item
+      )
+    );
   };
 
   // Selecting Ids
@@ -65,71 +79,54 @@ const MannualEntryApproval = () => {
   };
 
   // Bulk Approve and Reject
-  const bulkAction = (value) => {
+  const bulkAction = async (value) => {
     if (selectedIds.length === 0) {
-      toast.error("Please select Request");
+      toast.error("Please select a Request");
       return;
     }
 
-    const updated = requests.map((item) => {
-      if (selectedIds.includes(item.id)) {
-        if (value === "Approved") {
-          return {
-            ...item,
-            status: "Approved",
-          };
-        }
+    const payload = {
+      ids: selectedIds,
+      status: value,
+      rejectedreason: value === "Rejected" ? "Bulk Rejection" : "-",
+    };
 
-        if (value === "Rejected") {
-          return {
-            ...item,
-            status: "Rejected",
-          };
-        }
-      }
-
-      return item;
-    });
-
-    setRequests(updated);
-    localStorage.setItem("mannualEntryRequests", JSON.stringify(updated));
-
-    setSelectedIds([]);
-
-    toast.success(`Bulk ${value}`);
+    try {
+      await axios.put(`${API_BASE}/requests/manual/bulk`, payload);
+      setRequests((prev) => prev.filter((r) => !selectedIds.includes(r.id)));
+      setSelectedIds([]);
+      toast.success(`Bulk ${value}`);
+    } catch (error) {
+      toast.error(error?.response?.data?.error || "Bulk update failed");
+    }
   };
 
-  const pending = requests.filter((r) => r.status === "Pending");
-
-  const filteredData = pending.filter((x) =>
-    x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()),
+  const filteredData = requests.filter((x) =>
+    (x.employee_name || "")
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
   );
 
   const endIndex = currentPage * entriesPerPage;
-
   const startIndex = endIndex - entriesPerPage;
-
   const currentData = filteredData.slice(startIndex, endIndex);
-
   const totalPages = Math.max(
     1,
-    Math.ceil(filteredData.length / entriesPerPage),
+    Math.ceil(filteredData.length / entriesPerPage)
   );
 
   const selectedItem = requests.find((item) => item.id === selectedId);
 
   return (
     <div className="mb-6">
-      <div className="sm:flex sm:justify-between">
-        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-          <FaAngleRight />
-          Requests
-          <FaAngleRight />
-          Mannual Entry Approval
-        </h1>
+      <div className="flex items-center gap-2 text-lg font-semibold">
+        <FaAngleRight />
+        Approvals
+        <FaAngleRight />
+        Manual Entry Approval
       </div>
 
-      <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">
+      <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6">
         <div className="w-full text-white">
           <div className="bg-[oklch(0.69_0.2_16.439)] p-3 rounded-xl">
             Bulk Approve / Reject
@@ -137,13 +134,13 @@ const MannualEntryApproval = () => {
           <div className="flex justify-end m-4 gap-4">
             <button
               onClick={() => bulkAction("Approved")}
-              className="bg-gray-700 px-4 py-1 rounded"
+              className="bg-gray-700 px-4 py-1 rounded font-medium"
             >
               Approve
             </button>
             <button
               onClick={() => bulkAction("Rejected")}
-              className="bg-red-500 px-4 py-1 rounded"
+              className="bg-red-500 px-4 py-1 rounded font-medium"
             >
               Reject
             </button>
@@ -161,7 +158,7 @@ const MannualEntryApproval = () => {
                   setEntriesPerPage(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
+                className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -178,22 +175,27 @@ const MannualEntryApproval = () => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+                className="shadow-sm px-3 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
               />
             </div>
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+          <div
+            className="overflow-x-auto min-h-[250px]"
+            style={{ scrollbarWidth: "none" }}
+          >
             <table className="w-full text-lg border-collapse">
-              <thead className="bg-gray-100">
+              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
                   <th className="py-2 px-4">
                     <input
                       type="checkbox"
                       checked={
                         currentData.length > 0 &&
-                        currentData.every((emp) => selectedIds.includes(emp.id))
+                        currentData.every((emp) =>
+                          selectedIds.includes(emp.id)
+                        )
                       }
                       onChange={(e) => {
                         if (e.target.checked) {
@@ -204,26 +206,42 @@ const MannualEntryApproval = () => {
                       }}
                     />
                   </th>
-                  <th className="p-2 whitespace-nowrap">Emp Name</th>
-                  <th className="p-2 hidden xl:table-cell ">Location</th>
-                  <th className="p-2 hidden md:table-cell  whitespace-nowrap">
+                  <th className="p-2 font-semibold text-center">Emp Name</th>
+                  <th className="p-2 font-semibold text-center hidden xl:table-cell">
+                    Location
+                  </th>
+                  <th className="p-2 font-semibold text-center hidden md:table-cell whitespace-nowrap">
                     In Time
                   </th>
-                  <th className="p-2 hidden md:table-cell  whitespace-nowrap">
+                  <th className="p-2 font-semibold text-center hidden md:table-cell whitespace-nowrap">
                     Out Time
                   </th>
-                  <th className="p-2 hidden sm:table-cell  whitespace-nowrap">
+                  <th className="p-2 font-semibold text-center hidden sm:table-cell whitespace-nowrap">
                     Created On
                   </th>
-                  <th className="p-2 hidden xl:table-cell ">Remarks</th>
-                  <th className="p-2">Action</th>
+                  <th className="p-2 font-semibold text-center hidden xl:table-cell">
+                    Remarks
+                  </th>
+                  <th className="p-2 font-semibold text-center hidden xl:table-cell">
+                    Rejected Reason
+                  </th>
+                  <th className="p-2 font-semibold text-center">Action</th>
                 </tr>
               </thead>
 
               <tbody>
-                {filteredData.length === 0 ? (
+                {loading ? (
                   <tr>
-                    <td colSpan="7" className="text-center p-10">
+                    <td colSpan="9" className="text-center p-10 font-medium">
+                      Loading...
+                    </td>
+                  </tr>
+                ) : filteredData.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="9"
+                      className="text-center p-10 font-medium text-gray-500"
+                    >
                       No Pending Requests
                     </td>
                   </tr>
@@ -240,40 +258,36 @@ const MannualEntryApproval = () => {
                           onChange={() => handleSelect(item.id)}
                         />
                       </td>
-                      <td className="p-2  whitespace-nowrap">
-                        {item.employee}
+                      <td className="p-2 whitespace-nowrap">
+                        {item.employee_name}
                       </td>
-
-                      <td className="p-2 hidden xl:table-cell  whitespace-nowrap">
+                      <td className="p-2 hidden xl:table-cell whitespace-nowrap">
                         {item.location}
                       </td>
-
-                      <td className="p-2 hidden md:table-cell ">
-                        {item.intime
-                          ? new Date(item.intime).toLocaleTimeString([], {
-                              hour12: false,
-                            })
-                          : "No Checkin"}
+                      <td className="p-2 hidden md:table-cell">
+                        {item.in_time || "No Check-in"}
                       </td>
-
-                      <td className="p-2 hidden md:table-cell  whitespace-nowrap">
-                        {item.outtime
-                          ? new Date(item.outtime).toLocaleTimeString([], {
-                              hour12: false,
-                            })
-                          : "No Checkout"}
+                      <td className="p-2 hidden md:table-cell whitespace-nowrap">
+                        {item.out_time || "No Check-out"}
                       </td>
-
-                      <td className="p-2 hidden sm:table-cell ">
-                        {item.createdDate
-                          ? new Date(item.createdDate).toLocaleDateString()
-                          : "Missed Entry"}
+                      <td className="p-2 hidden sm:table-cell">
+                        {item.created_at
+                          ? new Date(item.created_at).toLocaleDateString()
+                          : "-"}
                       </td>
-
-                      <td className="p-2 hidden xl:table-cell  whitespace-nowrap">
-                        {item.remarks ? item.remarks : "-"}
+                      <td className="p-2 hidden xl:table-cell">
+                        {item.remarks || "-"}
                       </td>
-
+                      <td className="p-2 hidden xl:table-cell">
+                        <input
+                          placeholder="Rejected Reason"
+                          className="border border-gray-200 rounded px-2 py-1 text-sm w-40"
+                          value={item.rejectedreason || ""}
+                          onChange={(e) =>
+                            handleRejectedReason(item.id, e.target.value)
+                          }
+                        />
+                      </td>
                       <td className="p-2">
                         <div className="flex gap-2 justify-center">
                           <FaEye
@@ -281,18 +295,17 @@ const MannualEntryApproval = () => {
                               setSelectedId(item.id);
                               setOpenModal(true);
                             }}
-                            className="text-blue-500 cursor-pointer text-lg mt-2 mr-2"
+                            className="text-blue-500 cursor-pointer text-lg hover:scale-110 transition-transform"
                           />
                           <button
                             onClick={() => updateStatus(item.id, "Approved")}
-                            className="hidden sm:table-cell bg-green-100 text-green-700 px-3 py-1 rounded"
+                            className="hidden sm:inline-flex bg-green-100 text-green-700 px-3 py-1 rounded hover:bg-green-200 transition-colors"
                           >
                             Approve
                           </button>
-
                           <button
                             onClick={() => updateStatus(item.id, "Rejected")}
-                            className="hidden sm:table-cell bg-red-100 text-red-700 px-3 py-1 rounded"
+                            className="hidden sm:inline-flex bg-red-100 text-red-700 px-3 py-1 rounded hover:bg-red-200 transition-colors"
                           >
                             Reject
                           </button>
@@ -312,38 +325,35 @@ const MannualEntryApproval = () => {
               {Math.min(endIndex, filteredData.length)} of {filteredData.length}{" "}
               entries
             </span>
-
             <div className="flex flex-row space-x-1">
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="p-2 hidden lg:table-cell  bg-gray-200 rounded-full disabled:opacity-50"
+                className="p-2 bg-gray-200 rounded-full disabled:opacity-50 hover:bg-gray-300"
               >
                 First
               </button>
-
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="p-3 bg-gray-200 rounded-full disabled:opacity-50 hover:bg-gray-300"
               >
                 <GrPrevious />
               </button>
-
-              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
-
+              <div className="p-3 px-4 shadow rounded-full font-medium">
+                {currentPage}
+              </div>
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="p-3 bg-gray-200 rounded-full disabled:opacity-50 hover:bg-gray-300"
               >
                 <GrNext />
               </button>
-
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="p-2 hidden lg:table-cell  bg-gray-200 rounded-full disabled:opacity-50"
+                className="p-2 bg-gray-200 rounded-full disabled:opacity-50 hover:bg-gray-300"
               >
                 Last
               </button>
@@ -352,97 +362,93 @@ const MannualEntryApproval = () => {
         </div>
       </div>
 
+      {/* Detail Modal */}
       {openModal && selectedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <div
+            className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+            style={{ scrollbarWidth: "none" }}
+          >
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold">Manual Entry Details</h2>
-
+              <h2 className="text-xl font-semibold">
+                Manual Entry Approval Details
+              </h2>
               <RxCross2
                 onClick={() => setOpenModal(false)}
-                className="cursor-pointer text-xl text-red-500"
+                className="cursor-pointer text-xl text-red-500 hover:scale-110 transition-transform"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-lg">
               <div>
                 <p className={labelStyle}>Employee</p>
-                <p className={inputStyle}>{selectedItem.employee}</p>
+                <p className={inputStyle}>{selectedItem.employee_name}</p>
               </div>
-
               <div>
                 <p className={labelStyle}>Location</p>
                 <p className={inputStyle}>{selectedItem.location}</p>
               </div>
-
-              <div>
-                <p className={labelStyle}>Company</p>
-                <p className={inputStyle}>{selectedItem.company || "N/A"}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>Designation</p>
-                <p className={inputStyle}>
-                  {selectedItem.designation || "N/A"}
-                </p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>Employee Category</p>
-                <p className={inputStyle}>
-                  {selectedItem.employeeCategory || "N/A"}
-                </p>
-              </div>
-
               <div>
                 <p className={labelStyle}>In Time</p>
-                <p className={inputStyle}>
-                  {selectedItem.intime
-                    ? new Date(selectedItem.intime).toLocaleTimeString([], {
-                        hour12: false,
-                      })
-                    : "No Checkin"}
-                </p>
+                <p className={inputStyle}>{selectedItem.in_time || "No Check-in"}</p>
               </div>
-
               <div>
                 <p className={labelStyle}>Out Time</p>
                 <p className={inputStyle}>
-                  {selectedItem.outtime
-                    ? new Date(selectedItem.outtime).toLocaleTimeString([], {
-                        hour12: false,
-                      })
-                    : "No Checkout"}
+                  {selectedItem.out_time || "No Check-out"}
                 </p>
               </div>
-
               <div>
-                <p className={labelStyle}>Created Date</p>
+                <p className={labelStyle}>Created On</p>
                 <p className={inputStyle}>
-                  {selectedItem.createdDate
-                    ? new Date(selectedItem.createdDate).toLocaleDateString()
-                    : "Missed Entry"}
+                  {selectedItem.created_at
+                    ? new Date(selectedItem.created_at).toLocaleDateString()
+                    : "-"}
                 </p>
               </div>
-
-              <div>
-                <p className={labelStyle}>Remarks</p>
-                <p className={inputStyle}>
-                  {selectedItem.remarks ? selectedItem.remarks : "-"}
-                </p>
-              </div>
-
               <div>
                 <p className={labelStyle}>Status</p>
-                <span
-                  className={`px-2 py-1 rounded text-sm
-            ${selectedItem.status === "Approved" && "bg-green-100 text-green-700"}
-            ${selectedItem.status === "Rejected" && "bg-red-100 text-red-700"}
-            ${selectedItem.status === "Pending" && "bg-yellow-100 text-yellow-700"}
-            `}
+                <p
+                  className={`px-2 py-1.5 rounded text-lg w-fit bg-yellow-100 text-yellow-700`}
                 >
                   {selectedItem.status}
-                </span>
+                </p>
+              </div>
+              <div className="md:col-span-2">
+                <p className={labelStyle}>Remarks</p>
+                <p className={inputStyle}>{selectedItem.remarks || "-"}</p>
+              </div>
+              <div>
+                <p className={labelStyle}>Rejected Reason</p>
+                <input
+                  placeholder="Rejected Reason"
+                  className={inputStyle}
+                  value={selectedItem.rejectedreason || ""}
+                  onChange={(e) =>
+                    handleRejectedReason(selectedItem.id, e.target.value)
+                  }
+                />
+              </div>
+
+              <div className="sm:col-span-2 md:col-span-3 flex justify-end gap-4 mt-6">
+                <button
+                  onClick={() => {
+                    updateStatus(selectedItem.id, "Approved");
+                    setOpenModal(false);
+                  }}
+                  className="bg-green-600 text-white px-6 py-2 rounded font-medium hover:bg-green-700 transition-colors shadow-lg"
+                >
+                  Approve
+                </button>
+                <button
+                  onClick={() => {
+                    updateStatus(selectedItem.id, "Rejected");
+                    setOpenModal(false);
+                  }}
+                  className="bg-red-500 text-white px-6 py-2 rounded font-medium hover:bg-red-600 transition-colors shadow-lg"
+                >
+                  Reject
+                </button>
               </div>
             </div>
           </div>

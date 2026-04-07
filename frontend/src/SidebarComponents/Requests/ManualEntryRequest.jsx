@@ -50,6 +50,7 @@ const ManualEntryRequest = () => {
         axios.get(`${API_BASE}/requests/manual`),
         axios.get(`${API_BASE}/employee`),
       ]);
+      console.log(manualRes.data)
       setManualEntry(manualRes.data);
       setEmployeeOptions(empRes.data);
     } catch (error) {
@@ -71,7 +72,7 @@ const ManualEntryRequest = () => {
       if (emp) {
         setFormData((prev) => ({
           ...prev,
-          enrollment_id: emp.enrollment_id || "N/A",
+          enrollment_id: emp.device_enrollment_id|| "N/A",
         }));
       }
     }
@@ -348,12 +349,12 @@ const ManualEntryRequest = () => {
                     <td className="p-2">{item.location}</td>
                     <td className="p-2 whitespace-nowrap">
                       {item.in_time
-                        ? new Date(item.in_time).toLocaleString()
+                        ? item.in_time
                         : "-"}
                     </td>
                     <td className="p-2 whitespace-nowrap">
                       {item.out_time
-                        ? new Date(item.out_time).toLocaleString()
+                        ? item.out_time
                         : "-"}
                     </td>
                     <td className="py-2 px-6">

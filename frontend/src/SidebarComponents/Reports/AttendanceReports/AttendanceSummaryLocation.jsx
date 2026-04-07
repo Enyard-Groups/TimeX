@@ -1,53 +1,38 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../../SearchDropdown";
 import { FaEye } from "react-icons/fa";
+import { GoCopy } from "react-icons/go";
+import { FaFileExcel, FaFilePdf } from "react-icons/fa";
+import toast from "react-hot-toast";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
+const API_BASE = "http://localhost:3000/api";
 
 const AttendanceSummaryLocation = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [attendanceSummaryLocation, setAttendanceSummaryLocation] = useState(
-    [],
-  );
-
+  const [attendanceData, setAttendanceData] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [modalOpenSelectedItem, setModalOpenSelectedItem] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const stored =
-      JSON.parse(localStorage.getItem("mannualEntryRequests")) || [];
-    setAttendanceSummaryLocation(stored);
-  }, []);
+  // Dropdown data
+  const [companyOptions, setCompanyOptions] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const getTimeDiff = (inTime, outTime) => {
-    const [ih, im, is] = inTime.split(":").map(Number);
-    const [oh, om, os] = outTime.split(":").map(Number);
-
-    const inSeconds = ih * 3600 + im * 60 + is;
-    const outSeconds = oh * 3600 + om * 60 + os;
-
-    const diff = outSeconds - inSeconds;
-
-    const hours = Math.floor(diff / 3600);
-    const minutes = Math.floor((diff % 3600) / 60);
-    const seconds = diff % 60;
-
-    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-  };
-
   const [formData, setFormData] = useState({
-    employeeCategory: "",
     company: "",
+    company_id: "",
     location: "",
-    department: "",
-    employee: "",
-    punchMonth: "",
+    punchMonth: "", // yyyy-mm
   });
 
   const inputStyle =
@@ -56,63 +41,146 @@ const AttendanceSummaryLocation = () => {
   const labelStyle =
     "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
-  const filteredReport = attendanceSummaryLocation.filter((emp) => {
-    const punchDate = new Date(emp.createdDate);
+  useEffect(() => {
+    const fetchDropdowns = async () => {
+      try {
+        const companiesRes = await axios.get(`${API_BASE}/companies`);
+        setCompanyOptions(companiesRes.data);
+      } catch (err) {
+        console.error("Failed to load dropdown options:", err);
+        toast.error("Failed to load filter options");
+      }
+    };
+    fetchDropdowns();
+  }, []);
 
-    const punchMonth = punchDate.getMonth() + 1;
-    const punchYear = punchDate.getFullYear();
-
-    let selectedMonth = null;
-    let selectedYear = null;
-
-    if (formData.punchMonth) {
-      const [year, month] = formData.punchMonth.split("-");
-      selectedMonth = Number(month);
-      selectedYear = Number(year);
+  const getTimeDiff = (inTime, outTime) => {
+    if (!inTime || !outTime) return "—";
+    try {
+      const [ih, im, is] = inTime.split(":").map(Number);
+      const [oh, om, os] = outTime.split(":").map(Number);
+      const inSec = ih * 3600 + im * 60 + (is || 0);
+      const outSec = oh * 3600 + om * 60 + (os || 0);
+      let diff = outSec - inSec;
+      if (diff < 0) diff += 24 * 3600;
+      const h = Math.floor(diff / 3600);
+      const m = Math.floor((diff % 3600) / 60);
+      return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00`;
+    } catch (e) {
+      return "—";
     }
+  };
 
-    return (
-      (!formData.company || emp.company === formData.company) &&
-      (!formData.employeeCategory ||
-        formData.employeeCategory === "All Category" ||
-        emp.employeeCategory === formData.employeeCategory) &&
-      (!formData.location || emp.location === formData.location) &&
-      (!formData.department || emp.department === formData.department) &&
-      (!formData.employee ||
-        formData.employee === "All" ||
-        emp.employee === formData.employee) &&
-      (!formData.punchMonth ||
-        (punchMonth === selectedMonth && punchYear === selectedYear))
-    );
-  });
+  const handleGenerateReport = async () => {
+    try {
+      setLoading(true);
+      const params = {};
+      if (formData.company_id) params.company_id = formData.company_id;
+      
+      if (formData.punchMonth) {
+        const [year, month] = formData.punchMonth.split("-");
+        params.from_date = `01/${month}/${year}`;
+        // approximate end of month for calculation or just rely on backend to handle if possible
+        // but our backend expects from_date and to_date
+        const lastDay = new Date(year, month, 0).getDate();
+        params.to_date = `${lastDay}/${month}/${year}`;
+      }
 
-  const filteredattendanceSummaryLocation = filteredReport.filter(
+      const res = await axios.get(`${API_BASE}/requests/manual/report`, { params });
+      
+      // Filter by location if specified
+      let result = res.data;
+      if (formData.location) {
+        result = result.filter(item => (item.location || "").toLowerCase().includes(formData.location.toLowerCase()));
+      }
+      
+      setAttendanceData(result);
+      setCurrentPage(1);
+      setOpenModal(true);
+    } catch (err) {
+      console.error("Failed to generate report:", err);
+      toast.error("Failed to generate report");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredReport = attendanceData.filter(
     (x) =>
-      x.company.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.employeeCategory.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.location.toLowerCase().startsWith(searchTerm.toLowerCase()),
+      (x.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (x.location || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (x.employee_code || "").toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const endIndex = currentPage * entriesPerPage;
+  const totalPages = Math.max(1, Math.ceil(filteredReport.length / entriesPerPage));
+  const startIndex = (currentPage - 1) * entriesPerPage;
+  const currentData = filteredReport.slice(startIndex, startIndex + entriesPerPage);
 
-  const startIndex = endIndex - entriesPerPage;
+  const selectedItem = attendanceData.find((item) => item.id === selectedId);
 
-  const currentattendanceSummaryLocation =
-    filteredattendanceSummaryLocation.slice(startIndex, endIndex);
+  const handleCopy = () => {
+    const header = ["Sl.No", "Employee", "Location", "Date", "In Time", "Out Time", "Total Hours"].join("\t");
+    const rows = filteredReport.map((item, i) => {
+      const dt = item.created_at ? new Date(item.created_at) : null;
+      return [
+        i + 1,
+        item.employee_name,
+        item.location || "—",
+        dt ? dt.toLocaleDateString() : "—",
+        item.in_time || "—",
+        item.out_time || "—",
+        getTimeDiff(item.in_time, item.out_time),
+      ].join("\t");
+    }).join("\n");
+    navigator.clipboard.writeText(`${header}\n${rows}`);
+    toast.success("Copied to clipboard");
+  };
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredattendanceSummaryLocation.length / entriesPerPage),
-  );
+  const handleExcel = () => {
+    const data = filteredReport.map((item, i) => {
+      const dt = item.created_at ? new Date(item.created_at) : null;
+      return {
+        "Sl.No": i + 1,
+        Employee: item.employee_name,
+        "Employee ID": item.employee_code,
+        Location: item.location || "—",
+        Date: dt ? dt.toLocaleDateString() : "—",
+        "In Time": item.in_time || "—",
+        "Out Time": item.out_time || "—",
+        "Total Hours": getTimeDiff(item.in_time, item.out_time),
+      };
+    });
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "AttendanceSummaryLoc");
+    XLSX.writeFile(wb, "AttendanceSummaryLocation.xlsx");
+  };
 
-  const selectedItem = attendanceSummaryLocation.find(
-    (item) => item.id === selectedId,
-  );
+  const handlePDF = () => {
+    const doc = new jsPDF("landscape");
+    doc.text("Attendance Summary Location", 14, 14);
+    autoTable(doc, {
+      startY: 20,
+      head: [["Sl.No", "Employee", "Location", "Date", "In Time", "Out Time", "Total Hours"]],
+      body: filteredReport.map((item, i) => {
+        const dt = item.created_at ? new Date(item.created_at) : null;
+        return [
+          i + 1,
+          item.employee_name,
+          item.location || "—",
+          dt ? dt.toLocaleDateString() : "—",
+          item.in_time || "—",
+          item.out_time || "—",
+          getTimeDiff(item.in_time, item.out_time),
+        ];
+      }),
+    });
+    doc.save("AttendanceSummaryLocation.pdf");
+  };
 
   return (
     <>
       <div className="mb-6">
-        {/* Header */}
         <div className="sm:flex sm:justify-between">
           <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
             <FaAngleRight />
@@ -124,92 +192,38 @@ const AttendanceSummaryLocation = () => {
           </h1>
         </div>
 
-        <div
-          className="flex items-center justify-center p-4 overflow-y-auto"
-          style={{ scrollbarWidth: "none" }}
-        >
-          <div
-            className="bg-white rounded-xl shadow-sm w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
-            style={{ scrollbarWidth: "none" }}
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div>
+        <div className="flex items-center justify-center p-4 overflow-y-auto" style={{ scrollbarWidth: "none" }}>
+          <div className="bg-white rounded-xl shadow-sm w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6" style={{ scrollbarWidth: "none" }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+               <div>
                 <SearchDropdown
                   label="Company"
                   name="company"
                   value={formData.company}
-                  options={["Company 1", "Company 2"]}
+                  options={companyOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  labelName="company"
                   formData={formData}
-                  setFormData={setFormData}
+                  setFormData={(updated) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      company: updated.company,
+                      company_id: updated.company_id ?? updated.company,
+                    }))
+                  }
                   inputStyle={inputStyle}
                   labelStyle={labelStyle}
                 />
               </div>
-
-              <div>
-                <SearchDropdown
-                  label="Employee Category"
-                  name="employeeCategory"
-                  value={formData.employeeCategory}
-                  options={[
-                    "All Category",
-                    "Full Time Equivalent",
-                    "Contingent",
-                    "Freelence",
-                    "Contract",
-                    "Permanent",
-                  ]}
-                  formData={formData}
-                  setFormData={setFormData}
-                  inputStyle={inputStyle}
-                  labelStyle={labelStyle}
-                />
-              </div>
-
               <div>
                 <SearchDropdown
                   label="Location"
                   name="location"
                   value={formData.location}
-                  options={["Head Office", "Location 2"]}
-                  formData={formData}
-                  setFormData={setFormData}
-                  inputStyle={inputStyle}
-                  labelStyle={labelStyle}
-                />
-              </div>
-
-              <div>
-                <SearchDropdown
-                  label="Designation"
-                  name="department"
-                  value={formData.department}
-                  options={[
-                    "Regional Sales Support Manager",
-                    "Operations Support Officer",
-                    "Finance Assistant",
-                    "Trade Finance Specialist",
-                    "Banking Operations Officer",
-                    "Sales Support Officer",
-                    "Banking Operations Officer",
-                    "Project Manager",
-                    "Administrative Assistant",
-                    "Sales Officer",
-                    "Banking Officer",
-                    "Sales Manager",
-                    "Senior Banking Officer",
-                    "Client Service Manager",
-                    "Senior Director – Banking Operations",
-                    "Relationship Officer",
-                    "Accountant",
-                    "Director – Sales Excellence",
-                    "Service Sales Support Officer",
-                    "HR Manager",
-                    "Sales & Logistics Officer",
-                    "Operation Officer",
-                  ]}
-                  formData={formData}
-                  setFormData={setFormData}
+                  options={["Head Office", "UAE", "Location 2"]}
+                   formData={formData}
+                  setFormData={(updated) => setFormData((prev) => ({ ...prev, location: updated.location }))}
                   inputStyle={inputStyle}
                   labelStyle={labelStyle}
                 />
@@ -220,24 +234,19 @@ const AttendanceSummaryLocation = () => {
                   type="month"
                   name="punchMonth"
                   value={formData.punchMonth}
-                  onChange={(e) =>
-                    setFormData({ ...formData, punchMonth: e.target.value })
-                  }
+                  onChange={(e) => setFormData((prev) => ({ ...prev, punchMonth: e.target.value }))}
                   className={inputStyle}
                 />
               </div>
             </div>
 
-            {/* Save */}
-
             <div className="flex justify-end mt-10">
               <button
-                onClick={() => {
-                  setOpenModal(true);
-                }}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+                onClick={handleGenerateReport}
+                disabled={loading}
+                className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md disabled:opacity-60"
               >
-                Generate Report
+                {loading ? "Generating..." : "Generate Report"}
               </button>
             </div>
           </div>
@@ -245,26 +254,14 @@ const AttendanceSummaryLocation = () => {
 
         {openModal && (
           <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6 ">
-            {/* Close */}
             <div className="flex justify-end">
-              <RxCross2
-                onClick={() => setOpenModal(false)}
-                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-              />
+              <RxCross2 onClick={() => setOpenModal(false)} className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer" />
             </div>
 
-            {/* Top Controls */}
             <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
               <div>
                 <label className="mr-2 text-md">Show</label>
-                <select
-                  value={entriesPerPage}
-                  onChange={(e) => {
-                    setEntriesPerPage(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                  className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
-                >
+                <select value={entriesPerPage} onChange={(e) => { setEntriesPerPage(Number(e.target.value)); setCurrentPage(1); }} className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]">
                   <option value={10}>10</option>
                   <option value={25}>25</option>
                   <option value={50}>50</option>
@@ -272,194 +269,63 @@ const AttendanceSummaryLocation = () => {
                 </select>
                 <span className="ml-2 text-md">entries</span>
               </div>
-
               <div className="flex flex-wrap gap-2 items-center justify-center">
-                <input
-                  placeholder="Search"
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-                />
+                <input placeholder="Search" value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }} className=" shadow-sm px-3 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]" />
+                 <div className="flex">
+                  <button onClick={handleCopy} className="text-xl px-3 py-1 cursor-pointer text-gray-800"><GoCopy /></button>
+                  <button onClick={handleExcel} className="text-xl px-3 py-1 cursor-pointer text-green-700"><FaFileExcel /></button>
+                  <button onClick={handlePDF} className="text-xl px-3 py-1 cursor-pointer text-red-600"><FaFilePdf /></button>
+                </div>
               </div>
             </div>
 
-            {/* Table */}
-            <div
-              className="overflow-x-auto min-h-[250px]"
-              style={{ scrollbarWidth: "none" }}
-            >
-              <h1 className="text-[oklch(0.577_0.245_27.325)] text-xl mb-4 text-center">
-                Attendance Summary Location
-              </h1>
+            <div className="overflow-x-auto min-h-[250px]" style={{ scrollbarWidth: "none" }}>
+              <h1 className="text-[oklch(0.577_0.245_27.325)] text-xl mb-4 text-center"> Attendance Summary Location </h1>
               <table className="w-full text-lg border-collapse">
                 <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                   <tr>
-                    <th className="p-2 font-semibold  hidden sm:table-cell">
-                      SL.NO
-                    </th>
-                    <th className="p-2 font-semibold  hidden sm:table-cell">
-                      Employee ID
-                    </th>
                     <th className="p-2 font-semibold">Name</th>
-
-                    <th className="p-2 font-semibold whitespace-nowrap hidden md:table-cell">
-                      Date
-                    </th>
-                    <th className="p-2 font-semibold whitespace-nowrap hidden xl:table-cell">
-                      Day
-                    </th>
-                    <th className="p-2 font-semibold whitespace-nowrap hidden xl:table-cell">
-                      Check in
-                    </th>
-                    <th className="p-2 font-semibold whitespace-nowrap hidden xl:table-cell">
-                      In Location
-                    </th>
-                    <th className="p-2 font-semibold whitespace-nowrap hidden xl:table-cell">
-                      Check out
-                    </th>
-                    <th className="p-2 font-semibold whitespace-nowrap hidden xl:table-cell">
-                      Out Location
-                    </th>
-                    <th className="p-2 font-semibold whitespace-nowrap  hidden sm:table-cell">
-                      Total Hours
-                    </th>
+                    <th className="p-2 font-semibold whitespace-nowrap hidden md:table-cell">Date</th>
+                    <th className="p-2 font-semibold whitespace-nowrap hidden xl:table-cell">Location</th>
+                    <th className="p-2 font-semibold whitespace-nowrap hidden xl:table-cell">In Time</th>
+                    <th className="p-2 font-semibold whitespace-nowrap hidden xl:table-cell">Out Time</th>
+                    <th className="p-2 font-semibold whitespace-nowrap hidden sm:table-cell">Total Hours</th>
                     <th className="p-2 font-semibold">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {currentattendanceSummaryLocation.length === 0 ? (
-                    <tr>
-                      <td colSpan="6" className="sm:text-center p-10">
-                        No Data Available
-                      </td>
-                    </tr>
+                  {currentData.length === 0 ? (
+                    <tr><td colSpan="7" className="sm:text-center p-10">No Data Available</td></tr>
                   ) : (
-                    currentattendanceSummaryLocation.map((item, index) => (
-                      <tr
-                        key={item.id}
-                        className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
-                      >
-                        <td className="p-2  hidden sm:table-cell">
-                          {index + 1}
-                        </td>
-                        <td className="p-2  hidden sm:table-cell">
-                          {item.employeeId}
-                        </td>
-                        <td className="p-2  whitespace-nowrap">
-                          {item.employee}
-                        </td>
-
-                        <td className="p-2  hidden md:table-cell">
-                          {new Date(item.createdDate).toLocaleDateString()}
-                        </td>
-                        <td className="p-2  hidden xl:table-cell">
-                          {" "}
-                          {new Date(item.createdDate).toLocaleString("en-US", {
-                            weekday: "long",
-                          })}
-                        </td>
-
-                        <td className="p-2 hidden xl:table-cell ">
-                          {item.intime
-                            ? new Date(item.intime).toLocaleTimeString()
-                            : "No Checkin"}
-                        </td>
-                        <td className="p-2  whitespace-nowrap hidden xl:table-cell">
-                          {item.intime ? item.location : "-"}
-                        </td>
-
-                        <td className="p-2 hidden xl:table-cell ">
-                          {item.outtime
-                            ? new Date(item.outtime).toLocaleTimeString()
-                            : "No Checkout"}
-                        </td>
-
-                        <td className="p-2  whitespace-nowrap hidden xl:table-cell">
-                          {item.outtime ? item.location : "-"}
-                        </td>
-
-                        <td className="p-2  hidden sm:table-cell">
-                          {item.outtime && item.intime
-                            ? (() => {
-                                const inT = new Date(
-                                  item.intime,
-                                ).toLocaleTimeString();
-                                const outT = new Date(
-                                  item.outtime,
-                                ).toLocaleTimeString();
-                                return getTimeDiff(inT, outT);
-                              })()
-                            : "Missed Punch"}
-                        </td>
-                        <td className="p-2 ">
-                          <div className="flex gap-2 justify-center">
-                            <FaEye
-                              onClick={() => {
-                                setSelectedId(item.id);
-                                setModalOpenSelectedItem(true);
-                              }}
-                              className="text-blue-500 cursor-pointer text-lg mt-2 mr-2"
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    ))
+                    currentData.map((item, index) => {
+                      const dt = item.created_at ? new Date(item.created_at) : null;
+                      return (
+                        <tr key={item.id} className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]">
+                          <td className="p-2 whitespace-nowrap">{item.employee_name}</td>
+                          <td className="p-2 hidden md:table-cell">{dt ? dt.toLocaleDateString() : "—"}</td>
+                          <td className="p-2 hidden xl:table-cell">{item.location || "—"}</td>
+                          <td className="p-2 hidden xl:table-cell">{item.in_time || "—"}</td>
+                          <td className="p-2 hidden xl:table-cell">{item.out_time || "—"}</td>
+                          <td className="p-2 hidden sm:table-cell">{getTimeDiff(item.in_time, item.out_time)}</td>
+                          <td className="p-2 ">
+                             <FaEye onClick={() => { setSelectedId(item.id); setModalOpenSelectedItem(true); }} className="text-blue-500 cursor-pointer text-lg mx-auto" />
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>
             </div>
 
-            {/* Pagination */}
             <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-              <span>
-                Showing{" "}
-                {filteredattendanceSummaryLocation.length === 0
-                  ? "0"
-                  : startIndex + 1}{" "}
-                to{" "}
-                {Math.min(endIndex, filteredattendanceSummaryLocation.length)}{" "}
-                of {filteredattendanceSummaryLocation.length} entries
-              </span>
-
+              <span> Showing {filteredReport.length === 0 ? "0" : startIndex + 1} to {Math.min(startIndex + entriesPerPage, filteredReport.length)} of {filteredReport.length} entries </span>
               <div className="flex flex-row space-x-1">
-                <button
-                  disabled={currentPage == 1}
-                  onClick={() => setCurrentPage(1)}
-                  className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
-                >
-                  First
-                </button>
-
-                <button
-                  disabled={currentPage == 1}
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                  className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
-                >
-                  <GrPrevious />
-                </button>
-
-                <div className="p-3 px-4 shadow rounded-full">
-                  {currentPage}
-                </div>
-
-                <button
-                  disabled={currentPage == totalPages}
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                  className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
-                >
-                  <GrNext />
-                </button>
-
-                <button
-                  disabled={currentPage == totalPages}
-                  onClick={() => setCurrentPage(totalPages)}
-                  className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
-                >
-                  Last
-                </button>
+                <button disabled={currentPage === 1} onClick={() => setCurrentPage(1)} className="p-2 bg-gray-200 rounded-full disabled:opacity-50">First</button>
+                <button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)} className="p-3 bg-gray-200 rounded-full disabled:opacity-50"><GrPrevious /></button>
+                <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+                <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)} className="p-3 bg-gray-200 rounded-full disabled:opacity-50"><GrNext /></button>
+                <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(totalPages)} className="p-2 bg-gray-200 rounded-full disabled:opacity-50">Last</button>
               </div>
             </div>
           </div>
@@ -467,130 +333,19 @@ const AttendanceSummaryLocation = () => {
 
         {modalOpenSelectedItem && selectedItem && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
-            <div
-              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
-              style={{ scrollbarWidth: "none" }}
-            >
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6" style={{ scrollbarWidth: "none" }}>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold">
-                  {selectedItem.employee} Details
-                </h2>
-
-                <RxCross2
-                  onClick={() => (
-                    setModalOpenSelectedItem(false),
-                    setSelectedId(null)
-                  )}
-                  className="cursor-pointer text-xl text-red-500"
-                />
+                <h2 className="text-xl font-semibold">{selectedItem.employee_name} Details</h2>
+                <RxCross2 onClick={() => (setModalOpenSelectedItem(false), setSelectedId(null))} className="cursor-pointer text-xl text-red-500" />
               </div>
-
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-lg">
-                <div>
-                  <p className={labelStyle}>Employee ID</p>
-                  <p className={inputStyle}>{selectedItem.employeeId}</p>
-                </div>
-                <div>
-                  <p className={labelStyle}>Name</p>
-                  <p className={inputStyle}>{selectedItem.employee}</p>
-                </div>
-
-                <div>
-                  <p className={labelStyle}>Employee Category</p>
-                  <p className={inputStyle}>{selectedItem.employeeCategory}</p>
-                </div>
-
-                <div>
-                  <p className={labelStyle}>Designation</p>
-                  <p className={inputStyle}>{selectedItem.designation}</p>
-                </div>
-
-                <div>
-                  <p className={labelStyle}>Punch Date</p>
-                  <p className={inputStyle}>
-                    {new Date(selectedItem.createdDate).toLocaleDateString()}
-                  </p>
-                </div>
-
-                <div>
-                  <p className={labelStyle}>Punch Day</p>
-                  <p className={inputStyle}>
-                    {new Date(selectedItem.createdDate).toLocaleString(
-                      "en-US",
-                      {
-                        weekday: "long",
-                      },
-                    )}
-                  </p>
-                </div>
-
-                <div>
-                  <p className={labelStyle}>Check in</p>
-                  <p className={inputStyle}>
-                    {selectedItem.intime
-                      ? new Date(selectedItem.intime).toLocaleString()
-                      : "No Checkin"}
-                  </p>
-                </div>
-
-                <div>
-                  <p className={labelStyle}>In Location</p>
-                  <p className={inputStyle}>
-                    {selectedItem.intime ? selectedItem.location : "-"}
-                  </p>
-                </div>
-
-                <div>
-                  <p className={labelStyle}>Check out</p>
-                  <p className={inputStyle}>
-                    {selectedItem.outtime
-                      ? new Date(selectedItem.outtime).toLocaleString()
-                      : "No Checkout"}
-                  </p>
-                </div>
-
-                <div>
-                  <p className={labelStyle}>Out Location</p>
-                  <p className={inputStyle}>
-                    {selectedItem.outtime ? selectedItem.location : "-"}
-                  </p>
-                </div>
-
-                <div>
-                  <p className={labelStyle}>Work Hours</p>
-                  <p className={inputStyle}>
-                    {selectedItem.outtime && selectedItem.intime
-                      ? (() => {
-                          const inT = new Date(
-                            selectedItem.intime,
-                          ).toLocaleTimeString();
-                          const outT = new Date(
-                            selectedItem.outtime,
-                          ).toLocaleTimeString();
-                          return getTimeDiff(inT, outT);
-                        })()
-                      : "Missed Punch"}
-                  </p>
-                </div>
-
-                <div>
-                  <p className={labelStyle}>Remarks</p>
-                  <p className={inputStyle}>
-                    {selectedItem.remarks ? selectedItem.remarks : "-"}
-                  </p>
-                </div>
-
-                <div>
-                  <p className={labelStyle}>Status</p>
-                  <p
-                    className={` py-1 px-3 w-fit rounded
-                                             ${selectedItem.status === "Approved" && "bg-green-100 text-green-700"}
-                              ${selectedItem.status === "Rejected" && "bg-red-100 text-red-700"}
-                              ${selectedItem.status === "Pending" && "bg-yellow-100 text-yellow-700"}`}
-                  >
-                    {selectedItem.status}
-                  </p>
-                </div>
+                <div><p className={labelStyle}>Name</p><p className={inputStyle}>{selectedItem.employee_name}</p></div>
+                <div><p className={labelStyle}>Employee ID</p><p className={inputStyle}>{selectedItem.employee_code || "—"}</p></div>
+                <div><p className={labelStyle}>Location</p><p className={inputStyle}>{selectedItem.location || "—"}</p></div>
+                <div><p className={labelStyle}>Date</p><p className={inputStyle}>{selectedItem.created_at ? new Date(selectedItem.created_at).toLocaleDateString() : "—"}</p></div>
+                <div><p className={labelStyle}>Check in</p><p className={inputStyle}>{selectedItem.in_time || "—"}</p></div>
+                <div><p className={labelStyle}>Check out</p><p className={inputStyle}>{selectedItem.out_time || "—"}</p></div>
+                <div><p className={labelStyle}>Status</p><p className={`${inputStyle} font-semibold ${selectedItem.status === 'Approved' ? 'text-green-600' : selectedItem.status === 'Rejected' ? 'text-red-600' : 'text-yellow-600'}`}> {selectedItem.status || 'Pending'} </p></div>
               </div>
             </div>
           </div>

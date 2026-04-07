@@ -53,7 +53,7 @@ const Department = () => {
           id: d.id,
           name: d.name || "",
           code: d.code || "",
-          company: d.company || "",
+          company: d.company_name|| "",
           description: d.description || "",
           isActive:
             d.is_active === true ||

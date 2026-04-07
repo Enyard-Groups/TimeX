@@ -24,10 +24,12 @@ const DeviceManagementSub = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [companyOptions, setCompanyOptions] = useState([]);
   const [formData, setFormData] = useState({
     devicemodel: "",
     name: "",
     company: "",
+    company_name: "",
     deviceip: "",
     deviceserialno: "",
     latitude: "",
@@ -72,6 +74,7 @@ const DeviceManagementSub = () => {
         deviceserialno: d.serial_number ?? "",
         deviceip: d.ip_address ?? "",
         company: d.company ?? "",
+        company_name: d.company_name ?? "",
         devicemodel: d.device_model ?? "",
       }));
       setDevicemanagement(mapped);
@@ -81,8 +84,20 @@ const DeviceManagementSub = () => {
     }
   };
 
+  const fetchCompanies = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/companies`, {
+        headers: getHeaders(),
+      });
+      setCompanyOptions(res.data || []);
+    } catch (error) {
+      console.error("Failed to fetch companies", error);
+    }
+  };
+
   useEffect(() => {
     fetchDevices();
+    fetchCompanies();
   }, []);
 
   const filteredDevicemanagement = devicemanagement.filter(
@@ -94,7 +109,7 @@ const DeviceManagementSub = () => {
       (device.deviceip ?? "")
         .toLowerCase()
         .startsWith(searchTerm.toLowerCase()) ||
-      (device.company ?? "").toLowerCase().startsWith(searchTerm.toLowerCase()),
+      (device.company_name || device.company || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -141,6 +156,7 @@ const DeviceManagementSub = () => {
       setEditId(null);
       setFormData({
         company: "",
+        company_name: "",
         name: "",
         deviceip: "",
         deviceserialno: "",
@@ -184,7 +200,7 @@ const DeviceManagementSub = () => {
     const rows = filteredDevicemanagement
       .map(
         (d, i) =>
-          `${i + 1}\t${d.deviceserialno}\t${d.name}\t${d.deviceip}\t${d.isFace ? "Y" : "N"}\t${d.isFingerprint ? "Y" : "N"}\t${d.isCardNo ? "Y" : "N"}\t${d.isPinNo ? "Y" : "N"}\t${d.company}\t${d.isActive ? "Y" : "N"}`,
+          `${i + 1}\t${d.deviceserialno}\t${d.name}\t${d.deviceip}\t${d.isFace ? "Y" : "N"}\t${d.isFingerprint ? "Y" : "N"}\t${d.isCardNo ? "Y" : "N"}\t${d.isPinNo ? "Y" : "N"}\t${d.company_name || d.company}\t${d.isActive ? "Y" : "N"}`,
       )
       .join("\n");
     navigator.clipboard.writeText(header + "\n" + rows);
@@ -201,7 +217,7 @@ const DeviceManagementSub = () => {
       FingerPrint: d.isFingerprint ? "Y" : "N",
       "Card No": d.isCardNo ? "Y" : "N",
       "Pin No": d.isPinNo ? "Y" : "N",
-      Company: d.company,
+      Company: d.company_name || d.company,
       Active: d.isActive ? "Y" : "N",
     }));
     const worksheet = XLSX.utils.json_to_sheet(data);
@@ -233,7 +249,7 @@ const DeviceManagementSub = () => {
       d.isFingerprint ? "Y" : "N",
       d.isCardNo ? "Y" : "N",
       d.isPinNo ? "Y" : "N",
-      d.company,
+      d.company_name || d.company,
       d.isActive ? "Y" : "N",
     ]);
     autoTable(doc, { head: [tableColumn], body: tableRows });
@@ -255,11 +271,12 @@ const DeviceManagementSub = () => {
         {!openModal && (
           <div className="flex justify-end">
             <button
-              onClick={() => (
-                setMode(""),
-                setEditId(null),
+              onClick={() => {
+                setMode("");
+                setEditId(null);
                 setFormData({
                   company: "",
+                  company_name: "",
                   name: "",
                   deviceip: "",
                   deviceserialno: "",
@@ -271,9 +288,9 @@ const DeviceManagementSub = () => {
                   isCardNo: false,
                   isPinNo: false,
                   isActive: false,
-                }),
-                setOpenModal(true)
-              )}
+                });
+                setOpenModal(true);
+              }}
               className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
             >
               + Add New
@@ -410,7 +427,7 @@ const DeviceManagementSub = () => {
                       {item.isPinNo ? "Y" : "N"}
                     </td>
                     <td className="py-2 px-6 hidden xl:table-cell">
-                      {item.company}
+                      {item.company_name || item.company}
                     </td>
                     <td className="py-2 px-6 hidden xl:table-cell">
                       {item.isActive ? "Y" : "N"}
@@ -564,18 +581,23 @@ const DeviceManagementSub = () => {
                 />
               </div>
               <div>
-                <label className={labelStyle}>
-                  Company{" "}
-                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-                </label>
-                <input
+                <SearchDropdown
+                  label={
+                    <>
+                      Company <span className="text-red-500">*</span>
+                    </>
+                  }
                   name="company"
                   value={formData.company}
-                  onChange={handleChange}
+                  displayValue={formData.company_name}
+                  options={companyOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  formData={formData}
+                  setFormData={setFormData}
                   disabled={mode === "view"}
-                  placeholder="Company"
-                  className={inputStyle}
-                  required
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
                 />
               </div>
               <div>

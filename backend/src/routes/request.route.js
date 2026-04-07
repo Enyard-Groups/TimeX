@@ -24,11 +24,17 @@ import {
   createManualRequest,
   updateManualRequest,
   deleteManualRequest,
+  bulkUpdateManualStatus,
+  getManualEntryReport,
+  getWfhReport,
+  getClaimReport,
+  getLeaveReport,
 } from "../controllers/request.controller.js";
 
 const router = express.Router();
 
 // Leave
+router.get("/leave/report", getLeaveReport);
 router.get("/leave", getLeaveRequests);
 router.post("/leave", createLeaveRequest);
 router.put("/leave/bulk", bulkUpdateLeaveStatus);
@@ -36,6 +42,7 @@ router.put("/leave/:id", updateLeaveRequest);
 router.delete("/leave/:id", deleteLeaveRequest);
 
 // Claim
+router.get("/claim/report", getClaimReport);
 router.get("/claim", getClaimRequests);
 router.post("/claim", createClaimRequest);
 router.put("/claim/bulk", bulkUpdateClaimStatus);
@@ -50,6 +57,7 @@ router.put("/travel/:id", updateTravelRequest);
 router.delete("/travel/:id", deleteTravelRequest);
 
 // WFH
+router.get("/wfh/report", getWfhReport);
 router.get("/wfh", getWfhRequests);
 router.post("/wfh", createWfhRequest);
 router.put("/wfh/bulk", bulkUpdateWfhStatus);
@@ -57,8 +65,10 @@ router.put("/wfh/:id", updateWfhRequest);
 router.delete("/wfh/:id", deleteWfhRequest);
 
 // Manual Entry
+router.get("/manual/report", getManualEntryReport);
 router.get("/manual", getManualRequests);
 router.post("/manual", createManualRequest);
+router.put("/manual/bulk", bulkUpdateManualStatus);
 router.put("/manual/:id", updateManualRequest);
 router.delete("/manual/:id", deleteManualRequest);
 

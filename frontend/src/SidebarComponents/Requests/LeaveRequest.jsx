@@ -65,7 +65,8 @@ const LeaveRequest = () => {
     "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const filteredLeave = leave.filter((x) =>
-    (x.employee_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
+    (x.employee_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+    (x.company_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -241,6 +242,7 @@ const LeaveRequest = () => {
   const handleCopy = () => {
     const header = [
       "Employee",
+      "Company",
       "Leave Type",
       "From Date",
       "To Date",
@@ -253,6 +255,7 @@ const LeaveRequest = () => {
       .map((item) => {
         return [
           item.employee_name,
+          item.company_name || "N/A",
           item.leave_type,
           item.start_date,
           item.end_date,
@@ -272,6 +275,7 @@ const LeaveRequest = () => {
   const handleExcel = () => {
     const excelData = filteredLeave.map((item) => ({
       Employee: item.employee_name,
+      Company: item.company_name || "N/A",
       LeaveType: item.leave_type,
       FromDate: item.start_date,
       ToDate: item.end_date,
@@ -293,6 +297,7 @@ const LeaveRequest = () => {
 
     const tableColumn = [
       "Employee",
+      "Company",
       "Leave Type",
       "From Date",
       "To Date",
@@ -306,6 +311,7 @@ const LeaveRequest = () => {
     filteredLeave.forEach((item) => {
       const row = [
         item.employee_name,
+        item.company_name || "N/A",
         item.leave_type,
         item.start_date,
         item.end_date,
@@ -419,6 +425,7 @@ const LeaveRequest = () => {
               <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
                 <tr>
                   <th className="p-2 font-semibold">Employee</th>
+                  <th className="p-2 hidden md:table-cell font-semibold">Company</th>
                   <th className="p-2 hidden sm:table-cell font-semibold whitespace-nowrap">
                     Leave Type
                   </th>
@@ -451,6 +458,7 @@ const LeaveRequest = () => {
                       className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                     >
                       <td className="p-2">{item.employee_name}</td>
+                      <td className="p-2 hidden md:table-cell">{item.company_name || "N/A"}</td>
 
                       <td className="p-2 hidden sm:table-cell whitespace-nowraps">
                         {item.leave_type}

@@ -55,19 +55,34 @@ const SearchDropdown = ({
         [labelName || `${name}_name`]: updatedLabels,
       });
     } else {
-      setFormData({
+      const updatedFormData = {
         ...formData,
-        [name]: val,
-        [labelName || `${name}_name`]: lbl,
-      });
+        [name]: labelName === name ? lbl : val,
+      };
+
+      if (labelName && labelName !== name) {
+        updatedFormData[labelName] = lbl;
+      }
+
+      if (valueKey && labelName === name) {
+        updatedFormData[`${name}_id`] = val;
+      }
+
+      setFormData(updatedFormData);
       setOpen(false);
     }
   };
 
   const isSelected = (val) => {
-    return multiple
-      ? Array.isArray(value) && value.includes(val)
-      : value === val;
+    if (multiple) {
+      return Array.isArray(value) && value.includes(val);
+    }
+
+    if (labelName === name && valueKey) {
+      return formData[`${name}_id`] === val;
+    }
+
+    return value === val;
   };
 
   return (

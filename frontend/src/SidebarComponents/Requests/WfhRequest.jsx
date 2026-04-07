@@ -21,6 +21,7 @@ const emptyForm = {
   employee_id: "",
   start_date: "",
   end_date: "",
+  request_date: "",
   number_of_days: "",
   reason: "",
   status: "Pending",
@@ -198,6 +199,8 @@ const WfhRequest = () => {
       "Employee",
       "From Date",
       "To Date",
+      "Request Date",
+      "Number of Days",
       "Reason",
       "Created Date",
     ].join("\t");
@@ -207,6 +210,8 @@ const WfhRequest = () => {
           item.employee_name,
           item.start_date,
           item.end_date,
+          item.request_date,  
+          item.number_of_days,
           item.reason,
           new Date(item.created_at).toLocaleDateString(),
         ].join("\t"),
@@ -223,6 +228,8 @@ const WfhRequest = () => {
       Employee: item.employee_name,
       FromDate: item.start_date,
       ToDate: item.end_date,
+      RequestDate: item.request_date,
+      NumberOfDays: item.number_of_days,
       Reason: item.reason,
       CreatedDate: new Date(item.created_at).toLocaleDateString(),
     }));
@@ -239,6 +246,8 @@ const WfhRequest = () => {
       "Employee",
       "From Date",
       "To Date",
+      "Request Date",
+      "Number of Days",
       "Reason",
       "Created Date",
     ];
@@ -246,7 +255,9 @@ const WfhRequest = () => {
       item.employee_name,
       item.start_date,
       item.end_date,
-      item.reason,
+      item.request_date,
+      item.number_of_days,
+      item.reason,  
       new Date(item.created_at).toLocaleDateString(),
     ]);
 

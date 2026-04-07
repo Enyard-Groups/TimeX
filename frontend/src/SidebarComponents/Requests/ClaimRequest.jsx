@@ -138,9 +138,8 @@ const ClaimRequest = () => {
 
   const filteredClaims = claims.filter(
     (x) =>
-      (x.employee_name || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
+      (x.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (x.company_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
       (x.claim_category || "").toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
@@ -155,6 +154,7 @@ const ClaimRequest = () => {
   const handleCopy = () => {
     const header = [
       "Employee",
+      "Company",
       "Category",
       "Date",
       "Amount",
@@ -165,6 +165,7 @@ const ClaimRequest = () => {
       .map((item) =>
         [
           item.employee_name,
+          item.company_name || "N/A",
           item.claim_category,
           item.date,
           item.amount,
@@ -182,6 +183,7 @@ const ClaimRequest = () => {
   const handleExcel = () => {
     const excelData = filteredClaims.map((item) => ({
       Employee: item.employee_name,
+      Company: item.company_name || "N/A",
       Category: item.claim_category,
       Date: item.date,
       Amount: item.amount,
@@ -199,6 +201,7 @@ const ClaimRequest = () => {
     const doc = new jsPDF("landscape");
     const tableColumn = [
       "Employee",
+      "Company",
       "Category",
       "Date",
       "Amount",
@@ -207,6 +210,7 @@ const ClaimRequest = () => {
     ];
     const tableRows = filteredClaims.map((item) => [
       item.employee_name,
+      item.company_name || "N/A",
       item.claim_category,
       item.date,
       item.amount,
@@ -314,6 +318,9 @@ const ClaimRequest = () => {
             <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
               <tr>
                 <th className="py-2 px-6 font-semibold">Employee</th>
+                <th className="py-2 px-6 font-semibold hidden md:table-cell">
+                  Company
+                </th>
                 <th className="py-2 px-6 font-semibold hidden sm:table-cell">
                   Category
                 </th>
@@ -341,6 +348,9 @@ const ClaimRequest = () => {
                     className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                   >
                     <td className="py-2 px-6">{item.employee_name}</td>
+                    <td className="py-2 px-6 hidden md:table-cell">
+                      {item.name || "N/A"}
+                    </td>
                     <td className="py-2 px-6 hidden sm:table-cell">
                       {item.claim_category}
                     </td>

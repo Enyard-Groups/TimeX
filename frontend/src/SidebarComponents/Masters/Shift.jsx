@@ -166,6 +166,7 @@ const Shift = () => {
       shift_code: code,
       start_time: formatTime(intime),
       end_time: formatTime(outtime),
+      company: company,
       grace_period: 0,
       is_active: isActive,
     };

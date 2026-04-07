@@ -33,6 +33,7 @@ const VisitorBooking = () => {
   const today = now.toLocaleDateString("en-GB").split("/").join("/");
   const currentTime = now.toTimeString().slice(0, 8);
 
+  const [companyOptions, setCompanyOptions] = useState([]);
   const [formData, setFormData] = useState({
     searchType: "Mobile no.",
     searchValue: "",
@@ -41,6 +42,7 @@ const VisitorBooking = () => {
     visit_date: today,
     visit_time: currentTime,
     company: "",
+    company_name: "",
     mobile_no: "",
     point_of_contact: "",
     email: "",
@@ -134,7 +136,7 @@ const VisitorBooking = () => {
       const mapped = (Array.isArray(payload) ? payload : []).map((v) => ({
         ...v,
         vDateTime: `${v.visit_date} (${v.visit_time})`,
-        organization: v.company || "N/A", // Default if blank
+        organization: v.company_name || v.company || "N/A", // Default if blank
         meetingPerson: v.point_of_contact || "N/A",
         // Carry over other fields if present in DB
         visitorCode: `VS-${v.id}`,
@@ -146,8 +148,20 @@ const VisitorBooking = () => {
     }
   };
 
+  const fetchCompanies = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/companies`, {
+        headers: getHeaders(),
+      });
+      setCompanyOptions(res.data || []);
+    } catch (error) {
+      console.error("Failed to fetch companies", error);
+    }
+  };
+
   useEffect(() => {
     fetchVisitors();
+    fetchCompanies();
   }, []);
 
   const filteredVisitors = visitors.filter((visitor) =>
@@ -238,6 +252,7 @@ const VisitorBooking = () => {
         visit_date: today,
         visit_time: currentTime,
         company: "",
+        company_name: "",
         mobile_no: "",
         point_of_contact: "",
         email: "",
@@ -693,21 +708,23 @@ const VisitorBooking = () => {
                 </div>
 
                 <div>
-                  <label className={labelStyle}>
-                    Company
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <input
+                  <SearchDropdown
+                    label={
+                      <>
+                        Company <span className="text-red-500">*</span>
+                      </>
+                    }
                     name="company"
                     value={formData.company}
-                    onChange={handleChange}
+                    displayValue={formData.company_name}
+                    options={companyOptions}
+                    labelKey="name"
+                    valueKey="id"
+                    formData={formData}
+                    setFormData={setFormData}
                     disabled={mode === "view"}
-                    placeholder="Company"
-                    className={inputStyle}
-                    required
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
                   />
                 </div>
 

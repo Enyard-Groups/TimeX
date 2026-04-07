@@ -23,11 +23,13 @@ const DeviceModel = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [companyOptions, setCompanyOptions] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     company: "",
+    company_name: "",
     code: "",
-    active: false,
+    isActive: false,
   });
 
   const inputStyle =
@@ -52,7 +54,7 @@ const DeviceModel = () => {
       const payload = response?.data?.data ?? response?.data;
       const mapped = (Array.isArray(payload) ? payload : []).map((d) => ({
         ...d,
-        active: d.active ?? false,
+        isActive: d.is_active ?? d.active ?? false,
       }));
       setDeviceModel(mapped);
     } catch (error) {
@@ -61,15 +63,27 @@ const DeviceModel = () => {
     }
   };
 
+  const fetchCompanies = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/companies`, {
+        headers: getHeaders(),
+      });
+      setCompanyOptions(res.data || []);
+    } catch (error) {
+      console.error("Failed to fetch companies", error);
+    }
+  };
+
   useEffect(() => {
     fetchDeviceModels();
+    fetchCompanies();
   }, []);
 
   const filtereddeviceModel = deviceModel.filter(
     (device) =>
       (device.name ?? "").toLowerCase().startsWith(searchTerm.toLowerCase()) ||
       (device.code ?? "").toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      (device.company ?? "").toLowerCase().startsWith(searchTerm.toLowerCase()),
+      (device.company_name || device.company || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -113,7 +127,7 @@ const DeviceModel = () => {
       await fetchDeviceModels();
       setOpenModal(false);
       setEditId(null);
-      setFormData({ company: "", name: "", code: "", active: false });
+      setFormData({ company: "", company_name: "", name: "", code: "", isActive: false });
     } catch (error) {
       console.error("Failed to save device model", error);
       const message =
@@ -144,7 +158,7 @@ const DeviceModel = () => {
     const rows = filtereddeviceModel
       .map(
         (d, i) =>
-          `${i + 1}\t${d.name}\t${d.code}\t${d.company}\t${d.active ? "Y" : "N"}`,
+          `${i + 1}\t${d.name}\t${d.code}\t${d.company_name || d.company}\t${d.isActive ? "Y" : "N"}`,
       )
       .join("\n");
     navigator.clipboard.writeText(header + "\n" + rows);
@@ -156,8 +170,8 @@ const DeviceModel = () => {
       "SL.NO": i + 1,
       Name: d.name,
       Code: d.code,
-      Company: d.company,
-      Active: d.active ? "Y" : "N",
+      Company: d.company_name || d.company,
+      Active: d.isActive ? "Y" : "N",
     }));
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
@@ -172,8 +186,8 @@ const DeviceModel = () => {
       i + 1,
       d.name,
       d.code,
-      d.company,
-      d.active ? "Y" : "N",
+      d.company_name || d.company,
+      d.isActive ? "Y" : "N",
     ]);
     autoTable(doc, { head: [tableColumn], body: tableRows });
     doc.save("DeviceModel.pdf");
@@ -197,7 +211,7 @@ const DeviceModel = () => {
             onClick={() => (
               setMode(""),
               setEditId(null),
-              setFormData({ company: "", name: "", code: "", active: false }),
+              setFormData({ company: "", company_name: "", name: "", code: "", isActive: false }),
               setOpenModal(true)
             )}
             className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
@@ -299,7 +313,7 @@ const DeviceModel = () => {
                     <td className="p-2 hidden sm:table-cell">{index + 1}</td>
                     <td className="p-2 whitespace-nowrap">{item.name}</td>
                     <td className="p-2 hidden md:table-cell">{item.code}</td>
-                    <td className="p-2 hidden lg:table-cell">{item.company}</td>
+                    <td className="p-2 hidden lg:table-cell">{item.company_name || item.company}</td>
                     <td className="p-2 hidden md:table-cell">
                       {item.isActive ? "Y" : "N"}
                     </td>
@@ -424,18 +438,23 @@ const DeviceModel = () => {
                 />
               </div>
               <div>
-                <label className={labelStyle}>
-                  Company{" "}
-                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-                </label>
-                <input
+                <SearchDropdown
+                  label={
+                    <>
+                      Company <span className="text-red-500">*</span>
+                    </>
+                  }
                   name="company"
                   value={formData.company}
-                  onChange={handleChange}
+                  displayValue={formData.company_name}
+                  options={companyOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  formData={formData}
+                  setFormData={setFormData}
                   disabled={mode === "view"}
-                  placeholder="Company"
-                  className={inputStyle}
-                  required
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
                 />
               </div>
               <div className="flex items-center gap-2 mt-6">

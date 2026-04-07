@@ -76,6 +76,7 @@ const EmployeeMaster = () => {
     try {
       setLoading(true);
       const res = await axios.get(`${API_BASE}/employee`);
+      console.log(res.data);
       setEmployeeMaster(res.data);
     } catch (error) {
       toast.error("Failed to load employees");
@@ -87,7 +88,7 @@ const EmployeeMaster = () => {
   // ── Fetch dropdown options from backend ───────────────────────────────────
   const fetchDropdowns = async () => {
     try {
-      const [deptRes, desRes, shiftRes, appRes, levRes] = await Promise.all([
+      const [deptRes, desRes, shiftRes, appRes, levRes,compRes] = await Promise.all([
         axios.get(`${API_BASE}/master/departments`),
         axios.get(`${API_BASE}/master/designation`),
         axios.get(`${API_BASE}/master/shifts`),

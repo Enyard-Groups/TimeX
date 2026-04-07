@@ -25,11 +25,13 @@ const CardDetach = () => {
   const [editId, setEditId] = useState(null);
   const [showCicpaExpiryPicker, setShowCicpaExpiryPicker] = useState(false);
   const [showIdExpiryPicker, setShowIdExpiryPicker] = useState(false);
+  const [companyOptions, setCompanyOptions] = useState([]);
   const [formData, setFormData] = useState({
     searchType: "Mobile no.",
     searchValue: "",
     visitor_name: "",
     company: "",
+    company_name: "",
     mobile_no: "",
     point_of_contact: "",
     email: "",
@@ -64,7 +66,7 @@ const CardDetach = () => {
       const mapped = (Array.isArray(payload) ? payload : []).map((v) => ({
         ...v,
         visitorCode: `VS-${v.id}`,
-        organization: v.company || "N/A",
+        organization: v.company_name || v.company || "N/A",
         meetingPerson: v.point_of_contact || "N/A",
       }));
       setVisitors(mapped);
@@ -74,8 +76,20 @@ const CardDetach = () => {
     }
   };
 
+  const fetchCompanies = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/companies`, {
+        headers: getHeaders(),
+      });
+      setCompanyOptions(res.data || []);
+    } catch (error) {
+      console.error("Failed to fetch companies", error);
+    }
+  };
+
   React.useEffect(() => {
     fetchVisitors();
+    fetchCompanies();
   }, []);
 
   const inputStyle =
@@ -236,6 +250,7 @@ const CardDetach = () => {
         searchValue: "",
         visitor_name: "",
         company: "",
+        company_name: "",
         mobile_no: "",
         point_of_contact: "",
         email: "",
@@ -688,21 +703,23 @@ const CardDetach = () => {
                 </div>
 
                 <div>
-                  <label className={labelStyle}>
-                    Company
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <input
+                  <SearchDropdown
+                    label={
+                      <>
+                        Company <span className="text-red-500">*</span>
+                      </>
+                    }
                     name="company"
                     value={formData.company}
-                    onChange={handleChange}
+                    displayValue={formData.company_name}
+                    options={companyOptions}
+                    labelKey="name"
+                    valueKey="id"
+                    formData={formData}
+                    setFormData={setFormData}
                     disabled={mode === "view"}
-                    placeholder="Company"
-                    className={inputStyle}
-                    required
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
                   />
                 </div>
 
