@@ -362,21 +362,21 @@ const ClaimCategory = () => {
                     className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
                     title="Copy to clipboard"
                   >
-                    <GoCopy />
+                    <GoCopy className="text-lg" />
                   </button>
                   <button
                     onClick={handleExcel}
                     className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
                     title="Export to Excel"
                   >
-                    <FaFileExcel />
+                    <FaFileExcel className="text-lg" />
                   </button>
                   <button
                     onClick={handlePDF}
                     className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
                     title="Export to PDF"
                   >
-                    <FaFilePdf />
+                    <FaFilePdf className="text-lg" />
                   </button>
                 </div>
               </div>
@@ -576,7 +576,6 @@ const ClaimCategory = () => {
               className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8"
               style={{ scrollbarWidth: "none" }}
             >
-              
               {/* Modal Header */}
               <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
                 <h2 className="text-xl font-bold text-gray-900">
@@ -649,7 +648,9 @@ const ClaimCategory = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <label className="text-gray-700 font-medium cursor-pointer">Attachment Mandatory</label>
+                  <label className="text-gray-700 font-medium cursor-pointer">
+                    Attachment Mandatory
+                  </label>
                   <input
                     type="checkbox"
                     name="isAttachment"
@@ -661,7 +662,9 @@ const ClaimCategory = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <label className="text-gray-700 font-medium cursor-pointer">Active</label>
+                  <label className="text-gray-700 font-medium cursor-pointer">
+                    Active
+                  </label>
                   <input
                     type="checkbox"
                     name="isActive"

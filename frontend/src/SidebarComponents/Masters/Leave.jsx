@@ -352,21 +352,21 @@ const Leave = () => {
                     className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
                     title="Copy to clipboard"
                   >
-                    <GoCopy />
+                    <GoCopy className="text-lg" />
                   </button>
                   <button
                     onClick={handleExcel}
                     className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
                     title="Export to Excel"
                   >
-                    <FaFileExcel />
+                    <FaFileExcel className="text-lg" />
                   </button>
                   <button
                     onClick={handlePDF}
                     className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
                     title="Export to PDF"
                   >
-                    <FaFilePdf />
+                    <FaFilePdf className="text-lg" />
                   </button>
                 </div>
               </div>

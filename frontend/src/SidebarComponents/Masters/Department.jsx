@@ -307,9 +307,9 @@ const Department = () => {
       <div className="mb-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-          <h1 className="flex items-center h-[30px] gap-2 text-lg font-bold text-gray-900 ">
+          <h1 className="flex items-center h-[30px] gap-2 text-lg font-semibold text-gray-900 ">
             <FaAngleRight className="text-blue-500 text-base" />
-            Masters
+            <span className="text-gray-500">Masters</span>
             <FaAngleRight className="text-blue-500 text-base" />
             <div
               onClick={() => setOpenModal(false)}
@@ -610,7 +610,14 @@ const Department = () => {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
             <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8">
               {/* Close */}
-              <div className="flex justify-end mb-6">
+              <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+                <h2 className="text-xl font-bold text-gray-900">
+                  {mode === "view"
+                    ? "View Department"
+                    : mode === "edit"
+                      ? "Edit Department"
+                      : "Add New Department"}
+                </h2>
                 <button
                   onClick={() => setOpenModal(false)}
                   className="text-gray-400 hover:text-gray-600 transition"
@@ -618,14 +625,6 @@ const Department = () => {
                   <RxCross2 className="text-2xl" />
                 </button>
               </div>
-
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                {mode === "view"
-                  ? "View Department"
-                  : mode === "edit"
-                    ? "Edit Department"
-                    : "Add New Department"}
-              </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
                 <div>

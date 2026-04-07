@@ -317,9 +317,9 @@ const Performance = () => {
                 </span>
               </div>
 
-              <div className="flex flex-wrap gap-3 items-center">
+              <div className="flex flex-wrap gap-3 items-center justify-center">
                 <input
-                  placeholder="Search performance..."
+                  placeholder="Search employee..."
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
@@ -327,30 +327,27 @@ const Performance = () => {
                   }}
                   className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
                 />
-
                 <div className="flex gap-2">
                   <button
                     onClick={handleCopy}
                     className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
                     title="Copy to clipboard"
                   >
-                    <GoCopy />
+                    <GoCopy className="text-lg" />
                   </button>
-
                   <button
                     onClick={handleExcel}
                     className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
                     title="Export to Excel"
                   >
-                    <FaFileExcel />
+                    <FaFileExcel className="text-lg" />
                   </button>
-
                   <button
                     onClick={handlePDF}
                     className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
                     title="Export to PDF"
                   >
-                    <FaFilePdf />
+                    <FaFilePdf className="text-lg" />
                   </button>
                 </div>
               </div>

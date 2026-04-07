@@ -608,7 +608,14 @@ const EmployeeMaster = () => {
             style={{ scrollbarWidth: "none" }}
           >
             {/* Close Button */}
-            <div className="flex justify-end mb-6">
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+              <h2 className="text-xl font-bold text-gray-900 ">
+                {mode === "view"
+                  ? "View Employee"
+                  : mode === "edit"
+                    ? "Edit Employee"
+                    : "Add New Employee"}
+              </h2>
               <button
                 onClick={() => setOpenModal(false)}
                 className="text-gray-400 hover:text-gray-600 transition"
@@ -616,14 +623,6 @@ const EmployeeMaster = () => {
                 <RxCross2 className="text-2xl" />
               </button>
             </div>
-
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              {mode === "view"
-                ? "View Employee"
-                : mode === "edit"
-                  ? "Edit Employee"
-                  : "Add New Employee"}
-            </h2>
 
             {/* Section 1: Basic Information */}
             <div className="mb-8 pb-6 border-b border-blue-100/30">

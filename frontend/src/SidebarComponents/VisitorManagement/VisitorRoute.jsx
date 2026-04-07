@@ -8,7 +8,7 @@ const VisitorRoute = ({ user }) => {
   return (
     <div>
       <Navbar user={user} />
-      <div className="lg:ml-60 pt-8 pb-12 px-4 md:px-5 lg:pl-10 min-h-screen">
+      <div className="lg:ml-60 pt-8 pb-12 px-4 md:px-5 lg:pl-10 min-h-screen bg-gradient-to-r from-[#f1f6ff] via-[#e8eefa] to-[#f1f6ff]">
         <Routes>
           <Route path="visitor-booking" element={<VisitorBooking />} />
           <Route path="card-detach" element={<CardDetach />} />
