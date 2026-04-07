@@ -4,9 +4,10 @@ import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { GoCopy } from "react-icons/go";
-import { FaFileExcel } from "react-icons/fa";
+import { FaEye, FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import { RxCross2 } from "react-icons/rx";
 
 const EmployeeView = () => {
   const [employee] = useState([
@@ -18,6 +19,8 @@ const EmployeeView = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedEmployees, setSelectedEmployees] = useState([]);
+  const [openModal, setopenModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const filteredemployee = employee.filter(
     (x) =>
@@ -110,174 +113,253 @@ const EmployeeView = () => {
   };
 
   return (
-    <div>
-      {/* Top Controls */}
-      <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-        <div>
-          <label className="mr-2 text-md">Show</label>
-          <select
-            value={entriesPerPage}
-            onChange={(e) => {
-              setEntriesPerPage(Number(e.target.value));
-              setCurrentPage(1);
-            }}
-            className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
-          >
-            <option value={10}>10</option>
-            <option value={25}>25</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-          </select>
-          <span className="ml-2 text-md">entries</span>
+    <>
+      <div>
+        {/* Top Controls */}
+        <div className="p-6 border-b border-blue-100/30">
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-600">
+                Display
+              </label>
+              <select
+                value={entriesPerPage}
+                onChange={(e) => {
+                  setEntriesPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg text-sm"
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+              <span className="text-sm text-gray-600">entries</span>
+            </div>
+
+            <div className="flex flex-wrap gap-3 items-center justify-center">
+              <input
+                placeholder="Search employee..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+              />
+
+              <div className="flex gap-2">
+                <button
+                  onClick={handleCopy}
+                  className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 p-2 rounded-lg"
+                >
+                  <GoCopy className="text-lg" />
+                </button>
+                <button
+                  onClick={handleExcel}
+                  className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 p-2 rounded-lg"
+                >
+                  <FaFileExcel className="text-lg" />
+                </button>
+                <button
+                  onClick={handlePDF}
+                  className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 p-2 rounded-lg"
+                >
+                  <FaFilePdf className="text-lg" />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2 items-center justify-center">
-          <input
-            placeholder="Search"
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
-            }}
-            className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-          />
-          <div className="flex">
+
+        {/* Table */}
+        <div className="overflow-x-auto min-h-[250px]">
+          <table className="w-full text-[16px]">
+            <thead>
+              <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
+                <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                  <input
+                    type="checkbox"
+                    checked={
+                      currentemployee.length > 0 &&
+                      currentemployee.every((emp) =>
+                        selectedEmployees.includes(emp.id),
+                      )
+                    }
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedEmployees(currentemployee.map((x) => x.id));
+                      } else {
+                        setSelectedEmployees([]);
+                      }
+                    }}
+                  />
+                </th>
+                <th className="px-4 py-3 text-center font-semibold text-gray-700 hidden sm:table-cell">
+                  SL.NO
+                </th>
+                <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                  Name
+                </th>
+                <th className="px-4 py-3 text-center font-semibold text-gray-700 hidden md:table-cell">
+                  Enrollment Id
+                </th>
+                <th className="px-4 py-3 text-center font-semibold text-gray-700 hidden md:table-cell">
+                  Designation
+                </th>
+                <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                  Action
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {currentemployee.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan="5"
+                    className="px-4 py-12 text-center text-gray-500"
+                  >
+                    No Data Available
+                  </td>
+                </tr>
+              ) : (
+                currentemployee.map((item, index) => (
+                  <tr
+                    key={item.id}
+                    className="border-b border-blue-100/30 bg-white hover:bg-blue-50 transition even:bg-blue-50/50"
+                  >
+                    <td className="px-4 py-2 text-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedEmployees.includes(item.id)}
+                        onChange={() => handleSelect(item.id)}
+                      />
+                    </td>
+
+                    <td className="px-4 py-2 text-center hidden sm:table-cell">
+                      {index + 1}
+                    </td>
+                    <td className="px-4 py-2 text-center">{item.name}</td>
+                    <td className="px-4 py-2 text-center hidden md:table-cell">
+                      {item.id}
+                    </td>
+                    <td className="px-4 py-2 text-center  hidden md:table-cell">
+                      {item.role}
+                    </td>
+                    <td className="px-6 py-3 text-center flex justify-center mt-1">
+                      <FaEye
+                        onClick={() => {
+                          setSelectedItem(item);
+                          setopenModal(true);
+                        }}
+                        className="text-blue-600 hover:text-blue-800 cursor-pointer"
+                      />
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <span className="text-sm text-gray-600">
+            Showing {filteredemployee.length === 0 ? 0 : startIndex + 1} to{" "}
+            {Math.min(endIndex, filteredemployee.length)} of{" "}
+            {filteredemployee.length}
+          </span>
+
+          <div className="flex gap-2">
             <button
-              onClick={handleCopy}
-              className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(1)}
+              className="bg-blue-50 border border-blue-200 px-3 py-1 rounded-lg"
             >
-              <GoCopy />
+              First
+            </button>
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+              className="bg-blue-50 border border-blue-200 p-2 rounded-lg"
+            >
+              <GrPrevious />
             </button>
 
-            <button
-              onClick={handleExcel}
-              className="text-xl px-3 py-1 cursor-pointer text-green-700"
-            >
-              <FaFileExcel />
-            </button>
+            <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg">
+              {currentPage}
+            </div>
 
             <button
-              onClick={handlePDF}
-              className="text-xl px-3 py-1 cursor-pointer text-red-600"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(currentPage + 1)}
+              className="bg-blue-50 border border-blue-200 p-2 rounded-lg"
             >
-              <FaFilePdf />
+              <GrNext />
+            </button>
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(totalPages)}
+              className="bg-blue-50 border border-blue-200 px-3 py-1 rounded-lg"
+            >
+              Last
             </button>
           </div>
         </div>
-      </div>
 
-      <div className="overflow-x-auto min-h-[250px]" style={{ scrollbarWidth: "none" }}>
-        <table className="w-full text-lg border-collapse">
-          <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-            <tr>
-              <th className="p-2 font-semibold">
-                <input
-                  type="checkbox"
-                  checked={
-                    currentemployee.length > 0 &&
-                    currentemployee.every((emp) =>
-                      selectedEmployees.includes(emp.id),
-                    )
-                  }
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setSelectedEmployees(currentemployee.map((x) => x.id));
-                    } else {
-                      setSelectedEmployees([]);
-                    }
-                  }}
-                />
-              </th>
-              <th className="p-2 font-semibold">SL.NO</th>
-              <th className="p-2 font-semibold">Name</th>
-              <th className="p-2 font-semibold whitespace-nowrap">Enrollment Id</th>
-              <th className="p-2 font-semibold">Designation</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentemployee.length === 0 ? (
-              <tr>
-                <td colSpan="14" className="lg:text-center p-10 ">
-                  No Data Available
-                </td>
-              </tr>
-            ) : (
-              currentemployee.map((item, index) => (
-                <tr
-                  key={item.id}
-                  className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
-                >
-                  <td className="p-2">
-                    <input
-                      type="checkbox"
-                      checked={selectedEmployees.includes(item.id)}
-                      onChange={() => handleSelect(item.id)}
-                    />
-                  </td>
-
-                  <td className="p-2">{index + 1}</td>
-                  <td className="p-2">{item.name}</td>
-                  <td className="p-2">{item.id}</td>
-                  <td className="p-2">{item.role}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-        <span>
-          Showing {filteredemployee.length === 0 ? "0" : startIndex + 1} to{" "}
-          {Math.min(endIndex, filteredemployee.length)} of{" "}
-          {filteredemployee.length} entries
-        </span>
-
-        <div className="flex flex-row space-x-1">
+        {/* Mass Update */}
+        <div className="flex justify-center mt-6">
           <button
-            disabled={currentPage == 1}
-            onClick={() => setCurrentPage(1)}
-            className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+            onClick={handleMassUpdate}
           >
-            First
-          </button>
-
-          <button
-            disabled={currentPage == 1}
-            onClick={() => setCurrentPage(currentPage - 1)}
-            className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
-          >
-            <GrPrevious />
-          </button>
-
-          <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
-
-          <button
-            disabled={currentPage == totalPages}
-            onClick={() => setCurrentPage(currentPage + 1)}
-            className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
-          >
-            <GrNext />
-          </button>
-
-          <button
-            disabled={currentPage == totalPages}
-            onClick={() => setCurrentPage(totalPages)}
-            className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
-          >
-            Last
+            Mass Update
           </button>
         </div>
       </div>
+      {openModal && selectedItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8">
+            {/* Close */}
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+              <h2 className="text-xl font-bold text-gray-900">View Employee</h2>
+              <button
+                onClick={() => setopenModal(false)}
+                className="text-gray-400 hover:text-gray-600 transition"
+              >
+                <RxCross2 className="text-2xl" />
+              </button>
+            </div>
 
-      <div className="flex justify-center mt-8">
-        <button
-          className="px-6 py-2 rounded-lg text-white bg-[oklch(0.645_0.246_16.439)]"
-          onClick={handleMassUpdate}
-        >
-          Mass Update
-        </button>
-      </div>
-    </div>
+            {/* Content */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 text-lg font-semibold">
+                  {selectedItem.name.charAt(0)}
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {selectedItem.name}
+                  </h3>
+                </div>
+              </div>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p className="text-sm text-gray-700">
+                  <span className="font-medium">Enrollment ID:</span>{" "}
+                  {selectedItem.id}
+                </p>
+                <p className="text-sm text-gray-700 mt-2">
+                  <span className="font-medium">Designation:</span>{" "}
+                  {selectedItem.role}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

@@ -157,174 +157,179 @@ const CalenderView = () => {
   return (
     <div>
       {/* Filters */}
-      <div className="grid md:grid-cols-3 gap-6 mb-6">
-        <div>
-          <label className={labelStyle}>
-            StartDate
-            <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-          </label>
-          <input
-            name="startdate"
-            value={formData.startdate}
-            onChange={handleChange}
-            onClick={() => {
-              (setshowstartSpinner(true), setshowendSpinner(false));
-            }}
-            placeholder="dd/mm/yyyy"
-            className={inputStyle}
-          />
-
-          {showstartSpinner && (
-            <SpinnerDatePicker
+      <div className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-2xl mb-6">
+        <div className="grid md:grid-cols-3 gap-6">
+          {/* Start Date */}
+          <div>
+            <label className="text-sm font-semibold text-gray-700 mb-2 block">
+              Start Date <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="startdate"
               value={formData.startdate}
-              onChange={(date) => setFormData({ ...formData, startdate: date })}
-              onClose={() => setshowstartSpinner(false)}
+              onChange={handleChange}
+              onClick={() => {
+                setshowstartSpinner(true);
+                setshowendSpinner(false);
+              }}
+              placeholder="dd/mm/yyyy"
+              className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
             />
-          )}
-        </div>
 
-        <div>
-          <label className={labelStyle}>
-            End Date
-            <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
-          </label>
-          <input
-            name="enddate"
-            value={formData.enddate}
-            onChange={handleChange}
-            onClick={() => {
-              (setshowendSpinner(true), setshowstartSpinner(false));
-            }}
-            placeholder={
-              !formData.startdate ? "Select Start Date" : "dd/mm/yyyy"
-            }
-            className={inputStyle}
-            disabled={!formData.startdate}
-          />
+            {showstartSpinner && (
+              <SpinnerDatePicker
+                value={formData.startdate}
+                onChange={(date) =>
+                  setFormData({ ...formData, startdate: date })
+                }
+                onClose={() => setshowstartSpinner(false)}
+              />
+            )}
+          </div>
 
-          {showendSpinner && (
-            <SpinnerDatePicker
+          {/* End Date */}
+          <div>
+            <label className="text-sm font-semibold text-gray-700 mb-2 block">
+              End Date <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="enddate"
               value={formData.enddate}
-              onChange={(date) => setFormData({ ...formData, enddate: date })}
-              onClose={() => setshowendSpinner(false)}
+              onChange={handleChange}
+              onClick={() => {
+                setshowendSpinner(true);
+                setshowstartSpinner(false);
+              }}
+              placeholder={
+                !formData.startdate ? "Select Start Date" : "dd/mm/yyyy"
+              }
+              className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+              disabled={!formData.startdate}
             />
-          )}
-        </div>
 
-        <div>
-          <SearchDropdown
-            label={
-              <>
-                Location <span className="text-red-500">*</span>
-              </>
-            }
-            name="location"
-            value={formData.location}
-            options={["Head Office"]}
-            formData={formData}
-            setFormData={setFormData}
-            inputStyle={inputStyle}
-            labelStyle={labelStyle}
-          />
-        </div>
+            {showendSpinner && (
+              <SpinnerDatePicker
+                value={formData.enddate}
+                onChange={(date) => setFormData({ ...formData, enddate: date })}
+                onClose={() => setshowendSpinner(false)}
+              />
+            )}
+          </div>
 
-        <div>
-          <SearchDropdown
-            label={
-              <>
-                Employee <span className="text-red-500">*</span>
-              </>
-            }
-            name="employee"
-            value={formData.employee}
-            options={[
-              "Employee 1",
-              "Employee 2",
-              "Employee 3",
-              "Employee 4",
-              "Employee 5",
-            ]}
-            formData={formData}
-            setFormData={setFormData}
-            inputStyle={inputStyle}
-            labelStyle={labelStyle}
-          />
-        </div>
+          {/* Location */}
+          <div>
+            <SearchDropdown
+              label={
+                <>
+                  Location <span className="text-red-500">*</span>
+                </>
+              }
+              name="location"
+              value={formData.location}
+              options={["Head Office"]}
+              formData={formData}
+              setFormData={setFormData}
+              inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+              labelStyle="text-sm font-semibold text-gray-700 mb-2 block"
+            />
+          </div>
 
-        <div className="flex items-end">
-          <button
-            className="px-4 py-2 rounded-lg text-white bg-[oklch(0.645_0.246_16.439)] hover:opacity-90"
-            onClick={handlecalendergrid}
-          >
-            Show Calendar
-          </button>
+          {/* Employee */}
+          <div>
+            <SearchDropdown
+              label={
+                <>
+                  Employee <span className="text-red-500">*</span>
+                </>
+              }
+              name="employee"
+              value={formData.employee}
+              options={[
+                "Employee 1",
+                "Employee 2",
+                "Employee 3",
+                "Employee 4",
+                "Employee 5",
+              ]}
+              formData={formData}
+              setFormData={setFormData}
+              inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+              labelStyle="text-sm font-semibold text-gray-700 mb-2 block"
+            />
+          </div>
+
+          {/* Button */}
+          <div className="flex items-end">
+            <button
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition"
+              onClick={handlecalendergrid}
+            >
+              Show Calendar
+            </button>
+          </div>
         </div>
       </div>
 
+      {/* Calendar Grid */}
       {openCalenderGrid && (
-        <div
-          className="mt-6 overflow-x-auto"
-          style={{ scrollbarWidth: "none" }}
-        >
-          <div className="m-10 flex justify-center items-center">
+        <div className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-2xl border border-blue-100/50">
+          {/* Download */}
+
+          <div className="flex justify-end mb-6">
             <button
-              className="px-6 py-2 rounded-lg bg-[oklch(0.87_0.001_106.424)]"
+              className="bg-blue-50 border border-blue-200 px-4 py-2 rounded-lg hover:bg-blue-100"
               onClick={handleDownload}
             >
               Download Shift Planner
             </button>
           </div>
 
-          <div className="min-w-[1100px]">
-            {/* Week Header */}
-            <div className="grid grid-cols-7 gap-4 mb-3">
-              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-                <div
-                  key={d}
-                  className="text-center w-[150px] font-medium text-[oklch(0.45_0.004_49.25)]"
-                >
-                  {d}
-                </div>
-              ))}
-            </div>
+          <div className="overflow-x-auto">
+            <div className="min-w-[700px]">
+              {/* Week Header */}
+              <div className="grid grid-cols-7 gap-4 mb-4 text-center text-sm font-semibold text-gray-500">
+                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+                  <div key={d}>{d}</div>
+                ))}
+              </div>
 
-            {/* Calendar Grid */}
-            <div className="grid grid-cols-7 gap-4">
-              {/* Empty cells */}
-              {Array.from({ length: startDayIndex }).map((_, i) => (
-                <div key={"empty-" + i} className="w-[150px]"></div>
-              ))}
+              {/* Grid */}
+              <div className="grid grid-cols-7 gap-4 ">
+                {Array.from({ length: startDayIndex }).map((_, i) => (
+                  <div key={"empty-" + i}></div>
+                ))}
 
-              {/* Dates */}
-              {dateRange.map((date, index) => (
-                <div
-                  key={index}
-                  className="p-3 mb-4 shadow-md rounded-lg w-[150px]"
-                >
-                  <p className="text-sm mb-4 font-medium text-[oklch(0.555_0.246_16.439)] ">
-                    {date.toLocaleDateString("en-GB")}
-                  </p>
-
-                  <select
-                    className="w-full text-sm border rounded-md px-2 py-1 border-[oklch(0.923_0.003_48.717)]"
-                    value={shifts[date.toLocaleDateString("en-GB")] || ""}
-                    onChange={(e) => handleShiftChange(date, e.target.value)}
+                {dateRange.map((date, index) => (
+                  <div
+                    key={index}
+                    className="p-3 rounded-xl border border-blue-100 bg-white shadow-sm hover:shadow-md transition mb-1"
                   >
-                    <option value="">Select Shift</option>
-                    <option>General Shift</option>
-                    <option>Night Shift</option>
-                    <option>RS</option>
-                    <option>AL</option>
-                    <option>Off</option>
-                  </select>
-                </div>
-              ))}
+                    <p className="text-xs mb-2 font-semibold text-blue-600">
+                      {date.toLocaleDateString("en-GB")}
+                    </p>
+
+                    <select
+                      className="w-full text-xs bg-blue-50 border border-blue-200 rounded-md px-2 py-1"
+                      value={shifts[date.toLocaleDateString("en-GB")] || ""}
+                      onChange={(e) => handleShiftChange(date, e.target.value)}
+                    >
+                      <option value="">Select Shift</option>
+                      <option>General Shift</option>
+                      <option>Night Shift</option>
+                      <option>RS</option>
+                      <option>AL</option>
+                      <option>Off</option>
+                    </select>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div className="flex justify-center my-8">
+          {/* Assign */}
+          <div className="flex justify-center mt-8">
             <button
-              className="px-6 py-2 rounded-lg text-white bg-[oklch(0.645_0.246_16.439)]"
+              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transition"
               onClick={handleAssign}
             >
               Assign This Roster
