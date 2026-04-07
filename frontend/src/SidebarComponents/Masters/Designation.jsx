@@ -24,7 +24,7 @@ const Designation = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
-
+  const [loading, setLoading] = useState(false);
   const [companyOptions, setCompanyOptions] = useState([]);
   const [departmentOptions, setDepartmentOptions] = useState([]);
   const [formData, setFormData] = useState({
@@ -39,6 +39,7 @@ const Designation = () => {
 
   const fetchDesignations = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem("token");
       const headers = {
         "Content-Type": "application/json",
@@ -70,6 +71,8 @@ const Designation = () => {
     } catch (error) {
       console.error("Failed to fetch designations", error);
       toast.error("Unable to load designations");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -93,10 +96,13 @@ const Designation = () => {
 
   const fetchCompanies = async () => {
     try {
+      setLoading(true);
       const res = await axios.get(`${API_BASE}/companies`);
       setCompanyOptions(res.data || []);
     } catch (error) {
       console.error("Failed to fetch companies", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -105,7 +111,7 @@ const Designation = () => {
     fetchCompanies();
     fetchDepartments();
   }, []);
-  
+
   const filtereddesignation = designation.filter(
     (x) =>
       x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
@@ -339,17 +345,18 @@ const Designation = () => {
       <div className="mb-6">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-          <h1 className="flex items-center gap-2 h-[30px] text-lg font-bold text-gray-900">
+          <h1 className="flex items-center gap-2 h-[30px] text-lg font-semibold text-gray-800">
             <FaAngleRight className="text-blue-500 text-base" />
-            <span className="text-gray-600">Masters</span>
+            <span className="text-gray-500">Masters</span>
             <FaAngleRight className="text-blue-500 text-base" />
             <div
               onClick={() => setOpenModal(false)}
-              className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+              className="cursor-pointer text-blue-600 hover:text-blue-700"
             >
               Designation
             </div>
           </h1>
+
           {!openModal && (
             <div className="flex justify-end">
               <button
@@ -366,7 +373,7 @@ const Designation = () => {
                   }),
                   setOpenModal(true)
                 )}
-                className="w-full bg-gradient-to-r from-blue-500 via-blue-600 to-cyan-600 hover:from-blue-600 hover:via-blue-700 hover:to-cyan-700 text-white font-semibold px-6 py-2.5 rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap border border-blue-400/30"
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
               >
                 + Add New
               </button>
@@ -375,12 +382,12 @@ const Designation = () => {
         </div>
 
         {/* Main Container */}
-        <div className="bg-gradient-to-br from-white via-slate-50 to-blue-50/30 rounded-3xl overflow-hidden border border-blue-100/50 shadow-2xl backdrop-blur-sm">
-          {/* Top Controls Bar */}
-          <div className="p-6 bg-gradient-to-r from-slate-50/80 to-blue-50/50 border-b border-blue-100/40">
-            <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
-              <div className="flex items-center gap-3">
-                <label className="text-sm font-semibold text-gray-700">
+        <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl">
+          {/* Top Controls */}
+          <div className="p-6 border-b border-blue-100/30">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-600">
                   Display
                 </label>
                 <select
@@ -389,32 +396,32 @@ const Designation = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-white border-2 border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm font-medium cursor-pointer hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 transition-all shadow-sm"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm cursor-pointer hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 transition-all"
                 >
                   <option value={10}>10</option>
                   <option value={25}>25</option>
                   <option value={50}>50</option>
                   <option value={100}>100</option>
                 </select>
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-gray-600">
                   entries
                 </span>
               </div>
 
-              <div className="flex flex-wrap gap-3 items-center justify-center w-full lg:w-auto">
+              <div className="flex flex-wrap gap-3 items-center justify-center">
                 <input
-                  placeholder="Search designation..."
+                  placeholder="Search Departments..."
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full sm:w-56 bg-white border-2 border-blue-200 text-gray-900 px-4 py-2.5 rounded-lg text-sm placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 focus:bg-white transition-all shadow-sm"
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
                 />
                 <div className="flex gap-2">
                   <button
                     onClick={handleCopy}
-                    className="bg-white hover:bg-slate-50 border-2 border-gray-200 text-gray-700 hover:text-gray-900 p-2.5 rounded-lg transition-all hover:border-gray-300 shadow-sm"
+                    className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
                     title="Copy to clipboard"
                   >
                     <GoCopy className="text-lg" />
@@ -422,7 +429,7 @@ const Designation = () => {
 
                   <button
                     onClick={handleExcel}
-                    className="bg-white hover:bg-green-50 border-2 border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all hover:border-green-300 shadow-sm"
+                    className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
                     title="Export to Excel"
                   >
                     <FaFileExcel className="text-lg" />
@@ -430,7 +437,7 @@ const Designation = () => {
 
                   <button
                     onClick={handlePDF}
-                    className="bg-white hover:bg-red-50 border-2 border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all hover:border-red-300 shadow-sm"
+                    className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
                     title="Export to PDF"
                   >
                     <FaFilePdf className="text-lg" />
@@ -440,46 +447,52 @@ const Designation = () => {
             </div>
           </div>
 
-          {/* Table Container */}
-          <div className="overflow-x-auto min-h-[350px]">
-            <table className="w-full text-sm">
+          {/* Table */}
+          <div className="overflow-x-auto min-h-[300px]">
+            <table className="w-full text-[16px]">
               <thead>
-                <tr className="bg-gradient-to-r from-blue-100 via-blue-50 to-blue-100 border-b-2 border-blue-200/60">
-                  <th className="px-6 py-4 text-center font-bold text-blue-900 hidden sm:table-cell">
+                <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50 ">
+                  <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
                     SL.NO
                   </th>
-                  <th className="px-6 py-4 text-center font-bold text-blue-900">
+                  <th className="px-6 py-3 text-center font-semibold text-gray-700">
                     Designation
                   </th>
-                  <th className="px-6 py-4 text-center font-bold text-blue-900 hidden md:table-cell">
+                  <th className="px-6 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
                     Code
                   </th>
-                  <th className="px-6 py-4 text-center font-bold text-blue-900 hidden xl:table-cell">
+                  <th className="px-6 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
                     Company
                   </th>
-                  <th className="px-6 py-4 text-center font-bold text-blue-900 hidden xl:table-cell">
+                  <th className="px-6 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
                     Department
                   </th>
-                  <th className="px-6 py-4 text-center font-bold text-blue-900 hidden lg:table-cell">
+                  <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-center font-bold text-blue-900">
+                  <th className="px-6 py-3 text-center font-semibold text-gray-700">
                     Actions
                   </th>
                 </tr>
               </thead>
 
               <tbody>
-                {currentdesignation.length === 0 ? (
+                {loading ? (
                   <tr>
-                    <td colSpan="7" className="px-6 py-16 text-center">
-                      <div className="flex flex-col items-center gap-4">
-                        <div className="text-5xl opacity-30">📋</div>
-                        <p className="text-gray-400 text-lg font-medium">
-                          No Designations Found
-                        </p>
-                        <p className="text-gray-300 text-sm">
-                          Add a new designation to get started
+                    <td
+                      colSpan="6"
+                      className="sm:text-center p-10 text-gray-400"
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                ) : currentdesignation.length === 0 ? (
+                  <tr>
+                    <td colSpan="7" className="px-4 py-12 text-center">
+                      <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="text-4xl opacity-40">📭</div>
+                        <p className="text-gray-500 text-base">
+                          No Data Available
                         </p>
                       </div>
                     </td>
@@ -488,88 +501,78 @@ const Designation = () => {
                   currentdesignation.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="border-b border-blue-100/40 bg-white/60 hover:bg-blue-50 even:bg-slate-50/40 text-[15px] hover:-translate-y-0.5 transition-all duration-300"
+                      className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      {/* SL NO (fix for pagination if needed) */}
                       <td className="px-6 py-2 text-center hidden sm:table-cell">
                         {index + 1}
                       </td>
 
-                      {/* Name */}
                       <td className="px-6 py-2 text-center">
                         {item.name || "-"}
                       </td>
 
-                      {/* Code */}
                       <td className="px-6 py-2 text-center hidden md:table-cell">
                         {item.code || "-"}
                       </td>
 
-                      {/* Company */}
                       <td className="px-6 py-2 text-center hidden xl:table-cell">
                         {item.company_name || item.company || "-"}
                       </td>
 
-                      {/* Department */}
                       <td className="px-6 py-2 text-center hidden xl:table-cell">
                         {item.department || "-"}
                       </td>
 
-                      {/* Status */}
-                      <td className="px-6 py-2 text-center hidden lg:table-cell">
-                        <span
-                          className={`px-4 py-1.5 rounded-full font-semibold border ${
-                            item.isActive
-                              ? "bg-green-100 text-green-700 border-green-300"
-                              : "bg-gray-100 text-gray-700 border-gray-300"
-                          }`}
-                        >
-                          {item.isActive ? "✓ Active" : "○ Inactive"}
-                        </span>
+                      <td className="px-4 py-3 hidden lg:table-cell text-center">
+                        <div className="flex justify-center">
+                          <span
+                            className={`px-3 py-1 rounded-full text-sm font-semibold border ${
+                              item.isActive
+                                ? "bg-green-100 text-green-700 border-green-300"
+                                : "bg-gray-100 text-gray-700 border-gray-300"
+                            }`}
+                          >
+                            {item.isActive ? "✓ Active" : "○ Inactive"}
+                          </span>
+                        </div>
                       </td>
 
-                      {/* Actions */}
-                      <td className="px-6 py-2 text-center">
+                      <td className="px-4 py-3 text-center">
                         <div className="flex justify-center gap-2">
                           {/* View */}
                           <button
                             onClick={() => {
-                              setFormData({
-                                ...item,
-                                isActive:
-                                  item.isActive ?? item.is_active ?? false,
-                              });
+                              setFormData(item);
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="p-2 text-blue-500 bg-blue-100 hover:bg-blue-200 rounded-lg transition hover:scale-110"
+                            className="text-blue-500 hover:text-blue-700 hover:bg-blue-100 p-1.5 rounded-lg transition-all"
+                            title="View"
                           >
-                            <FaEye />
+                            <FaEye className="text-lg" />
                           </button>
 
                           {/* Edit */}
                           <button
                             onClick={() => {
-                              setFormData({
-                                ...item,
-                                isActive:
-                                  item.isActive ?? item.is_active ?? false,
-                              });
+                              setFormData(item);
                               setEditId(item.id);
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="p-2 text-blue-500 bg-blue-100 hover:bg-blue-200 rounded-lg transition hover:scale-110"
+                            className="text-green-500 hover:text-green-700 hover:bg-green-100 p-1.5 rounded-lg transition-all"
+                            title="Edit"
                           >
-                            <FaPen />
+                            <FaPen className="text-lg" />
                           </button>
 
                           {/* Delete */}
                           <button
                             onClick={() => handleDelete(item.id)}
-                            className="p-2 text-red-500 bg-red-100 hover:bg-red-200 rounded-lg transition hover:scale-110"
+                            className="text-red-500 hover:text-red-700 hover:bg-red-100 p-1.5 rounded-lg transition-all"
+                            title="Delete"
                           >
-                            <MdDeleteForever />
+                            <MdDeleteForever className="text-xl" />
                           </button>
                         </div>
                       </td>
@@ -580,19 +583,19 @@ const Designation = () => {
             </table>
           </div>
 
-          {/* Pagination Section */}
-          <div className="p-6 bg-gradient-to-r from-slate-50/80 to-blue-50/50 border-t border-blue-100/40 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <span className="text-sm text-gray-600 font-medium">
+          {/* Pagination */}
+          <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <span className="text-sm text-gray-600">
               Showing{" "}
-              <span className="text-gray-900 font-bold">
+              <span className="text-gray-900 font-semibold">
                 {filtereddesignation.length === 0 ? "0" : startIndex + 1}
               </span>{" "}
               to{" "}
-              <span className="text-gray-900 font-bold">
+              <span className="text-gray-900 font-semibold">
                 {Math.min(endIndex, filtereddesignation.length)}
               </span>{" "}
               of{" "}
-              <span className="text-gray-900 font-bold">
+              <span className="text-gray-900 font-semibold">
                 {filtereddesignation.length}
               </span>{" "}
               entries
@@ -600,37 +603,41 @@ const Designation = () => {
 
             <div className="flex gap-2">
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
-                className="bg-white hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-blue-200 text-blue-600 hover:text-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:border-blue-400"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="First page"
               >
                 First
               </button>
 
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="bg-white hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-blue-200 text-blue-600 p-2 rounded-lg transition-all hover:border-blue-400"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Previous page"
               >
                 <GrPrevious />
               </button>
 
-              <div className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 border-2 border-blue-400 rounded-lg text-white font-bold min-w-[50px] text-center shadow-lg">
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
                 {currentPage}
               </div>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="bg-white hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-blue-200 text-blue-600 p-2 rounded-lg transition-all hover:border-blue-400"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Next page"
               >
                 <GrNext />
               </button>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="bg-white hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-blue-200 text-blue-600 hover:text-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:border-blue-400"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="Last page"
               >
                 Last
               </button>
@@ -641,24 +648,24 @@ const Designation = () => {
         {/* Modal */}
         {openModal && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md p-4 overflow-y-auto"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
             style={{ scrollbarWidth: "none" }}
           >
             <div
-              className="bg-gradient-to-br from-white via-slate-50 to-blue-50 rounded-3xl shadow-2xl border border-blue-200/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8"
+              className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8"
               style={{ scrollbarWidth: "none" }}
             >
               {/* Close Button */}
               <div className="flex justify-end mb-6">
                 <button
                   onClick={() => setOpenModal(false)}
-                  className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-lg transition"
+                  className="text-gray-400 hover:text-gray-600 transition"
                 >
                   <RxCross2 className="text-2xl" />
                 </button>
               </div>
 
-              <h2 className="text-3xl font-bold text-gray-900 mb-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 {mode === "view"
                   ? "View Designation"
                   : mode === "edit"
@@ -669,7 +676,7 @@ const Designation = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
                 {/* Name Field */}
                 <div>
-                  <label className="text-sm font-bold text-gray-700 mb-2 block">
+                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
                     Designation Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -678,14 +685,14 @@ const Designation = () => {
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Enter designation name"
-                    className="w-full bg-white border-2 border-blue-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                     required
                   />
                 </div>
 
                 {/* Code Field */}
                 <div>
-                  <label className="text-sm font-bold text-gray-700 mb-2 block">
+                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
                     Code <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -694,7 +701,7 @@ const Designation = () => {
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Enter code"
-                    className="w-full bg-white border-2 border-blue-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                     required
                   />
                 </div>
@@ -716,7 +723,7 @@ const Designation = () => {
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
-                    inputStyle="w-full bg-white border-2 border-blue-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
+                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
                     labelStyle="text-sm font-bold text-gray-700 mb-2 block"
                   />
                 </div>
@@ -738,7 +745,7 @@ const Designation = () => {
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
-                    inputStyle="w-full bg-white border-2 border-blue-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
+                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
                     labelStyle="text-sm font-bold text-gray-700 mb-2 block"
                   />
                 </div>
@@ -754,12 +761,12 @@ const Designation = () => {
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Enter description"
-                    className="w-full bg-white border-2 border-blue-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
                 </div>
 
                 {/* Active Checkbox */}
-                <div className="flex items-center gap-3 bg-blue-50/50 px-4 py-3 rounded-xl border border-blue-100">
+                <div className="flex items-center gap-3 px-4 py-3 rounded-xl">
                   <input
                     type="checkbox"
                     name="isActive"
@@ -769,7 +776,7 @@ const Designation = () => {
                     className="w-5 h-5 cursor-pointer accent-blue-500 disabled:cursor-not-allowed"
                   />
                   <label className="text-gray-700 font-semibold cursor-pointer">
-                    Mark as Active
+                    Active
                   </label>
                 </div>
               </div>
@@ -779,15 +786,15 @@ const Designation = () => {
                 <div className="flex justify-end gap-3">
                   <button
                     onClick={() => setOpenModal(false)}
-                    className="px-6 py-2.5 rounded-lg border-2 border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-50 font-semibold transition-all"
+                    className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-50 font-semibold transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSubmit}
-                    className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-600 hover:from-blue-600 hover:via-blue-700 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 border border-blue-400/30"
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                   >
-                    Save Designation
+                    Save
                   </button>
                 </div>
               )}

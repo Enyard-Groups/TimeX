@@ -27,6 +27,7 @@ const Shift = () => {
   const [editId, setEditId] = useState(null);
   const [showInTimePicker, setShowInTimePicker] = useState(false);
   const [showOutTimePicker, setShowOutTimePicker] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [companyOptions, setCompanyOptions] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -38,7 +39,6 @@ const Shift = () => {
     isActive: false,
   });
 
-
   const formatTime = (value) => {
     if (!value) return null;
     if (value instanceof Date) {
@@ -47,7 +47,6 @@ const Shift = () => {
       const s = String(value.getSeconds()).padStart(2, "0");
       return `${h}:${m}:${s}`;
     }
-    // handle strings like "HH:mm" or "HH:mm:ss"
     const [h, m, s] = value.split(":");
     if (!h || !m) return null;
     return `${h.padStart(2, "0")}:${m.padStart(2, "0")}:${(s || "00").padStart(2, "0")}`;
@@ -68,6 +67,7 @@ const Shift = () => {
 
   const fetchShifts = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem("token");
       const headers = {
         "Content-Type": "application/json",
@@ -96,15 +96,20 @@ const Shift = () => {
     } catch (error) {
       console.error("Failed to fetch shifts", error);
       toast.error("Unable to load shifts");
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchCompanies = async () => {
     try {
+      setLoading(true);
       const res = await axios.get(`${API_BASE}/companies`);
       setCompanyOptions(res.data || []);
     } catch (error) {
       console.error("Failed to fetch companies", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -113,27 +118,16 @@ const Shift = () => {
     fetchCompanies();
   }, []);
 
-
-  const inputStyle =
-    "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
-
-  const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
-
   const filteredshift = shift.filter(
     (x) =>
       x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
       x.code.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
       (x.company_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
-
   );
 
   const endIndex = currentPage * entriesPerPage;
-
   const startIndex = endIndex - entriesPerPage;
-
   const currentshift = filteredshift.slice(startIndex, endIndex);
-
   const totalPages = Math.max(
     1,
     Math.ceil(filteredshift.length / entriesPerPage),
@@ -141,7 +135,6 @@ const Shift = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -153,7 +146,7 @@ const Shift = () => {
 
     if (!name || !code || !intime || !outtime) {
       toast.error("Please fill all required fields");
-      return; // stop execution
+      return;
     }
 
     if (new Date(outtime) <= new Date(intime)) {
@@ -225,7 +218,6 @@ const Shift = () => {
         };
 
         setShift((prev) => [created, ...prev]);
-
         toast.success("Data Added");
       }
 
@@ -298,7 +290,6 @@ const Shift = () => {
       .join("\n");
 
     const text = `${header}\n${rows}`;
-
     navigator.clipboard.writeText(text);
     toast.success("Table copied to clipboard");
   };
@@ -309,14 +300,10 @@ const Shift = () => {
       "Shift Name": item.name,
       "Shift Code": item.code,
       InTime: item.intime
-        ? item.intime.toLocaleTimeString([], {
-            hour12: false,
-          })
+        ? item.intime.toLocaleTimeString([], { hour12: false })
         : "",
       OutTime: item.outtime
-        ? item.outtime.toLocaleTimeString([], {
-            hour12: false,
-          })
+        ? item.outtime.toLocaleTimeString([], { hour12: false })
         : "",
       Company: item.company_name || item.company,
       Active: item.isActive ? "Y" : "N",
@@ -324,15 +311,12 @@ const Shift = () => {
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     const workbook = XLSX.utils.book_new();
-
     XLSX.utils.book_append_sheet(workbook, worksheet, "Shift");
-
     XLSX.writeFile(workbook, "ShiftData.xlsx");
   };
 
   const handlePDF = () => {
     const doc = new jsPDF("landscape");
-
     const tableColumn = [
       "SL.NO",
       "Shift Name",
@@ -342,7 +326,6 @@ const Shift = () => {
       "Company",
       "Active",
     ];
-
     const tableRows = [];
 
     filteredshift.forEach((item, index) => {
@@ -351,19 +334,14 @@ const Shift = () => {
         item.name,
         item.code,
         item.intime
-          ? item.intime.toLocaleTimeString([], {
-              hour12: false,
-            })
+          ? item.intime.toLocaleTimeString([], { hour12: false })
           : "",
         item.outtime
-          ? item.outtime.toLocaleTimeString([], {
-              hour12: false,
-            })
+          ? item.outtime.toLocaleTimeString([], { hour12: false })
           : "",
         item.company_name || item.company,
         item.isActive ? "Y" : "N",
       ];
-
       tableRows.push(row);
     });
 
@@ -378,16 +356,20 @@ const Shift = () => {
   return (
     <>
       <div className="mb-6">
-        {/* Header */}
-        <div className="sm:flex sm:justify-between">
-          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-            <FaAngleRight />
-            Masters
-            <FaAngleRight />
-            <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+          <h1 className="flex items-center gap-2 h-[30px] text-lg font-semibold text-gray-800">
+            <FaAngleRight className="text-blue-500 text-base" />
+            <span className="text-gray-500">Masters</span>
+            <FaAngleRight className="text-blue-500 text-base" />
+            <div
+              onClick={() => setOpenModal(false)}
+              className="cursor-pointer text-blue-600 hover:text-blue-700"
+            >
               Shift
             </div>
           </h1>
+
           {!openModal && (
             <div className="flex justify-end">
               <button
@@ -405,7 +387,7 @@ const Shift = () => {
                   }),
                   setOpenModal(true)
                 )}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
               >
                 + Add New
               </button>
@@ -413,169 +395,214 @@ const Shift = () => {
           )}
         </div>
 
-        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">
+        {/* Main Container */}
+        <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl">
           {/* Top Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <div>
-              <label className="mr-2 text-md">Show</label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="ml-2 text-md">entries</span>
-            </div>
-            <div className="flex flex-wrap gap-2 items-center justify-center">
-              <input
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-              />
-              <div className="flex">
-                <button
-                  onClick={handleCopy}
-                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+          <div className="p-6 border-b border-blue-100/30">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-600">
+                  Display
+                </label>
+                <select
+                  value={entriesPerPage}
+                  onChange={(e) => {
+                    setEntriesPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm cursor-pointer hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 transition-all"
                 >
-                  <GoCopy />
-                </button>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+                <span className="text-sm font-medium text-gray-600">
+                  entries
+                </span>
+              </div>
 
-                <button
-                  onClick={handleExcel}
-                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
-                >
-                  <FaFileExcel />
-                </button>
+              <div className="flex flex-wrap gap-3 items-center justify-center">
+                <input
+                  placeholder="Search Shifts..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopy}
+                    className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
+                    title="Copy to clipboard"
+                  >
+                    <GoCopy className="text-lg" />
+                  </button>
 
-                <button
-                  onClick={handlePDF}
-                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
-                >
-                  <FaFilePdf />
-                </button>
+                  <button
+                    onClick={handleExcel}
+                    className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
+                    title="Export to Excel"
+                  >
+                    <FaFileExcel className="text-lg" />
+                  </button>
+
+                  <button
+                    onClick={handlePDF}
+                    className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
+                    title="Export to PDF"
+                  >
+                    <FaFilePdf className="text-lg" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Table */}
-          <div
-            className="overflow-x-auto min-h-[250px]"
-            style={{ scrollbarWidth: "none" }}
-          >
-            <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="p-2 font-semibold hidden sm:table-cell">
+          <div className="overflow-x-auto min-h-[300px]">
+            <table className="w-full text-[16px]">
+              <thead>
+                <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
+                  <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
                     SL.NO
                   </th>
-
-                  <th className="p-2 font-semibold ">Shift Name</th>
-
-                  <th className="p-2 font-semibold  hidden md:table-cell">
-                    Shift Code
+                  <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                    Shift
                   </th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="px-6 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
+                    Code
+                  </th>
+                  <th className="px-6 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
                     In Time
                   </th>
-
-                  <th className="p-2 font-semibold  hidden md:table-cell">
+                  <th className="px-6 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
                     Out Time
                   </th>
-
-                  <th className="p-2 font-semibold hidden lg:table-cell">
+                  <th className="px-6 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
                     Company
                   </th>
-
-                  <th className="p-2 font-semibold hidden lg:table-cell">
-                    Active
+                  <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
+                    Status
                   </th>
-
-                  <th className="p-2 font-semibold">Action</th>
+                  <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                    Actions
+                  </th>
                 </tr>
               </thead>
+
               <tbody>
-                {currentshift.length === 0 ? (
+                {loading ? (
                   <tr>
-                    <td colSpan="14" className="lg:text-center p-10 ">
-                      No Data Available
+                    <td
+                      colSpan="6"
+                      className="sm:text-center p-10 text-gray-400"
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                ) : currentshift.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" className="px-4 py-12 text-center">
+                      <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="text-4xl opacity-40">📭</div>
+                        <p className="text-gray-500 text-base">
+                          No Data Available
+                        </p>
+                      </div>
                     </td>
                   </tr>
                 ) : (
                   currentshift.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                      className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="p-2 hidden sm:table-cell">{index + 1}</td>
+                      <td className="px-6 py-2 text-center hidden sm:table-cell">
+                        {index + 1}
+                      </td>
 
-                      <td className="p-2">{item.name}</td>
+                      <td className="px-6 py-2 text-center">
+                        {item.name || "-"}
+                      </td>
 
-                      <td className="p-2 hidden md:table-cell">{item.code}</td>
+                      <td className="px-6 py-2 text-center hidden md:table-cell">
+                        {item.code || "-"}
+                      </td>
 
-                      <td className="p-2 hidden md:table-cell">
+                      <td className="px-6 py-2 text-center hidden md:table-cell">
                         {item.intime
                           ? item.intime.toLocaleTimeString([], {
                               hour12: false,
                             })
-                          : ""}
+                          : "-"}
                       </td>
 
-                      <td className="p-2 hidden md:table-cell">
+                      <td className="px-6 py-2 text-center hidden xl:table-cell">
                         {item.outtime
                           ? item.outtime.toLocaleTimeString([], {
                               hour12: false,
                             })
-                          : ""}
+                          : "-"}
                       </td>
 
-                      <td className="p-2 hidden lg:table-cell">
-                        {item.company_name || item.company}
+                      <td className="px-6 py-2 text-center hidden xl:table-cell">
+                        {item.company_name || item.company || "-"}
                       </td>
 
-                      <td className="p-2 hidden lg:table-cell">
-                        {item.isActive ? "Y" : "N"}
+                      <td className="px-4 py-3 hidden lg:table-cell text-center">
+                        <div className="flex justify-center">
+                          <span
+                            className={`px-3 py-1 rounded-full text-sm font-semibold border ${
+                              item.isActive
+                                ? "bg-green-100 text-green-700 border-green-300"
+                                : "bg-gray-100 text-gray-700 border-gray-300"
+                            }`}
+                          >
+                            {item.isActive ? "✓ Active" : "○ Inactive"}
+                          </span>
+                        </div>
                       </td>
 
-                      <td className="p-2">
-                        <div className="flex flex-row space-x-3 justify-center ">
+                      <td className="px-4 py-3 text-center">
+                        <div className="flex justify-center gap-2">
                           {/* View */}
-                          <FaEye
+                          <button
                             onClick={() => {
                               setFormData(item);
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />
+                            className="text-blue-500 hover:text-blue-700 hover:bg-blue-100 p-1.5 rounded-lg transition-all"
+                            title="View"
+                          >
+                            <FaEye className="text-lg" />
+                          </button>
 
                           {/* Edit */}
-                          <FaPen
+                          <button
                             onClick={() => {
                               setFormData(item);
                               setEditId(item.id);
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="inline text-green-500 cursor-pointer text-lg"
-                          />
+                            className="text-green-500 hover:text-green-700 hover:bg-green-100 p-1.5 rounded-lg transition-all"
+                            title="Edit"
+                          >
+                            <FaPen className="text-lg" />
+                          </button>
 
                           {/* Delete */}
-                          <MdDeleteForever
+                          <button
                             onClick={() => handleDelete(item.id)}
-                            className="inline text-red-500 cursor-pointer text-xl"
-                          />
+                            className="text-red-500 hover:text-red-700 hover:bg-red-100 p-1.5 rounded-lg transition-all"
+                            title="Delete"
+                          >
+                            <MdDeleteForever className="text-xl" />
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -586,18 +613,29 @@ const Shift = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-            <span>
-              Showing {filteredshift.length === 0 ? "0" : startIndex + 1} to{" "}
-              {Math.min(endIndex, filteredshift.length)} of{" "}
-              {filteredshift.length} entries
+          <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <span className="text-sm text-gray-600">
+              Showing{" "}
+              <span className="text-gray-900 font-semibold">
+                {filteredshift.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
+              to{" "}
+              <span className="text-gray-900 font-semibold">
+                {Math.min(endIndex, filteredshift.length)}
+              </span>{" "}
+              of{" "}
+              <span className="text-gray-900 font-semibold">
+                {filteredshift.length}
+              </span>{" "}
+              entries
             </span>
 
-            <div className="flex flex-row space-x-1">
+            <div className="flex gap-2">
               <button
                 disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="First page"
               >
                 First
               </button>
@@ -605,17 +643,21 @@ const Shift = () => {
               <button
                 disabled={currentPage == 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Previous page"
               >
                 <GrPrevious />
               </button>
 
-              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
+                {currentPage}
+              </div>
 
               <button
                 disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Next page"
               >
                 <GrNext />
               </button>
@@ -623,7 +665,8 @@ const Shift = () => {
               <button
                 disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="Last page"
               >
                 Last
               </button>
@@ -631,77 +674,79 @@ const Shift = () => {
           </div>
         </div>
 
+        {/* Modal */}
         {openModal && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
             style={{ scrollbarWidth: "none" }}
           >
             <div
-              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+              className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8"
               style={{ scrollbarWidth: "none" }}
             >
-              {/* Close */}
-              <div className="flex justify-end">
-                <RxCross2
+              {/* Close Button */}
+              <div className="flex justify-end mb-6">
+                <button
                   onClick={() => setOpenModal(false)}
-                  className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-                />
+                  className="text-gray-400 hover:text-gray-600 transition"
+                >
+                  <RxCross2 className="text-2xl" />
+                </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                {mode === "view"
+                  ? "View Shift"
+                  : mode === "edit"
+                    ? "Edit Shift"
+                    : "Add New Shift"}
+              </h2>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                {/* Shift Name Field */}
                 <div>
-                  <label className={labelStyle}>
-                    Shift Name
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
+                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                    Shift Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    placeholder="Name"
-                    className={inputStyle}
                     disabled={mode === "view"}
+                    placeholder="Enter shift name"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                     required
                   />
                 </div>
 
+                {/* Code Field */}
                 <div>
-                  <label className={labelStyle}>
-                    Code
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
+                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                    Code <span className="text-red-500">*</span>
                   </label>
                   <input
                     name="code"
                     value={formData.code}
                     onChange={handleChange}
-                    placeholder="Code"
-                    className={inputStyle}
                     disabled={mode === "view"}
+                    placeholder="Enter code"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                     required
                   />
                 </div>
 
-                <div className="relative">
-                  <label className={labelStyle}>
-                    In Time
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
+                {/* In Time Field */}
+                <div>
+                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                    In Time <span className="text-red-500">*</span>
                   </label>
                   <div
-                    className={`${inputStyle} cursor-pointer`}
                     onClick={() => {
                       if (mode !== "view") {
                         setShowInTimePicker(true);
                       }
                     }}
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm cursor-pointer flex items-center justify-center"
                   >
                     {formData.intime
                       ? formData.intime.toLocaleTimeString([], {
@@ -720,21 +765,18 @@ const Shift = () => {
                   )}
                 </div>
 
-                <div className="relative">
-                  <label className={labelStyle}>
-                    Out Time
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
+                {/* Out Time Field */}
+                <div>
+                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                    Out Time <span className="text-red-500">*</span>
                   </label>
                   <div
-                    className={`${inputStyle} cursor-pointer`}
                     onClick={() => {
                       if (mode !== "view") {
                         setShowOutTimePicker(true);
                       }
                     }}
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm cursor-pointer flex items-center justify-center"
                   >
                     {formData.outtime
                       ? formData.outtime.toLocaleTimeString([], {
@@ -753,6 +795,7 @@ const Shift = () => {
                   )}
                 </div>
 
+                {/* Company Field */}
                 <div>
                   <SearchDropdown
                     label={
@@ -765,33 +808,43 @@ const Shift = () => {
                     displayValue={formData.company_name}
                     options={companyOptions}
                     labelKey="name"
-                    valueKey="id"
+                    valueKey="name"
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
-                    inputStyle={inputStyle}
-                    labelStyle={labelStyle}
+                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
+                    labelStyle="text-sm font-bold text-gray-700 mb-2 block"
                   />
                 </div>
 
-                <div className="flex items-center gap-2 mt-6">
-                  <label className={labelStyle}>Active</label>
+                {/* Active Checkbox */}
+                <div className="flex items-center gap-3 px-4 py-3 rounded-xl h-fit md:mt-6">
                   <input
                     type="checkbox"
                     name="isActive"
                     checked={formData.isActive}
                     onChange={handleChange}
                     disabled={mode === "view"}
+                    className="w-5 h-5 cursor-pointer accent-blue-500 disabled:cursor-not-allowed"
                   />
+                  <label className="text-gray-700 font-semibold cursor-pointer">
+                    Active
+                  </label>
                 </div>
               </div>
 
-              {/* Save */}
+              {/* Action Buttons */}
               {mode !== "view" && (
-                <div className="flex justify-end mt-10">
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={() => setOpenModal(false)}
+                    className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-50 font-semibold transition-all"
+                  >
+                    Cancel
+                  </button>
                   <button
                     onClick={handleSubmit}
-                    className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md mb-6"
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                   >
                     Save
                   </button>

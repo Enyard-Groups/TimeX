@@ -80,7 +80,7 @@ const SearchDropdown = ({
         className={`${inputStyle} ${
           disabled
             ? "cursor-not-allowed opacity-60 bg-gray-100 border-gray-200 text-gray-500 hover:border-gray-200"
-            : "cursor-pointer hover:border-gray-400"
+            : "cursor-pointer border-2 hover:border-blue-500/60"
         } flex items-center justify-between min-h-[40px] transition-all`}
       >
         <span className="truncate">
