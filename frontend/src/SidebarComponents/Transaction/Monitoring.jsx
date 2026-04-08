@@ -307,7 +307,7 @@ const Monitoring = () => {
                       <div className="flex flex-col items-center justify-center gap-3">
                         <div className="text-4xl opacity-40">📅</div>
                         <p className="text-gray-500 text-base font-medium">
-                         No attendance data found
+                         No attendance data
                         </p>
                       </div>
                     </td>
