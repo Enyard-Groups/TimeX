@@ -11,14 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
-<<<<<<< HEAD
 
-<<<<<<< HEAD
-=======
-=======
 .env
 
->>>>>>> 03e01cb20e49bb2cd41ee2c42fd59786360b51dd
+
 node_modules
 
 # Editor directories and files

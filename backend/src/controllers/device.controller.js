@@ -7,13 +7,16 @@ const authHeaders = (req) => req.headers.authorization; // kept for future middl
 export const getDevices = async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT d.*
+      SELECT d.*, c.name as company_name
       FROM devices d
+      LEFT JOIN companies c ON d.company = CAST(c.id AS TEXT)
       ORDER BY d.created_at DESC
     `);
     return res.json({ data: result.rows });
   } catch (error) {
     console.log("error in getDevices", error.message);
+  
+
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -107,7 +110,12 @@ export const deleteDevice = async (req, res) => {
 
 export const getDeviceModels = async (req, res) => {
   try {
-    const result = await db.query("SELECT * FROM device_models ORDER BY created_at DESC");
+    const result = await db.query(`
+      SELECT dm.*, c.name as company_name
+      FROM device_models dm
+      LEFT JOIN companies c ON dm.company = CAST(c.id AS TEXT)
+      ORDER BY dm.created_at DESC
+    `);
     return res.json({ data: result.rows });
   } catch (error) {
     console.log("error in getDeviceModels", error.message);

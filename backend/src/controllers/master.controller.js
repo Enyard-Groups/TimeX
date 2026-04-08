@@ -4,15 +4,17 @@ import db from "../lib/db.js";
 
 export const getDepartments = async (req, res) => {
   try {
-    const result = await db.query(`
-      SELECT d.*, c.name as company_name
-      FROM departments d
-      LEFT JOIN companies c ON d.company = CAST(c.id AS TEXT)
-      ORDER BY d.created_at DESC
-    `);
+   const result = await db.query(`
+  SELECT d.*, c.name AS company_name
+  FROM departments d
+  LEFT JOIN companies c ON d.company = c.id
+  ORDER BY d.created_at DESC
+`);
+console.log(result.rows)
     res.json(result.rows);
 
   } catch (error) {
+    console.log("Erro in get departments:",error.message)
     res.status(500).json({ message: error.message });
   }
 };
@@ -61,7 +63,7 @@ export const getDesignations = async (req, res) => {
     const result = await db.query(`
       SELECT ds.*, c.name as company_name
       FROM designations ds
-      LEFT JOIN companies c ON ds.company = CAST(c.id AS TEXT)
+      LEFT JOIN companies c ON ds.company = c.id
       ORDER BY ds.created_at DESC
     `);
     res.json(result.rows);
@@ -112,19 +114,27 @@ export const updateDesignation = async (req, res) => {
 
 export const getShifts = async (req, res) => {
   try {
-    const result = await db.query('SELECT * FROM shifts ORDER BY created_at DESC');
+    const result = await db.query(`
+      SELECT s.*, c.name as company_name
+      FROM shifts s
+      LEFT JOIN companies c ON s.company = c.id
+      ORDER BY s.created_at DESC
+    `);
+
     res.json(result.rows);
   } catch (error) {
+    console.log("error in getShifts", error.message);
     res.status(500).json({ message: error.message });
   }
 };
 
 export const createShift = async (req, res) => {
-  const { shift_name, shift_code, start_time, end_time, grace_period, is_active } = req.body;
+  const { shift_name, shift_code, start_time, end_time, grace_period, is_active, company } = req.body;
+  
   try {
     const result = await db.query(
-      'INSERT INTO shifts (shift_name, shift_code, start_time, end_time, grace_period, is_active) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [shift_name, shift_code, start_time, end_time, grace_period, is_active]
+      'INSERT INTO shifts (shift_name, shift_code, start_time, end_time, grace_period, is_active, company) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      [shift_name, shift_code, start_time, end_time, grace_period, is_active, company]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
