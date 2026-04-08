@@ -18,6 +18,7 @@ const API_BASE = "http://localhost:3000/api";
 
 const DeviceManagementSub = () => {
   const [devicemanagement, setDevicemanagement] = useState([]);
+  const [deviceModels, setDeviceModels] = useState([]);
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -38,12 +39,6 @@ const DeviceManagementSub = () => {
     isPinNo: false,
     isActive: false,
   });
-
-  const inputStyle =
-    "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
-
-  const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const getHeaders = () => {
     const token = localStorage.getItem("token");
@@ -81,8 +76,22 @@ const DeviceManagementSub = () => {
     }
   };
 
+  const fetchDeviceModels = async () => {
+    try {
+      const response = await axios.get(`${API_BASE}/device/device-models`, {
+        headers: getHeaders(),
+      });
+      const payload = response?.data?.data ?? response?.data;
+      setDeviceModels(Array.isArray(payload) ? payload : []);
+    } catch (error) {
+      console.error("Failed to fetch device models", error);
+      // Don't show toast for models, as it's not critical
+    }
+  };
+
   useEffect(() => {
     fetchDevices();
+    fetchDeviceModels();
   }, []);
 
   const filteredDevicemanagement = devicemanagement.filter(
@@ -117,9 +126,9 @@ const DeviceManagementSub = () => {
   };
 
   const handleSubmit = async () => {
-    const { name, company, deviceip } = formData;
+    const { name, company, deviceip, deviceserialno } = formData;
 
-    if (!name || !company || !deviceip) {
+    if (!name || !company || !deviceip || !deviceserialno) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -446,7 +455,7 @@ const DeviceManagementSub = () => {
                     <td className="px-6 py-2 text-center hidden xl:table-cell">
                       <BoolBadge value={item.isFingerprint} />
                     </td>
-                    <td className="px-6 py-2 text-center hidden 22xl:table-cell">
+                    <td className="px-6 py-2 text-center hidden 2xl:table-cell">
                       <BoolBadge value={item.isCardNo} />
                     </td>
                     <td className="px-6 py-2 text-center hidden 2xl:table-cell">
@@ -622,9 +631,7 @@ const DeviceManagementSub = () => {
                   name="devicemodel"
                   value={formData.devicemodel}
                   displayValue={formData.devicemodel}
-                  options={["Model 1", "Model 2", "Model 3"].map((m) => ({
-                    name: m,
-                  }))}
+                  options={deviceModels}
                   onChange={handleChange}
                   labelKey="name"
                   valueKey="name"
