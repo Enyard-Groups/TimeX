@@ -13,10 +13,9 @@ const ShiftUpload = () => {
   });
 
   const inputStyle =
-    "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm";
 
-  const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
+  const labelStyle = "text-sm font-semibold text-gray-700 mb-2 block";
 
   const getDatesBetween = (start, end) => {
     const dates = [];
@@ -135,22 +134,23 @@ const ShiftUpload = () => {
   return (
     <div className="mb-6">
       {/* Header */}
-      <div className="sm:flex sm:justify-between">
-        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-          <FaAngleRight />
-          Transaction
-          <FaAngleRight />
-          Shift Upload
+      <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+        <h1 className="flex items-center gap-2 h-[30px] text-lg font-semibold text-gray-800">
+          <FaAngleRight className="text-blue-500 text-base" />
+          <span className="text-gray-500">Transaction</span>
+          <FaAngleRight className="text-blue-500 text-base" />
+          <span className="text-blue-600">Shift Upload</span>
         </h1>
       </div>
 
-      <div className="bg-[oklch(1_0_0)] p-6 rounded-xl shadow-sm border border-[oklch(0.923_0.003_48.717)]">
+      {/* Container */}
+      <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl border border-blue-100/50 shadow-xl p-6">
         {/* Filters */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6">
+          {/* From Date */}
           <div className="relative">
             <label className={labelStyle}>
-              From Punch Date
-              <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+              From Punch Date <span className="text-red-500">*</span>
             </label>
             <input
               name="frompunch"
@@ -162,6 +162,7 @@ const ShiftUpload = () => {
               placeholder="dd/mm/yyyy"
               className={inputStyle}
             />
+
             {showFromSpinner && (
               <SpinnerDatePicker
                 value={formData.frompunch}
@@ -173,12 +174,11 @@ const ShiftUpload = () => {
             )}
           </div>
 
+          {/* To Date */}
           <div className="relative">
             <label className={labelStyle}>
-              To Punch Date
-              <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
+              To Punch Date <span className="text-red-500">*</span>
             </label>
-
             <input
               name="topunch"
               value={formData.topunch}
@@ -189,9 +189,10 @@ const ShiftUpload = () => {
               placeholder={
                 !formData.frompunch ? "Select Start Date" : "dd/mm/yyyy"
               }
-              className={inputStyle}
               disabled={!formData.frompunch}
+              className={inputStyle}
             />
+
             {showToSpinner && (
               <SpinnerDatePicker
                 value={formData.topunch}
@@ -201,37 +202,48 @@ const ShiftUpload = () => {
             )}
           </div>
 
-          <div>
-            {" "}
+          {/* Download Button */}
+          <div className="flex items-end">
             <button
-              className="px-6 py-2 mt-4 rounded-lg text-white bg-[oklch(0.645_0.246_16.439)]"
               onClick={handleDownload}
+              className="w-full md:w-fit bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
             >
               Download
             </button>
           </div>
         </div>
 
-        <div>
+        {/* File Upload */}
+        <div className="border-t border-blue-100/30 pt-6">
           <label className={labelStyle}>File Upload</label>
-          <input
-            type="file"
-            accept=".xlsx,.xls,image/*"
-            onChange={handleFileChange}
-            className="text-sm"
-          />
 
-          <button
-            onClick={handleUpload}
-            className="px-4 py-2 bg-[oklch(0.57_0.001_106.424)] text-white rounded"
-          >
-            Import
-          </button>
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+            <input
+              type="file"
+              accept=".xlsx,.xls,image/*"
+              onChange={handleFileChange}
+              className=" w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+            />
+
+            <button
+              onClick={handleUpload}
+              className="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-semibold px-5 py-2 rounded-lg shadow hover:shadow-md transition-all whitespace-nowrap"
+            >
+              Import File
+            </button>
+          </div>
+
+          {/* Preview */}
+          {preview && (
+            <div className="mt-4">
+              <img
+                src={preview}
+                alt="preview"
+                className="w-40 rounded-lg border border-blue-100 shadow-sm"
+              />
+            </div>
+          )}
         </div>
-
-        {preview && (
-          <img src={preview} alt="preview" className="w-40 mt-4 rounded-md" />
-        )}
       </div>
     </div>
   );

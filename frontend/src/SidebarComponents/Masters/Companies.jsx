@@ -32,7 +32,6 @@ const Companies = () => {
     is_active: false,
   });
 
-
   const inputStyle =
     "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-lg py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
 
@@ -45,13 +44,9 @@ const Companies = () => {
       (x.code || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
-
   const endIndex = currentPage * entriesPerPage;
-
   const startIndex = endIndex - entriesPerPage;
-
   const currentcompany = filteredcompany.slice(startIndex, endIndex);
-
   const totalPages = Math.max(
     1,
     Math.ceil(filteredcompany.length / entriesPerPage),
@@ -73,10 +68,8 @@ const Companies = () => {
     fetchCompanies();
   }, []);
 
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -93,7 +86,10 @@ const Companies = () => {
 
     try {
       if (editId) {
-        const res = await axios.put(`${API_BASE}/companies/${editId}`, formData);
+        const res = await axios.put(
+          `${API_BASE}/companies/${editId}`,
+          formData,
+        );
         setCompany((prev) =>
           prev.map((emp) => (emp.id === editId ? res.data : emp)),
         );
@@ -117,7 +113,6 @@ const Companies = () => {
     }
   };
 
-
   const handleDelete = async (id) => {
     try {
       await axios.delete(`${API_BASE}/companies/${id}`);
@@ -128,21 +123,18 @@ const Companies = () => {
     }
   };
 
-
   const handleCopy = () => {
     const header = ["SL.NO", "Company Name", "Company Code", "Active"].join(
       "\t",
     );
-
     const rows = filteredcompany
       .map((item, index) =>
-        [index + 1, item.name, item.code, item.is_active ? "Y" : "N"].join("\t"),
-
+        [index + 1, item.name, item.code, item.is_active ? "Y" : "N"].join(
+          "\t",
+        ),
       )
       .join("\n");
-
     const text = `${header}\n${rows}`;
-
     navigator.clipboard.writeText(text);
     toast.success("Table copied to clipboard");
   };
@@ -153,36 +145,25 @@ const Companies = () => {
       "Company Name": item.name,
       "Company Code": item.code,
       Active: item.is_active ? "Y" : "N",
-
     }));
-
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     const workbook = XLSX.utils.book_new();
-
     XLSX.utils.book_append_sheet(workbook, worksheet, "Company");
-
     XLSX.writeFile(workbook, "CompanyData.xlsx");
   };
 
   const handlePDF = () => {
     const doc = new jsPDF("landscape");
-
     const tableColumn = ["SL.NO", "Company Name", "Company Code", "Active"];
-
     const tableRows = [];
-
     filteredcompany.forEach((item, index) => {
       const row = [index + 1, item.name, item.code, item.is_active ? "Y" : "N"];
-
-
       tableRows.push(row);
     });
-
     autoTable(doc, {
       head: [tableColumn],
       body: tableRows,
     });
-
     doc.save("CompanyData.pdf");
   };
 
@@ -190,12 +171,15 @@ const Companies = () => {
     <>
       <div className="mb-6">
         {/* Header */}
-        <div className="sm:flex sm:justify-between">
-          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-            <FaAngleRight />
-            Masters
-            <FaAngleRight />
-            <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+        <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+          <h1 className="flex items-center h-[30px] gap-2 text-lg font-semibold text-gray-900 ">
+            <FaAngleRight className="text-blue-500 text-base" />
+            <span className="text-gray-500">Masters</span>
+            <FaAngleRight className="text-blue-500 text-base" />
+            <div
+              onClick={() => setOpenModal(false)}
+              className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+            >
               Companies
             </div>
           </h1>
@@ -215,7 +199,7 @@ const Companies = () => {
 
                   setOpenModal(true);
                 }}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
               >
                 + Add New
               </button>
@@ -223,140 +207,180 @@ const Companies = () => {
           )}
         </div>
 
-        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6 ">
+        {/* Main Container */}
+        <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl">
           {/* Top Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <div>
-              <label className="mr-2 text-md">Show</label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="ml-2 text-md">entries</span>
-            </div>
-
-            <div className="flex flex-wrap gap-2 items-center justify-center">
-              <input
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-              />
-              <div className="flex">
-                <button
-                  onClick={handleCopy}
-                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+          <div className="p-6 border-b border-blue-100/30">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-600">
+                  Display
+                </label>
+                <select
+                  value={entriesPerPage}
+                  onChange={(e) => {
+                    setEntriesPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm cursor-pointer hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 transition-all"
                 >
-                  <GoCopy />
-                </button>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+                <span className="text-sm font-medium text-gray-600">
+                  entries
+                </span>
+              </div>
 
-                <button
-                  onClick={handleExcel}
-                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
-                >
-                  <FaFileExcel />
-                </button>
+              <div className="flex flex-wrap gap-3 items-center justify-center">
+                <input
+                  placeholder="Search companies..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopy}
+                    className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
+                    title="Copy to clipboard"
+                  >
+                    <GoCopy className="text-lg" />
+                  </button>
 
-                <button
-                  onClick={handlePDF}
-                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
-                >
-                  <FaFilePdf />
-                </button>
+                  <button
+                    onClick={handleExcel}
+                    className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
+                    title="Export to Excel"
+                  >
+                    <FaFileExcel className="text-lg" />
+                  </button>
+
+                  <button
+                    onClick={handlePDF}
+                    className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
+                    title="Export to PDF"
+                  >
+                    <FaFilePdf className="text-lg" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Table */}
-          <div
-            className="overflow-x-auto min-h-[250px]"
-            style={{ scrollbarWidth: "none" }}
-          >
-            <table className="w-full text-lg border-collapse ">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="p-2 font-semibold hidden sm:table-cell">
+          <div className="overflow-x-auto min-h-[300px]">
+            <table className="w-full text-[16px]">
+              <thead>
+                <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700 hidden sm:table-cell">
                     SL.NO
                   </th>
-                  <th className="p-2 font-semibold whitespace-nowrap">
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700 whitespace-nowrap">
                     Company Name
                   </th>
-                  <th className="p-2 font-semibold whitespace-nowrap hidden sm:table-cell">
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700 whitespace-nowrap hidden sm:table-cell">
                     Company Code
                   </th>
-                  <th className="p-2 font-semibold hidden lg:table-cell">
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700 hidden lg:table-cell">
                     Active
                   </th>
-                  <th className="p-2 font-semibold">Action</th>
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="6" className="sm:text-center p-10 text-gray-400">
+                    <td
+                      colSpan="6"
+                      className="sm:text-center p-10 text-gray-400"
+                    >
                       Loading...
                     </td>
                   </tr>
                 ) : currentcompany.length === 0 ? (
-
                   <tr>
-                    <td colSpan="6" className="sm:text-center p-10">
-                      No Data Available
+                    <td colSpan="6" className="px-4 py-12 text-center">
+                      <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="text-4xl opacity-40">📭</div>
+                        <p className="text-gray-500 text-base">
+                          No Data Available
+                        </p>
+                      </div>
                     </td>
                   </tr>
                 ) : (
                   currentcompany.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                      className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="p-2 hidden sm:table-cell">{index + 1}</td>
-                      <td className="p-2">{item.name}</td>
-                      <td className="p-2 hidden sm:table-cell">{item.code}</td>
-                      <td className="p-2 hidden lg:table-cell">
-                        {item.is_active ? "Y" : "N"}
-
+                      <td className="px-4 py-3 text-gray-900 text-center hidden sm:table-cell">
+                        {index + 1}
                       </td>
-                      <td className="p-2">
-                        <div className="flex flex-row space-x-3 justify-center ">
+                      <td className="px-4 py-3 text-gray-900 font-medium text-center">
+                        {item.name}
+                      </td>
+                      <td className="px-4 py-3 hidden sm:table-cell text-gray-600 text-center">
+                        {item.code}
+                      </td>
+                      <td className="px-4 py-3 hidden lg:table-cell text-center">
+                        <div className="flex justify-center">
+                          <span
+                            className={`px-3 py-1 rounded-full text-sm font-semibold border ${
+                              item.is_active
+                                ? "bg-green-100 text-green-700 border-green-300"
+                                : "bg-gray-100 text-gray-700 border-gray-300"
+                            }`}
+                          >
+                            {item.is_active ? "✓ Active" : "○ Inactive"}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <div className="flex justify-center gap-2">
                           {/* View */}
-                          <FaEye
+                          <button
                             onClick={() => {
                               setFormData(item);
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />
+                            className="text-blue-500 hover:text-blue-700 hover:bg-blue-100 p-1.5 rounded-lg transition-all"
+                            title="View"
+                          >
+                            <FaEye className="text-lg" />
+                          </button>
 
                           {/* Edit */}
-                          <FaPen
+                          <button
                             onClick={() => {
                               setFormData(item);
                               setEditId(item.id);
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="inline text-green-500 cursor-pointer text-lg"
-                          />
+                            className="text-green-500 hover:text-green-700 hover:bg-green-100 p-1.5 rounded-lg transition-all"
+                            title="Edit"
+                          >
+                            <FaPen className="text-lg" />
+                          </button>
 
                           {/* Delete */}
-                          <MdDeleteForever
+                          <button
                             onClick={() => handleDelete(item.id)}
-                            className="inline text-red-500 cursor-pointer text-xl"
-                          />
+                            className="text-red-500 hover:text-red-700 hover:bg-red-100 p-1.5 rounded-lg transition-all"
+                            title="Delete"
+                          >
+                            <MdDeleteForever className="text-xl" />
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -367,18 +391,29 @@ const Companies = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-            <span>
-              Showing {filteredcompany.length === 0 ? "0" : startIndex + 1} to{" "}
-              {Math.min(endIndex, filteredcompany.length)} of{" "}
-              {filteredcompany.length} entries
+          <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <span className="text-sm text-gray-600">
+              Showing{" "}
+              <span className="text-gray-900 font-semibold">
+                {filteredcompany.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
+              to{" "}
+              <span className="text-gray-900 font-semibold">
+                {Math.min(endIndex, filteredcompany.length)}
+              </span>{" "}
+              of{" "}
+              <span className="text-gray-900 font-semibold">
+                {filteredcompany.length}
+              </span>{" "}
+              entries
             </span>
 
-            <div className="flex flex-row space-x-1">
+            <div className="flex gap-2">
               <button
                 disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="First page"
               >
                 First
               </button>
@@ -386,17 +421,21 @@ const Companies = () => {
               <button
                 disabled={currentPage == 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Previous page"
               >
                 <GrPrevious />
               </button>
 
-              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
+                {currentPage}
+              </div>
 
               <button
                 disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Next page"
               >
                 <GrNext />
               </button>
@@ -404,7 +443,8 @@ const Companies = () => {
               <button
                 disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="Last page"
               >
                 Last
               </button>
@@ -412,93 +452,101 @@ const Companies = () => {
           </div>
         </div>
 
+        {/* Modal */}
         {openModal && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
-            style={{ scrollbarWidth: "none" }}
-          >
-            <div
-              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
-              style={{ scrollbarWidth: "none" }}
-            >
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
+            <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8">
               {/* Close */}
-              <div className="flex justify-end">
-                <RxCross2
+              <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+                <h2 className="text-xl font-bold text-gray-900">
+                  {mode === "view"
+                    ? "View Company"
+                    : mode === "edit"
+                      ? "Edit Company"
+                      : "Add New Company"}
+                </h2>
+                <button
                   onClick={() => setOpenModal(false)}
-                  className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-                />
+                  className="text-gray-400 hover:text-gray-600 transition"
+                >
+                  <RxCross2 className="text-2xl" />
+                </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
                 <div>
-                  <label className={labelStyle}>
+                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
                     Company Name
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
+                    <span className="text-red-500"> *</span>
                   </label>
                   <input
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    placeholder="Name"
-                    className={inputStyle}
+                    placeholder="Enter company name"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className={labelStyle}>
+                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
                     Company Code
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
+                    <span className="text-red-500"> *</span>
                   </label>
                   <input
                     name="code"
                     value={formData.code}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    placeholder="Code"
-                    className={inputStyle}
+                    placeholder="Enter company code"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                     required
                   />
                 </div>
 
-                <div>
-                  <label className={labelStyle}>Description</label>
+                <div className="sm:col-span-2">
+                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                    Description
+                  </label>
                   <input
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    placeholder="Description"
-                    className={inputStyle}
-                    required
+                    placeholder="Enter description"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
                 </div>
 
-                <div className="flex items-center gap-2 mt-6">
-                  <label className={labelStyle}>Active</label>
+                <div className="flex items-center gap-3">
                   <input
                     type="checkbox"
                     name="is_active"
                     checked={formData.is_active}
                     onChange={handleChange}
                     disabled={mode === "view"}
+                    className="w-5 h-5 cursor-pointer accent-blue-500 disabled:cursor-not-allowed"
                   />
+                  <label className="text-gray-700 font-medium cursor-pointer">
+                    Active
+                  </label>
                 </div>
               </div>
 
-              {/* Save */}
+              {/* Action Buttons */}
               {mode !== "view" && (
-                <div className="flex justify-end mt-10">
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={() => setOpenModal(false)}
+                    className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-50 font-medium transition-all"
+                  >
+                    Cancel
+                  </button>
                   <button
                     onClick={handleSubmit}
-                    className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                   >
                     Save
                   </button>

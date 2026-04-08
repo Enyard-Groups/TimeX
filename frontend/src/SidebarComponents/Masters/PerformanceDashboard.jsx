@@ -7,7 +7,13 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import { FaUsers, FaUserCheck, FaUserTimes, FaUserClock, FaAngleRight } from "react-icons/fa";
+import {
+  FaUsers,
+  FaUserCheck,
+  FaUserTimes,
+  FaUserClock,
+  FaAngleRight,
+} from "react-icons/fa";
 
 const PerformanceDashboard = () => {
   // Summary Cards
@@ -61,13 +67,15 @@ const PerformanceDashboard = () => {
 
   return (
     <>
-      {/* Header */}
-      <div className="sm:flex sm:justify-between">
-        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-          <FaAngleRight />
-          Masters
-          <FaAngleRight />
-          Performance Dashboard
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+        <h1 className="flex items-center gap-2 h-[30px] text-lg font-semibold text-gray-800">
+          <FaAngleRight className="text-blue-500 text-base" />
+          <span className="text-gray-500">Masters</span>
+          <FaAngleRight className="text-blue-500 text-base" />
+          <div className="text-blue-600 hover:text-blue-700">
+            Performance Dashboard
+          </div>
         </h1>
       </div>
 

@@ -93,8 +93,10 @@ const SearchDropdown = ({
       <div
         onClick={() => !disabled && setOpen(!open)}
         className={`${inputStyle} ${
-          disabled ? "cursor-default" : "cursor-pointer"
-        } flex items-center justify-between min-h-[40px]`}
+          disabled
+            ? "cursor-not-allowed opacity-60 bg-gray-100 border-gray-200 text-gray-500 hover:border-gray-200"
+            : "cursor-pointer border-2 hover:border-blue-500/60"
+        } flex items-center justify-between min-h-[40px] transition-all`}
       >
         <span className="truncate">
           {multiple
@@ -107,26 +109,29 @@ const SearchDropdown = ({
 
         {!disabled &&
           (open ? (
-            <MdKeyboardArrowUp className="text-xl shrink-0" />
+            <MdKeyboardArrowUp className="text-xl shrink-0 text-gray-500" />
           ) : (
-            <MdKeyboardArrowDown className="text-xl shrink-0" />
+            <MdKeyboardArrowDown className="text-xl shrink-0 text-gray-500" />
           ))}
       </div>
 
       {/* Dropdown */}
-      {open && (
-        <div className="absolute w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg z-[100]">
+      {open && !disabled && (
+        <div className="absolute w-full bg-white border-2 border-gray-300 rounded-lg mt-2 shadow-xl z-[100]">
           {/* Search */}
           <input
             placeholder="Search.."
             autoFocus
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-2 py-1 border-b border-gray-300 outline-none"
+            className="w-full px-4 py-2 border-b-2 border-gray-200 outline-none focus:ring-1 focus:ring-gray-400 focus:bg-gray-50 text-gray-900 placeholder-gray-400 font-medium transition-all"
           />
 
           {/* Options */}
-          <div className="max-h-48 overflow-y-auto">
+          <div
+            className="max-h-48 overflow-y-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
             {filtered.length > 0 ? (
               filtered.map((o, i) => {
                 const val = getValue(o);
@@ -136,21 +141,26 @@ const SearchDropdown = ({
                   <div
                     key={i}
                     onClick={() => handleSelect(val, lbl)}
-                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2"
+                    className={`px-4 py-2 cursor-pointer flex items-center gap-3 transition-all border-b border-gray-50/50 last:border-b-0 ${
+                      isSelected(val)
+                        ? "bg-gray-100 text-gray-900"
+                        : "hover:bg-gray-50 text-gray-700"
+                    }`}
                   >
                     {multiple && (
                       <input
                         type="checkbox"
                         checked={isSelected(val)}
                         readOnly
+                        className="w-4 h-4 accent-gray-500 cursor-pointer"
                       />
                     )}
-                    <span>{lbl}</span>
+                    <span className="font-medium">{lbl}</span>
                   </div>
                 );
               })
             ) : (
-              <div className="px-3 py-2 text-gray-400 italic">
+              <div className="px-4 py-4 text-gray-400 italic text-center">
                 No results found
               </div>
             )}

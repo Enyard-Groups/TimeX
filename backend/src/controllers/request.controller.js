@@ -871,8 +871,8 @@ export const createManualRequest = async (req, res) => {
       [
         employee_id,
         location || null,
-        in_time,
-        out_time,
+        new Date(in_time).toISOString().split('T')[1].split('.')[0],
+        new Date(out_time).toISOString().split('T')[1].split('.')[0],
         remarks,
       ]
     );
