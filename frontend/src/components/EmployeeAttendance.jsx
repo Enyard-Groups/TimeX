@@ -24,7 +24,6 @@ function TrendBadge({ pct }) {
         alignItems: "center",
         gap: "1px",
         color: isUp ? "#2da45b" : "#d62b2b",
-        fontSize: "11px",
         fontWeight: 500,
         borderRadius: "999px",
       }}
@@ -51,59 +50,35 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
     {
       title: "Present",
       value: present,
-      icon: <UserCheck size={18} />,
+      icon: <UserCheck />,
       dataKey: "presentToday",
       color: "#2563EB",
       bg: "bg-[#DBEAFE]",
+      text:"text-[#0049a8]",
       pct: getPercentChange(present, prevPresent),
     },
     {
       title: "Absent",
       value: absent,
-      icon: <UserX size={18} />,
+      icon: <UserX />,
       dataKey: "absent",
       color: "#EF4444",
       bg: "bg-[#FEE2E2]",
+      text:"text-[#890000]",
       pct: getPercentChange(absent, prevAbsent),
     },
     {
       title: "Leave",
       value: leave,
-      icon: <Calendar size={18} />,
+      icon: <Calendar />,
       dataKey: "leave",
       color: "#06B6D4",
       bg: "bg-[#E0F2FE]",
+      text:"text-[#004e82]",
       pct: getPercentChange(leave, prevLeave),
     },
   ];
 
-  // const stats = [
-  //   {
-  //     title: "Present",
-  //     value: present,
-  //     icon: <UserCheck size={18} />,
-  //     dataKey: "presentToday",
-  //     gradient: ["#ede9fe", "#8b5cf6", "#5b21b6"], // lavender → deep purple
-
-  //     bg: "bg-purple-50",
-  //   },
-  //   {
-  //     title: "Absent",
-  //     value: absent,
-  //     icon: <UserX size={18} />,
-  //     dataKey: "absent",
-  //     gradient: ["#dbeafe", "#3b82f6", "#1e3a8a"], // light blue → navy
-  //     bg: "bg-blue-50",
-  //   },
-  //   {
-  //     title: "Leave",
-  //     value: leave,
-  //     icon: <Calendar size={18} />,
-  //     dataKey: "leave",
-  //     gradient: ["#e0f2fe", "#6366f1", "#312e81"], // soft blue → indigo
-  //     bg: "bg-indigo-50",
-  //   },
-  // ];
 
   // Limit to last 7 days + dynamic values
 
@@ -118,21 +93,26 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
         {stats.map((item, index) => (
           <div
             key={index}
-            className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex items-center justify-between overflow-hidden relative h-[100px] border border-gray-200"
+            className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex items-center justify-between overflow-hidden relative h-[120px] border border-gray-200"
           >
-            <h3 className="text-xl font-bold text-gray-800 absolute top-1 left-26">
+            <h3 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-800 absolute top-2 left-26">
               {item.value}
             </h3>
-            <div className="absolute top-1 right-1">
+            <div className="text-xs lg:text-sm 3xl:text-lg absolute top-1 right-1">
               <TrendBadge pct={item.pct} />
-              <p className="text-xs text-gray-500">this week</p>
+              <p className=" text-gray-500">this week</p>
             </div>
 
             {/* Left Info */}
             <div
-              className={`${item.bg} h-full flex flex-col justify-center items-center min-w-[90px]`}
+              className={`${item.bg} ${item.text} h-full flex flex-col justify-center items-center min-w-[90px]`}
             >
-              <span className="text-sm text-gray-500">{item.title}</span>
+              <span className="text-sm lg:text-lg 3xl:text-3xl mb-3">
+                {item.title}
+              </span>
+              <span className="text-sm lg:text-xl 3xl:text-4xl ">
+                {item.icon}
+              </span>
             </div>
 
             {/* Chart */}

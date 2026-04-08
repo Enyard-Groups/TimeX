@@ -44,7 +44,7 @@ export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
 
   return (
     <>
-      <div className="pt-4 ">
+      <div className="pt-3 ">
         {/* LEFT MENU BUTTON */}
         <button
           className="absolute top-8 left-6 rounded-xl lg:hidden text-xl font-bold"
@@ -66,19 +66,19 @@ export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
               onClick={handleLogout}
               className="text-[18px] bg-[#0f172a] rounded-full text-white p-1.5"
             >
-              <IoIosLogOut />
+              <IoIosLogOut className="text-xl lg:text-2xl 3xl:text-4xl" />
             </button>
 
             <button
               onClick={() => setRightSidebarOpen(true)}
               className="text-[18px] bg-[#0f172a] rounded-full text-white p-1.5"
             >
-              <IoMdNotificationsOutline />
+              <IoMdNotificationsOutline className="text-xl lg:text-2xl 3xl:text-4xl" />
             </button>
 
             <div
               onClick={() => setRightSidebarOpen(true)}
-              className="py-1 px-2.5 bg-[#0f172a] rounded-full text-white cursor-pointer"
+              className="py-1 px-2.5 bg-[#0f172a] rounded-full text-white cursor-pointer text-xl lg:text-2xl 3xl:text-4xl"
             >
               {user?.user_name?.charAt(0).toUpperCase()}
             </div>

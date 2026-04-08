@@ -147,7 +147,7 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
     legend: {
       position: "top",
       horizontalAlign: "right",
-      fontSize: "12px",
+      fontSize: "14px",
       labels: {
         colors: "#64748b",
       },
@@ -174,7 +174,7 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
     <div className="py-4 bg-white rounded-xl">
       {/*  Filter Buttons */}
       <div className="sm:flex sm:justify-between">
-        <h3 className="text-[16px] font-semibold text-gray-700 ml-5 mb-3">
+        <h3 className="text-[16px] lg:text-[20px] 3xl:text-[22px] font-semibold text-gray-700 ml-5 mb-3">
           Attendance Overview
         </h3>
         <div className="flex sm:gap-2 mb-3 px-3">
@@ -188,7 +188,7 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
             <button
               key={btn.value}
               onClick={() => setRange(btn.value)}
-              className={`px-3 py-1 text-xs rounded-lg transition-all ${
+              className={`px-3 py-1 text-xs lg:text-[15px] 3xl:text-lg rounded-lg transition-all ${
                 range === btn.value
                   ? "bg-[#042b6a] text-white shadow-md"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -202,13 +202,13 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
 
       {/*  Optional warning */}
       {isEmptyRange && (
-        <div className="text-xs text-red-400 text-right mb-2">
+        <div className="text-xs lg:text-sm 3xl:text-lg text-red-400 text-right mb-2">
           No data for selected range
         </div>
       )}
 
       {/*  Chart */}
-      <Chart options={options} series={series} type="area" height={300} />
+      <Chart options={options} series={series} type="area" height={360} />
     </div>
   );
 };
