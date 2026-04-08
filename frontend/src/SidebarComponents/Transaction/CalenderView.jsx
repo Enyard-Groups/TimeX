@@ -155,7 +155,7 @@ const CalenderView = () => {
   };
 
   return (
-    <div>
+    <div >
       {/* Filters */}
       <div className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-2xl mb-6">
         <div className="grid md:grid-cols-3 gap-6">
