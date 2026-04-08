@@ -39,7 +39,7 @@ const Sidebar = ({ user }) => {
   return (
     <div className="h-screen flex flex-col bg-[#0f172a]">
       {/* TOP */}
-      <div className=" pl-13 pt-7 mb-12 mt-2">
+      <div className=" pl-13 pt-7 mb-8 mt-2">
         <Link to="/dashboard">
           <img
             src="../timexlogo.png"
@@ -51,6 +51,19 @@ const Sidebar = ({ user }) => {
         </Link>
       </div>
 
+      {isAdmin && (
+        <div
+          className={`mt-2.5 mb-7 px-3 mx-2.5 rounded-xl text-md transition-all ${
+            isdashboardActive ? activeClass : hoverClass
+          }`}
+        >
+          <div className="flex items-center gap-4 text-[18px] xl:text-[20px] pl-2">
+            <RxDashboard />
+            <Link to="/dashboard">Dashboard</Link>
+          </div>
+        </div>
+      )}
+
       {/* MIDDLE (Scrollable Area) */}
       <div
         className="flex-1 overflow-y-auto px-3 space-y-7"
@@ -58,17 +71,6 @@ const Sidebar = ({ user }) => {
       >
         {isAdmin ? (
           <>
-            <div
-              className={`mt-2.5 mb-7 px-1.5 py-2 rounded-xl text-md transition-all ${
-                isdashboardActive ? activeClass : hoverClass
-              }`}
-            >
-              <div className="flex items-center gap-4 text-[18px] xl:text-[20px] pl-2">
-                <RxDashboard />
-                <Link to="/dashboard">Dashboard</Link>
-              </div>
-            </div>
-
             <Master user={user} />
             <DeviceManagement user={user} />
             <Transaction user={user} />
