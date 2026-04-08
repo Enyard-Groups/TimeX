@@ -25,7 +25,7 @@ const Transaction = ({ user }) => {
               istransactionActive ? activeClass : hoverClass
             }`}
           >
-            <div className="flex items-center gap-4 text-[18px] xl:text-[20px]">
+            <div className="flex items-center gap-4 text-[18px] xl:text-[21px]">
               <PiNotePencilFill />
               <span>Transaction</span>
             </div>
@@ -38,7 +38,7 @@ const Transaction = ({ user }) => {
 
           {/* Sub Menu */}
           {openTransaction && (
-            <div className="mt-2 flex flex-col pl-10 gap-2 text-md xl:text-lg">
+            <div className="mt-2 flex flex-col pl-10 gap-2 text-md xl:text-[19px]">
               <NavLink
                 to="/transaction/monitoring"
                 className={({ isActive }) =>

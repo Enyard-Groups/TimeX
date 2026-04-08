@@ -583,13 +583,15 @@ const UserMaster = () => {
                   </tr>
                 ) : currentUsers.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan="7"
-                      className="px-4 py-12 text-center text-gray-500 font-medium text-lg lg:text-xl 3xl:text-3xl"
-                    >
-                      No Data Available
-                    </td>
-                  </tr>
+                  <td colSpan="7" className="px-4 py-12 text-center">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <div className="text-4xl opacity-40">👤</div>
+                      <p className="text-gray-500 text-base font-medium">
+                        No user data
+                      </p>
+                    </div>
+                  </td>
+                </tr>
                 ) : (
                   currentUsers.map((user, index) => (
                     <tr

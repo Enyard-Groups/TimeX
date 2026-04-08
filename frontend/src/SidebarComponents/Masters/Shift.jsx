@@ -507,9 +507,9 @@ const Shift = () => {
                   <tr>
                     <td colSpan="8" className="px-4 py-12 text-center">
                       <div className="flex flex-col items-center justify-center gap-3">
-                        <div className="text-4xl opacity-40">📭</div>
+                        <div className="text-4xl opacity-40">🌗</div>
                         <p className="text-gray-500 text-base font-medium">
-                          No Data Available
+                          No shift data 
                         </p>
                       </div>
                     </td>
