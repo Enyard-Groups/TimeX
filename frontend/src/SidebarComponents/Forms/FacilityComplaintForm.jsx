@@ -531,7 +531,7 @@ const FacilityComplaintForm = () => {
                         Issue Type
                       </label>
                       <SearchDropdown
-                        name="issueType"
+                        name="issue_type"
                         value={formData.issue_type}
                         options={[
                           "Electrical",
@@ -540,6 +540,7 @@ const FacilityComplaintForm = () => {
                           "Cleaning",
                           "Security",
                         ]}
+                        onChange={handleChange}
                         formData={formData}
                         setFormData={setFormData}
                         disabled={mode === "view"}
@@ -567,7 +568,7 @@ const FacilityComplaintForm = () => {
                       </label>
                       <input
                         type="text"
-                        name="date"
+                        name="date_noticed"
                         value={formData.date_noticed}
                         onChange={handleChange}
                         disabled={mode === "view"}
