@@ -33,8 +33,8 @@ const HolidayMaster = () => {
   const [formData, setFormData] = useState({
     name: "",
     code: "",
-    holidaystart: null,
-    holidayend: null,
+    holidaystart: "",
+    holidayend: "",
     company: "",
     company_name: "",
     location: "",
@@ -47,6 +47,43 @@ const HolidayMaster = () => {
       setCompanyOptions(res.data || []);
     } catch (error) {
       console.error("Failed to fetch companies", error);
+    }
+  };
+
+  const fetchHolidays = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+      const res = await axios.get(`${API_BASE}/master/holidays`, { headers });
+      setHolidayMaster(res.data || []);
+    } catch (error) {
+      console.error("Failed to fetch holidays", error);
+      toast.error("Failed to fetch holidays");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this holiday?")) {
+      return;
+    }
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+      await axios.delete(`${API_BASE}/master/holidays/${id}`, { headers });
+      toast.success("Holiday deleted successfully");
+      fetchHolidays(); // Refresh the list
+    } catch (error) {
+      console.error("Failed to delete holiday", error);
+      toast.error("Failed to delete holiday");
     }
   };
 
@@ -281,8 +318,8 @@ const HolidayMaster = () => {
                 setFormData({
                   name: "",
                   code: "",
-                  holidaystart: null,
-                  holidayend: null,
+                  holidaystart: "",
+                  holidayend: "",
                   company: "",
                   company_name: "",
                   location: "",
@@ -658,6 +695,8 @@ const HolidayMaster = () => {
                 formData={formData}
                 setFormData={setFormData}
                 disabled={mode === "view"}
+                labelKey="name"
+                valueKey="id"
                 inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm font-medium"
                 labelStyle="text-sm lg:text-lg 3xl:text-xl font-bold text-gray-700 mb-2 block"
               />

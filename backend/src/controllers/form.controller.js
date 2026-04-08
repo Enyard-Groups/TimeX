@@ -58,6 +58,7 @@ export const updateFacilityComplaint = async (req, res) => {
         res.json(result.rows[0]);
     } catch (error) {
         res.status(500).json({ message: error.message });
+        console.log("error in updateFacility:",error.message);
     }
 };
 
@@ -68,7 +69,7 @@ export const deleteFacilityComplaint = async (req, res) => {
         res.json({ message: 'Facility complaint removed' });
     } catch (error) {
         res.status(500).json({ message: error.message });
-    }
+        }
 };
 
 
@@ -132,7 +133,49 @@ export const deleteIncident = async (req, res) => {
 
 export const getLeaveApplication = async (req, res) => {
     try {
-        const result = await db.query('SELECT * FROM leave_application ORDER BY created_at DESC');
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS leave_application_requests (
+                id SERIAL PRIMARY KEY,
+                employee VARCHAR(255),
+                location VARCHAR(255),
+                "enrollmentId" VARCHAR(100),
+                designation VARCHAR(255),
+                date DATE,
+                nationality VARCHAR(100),
+                natureofleave JSONB,
+                "calenderDaysLeave" VARCHAR(255),
+                "leaveFrom" DATE,
+                "leaveTo" DATE,
+                "toilReq" VARCHAR(255),
+                "calenderDaystoil" VARCHAR(255),
+                "toilFrom" DATE,
+                "toilTo" DATE,
+                "calenderDaysLeaveToil" VARCHAR(255),
+                "actualDays" VARCHAR(255),
+                "rejoinDate" DATE,
+                "reasonForLeave" TEXT,
+                "visaExpiry" DATE,
+                "emergencyContact" VARCHAR(255),
+                signature TEXT,
+                signaturehere TEXT,
+                adminoperation JSONB,
+                "leaveGranted" VARCHAR(255),
+                "leaveGrantedFrom" DATE,
+                "leaveGrantedTo" DATE,
+                "finalApproval" JSONB,
+                "passportCollection" JSONB,
+                "employeeForm" JSONB,
+                "finalSignature" TEXT,
+                "finalSignatureHere" TEXT,
+                sign TEXT,
+                approval1sign TEXT,
+                approval2sign TEXT,
+                passportsign TEXT,
+                finalsign TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
+        const result = await db.query('SELECT * FROM leave_application_requests ORDER BY created_at DESC');
         res.json(result.rows);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -140,28 +183,73 @@ export const getLeaveApplication = async (req, res) => {
 };
 
 export const createLeaveApplication = async (req, res) => {
-    const { name, email, contact, leaveType, startDate, endDate, description, safetyConcerns, urgent, requestedAction, attachedFile } = req.body;
+    const { 
+        employee, location, enrollmentId, designation, date, nationality, natureofleave,
+        calenderDaysLeave, leaveFrom, leaveTo, toilReq, calenderDaystoil, toilFrom, toilTo,
+        calenderDaysLeaveToil, actualDays, rejoinDate, reasonForLeave, visaExpiry, emergencyContact,
+        signature, signaturehere, adminoperation, leaveGranted, leaveGrantedFrom, leaveGrantedTo,
+        finalApproval, passportCollection, employeeForm, finalSignature, finalSignatureHere,
+        sign, approval1sign, approval2sign, passportsign, finalsign
+    } = req.body;
     try {
         const result = await db.query(
-            'INSERT INTO leave_application (name, email, contact, leave_type, start_date, end_date, description, safety_concerns, urgent, requested_action, attached_file) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
-            [name, email, contact, leaveType, startDate, endDate, description, safetyConcerns, urgent, requestedAction, attachedFile]
+            `INSERT INTO leave_application_requests (
+                employee, location, "enrollmentId", designation, date, nationality, natureofleave,
+                "calenderDaysLeave", "leaveFrom", "leaveTo", "toilReq", "calenderDaystoil", "toilFrom", "toilTo",
+                "calenderDaysLeaveToil", "actualDays", "rejoinDate", "reasonForLeave", "visaExpiry", "emergencyContact",
+                signature, signaturehere, adminoperation, "leaveGranted", "leaveGrantedFrom", "leaveGrantedTo",
+                "finalApproval", "passportCollection", "employeeForm", "finalSignature", "finalSignatureHere",
+                sign, approval1sign, approval2sign, passportsign, finalsign
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36) RETURNING *`,
+            [
+                employee, location, enrollmentId, designation, formatToPostgresDate(date), nationality, JSON.stringify(natureofleave),
+                calenderDaysLeave, formatToPostgresDate(leaveFrom), formatToPostgresDate(leaveTo), toilReq, calenderDaystoil, formatToPostgresDate(toilFrom), formatToPostgresDate(toilTo),
+                calenderDaysLeaveToil, actualDays, formatToPostgresDate(rejoinDate), reasonForLeave, formatToPostgresDate(visaExpiry), emergencyContact,
+                signature, signaturehere, JSON.stringify(adminoperation), leaveGranted, formatToPostgresDate(leaveGrantedFrom), formatToPostgresDate(leaveGrantedTo),
+                JSON.stringify(finalApproval), JSON.stringify(passportCollection), JSON.stringify(employeeForm), finalSignature, finalSignatureHere,
+                sign, approval1sign, approval2sign, passportsign, finalsign
+            ]
         );
         res.status(201).json(result.rows[0]);
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: error.message });
     }
 };
 
 export const updateLeaveApplication = async (req, res) => {
     const { id } = req.params;
-    const { name, email, contact, leaveType, startDate, endDate, description, safetyConcerns, urgent, requestedAction, attachedFile } = req.body;
+    const { 
+        employee, location, enrollmentId, designation, date, nationality, natureofleave,
+        calenderDaysLeave, leaveFrom, leaveTo, toilReq, calenderDaystoil, toilFrom, toilTo,
+        calenderDaysLeaveToil, actualDays, rejoinDate, reasonForLeave, visaExpiry, emergencyContact,
+        signature, signaturehere, adminoperation, leaveGranted, leaveGrantedFrom, leaveGrantedTo,
+        finalApproval, passportCollection, employeeForm, finalSignature, finalSignatureHere,
+        sign, approval1sign, approval2sign, passportsign, finalsign
+    } = req.body;
     try {
         const result = await db.query(
-            'UPDATE leave_application SET name=$1, email=$2, contact=$3, leave_type=$4, start_date=$5, end_date=$6, description=$7, safety_concerns=$8, urgent=$9, requested_action=$10, attached_file=$11 WHERE id=$12 RETURNING *',
-            [name, email, contact, leaveType, startDate, endDate, description, safetyConcerns, urgent, requestedAction, attachedFile, id]
+            `UPDATE leave_application_requests SET 
+                employee=$1, location=$2, "enrollmentId"=$3, designation=$4, date=$5, nationality=$6, natureofleave=$7,
+                "calenderDaysLeave"=$8, "leaveFrom"=$9, "leaveTo"=$10, "toilReq"=$11, "calenderDaystoil"=$12, "toilFrom"=$13, "toilTo"=$14,
+                "calenderDaysLeaveToil"=$15, "actualDays"=$16, "rejoinDate"=$17, "reasonForLeave"=$18, "visaExpiry"=$19, "emergencyContact"=$20,
+                signature=$21, signaturehere=$22, adminoperation=$23, "leaveGranted"=$24, "leaveGrantedFrom"=$25, "leaveGrantedTo"=$26,
+                "finalApproval"=$27, "passportCollection"=$28, "employeeForm"=$29, "finalSignature"=$30, "finalSignatureHere"=$31,
+                sign=$32, approval1sign=$33, approval2sign=$34, passportsign=$35, finalsign=$36
+                WHERE id=$37 RETURNING *`,
+            [
+                employee, location, enrollmentId, designation, formatToPostgresDate(date), nationality, JSON.stringify(natureofleave),
+                calenderDaysLeave, formatToPostgresDate(leaveFrom), formatToPostgresDate(leaveTo), toilReq, calenderDaystoil, formatToPostgresDate(toilFrom), formatToPostgresDate(toilTo),
+                calenderDaysLeaveToil, actualDays, formatToPostgresDate(rejoinDate), reasonForLeave, formatToPostgresDate(visaExpiry), emergencyContact,
+                signature, signaturehere, JSON.stringify(adminoperation), leaveGranted, formatToPostgresDate(leaveGrantedFrom), formatToPostgresDate(leaveGrantedTo),
+                JSON.stringify(finalApproval), JSON.stringify(passportCollection), JSON.stringify(employeeForm), finalSignature, finalSignatureHere,
+                sign, approval1sign, approval2sign, passportsign, finalsign,
+                id
+            ]
         );
         res.json(result.rows[0]);
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: error.message });
     }
 };
@@ -169,7 +257,7 @@ export const updateLeaveApplication = async (req, res) => {
 export const deleteLeaveApplication = async (req, res) => {
     const { id } = req.params;
     try {
-        await db.query('DELETE FROM leave_application WHERE id = $1', [id]);
+        await db.query('DELETE FROM leave_application_requests WHERE id = $1', [id]);
         res.json({ message: 'Leave application removed' });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -582,4 +670,124 @@ export const deletePatrollingChecklist = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };      
+
+export const getMonthlyFireSafety = async (req, res) => {
+    try {
+        // Ensure table exists
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS monthly_fire_safety_inspections (
+                id SERIAL PRIMARY KEY,
+                employee VARCHAR(255),
+                location VARCHAR(255),
+                "createdDate" DATE,
+                "fireHazards" JSONB,
+                "fireAlarm" JSONB,
+                extinguishers JSONB,
+                "fireHose" JSONB,
+                fm200 JSONB,
+                "fireExits" JSONB,
+                "noticeSigns" JSONB,
+                "paSystem" JSONB,
+                pumps JSONB,
+                "smokeExtraction" JSONB,
+                remarks JSONB,
+                signature TEXT,
+                signhere TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
+        const result = await db.query('SELECT * FROM monthly_fire_safety_inspections ORDER BY created_at DESC');
+        res.json(result.rows);
+    } catch (error) {
+        console.log("Error in getting monthly fire safety inspections:", error.message);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const createMonthlyFireSafety = async (req, res) => {
+    const { 
+        employee, location, createdDate,
+        fireHazards, fireAlarm, extinguishers, fireHose, fm200, 
+        fireExits, noticeSigns, paSystem, pumps, smokeExtraction,
+        remarks, signature, signhere
+    } = req.body;
     
+    try {
+        // Ensure table exists
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS monthly_fire_safety_inspections (
+                id SERIAL PRIMARY KEY,
+                employee VARCHAR(255),
+                location VARCHAR(255),
+                "createdDate" DATE,
+                "fireHazards" JSONB,
+                "fireAlarm" JSONB,
+                extinguishers JSONB,
+                "fireHose" JSONB,
+                fm200 JSONB,
+                "fireExits" JSONB,
+                "noticeSigns" JSONB,
+                "paSystem" JSONB,
+                pumps JSONB,
+                "smokeExtraction" JSONB,
+                remarks JSONB,
+                signature TEXT,
+                signhere TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
+
+        const result = await db.query(
+            'INSERT INTO monthly_fire_safety_inspections (employee, location, "createdDate", "fireHazards", "fireAlarm", extinguishers, "fireHose", fm200, "fireExits", "noticeSigns", "paSystem", pumps, "smokeExtraction", remarks, signature, signhere) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING *',
+            [
+                employee, location, formatToPostgresDate(createdDate), 
+                JSON.stringify(fireHazards), JSON.stringify(fireAlarm), JSON.stringify(extinguishers), 
+                JSON.stringify(fireHose), JSON.stringify(fm200), JSON.stringify(fireExits), 
+                JSON.stringify(noticeSigns), JSON.stringify(paSystem), JSON.stringify(pumps), 
+                JSON.stringify(smokeExtraction), JSON.stringify(remarks), 
+                signature, signhere
+            ]
+        );
+        res.status(201).json(result.rows[0]);
+    } catch (error) {
+        console.log("Error in creating monthly fire safety:", error.message);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const updateMonthlyFireSafety = async (req, res) => {
+    const { id } = req.params;
+    const { 
+        employee, location, createdDate,
+        fireHazards, fireAlarm, extinguishers, fireHose, fm200, 
+        fireExits, noticeSigns, paSystem, pumps, smokeExtraction,
+        remarks, signature, signhere
+    } = req.body;
+    try {
+        const result = await db.query(
+            'UPDATE monthly_fire_safety_inspections SET employee=$1, location=$2, "createdDate"=$3, "fireHazards"=$4, "fireAlarm"=$5, extinguishers=$6, "fireHose"=$7, fm200=$8, "fireExits"=$9, "noticeSigns"=$10, "paSystem"=$11, pumps=$12, "smokeExtraction"=$13, remarks=$14, signature=$15, signhere=$16 WHERE id=$17 RETURNING *',
+            [
+                employee, location, formatToPostgresDate(createdDate), 
+                JSON.stringify(fireHazards), JSON.stringify(fireAlarm), JSON.stringify(extinguishers), 
+                JSON.stringify(fireHose), JSON.stringify(fm200), JSON.stringify(fireExits), 
+                JSON.stringify(noticeSigns), JSON.stringify(paSystem), JSON.stringify(pumps), 
+                JSON.stringify(smokeExtraction), JSON.stringify(remarks), 
+                signature, signhere, id
+            ]
+        );
+        res.json(result.rows[0]);
+    } catch (error) {
+        console.log("Error in updating monthly fire safety:", error.message);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const deleteMonthlyFireSafety = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await db.query('DELETE FROM monthly_fire_safety_inspections WHERE id = $1', [id]);
+        res.json({ message: 'Monthly fire safety inspection removed' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

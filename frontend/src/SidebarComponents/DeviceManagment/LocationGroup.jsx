@@ -33,6 +33,9 @@ const LocationGroup = () => {
     time_keeper: "",
   });
 
+  const [siteManagers, setSiteManagers] = useState([]);
+  const [timeKeepers, setTimeKeepers] = useState([]);
+
   const filteredlocationGroup = locationGroup.filter((locationgroup) => {
     const search = searchTerm.toLowerCase();
     const nameMatch = (locationgroup.group_name ?? "")
@@ -94,9 +97,36 @@ const LocationGroup = () => {
     }
   };
 
+  const fetchUsersRoles = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
+      const response = await axios.get(`${API_BASE}/users`, { headers });
+      const users = Array.isArray(response?.data?.data) ? response.data.data : (Array.isArray(response?.data) ? response.data : []);
+
+      const siteManagerList = users
+        .filter((u) => u.role && u.role.toLowerCase() === "manager")
+        .map((u) => u.emp_name || u.user_name || u.userName);
+
+      const timeKeeperList = users
+        .filter((u) => u.role && (u.role.toLowerCase() === "time keeper" || u.role.toLowerCase() === "time keaper" || u.role.toLowerCase() === "timekeeper"))
+        .map((u) => u.emp_name || u.user_name || u.userName);
+
+      setSiteManagers(siteManagerList);
+      setTimeKeepers(timeKeeperList);
+    } catch (error) {
+      console.error("Failed to fetch users roles", error);
+    }
+  };
+
   useEffect(() => {
     // This is an intentional "load on mount" pattern.
     fetchLocationGroups();
+    fetchUsersRoles();
   }, []);
 
   const handleSubmit = async () => {
@@ -589,7 +619,7 @@ const LocationGroup = () => {
                 label="Site Manager Name"
                 name="site_manager"
                 value={formData.site_manager}
-                options={["Name 1", "Name 2"]}
+                options={siteManagers}
                 formData={formData}
                 setFormData={setFormData}
                 disabled={mode === "view"}
@@ -600,7 +630,7 @@ const LocationGroup = () => {
                 label="Time Keeper Name"
                 name="time_keeper"
                 value={formData.time_keeper}
-                options={["Name 1", "Name 2"]}
+                options={timeKeepers}
                 formData={formData}
                 setFormData={setFormData}
                 disabled={mode === "view"}

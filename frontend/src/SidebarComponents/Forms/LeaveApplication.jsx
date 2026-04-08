@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -188,51 +189,54 @@ const LeaveApplication = () => {
 
   const totalPages = Math.max(1, Math.ceil(leaveData.length / entriesPerPage));
 
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/form/leaveApplication");
+      setLeaveData(response.data);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to fetch data");
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   // Handle submit
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const newEntry = {
-      id: editId ? editId : Date.now(),
       ...formData,
     };
 
-    if (editId) {
-      const updated = leaveData.map((item) =>
-        item.id === editId ? { ...item, ...newEntry } : item,
-      );
-
-      setLeaveData(updated);
-
-      // Backend version
-      // await axios.put(`/api/manual-entry/${editId}`, newEntry)
-
-      toast.success("Request Updated");
-    } else {
-      const updated = [...leaveData, newEntry];
-      setLeaveData(updated);
-
-      // Backend version
-      // await axios.post("/api/manual-entry-request", newEntry)
-
-      toast.success("Request Submitted");
+    try {
+      if (editId) {
+        await axios.put(`http://localhost:3000/api/form/leaveApplication/${editId}`, newEntry);
+        toast.success("Request Updated");
+      } else {
+        await axios.post("http://localhost:3000/api/form/leaveApplication", newEntry);
+        toast.success("Request Submitted");
+      }
+      fetchData();
+      setOpenModal(false);
+      setEditId(null);
+      setFormData(defaultFormData);
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData(defaultFormData);
   };
 
   // Handle delete
-  const handleDelete = (id) => {
-    const updated = leaveData.filter((v) => v.id !== id);
-
-    setLeaveData(
-      updated.map((item) => ({
-        ...item,
-      })),
-    );
-
-    toast.success("Deleted Successfully");
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/form/leaveApplication/${id}`);
+      fetchData();
+      toast.success("Deleted Successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete");
+    }
   };
 
   const handleCopy = () => {
