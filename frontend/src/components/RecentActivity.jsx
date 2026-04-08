@@ -58,7 +58,7 @@ const RecentActivity = ({ userData = [] }) => {
 
   return (
     <div className="overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-      <table className="w-full text-sm lg:text-lg 3xl:text-2xl text-left border-collapse">
+      <table className="w-full text-sm lg:text-base 3xl:text-xl text-left border-collapse">
         <thead>
           <tr className="border-b border-gray-100 font-semibold text-gray-600">
             <td className="px-2 pb-2 pl-4 sm:pl-12">Name</td>

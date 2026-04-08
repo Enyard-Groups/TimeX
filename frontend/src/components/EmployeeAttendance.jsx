@@ -95,7 +95,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
             key={index}
             className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex items-center justify-between overflow-hidden relative h-[120px] border border-gray-200"
           >
-            <h3 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-800 absolute top-2 left-26">
+            <h3 className="text-xl 3xl:text-2xl font-bold text-gray-800 absolute top-2 left-26">
               {item.value}
             </h3>
             <div className="text-xs lg:text-sm 3xl:text-lg absolute top-1 right-1">
@@ -107,7 +107,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
             <div
               className={`${item.bg} ${item.text} h-full flex flex-col justify-center items-center min-w-[90px]`}
             >
-              <span className="text-sm lg:text-lg 3xl:text-3xl mb-3">
+              <span className="text-sm lg:text-base 3xl:text-2xl mb-3">
                 {item.title}
               </span>
               <span className="text-sm lg:text-xl 3xl:text-4xl ">

@@ -174,7 +174,7 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
     <div className="py-4 bg-white rounded-xl">
       {/*  Filter Buttons */}
       <div className="sm:flex sm:justify-between">
-        <h3 className="text-[16px] lg:text-[20px] 3xl:text-[22px] font-semibold text-gray-700 ml-5 mb-3">
+        <h3 className="text-[16px] lg:text-[18px] 3xl:text-[20px] font-semibold text-gray-700 ml-5 mb-3">
           Attendance Overview
         </h3>
         <div className="flex sm:gap-2 mb-3 px-3">
@@ -188,7 +188,7 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
             <button
               key={btn.value}
               onClick={() => setRange(btn.value)}
-              className={`px-3 py-1 text-xs lg:text-[15px] 3xl:text-lg rounded-lg transition-all ${
+              className={`px-3 py-1 text-xs lg:text-sm 3xl:text-base rounded-lg transition-all ${
                 range === btn.value
                   ? "bg-[#042b6a] text-white shadow-md"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
