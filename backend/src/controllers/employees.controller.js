@@ -1,5 +1,73 @@
 import db from "../lib/db.js";
 
+export const getEmployeeReport = async (req, res) => {
+  try {
+    const { company, type, location, designation_id, finger } = req.query;
+
+    const conditions = [];
+    const params = [];
+
+    if (company) {
+      params.push(company);
+      conditions.push(`c.id = $${params.length}`);
+    }
+    if (type) {
+      params.push(type);
+      conditions.push(`e.type = $${params.length}`);
+    }
+    if (location) {
+      params.push(location);
+      conditions.push(`e.location = $${params.length}`);
+    }
+    if (designation_id) {
+      params.push(designation_id);
+      conditions.push(`e.designation_id = $${params.length}`);
+    }
+    if (finger) {
+      params.push(Number(finger));
+      conditions.push(`e.device_enrollment_id IS NOT NULL`);
+      // finger count filter — stored as integer in device_enrollment_id count or separate field
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+    const result = await db.query(
+      `SELECT
+        e.id,
+        e.company_enrollment_id AS "employeeID",
+        e.full_name             AS name,
+        c.name                  AS company,
+        c.id                    AS company_id,
+        e.type                  AS "employeeCategory",
+        e.location,
+        ds.name                 AS department,
+        ds.id                   AS designation_id,
+        d.name                  AS department_name,
+        d.id                    AS department_id,
+        e.is_active,
+        e.phone,
+        e.dob,
+        e.doj,
+        e.shift_id,
+        s.shift_name,
+        e.created_at
+       FROM employees e
+       LEFT JOIN companies c      ON e.company = CAST(c.id AS int)
+       LEFT JOIN designations ds  ON e.designation_id = ds.id
+       LEFT JOIN departments d    ON e.department_id = d.id
+       LEFT JOIN shifts s         ON e.shift_id = s.id
+       ${whereClause}
+       ORDER BY e.created_at DESC`,
+      params
+    );
+
+    return res.json(result.rows);
+  } catch (error) {
+    console.log("Error in getEmployeeReport:", error.message);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 
 
 export const getEmployees = async (req, res) => {
@@ -14,7 +82,7 @@ export const getEmployees = async (req, res) => {
        LEFT JOIN departments d ON e.department_id = d.id
        LEFT JOIN designations ds ON e.designation_id = ds.id
        LEFT JOIN shifts s ON e.shift_id = s.id
-       LEFT JOIN companies c ON e.company = CAST(c.id AS TEXT)
+       LEFT JOIN companies c ON e.company = CAST(c.id AS int)
        ORDER BY e.created_at DESC`
     );
 

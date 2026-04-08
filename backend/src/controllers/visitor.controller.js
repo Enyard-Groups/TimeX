@@ -5,9 +5,10 @@ export const getVisitorBooking = async (req, res) => {
   try {
 
     const result = await db.query(`
-       SELECT vb.*, e.full_name as host_full_name 
+      SELECT vb.*, e.full_name as host_full_name, c.name as company_name 
       FROM visitor_bookings vb
       LEFT JOIN employees e ON vb.host_employee_id = e.id
+      LEFT JOIN companies c ON vb.company = CAST(c.id AS TEXT)
       ORDER BY vb.visit_date DESC, vb.visit_time DESC
        `);
 
@@ -68,17 +69,16 @@ export const createVisitorBooking = async (req, res) => {
 };
 
 export const getVisitors = async (req, res) => {
-
   try {
-    const result = await db.query('select*from visitors order by created_at desc');
-
+    const result = await db.query(`
+      SELECT v.*, c.name as company_name
+      FROM visitors v
+      LEFT JOIN companies c ON v.company = CAST(c.id AS TEXT)
+      ORDER BY v.created_at DESC
+    `);
     return res.json(result.rows);
-
-  }
-  catch (error) {
+  } catch (error) {
     return res.status(500).json({ message: "Internal server error" });
-
-
   }
 };
 
