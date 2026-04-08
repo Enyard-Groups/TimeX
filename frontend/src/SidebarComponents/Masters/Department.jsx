@@ -304,10 +304,10 @@ const Department = () => {
 
   return (
     <>
-      <div className="mb-6">
+      <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-          <h1 className="flex items-center h-[30px] gap-2 text-lg font-semibold text-gray-900 ">
+          <h1 className="flex items-center h-[30px] gap-2 text-lg lg:text-xl 3xl:text-2xl font-semibold text-gray-900 ">
             <FaAngleRight className="text-blue-500 text-base" />
             <span className="text-gray-500">Masters</span>
             <FaAngleRight className="text-blue-500 text-base" />
@@ -318,20 +318,6 @@ const Department = () => {
               Department
             </div>
           </h1>
-          {/* <div
-            className=" border border-gray-200 rounded-xl px-3 py-2 w-full bg-white max-w-[300px]"
-            style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.05)" }}
-          >
-            <input
-              placeholder="Search"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              className=" bg-transparent outline-none text-sm w-full placeholder-gray-400"
-            />
-          </div> */}
 
           {!openModal && (
             <div className="flex justify-end">
@@ -348,7 +334,7 @@ const Department = () => {
                   });
                   setOpenModal(true);
                 }}
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
               >
                 + Add New
               </button>
@@ -356,12 +342,13 @@ const Department = () => {
           )}
         </div>
 
+        {/* Main Container */}
         <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl">
           {/* Top Controls */}
           <div className="p-6 border-b border-blue-100/30">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-600">
+                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
                   Display
                 </label>
                 <select
@@ -377,7 +364,7 @@ const Department = () => {
                   <option value={50}>50</option>
                   <option value={100}>100</option>
                 </select>
-                <span className="text-sm font-medium text-gray-600">
+                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
                   entries
                 </span>
               </div>
@@ -390,7 +377,7 @@ const Department = () => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
                 />
                 <div className="flex gap-2">
                   <button
@@ -400,7 +387,6 @@ const Department = () => {
                   >
                     <GoCopy className="text-lg" />
                   </button>
-
                   <button
                     onClick={handleExcel}
                     className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
@@ -408,7 +394,6 @@ const Department = () => {
                   >
                     <FaFileExcel className="text-lg" />
                   </button>
-
                   <button
                     onClick={handlePDF}
                     className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
@@ -422,26 +407,26 @@ const Department = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto min-h-[300px]">
-            <table className="w-full text-[16px]">
+          <div className="overflow-x-auto min-h-[350px]">
+            <table className="w-full text-[16px] lg:text-[19px] 3xl:text-[22px]">
               <thead>
                 <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
-                  <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden sm:table-cell">
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700 hidden sm:table-cell">
                     SL.NO
                   </th>
-                  <th className="px-6 py-3 text-center font-semibold text-gray-700 whitespace-nowrap">
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700 whitespace-nowrap">
                     Department Name
                   </th>
-                  <th className="px-6 py-3 text-center font-semibold text-gray-700 whitespace-nowrap hidden sm:table-cell">
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700 whitespace-nowrap hidden sm:table-cell">
                     Department Code
                   </th>
-                  <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden xl:table-cell">
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700 hidden lg:table-cell">
                     Company
                   </th>
-                  <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden md:table-cell">
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700 hidden md:table-cell">
                     Active
                   </th>
-                  <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700">
                     Action
                   </th>
                 </tr>
@@ -451,18 +436,21 @@ const Department = () => {
                   <tr>
                     <td
                       colSpan="6"
-                      className="sm:text-center p-10 text-gray-400"
+                      className="px-4 py-12 text-center text-gray-500"
                     >
-                      Loading...
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        <span>Loading...</span>
+                      </div>
                     </td>
                   </tr>
                 ) : currentdepartment.length === 0 ? (
                   <tr>
                     <td colSpan="6" className="px-4 py-12 text-center">
                       <div className="flex flex-col items-center justify-center gap-3">
-                        <div className="text-4xl opacity-40">📭</div>
-                        <p className="text-gray-500 text-base">
-                          No Data Available
+                        <div className="text-4xl opacity-40">🏛️</div>
+                        <p className="text-gray-500 text-base font-medium">
+                          No department data 
                         </p>
                       </div>
                     </td>
@@ -473,22 +461,22 @@ const Department = () => {
                       key={item.id}
                       className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="p-2 text-gray-900 text-center  hidden sm:table-cell">
+                      <td className="px-4 py-3 text-gray-900 text-center hidden sm:table-cell">
                         {index + 1}
                       </td>
-                      <td className="p-2 text-gray-900 text-center font-medium">
+                      <td className="px-4 py-3 text-gray-900 font-medium text-center">
                         {item.name}
                       </td>
-                      <td className="p-2 text-gray-600 text-center hidden sm:table-cell">
+                      <td className="px-4 py-3 hidden sm:table-cell text-gray-600 text-center">
                         {item.code}
                       </td>
-                      <td className="p-2 text-gray-900 text-center hidden xl:table-cell">
+                      <td className="px-4 py-3 hidden lg:table-cell text-center text-gray-900">
                         {item.company_name || item.company}
                       </td>
                       <td className="px-4 py-3 hidden md:table-cell text-center">
                         <div className="flex justify-center">
                           <span
-                            className={`px-3 py-1 rounded-full text-sm font-semibold border ${
+                            className={`px-3 py-1 rounded-full text-sm lg:text-base 3xl:text-lg font-semibold border ${
                               item.isActive
                                 ? "bg-green-100 text-green-700 border-green-300"
                                 : "bg-gray-100 text-gray-700 border-gray-300"
@@ -500,7 +488,6 @@ const Department = () => {
                       </td>
                       <td className="px-4 py-3 text-center">
                         <div className="flex justify-center gap-2">
-                          {/* View */}
                           <button
                             onClick={() => {
                               setFormData(item);
@@ -510,10 +497,8 @@ const Department = () => {
                             className="text-blue-500 hover:text-blue-700 hover:bg-blue-100 p-1.5 rounded-lg transition-all"
                             title="View"
                           >
-                            <FaEye className="text-lg" />
+                            <FaEye className="text-lg lg:text-xl 3xl:text-2xl" />
                           </button>
-
-                          {/* Edit */}
                           <button
                             onClick={() => {
                               setFormData(item);
@@ -524,16 +509,14 @@ const Department = () => {
                             className="text-green-500 hover:text-green-700 hover:bg-green-100 p-1.5 rounded-lg transition-all"
                             title="Edit"
                           >
-                            <FaPen className="text-lg" />
+                            <FaPen className="text-lg lg:text-xl 3xl:text-2xl" />
                           </button>
-
-                          {/* Delete */}
                           <button
                             onClick={() => handleDelete(item.id)}
                             className="text-red-500 hover:text-red-700 hover:bg-red-100 p-1.5 rounded-lg transition-all"
                             title="Delete"
                           >
-                            <MdDeleteForever className="text-xl" />
+                            <MdDeleteForever className="text-xl lg:text-xl 3xl:text-2xl" />
                           </button>
                         </div>
                       </td>
@@ -546,7 +529,7 @@ const Department = () => {
 
           {/* Pagination */}
           <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-            <span className="text-sm text-gray-600">
+            <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
               Showing{" "}
               <span className="text-gray-900 font-semibold">
                 {filtereddepartment.length === 0 ? "0" : startIndex + 1}
@@ -606,10 +589,10 @@ const Department = () => {
           </div>
         </div>
 
+        {/* Modal */}
         {openModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
             <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8">
-              {/* Close */}
               <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
                 <h2 className="text-xl font-bold text-gray-900">
                   {mode === "view"
@@ -628,12 +611,8 @@ const Department = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                    Name
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
+                  <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                    Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     name="name"
@@ -641,18 +620,14 @@ const Department = () => {
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Name"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                    Code
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
+                  <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                    Code <span className="text-red-500">*</span>
                   </label>
                   <input
                     name="code"
@@ -660,13 +635,12 @@ const Department = () => {
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Code"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                     required
                   />
                 </div>
 
-                {/* Company Field */}
-                <div>
+                <div className="sm:col-span-2">
                   <SearchDropdown
                     label={
                       <>
@@ -682,29 +656,27 @@ const Department = () => {
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
-                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                    labelStyle="text-sm font-bold text-gray-700 mb-2 block"
+                    inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    labelStyle="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block"
                   />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                  <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
                     Description
                   </label>
-                  <input
+                  <textarea
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Enter description"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    rows="3"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <label className="text-gray-700 font-medium cursor-pointer">
-                    Active
-                  </label>
                   <input
                     type="checkbox"
                     name="isActive"
@@ -713,21 +685,23 @@ const Department = () => {
                     disabled={mode === "view"}
                     className="w-5 h-5 cursor-pointer accent-blue-500 disabled:cursor-not-allowed"
                   />
+                  <label className="text-gray-700 font-medium lg:text-lg 3xl:text-xl cursor-pointer">
+                    Active
+                  </label>
                 </div>
               </div>
 
-              {/* Action Buttons */}
               {mode !== "view" && (
                 <div className="flex justify-end gap-3">
                   <button
                     onClick={() => setOpenModal(false)}
-                    className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-50 font-medium transition-all"
+                    className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 lg:text-lg 3xl:text-xl hover:bg-gray-50 font-medium transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSubmit}
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg lg:text-lg 3xl:text-xl hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                   >
                     Save
                   </button>

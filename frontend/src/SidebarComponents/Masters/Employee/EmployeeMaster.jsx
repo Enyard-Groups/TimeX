@@ -265,18 +265,17 @@ const EmployeeMaster = () => {
     doc.save("EmployeeMaster.pdf");
   };
 
-  // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="mb-6">
+    <div className="mb-6 max-w-[1920px] mx-auto">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center gap-2 h-[30px] text-lg font-semibold text-gray-800">
+        <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900 ">
           <FaAngleRight className="text-blue-500 text-base" />
           <span className="text-gray-500">Masters</span>
           <FaAngleRight className="text-blue-500 text-base" />
           <div
             onClick={() => setOpenModal(false)}
-            className="cursor-pointer text-blue-600 hover:text-blue-700"
+            className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
           >
             Employee Master
           </div>
@@ -291,7 +290,7 @@ const EmployeeMaster = () => {
                 setFormData(emptyForm),
                 setOpenModal(true)
               )}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -305,7 +304,7 @@ const EmployeeMaster = () => {
         <div className="p-6 border-b border-blue-100/30">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-600">
+              <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
                 Display
               </label>
               <select
@@ -314,14 +313,16 @@ const EmployeeMaster = () => {
                   setEntriesPerPage(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm cursor-pointer hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 transition-all"
+                className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base xl:text-lg 3xl:text-xl cursor-pointer hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 transition-all"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
                 <option value={50}>50</option>
                 <option value={100}>100</option>
               </select>
-              <span className="text-sm font-medium text-gray-600">entries</span>
+              <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                entries
+              </span>
             </div>
 
             <div className="flex flex-wrap gap-3 items-center justify-center">
@@ -332,7 +333,7 @@ const EmployeeMaster = () => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
               />
               <div className="flex gap-2">
                 <button
@@ -340,23 +341,21 @@ const EmployeeMaster = () => {
                   className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
                   title="Copy to clipboard"
                 >
-                  <GoCopy className="text-lg" />
+                  <GoCopy className="text-lg lg:text-xl 3xl:text-3xl" />
                 </button>
-
                 <button
                   onClick={handleExcel}
                   className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
                   title="Export to Excel"
                 >
-                  <FaFileExcel className="text-lg" />
+                  <FaFileExcel className="text-lg lg:text-xl 3xl:text-3xl" />
                 </button>
-
                 <button
                   onClick={handlePDF}
                   className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
                   title="Export to PDF"
                 >
-                  <FaFilePdf className="text-lg" />
+                  <FaFilePdf className="text-lg lg:text-xl 3xl:text-3xl" />
                 </button>
               </div>
             </div>
@@ -364,14 +363,14 @@ const EmployeeMaster = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto min-h-[300px]">
-          <table className="w-full text-[16px]">
+        <div className="overflow-x-auto min-h-[350px]">
+          <table className="w-full text-[16px] lg:text-[19px] 3xl:text-[22px]">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
                 <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
                   SL.NO
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden sm:table-cell">
+                <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
                   Device ID
                 </th>
                 <th className="px-6 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
@@ -397,24 +396,26 @@ const EmployeeMaster = () => {
                 </th>
               </tr>
             </thead>
-
             <tbody>
               {loading ? (
                 <tr>
                   <td
                     colSpan="9"
-                    className="px-4 py-12 text-center text-gray-400"
+                    className="px-4 py-12 text-center text-gray-500"
                   >
-                    Loading...
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                      <span>Loading...</span>
+                    </div>
                   </td>
                 </tr>
               ) : currentemployeeMaster.length === 0 ? (
                 <tr>
                   <td colSpan="9" className="px-4 py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="text-4xl opacity-40">📭</div>
-                      <p className="text-gray-500 text-base">
-                        No Data Available
+                      <div className="text-4xl opacity-40">👥</div>
+                      <p className="text-gray-500 text-base font-medium">
+                        No employee data
                       </p>
                     </div>
                   </td>
@@ -428,101 +429,55 @@ const EmployeeMaster = () => {
                     <td className="px-6 py-2 text-center hidden sm:table-cell">
                       {startIndex + index + 1}
                     </td>
-
                     <td className="px-6 py-2 text-center hidden sm:table-cell">
                       {item.device_enrollment_id || "-"}
                     </td>
-
                     <td className="px-6 py-2 text-center hidden md:table-cell">
                       {item.company_enrollment_id || "-"}
                     </td>
-
                     <td className="px-6 py-2 text-center hidden lg:table-cell">
                       {item.location || "-"}
                     </td>
-
-                    <td className="px-6 py-2 text-center">
+                    <td className="px-6 py-2 text-center font-medium">
                       {item.full_name || "-"}
                     </td>
-
                     <td className="px-6 py-2 text-center hidden md:table-cell">
                       {item.shift_name || item.shift || "-"}
                     </td>
-
                     <td className="px-6 py-2 text-center hidden xl:table-cell">
                       {item.designation_name || item.designation || "-"}
                     </td>
-
                     <td className="px-6 py-2 text-center hidden xl:table-cell">
                       {item.company_name || item.company || "-"}
                     </td>
-
                     <td className="px-4 py-3 text-center">
                       <div className="flex justify-center gap-2">
-                        {/* View */}
                         <button
                           onClick={() => {
-                            setFormData({
-                              ...item,
-                              department_id: item.department_id || "",
-                              designation_id: item.designation_id || "",
-                              shift_id: item.shift_id || "",
-                              department_id_name: item.department_name || "",
-                              designation_id_name: item.designation_name || "",
-                              shift_id_name: item.shift_name || "",
-                              company_name: item.company_name || "",
-                              leave_plan_name: item.leave_plan
-                                ? item.leave_plan.split(",")
-                                : [],
-                              leave_plan: item.leave_plan
-                                ? item.leave_plan.split(",")
-                                : [],
-                            });
+                            setFormData({ ...item });
                             setMode("view");
                             setOpenModal(true);
                           }}
                           className="text-blue-500 hover:text-blue-700 hover:bg-blue-100 p-1.5 rounded-lg transition-all"
-                          title="View"
                         >
-                          <FaEye className="text-lg" />
+                          <FaEye className="text-lg lg:text-xl 3xl:text-2xl" />
                         </button>
-
-                        {/* Edit */}
                         <button
                           onClick={() => {
-                            setFormData({
-                              ...item,
-                              department_id: item.department_id || "",
-                              designation_id: item.designation_id || "",
-                              shift_id: item.shift_id || "",
-                              department_id_name: item.department_name || "",
-                              designation_id_name: item.designation_name || "",
-                              shift_id_name: item.shift_name || "",
-                              company_name: item.company_name || "",
-                              leave_plan_name: item.leave_plan
-                                ? item.leave_plan.split(",")
-                                : [],
-                              leave_plan: item.leave_plan
-                                ? item.leave_plan.split(",")
-                                : [],
-                            });
+                            setFormData({ ...item });
                             setEditId(item.id);
                             setMode("edit");
                             setOpenModal(true);
                           }}
                           className="text-green-500 hover:text-green-700 hover:bg-green-100 p-1.5 rounded-lg transition-all"
-                          title="Edit"
                         >
-                          <FaPen className="text-lg" />
+                          <FaPen className="text-lg lg:text-xl 3xl:text-2xl" />
                         </button>
-
-                        {/* Delete */}
                         <button
                           onClick={() => handleDelete(item.id)}
                           className="text-red-500 hover:text-red-700 hover:bg-red-100 p-1.5 rounded-lg transition-all"
-                          title="Delete"
                         >
-                          <MdDeleteForever className="text-xl" />
+                          <MdDeleteForever className="text-xl lg:text-xl 3xl:text-2xl" />
                         </button>
                       </div>
                     </td>
@@ -535,7 +490,7 @@ const EmployeeMaster = () => {
 
         {/* Pagination */}
         <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-          <span className="text-sm text-gray-600">
+          <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
             Showing{" "}
             <span className="text-gray-900 font-semibold">
               {filteredemployeeMaster.length === 0 ? "0" : startIndex + 1}
@@ -550,44 +505,35 @@ const EmployeeMaster = () => {
             </span>{" "}
             entries
           </span>
-
           <div className="flex gap-2">
             <button
               disabled={currentPage == 1}
               onClick={() => setCurrentPage(1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
-              title="First page"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base xl:text-lg 3xl:text-xl font-medium transition-all"
             >
               First
             </button>
-
             <button
               disabled={currentPage == 1}
               onClick={() => setCurrentPage(currentPage - 1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
-              title="Previous page"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
             >
               <GrPrevious />
             </button>
-
             <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
               {currentPage}
             </div>
-
             <button
               disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(currentPage + 1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
-              title="Next page"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
             >
               <GrNext />
             </button>
-
             <button
               disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(totalPages)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
-              title="Last page"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base xl:text-lg 3xl:text-xl font-medium transition-all"
             >
               Last
             </button>
@@ -597,17 +543,10 @@ const EmployeeMaster = () => {
 
       {/* Modal */}
       {openModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
-          style={{ scrollbarWidth: "none" }}
-        >
-          <div
-            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8"
-            style={{ scrollbarWidth: "none" }}
-          >
-            {/* Close Button */}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8">
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
-              <h2 className="text-xl font-bold text-gray-900 ">
+              <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
                 {mode === "view"
                   ? "View Employee"
                   : mode === "edit"
@@ -616,21 +555,20 @@ const EmployeeMaster = () => {
               </h2>
               <button
                 onClick={() => setOpenModal(false)}
-                className="text-gray-400 hover:text-gray-600 transition"
+                className="text-gray-400 hover:text-red-600 transition-colors"
               >
                 <RxCross2 className="text-2xl" />
               </button>
             </div>
 
-            {/* Section 1: Basic Information */}
+            {/* Form Sections with Responsive Labels */}
             <div className="mb-8 pb-6 border-b border-blue-100/30">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              <h3 className="text-lg lg:text-xl 3xl:text-2xl font-semibold text-gray-800 mb-4">
                 Basic Information
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {/* Device Enrollment ID */}
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                  <label className="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block">
                     Device Enrollment ID <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -638,15 +576,12 @@ const EmployeeMaster = () => {
                     value={formData.device_enrollment_id}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    placeholder="Device ID"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
                     required
                   />
                 </div>
-
-                {/* Company Enrollment ID */}
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                  <label className="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block">
                     Company Enrollment ID{" "}
                     <span className="text-red-500">*</span>
                   </label>
@@ -655,15 +590,12 @@ const EmployeeMaster = () => {
                     value={formData.company_enrollment_id}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    placeholder="Company ID"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
                     required
                   />
                 </div>
-
-                {/* Full Name */}
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                  <label className="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block">
                     Full Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -671,15 +603,12 @@ const EmployeeMaster = () => {
                     value={formData.full_name}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    placeholder="Full Name"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
                     required
                   />
                 </div>
-
-                {/* Mobile */}
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                  <label className="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block">
                     Mobile
                   </label>
                   <input
@@ -687,32 +616,28 @@ const EmployeeMaster = () => {
                     value={formData.mobile}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    placeholder="Mobile"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Section 2: Dates & Organization */}
             <div className="mb-8 pb-6 border-b border-blue-100/30">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              <h3 className="text-lg lg:text-xl 3xl:text-2xl font-semibold text-gray-800 mb-4">
                 Organization Details
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Date Of Birth */}
-                <div className="relative">
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <div>
+                  <label className="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block">
                     Date Of Birth
                   </label>
                   <input
                     name="dob"
                     value={formData.dob}
-                    onChange={handleChange}
-                    onClick={() => setShowDobPicker(true)}
+                    onClick={() => mode !== "view" && setShowDobPicker(true)}
                     disabled={mode === "view"}
-                    placeholder="dd/mm/yyyy"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm cursor-pointer"
+                    readOnly
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl cursor-pointer shadow-sm"
                   />
                   {showDobPicker && (
                     <SpinnerDatePicker
@@ -724,20 +649,17 @@ const EmployeeMaster = () => {
                     />
                   )}
                 </div>
-
-                {/* Date Of Join */}
-                <div className="relative">
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <div>
+                  <label className="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block">
                     Date Of Join
                   </label>
                   <input
                     name="doj"
                     value={formData.doj}
-                    onChange={handleChange}
-                    onClick={() => setShowDojPicker(true)}
+                    onClick={() => mode !== "view" && setShowDojPicker(true)}
                     disabled={mode === "view"}
-                    placeholder="dd/mm/yyyy"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm cursor-pointer"
+                    readOnly
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl cursor-pointer shadow-sm"
                   />
                   {showDojPicker && (
                     <SpinnerDatePicker
@@ -749,206 +671,67 @@ const EmployeeMaster = () => {
                     />
                   )}
                 </div>
-
-                {/* Company */}
-                <div>
-                  <SearchDropdown
-                    label="Company"
-                    name="company"
-                    value={formData.company}
-                    displayValue={formData.company_name}
-                    options={companyOptions}
-                    labelKey="name"
-                    valueKey="id"
-                    formData={formData}
-                    setFormData={setFormData}
-                    disabled={mode === "view"}
-                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                    labelStyle="text-sm font-bold text-gray-700 mb-2 block"
-                  />
-                </div>
-
-                {/* Location */}
-                <div>
-                  <SearchDropdown
-                    label="Location"
-                    name="location"
-                    value={formData.location}
-                    options={[
-                      "Location1",
-                      "Location2",
-                      "Location3",
-                      "Location4",
-                      "Location5",
-                      "Location6",
-                    ]}
-                    formData={formData}
-                    setFormData={setFormData}
-                    disabled={mode === "view"}
-                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                    labelStyle="text-sm font-bold text-gray-700 mb-2 block"
-                  />
-                </div>
-
-                {/* Department */}
-                <div>
-                  <SearchDropdown
-                    label="Department"
-                    name="department_id"
-                    value={formData.department_id}
-                    displayValue={formData.department_id_name}
-                    options={departmentOptions}
-                    labelKey="name"
-                    valueKey="id"
-                    formData={formData}
-                    setFormData={setFormData}
-                    disabled={mode === "view"}
-                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                    labelStyle="text-sm font-bold text-gray-700 mb-2 block"
-                  />
-                </div>
-
-                {/* Designation */}
-                <div>
-                  <SearchDropdown
-                    label="Designation"
-                    name="designation_id"
-                    value={formData.designation_id}
-                    displayValue={formData.designation_id_name}
-                    options={designationOptions}
-                    labelKey="name"
-                    valueKey="id"
-                    formData={formData}
-                    setFormData={setFormData}
-                    disabled={mode === "view"}
-                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                    labelStyle="text-sm font-bold text-gray-700 mb-2 block"
-                  />
-                </div>
-
-                {/* Shift */}
-                <div>
-                  <SearchDropdown
-                    label="Shift"
-                    name="shift_id"
-                    value={formData.shift_id}
-                    displayValue={formData.shift_id_name}
-                    options={shiftOptions}
-                    labelKey="shift_name"
-                    valueKey="id"
-                    formData={formData}
-                    setFormData={setFormData}
-                    disabled={mode === "view"}
-                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                    labelStyle="text-sm font-bold text-gray-700 mb-2 block"
-                  />
-                </div>
-
-                {/* Leave Plan */}
-                <div>
-                  <SearchDropdown
-                    label="Leave Plan"
-                    name="leave_plan"
-                    value={formData.leave_plan}
-                    displayValue={formData.leave_plan_name}
-                    options={leavePlanOptions}
-                    labelKey="name"
-                    valueKey="name"
-                    formData={formData}
-                    setFormData={setFormData}
-                    labelName="leave_plan_name"
-                    disabled={mode === "view"}
-                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                    labelStyle="text-sm font-bold text-gray-700 mb-2 block"
-                    multiple={true}
-                  />
-                </div>
+                <SearchDropdown
+                  label="Company"
+                  name="company"
+                  value={formData.company}
+                  displayValue={formData.company_name}
+                  options={companyOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  formData={formData}
+                  setFormData={setFormData}
+                  disabled={mode === "view"}
+                  inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-4 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                  labelStyle="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block"
+                />
+                <SearchDropdown
+                  label="Location"
+                  name="location"
+                  value={formData.location}
+                  options={["Location1", "Location2", "Location3"]}
+                  formData={formData}
+                  setFormData={setFormData}
+                  disabled={mode === "view"}
+                  inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-4 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                  labelStyle="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block"
+                />
+                <SearchDropdown
+                  label="Department"
+                  name="department_id"
+                  value={formData.department_id}
+                  displayValue={formData.department_id_name}
+                  options={departmentOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  formData={formData}
+                  setFormData={setFormData}
+                  disabled={mode === "view"}
+                  inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-4 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                  labelStyle="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block"
+                />
+                <SearchDropdown
+                  label="Designation"
+                  name="designation_id"
+                  value={formData.designation_id}
+                  displayValue={formData.designation_id_name}
+                  options={designationOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  formData={formData}
+                  setFormData={setFormData}
+                  disabled={mode === "view"}
+                  inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-4 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                  labelStyle="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block"
+                />
               </div>
             </div>
 
-            {/* Section 3: Approvals & Settings */}
-            <div className="mb-8 pb-6 border-b border-blue-100/30">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                Approvals & Settings
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* First Approver */}
-                <div>
-                  <SearchDropdown
-                    label="First Approver"
-                    name="first_approver"
-                    value={formData.first_approver}
-                    options={approverOptions}
-                    labelKey="emp_name"
-                    valueKey="emp_name"
-                    formData={formData}
-                    setFormData={setFormData}
-                    disabled={mode === "view"}
-                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                    labelStyle="text-sm font-bold text-gray-700 mb-2 block"
-                  />
-                </div>
-
-                {/* Second Approver */}
-                <div>
-                  <SearchDropdown
-                    label="Second Approver"
-                    name="second_approver"
-                    value={formData.second_approver}
-                    options={approverOptions}
-                    labelKey="emp_name"
-                    valueKey="emp_name"
-                    formData={formData}
-                    setFormData={setFormData}
-                    disabled={mode === "view"}
-                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                    labelStyle="text-sm font-bold text-gray-700 mb-2 block"
-                  />
-                </div>
-
-                {/* Type */}
-                <div>
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                    Type
-                  </label>
-                  <div className="flex gap-4 mt-2">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="type"
-                        value="Card"
-                        checked={formData.type === "Card"}
-                        onChange={handleChange}
-                        disabled={mode === "view"}
-                        className="w-4 h-4 accent-blue-500 disabled:cursor-not-allowed"
-                      />
-                      <span className="text-sm text-gray-700">Card</span>
-                    </label>
-
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="type"
-                        value="User"
-                        checked={formData.type === "User"}
-                        onChange={handleChange}
-                        disabled={mode === "view"}
-                        className="w-4 h-4 accent-blue-500 disabled:cursor-not-allowed"
-                      />
-                      <span className="text-sm text-gray-700">User</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Section 4: Flags & Status */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              <h3 className="text-lg lg:text-xl 3xl:text-2xl font-semibold text-gray-800 mb-4">
                 Flags & Status
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {/* Is Manager */}
                 <div className="flex items-center gap-3 bg-blue-50/50 px-4 py-3 rounded-xl border border-blue-100">
                   <input
                     type="checkbox"
@@ -956,29 +739,12 @@ const EmployeeMaster = () => {
                     checked={formData.is_manager}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    className="w-5 h-5 cursor-pointer accent-blue-500 disabled:cursor-not-allowed"
+                    className="w-5 h-5 cursor-pointer accent-blue-500"
                   />
-                  <label className="text-gray-700 font-semibold cursor-pointer">
+                  <label className="text-gray-700 lg:text-base 3xl:text-lg font-semibold cursor-pointer">
                     Is Manager
                   </label>
                 </div>
-
-                {/* Break Hours Friday */}
-                <div className="flex items-center gap-3 bg-blue-50/50 px-4 py-3 rounded-xl border border-blue-100">
-                  <input
-                    type="checkbox"
-                    name="break_hours_friday"
-                    checked={formData.break_hours_friday}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                    className="w-5 h-5 cursor-pointer accent-blue-500 disabled:cursor-not-allowed"
-                  />
-                  <label className="text-gray-700 font-semibold cursor-pointer">
-                    Break Hours (Friday)
-                  </label>
-                </div>
-
-                {/* Active */}
                 <div className="flex items-center gap-3 bg-blue-50/50 px-4 py-3 rounded-xl border border-blue-100">
                   <input
                     type="checkbox"
@@ -986,42 +752,26 @@ const EmployeeMaster = () => {
                     checked={formData.is_active}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    className="w-5 h-5 cursor-pointer accent-blue-500 disabled:cursor-not-allowed"
+                    className="w-5 h-5 cursor-pointer accent-blue-500"
                   />
-                  <label className="text-gray-700 font-semibold cursor-pointer">
+                  <label className="text-gray-700 lg:text-base 3xl:text-lg font-semibold cursor-pointer">
                     Active
-                  </label>
-                </div>
-
-                {/* Is Mobile User */}
-                <div className="flex items-center gap-3 bg-blue-50/50 px-4 py-3 rounded-xl border border-blue-100">
-                  <input
-                    type="checkbox"
-                    name="is_mobile_user"
-                    checked={formData.is_mobile_user}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                    className="w-5 h-5 cursor-pointer accent-blue-500 disabled:cursor-not-allowed"
-                  />
-                  <label className="text-gray-700 font-semibold cursor-pointer">
-                    Is Mobile User
                   </label>
                 </div>
               </div>
             </div>
 
-            {/* Action Buttons */}
             {mode !== "view" && (
-              <div className="flex justify-end gap-3">
+              <div className="flex justify-end gap-3 pt-4 border-t">
                 <button
                   onClick={() => setOpenModal(false)}
-                  className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-50 font-semibold transition-all"
+                  className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 lg:text-lg 3xl:text-xl hover:bg-gray-50 font-semibold transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold px-6 py-2 rounded-lg shadow-lg lg:text-lg 3xl:text-xl hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                 >
                   Save
                 </button>

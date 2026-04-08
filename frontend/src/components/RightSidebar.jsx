@@ -34,10 +34,10 @@ const RightSidebar = ({ user }) => {
             {user?.user_name?.charAt(0)?.toUpperCase() || "U"}
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-800">
+            <h3 className="text-lg lg:text-[20px] 3xl:text-[22px] font-semibold text-gray-800">
               {user?.user_name}
             </h3>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm lg:text-base 3xl:text-2xl text-gray-500">
               {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
             </p>
           </div>
@@ -45,12 +45,12 @@ const RightSidebar = ({ user }) => {
       </div>
 
       <div className="px-4 ">
-        <h1 className="text-gray-600 font-medium flex justify-between">
-          Notifications <IoNotifications className="text-lg mt-1" />
+        <h1 className="text-gray-600 text-sm lg:text-lg 3xl:text-2xl font-medium flex justify-between">
+          Notifications <IoNotifications className="text-lg lg:text-[20px] 3xl:text-[22px] mt-1" />
         </h1>
 
         {notifications.length === 0 ? (
-          <div className="flex items-center justify-center min-h-[220px] h-full text-md opacity-60 text-[oklch(0.147_0.004_49.25)]">
+          <div className="flex items-center justify-center min-h-[220px] h-full text-md opacity-60 text-[oklch(0.147_0.004_49.25)] text-sm lg:text-lg 3xl:text-2xl">
             No Notifications
           </div>
         ) : (
@@ -68,7 +68,7 @@ const RightSidebar = ({ user }) => {
       <div className="fixed bottom-0 mb-6 mt-1 flex justify-between px-4 gap-4 border-t border-gray-200">
         <button
           onClick={handleLogout}
-          className="h-fit px-3 mt-2 py-0.5 cursor-pointer flex flex-row gap-2 rounded-full shadow text-xs"
+          className="h-fit px-3 mt-2 py-0.5 cursor-pointer flex flex-row gap-2 rounded-full shadow text-xs xl:text-[16px] "
         >
           <span className="pt-1">Logout</span>
           <span className="text-[15px] bg-[#00173d] rounded-full text-white p-1">
@@ -76,7 +76,7 @@ const RightSidebar = ({ user }) => {
           </span>
         </button>
 
-        <button className="px-3 mt-1 py-0.5 cursor-pointer rounded-full shadow text-xs">
+        <button className="px-3 mt-1 py-0.5 cursor-pointer rounded-full shadow text-xs xl:text-[16px] ">
           Change Password
         </button>
       </div>

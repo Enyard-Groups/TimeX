@@ -39,7 +39,7 @@ const Sidebar = ({ user }) => {
   return (
     <div className="h-screen flex flex-col bg-[#0f172a]">
       {/* TOP */}
-      <div className=" pl-10 py-4 mt-2">
+      <div className=" pl-13 pt-7 mb-8 mt-2">
         <Link to="/dashboard">
           <img
             src="../timexlogo.png"
@@ -51,24 +51,26 @@ const Sidebar = ({ user }) => {
         </Link>
       </div>
 
+      {isAdmin && (
+        <div
+          className={`mt-2.5 mb-7 px-3 mx-2.5 rounded-xl text-md transition-all ${
+            isdashboardActive ? activeClass : hoverClass
+          }`}
+        >
+          <div className="flex items-center gap-4 text-[18px] xl:text-[20px] pl-2">
+            <RxDashboard />
+            <Link to="/dashboard">Dashboard</Link>
+          </div>
+        </div>
+      )}
+
       {/* MIDDLE (Scrollable Area) */}
       <div
-        className="flex-1 overflow-y-auto px-3 space-y-5"
+        className="flex-1 overflow-y-auto px-3 space-y-7"
         style={{ scrollbarWidth: "none" }}
       >
         {isAdmin ? (
           <>
-            <div
-              className={`mt-0.5 mb-5 px-1.5 py-2 rounded-xl text-md transition-all ${
-                isdashboardActive ? activeClass : hoverClass
-              }`}
-            >
-              <div className="flex items-center gap-4 text-[18px] pl-2">
-                <RxDashboard />
-                <Link to="/dashboard">Dashboard</Link>
-              </div>
-            </div>
-
             <Master user={user} />
             <DeviceManagement user={user} />
             <Transaction user={user} />
@@ -102,7 +104,7 @@ const Sidebar = ({ user }) => {
       <div className="p-4 mt-4">
         <button
           onClick={handleLogout}
-          className="w-full flex pl-2 items-center gap-2 font-semibold text-blue-100 hover:text-white transition-all gap-3"
+          className="w-full xl:text-lg flex pl-2 items-center gap-2 font-semibold text-blue-100 hover:text-white transition-all gap-3"
         >
           <span className="text-lg bg-[#1E3A8A] rounded-full p-1 text-white">
             <IoIosLogOut />

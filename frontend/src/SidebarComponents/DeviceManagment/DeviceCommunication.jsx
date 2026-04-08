@@ -20,9 +20,11 @@ const DeviceCommunication = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [openModal, setopenModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const fetchCommunications = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem("token");
       const headers = {
         "Content-Type": "application/json",
@@ -37,6 +39,8 @@ const DeviceCommunication = () => {
     } catch (error) {
       console.error("Failed to fetch device communications", error);
       toast.error("Failed to load data");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,9 +49,10 @@ const DeviceCommunication = () => {
   }, []);
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm";
 
-  const labelStyle = "text-sm font-semibold text-gray-700 mb-2 block";
+  const labelStyle =
+    "text-sm xl:text-lg font-semibold text-gray-700 mb-2 block";
 
   const filtereddevicecommunication = devicecommunication.filter(
     (device) =>
@@ -147,14 +152,16 @@ const DeviceCommunication = () => {
   };
 
   return (
-    <div className="mb-6">
-      {/* Header */}
+    <div className="mb-6 max-w-[1920px] mx-auto">
+      {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center gap-2 h-[30px] text-lg font-semibold text-gray-800">
+        <h1 className="flex items-center gap-2 h-[30px] text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-800">
           <FaAngleRight className="text-blue-500 text-base" />
           <span className="text-gray-500">Device Management</span>
           <FaAngleRight className="text-blue-500 text-base" />
-          <span className="text-blue-600">Device Communication</span>
+          <div className="text-blue-600 hover:text-blue-700 transition cursor-pointer">
+            Device Communication
+          </div>
         </h1>
       </div>
 
@@ -164,7 +171,7 @@ const DeviceCommunication = () => {
         <div className="p-6 border-b border-blue-100/30">
           <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-600">
+              <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
                 Display
               </label>
               <select
@@ -180,7 +187,9 @@ const DeviceCommunication = () => {
                 <option value={50}>50</option>
                 <option value={100}>100</option>
               </select>
-              <span className="text-sm font-medium text-gray-600">entries</span>
+              <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                entries
+              </span>
             </div>
 
             <div className="flex flex-wrap gap-3 items-center justify-center">
@@ -191,7 +200,7 @@ const DeviceCommunication = () => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
               />
               <div className="flex gap-2">
                 <button
@@ -199,21 +208,21 @@ const DeviceCommunication = () => {
                   className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
                   title="Copy to clipboard"
                 >
-                  <GoCopy className="text-lg" />
+                  <GoCopy className="text-lg lg:text-xl 3xl:text-3xl" />
                 </button>
                 <button
                   onClick={handleExcel}
                   className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
                   title="Export to Excel"
                 >
-                  <FaFileExcel className="text-lg" />
+                  <FaFileExcel className="text-lg lg:text-xl 3xl:text-3xl" />
                 </button>
                 <button
                   onClick={handlePDF}
                   className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
                   title="Export to PDF"
                 >
-                  <FaFilePdf className="text-lg" />
+                  <FaFilePdf className="text-lg lg:text-xl 3xl:text-3xl" />
                 </button>
               </div>
             </div>
@@ -221,8 +230,11 @@ const DeviceCommunication = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto min-h-[300px]">
-          <table className="w-full text-[16px]">
+        <div
+          className="overflow-x-auto min-h-[350px]"
+          style={{ scrollbarWidth: "none" }}
+        >
+          <table className="w-full text-[16px] lg:text-[19px] 3xl:text-[22px]">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
                 <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
@@ -243,17 +255,8 @@ const DeviceCommunication = () => {
                 <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
                   Last Activity
                 </th>
-                <th className="px-6 py-3 text-center hidden 2xl:table-cell font-semibold text-gray-700">
-                  FW Version
-                </th>
-                <th className="px-6 py-3 text-center hidden 2xl:table-cell font-semibold text-gray-700">
-                  User Count
-                </th>
-                <th className="px-6 py-3 text-center hidden 2xl:table-cell font-semibold text-gray-700">
-                  FP Count
-                </th>
                 <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
-                  Transaction Count
+                  Transactions
                 </th>
                 <th className="px-6 py-3 text-center font-semibold text-gray-700">
                   Action
@@ -262,13 +265,25 @@ const DeviceCommunication = () => {
             </thead>
 
             <tbody>
-              {currentdevicecommunication.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan="10"
+                    className="px-4 py-12 text-center text-gray-500"
+                  >
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                      <span>Loading...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : currentdevicecommunication.length === 0 ? (
                 <tr>
                   <td colSpan="10" className="px-4 py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="text-4xl opacity-40">📭</div>
-                      <p className="text-gray-500 text-base">
-                        No Data Available
+                      <div className="text-4xl opacity-40">💻</div>
+                      <p className="text-gray-500 text-base font-medium">
+                        No Device available
                       </p>
                     </div>
                   </td>
@@ -277,53 +292,40 @@ const DeviceCommunication = () => {
                 currentdevicecommunication.map((item) => (
                   <tr
                     key={item.id}
-                    className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
+                    className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
                   >
                     <td className="px-6 py-3 text-center hidden sm:table-cell">
                       <span
-                        className={`px-3 py-1 rounded-full text-sm font-semibold border whitespace-nowrap ${
-                          item.status === "Online"
-                            ? "bg-green-100 text-green-700 border-green-300"
-                            : "bg-red-100 text-red-700 border-red-300"
-                        }`}
+                        className={`px-3 py-1 rounded-full text-sm lg:text-base 3xl:text-lg font-semibold border whitespace-nowrap ${item.status === "Online" ? "bg-green-100 text-green-700 border-green-300" : "bg-red-100 text-red-700 border-red-300"}`}
                       >
                         {item.status === "Online" ? "● Online" : "○ Offline"}
                       </span>
                     </td>
-                    <td className="px-6 py-3 text-center hidden sm:table-cell">
+                    <td className="px-6 py-3 text-center hidden sm:table-cell text-gray-600">
                       {item.serialno || "-"}
                     </td>
-                    <td className="px-6 py-3 text-center">
+                    <td className="px-6 py-3 text-center font-medium text-gray-900">
                       {item.devicename || "-"}
                     </td>
-                    <td className="px-6 py-3 text-center hidden 2xl:table-cell whitespace-nowrap">
+                    <td className="px-6 py-3 text-center hidden 2xl:table-cell text-gray-600">
                       {item.transfername || "-"}
                     </td>
-                    <td className="px-6 py-3 text-center hidden 2xl:table-cell whitespace-nowrap">
+                    <td className="px-6 py-3 text-center hidden 2xl:table-cell text-gray-600">
                       {item.interval || "-"}
                     </td>
-                    <td className="px-6 py-3 text-center hidden lg:table-cell whitespace-nowrap">
+                    <td className="px-6 py-3 text-center hidden lg:table-cell text-gray-600 whitespace-nowrap">
                       {item.lastactivity || "-"}
                     </td>
-                    <td className="px-6 py-3 text-center hidden 2xl:table-cell">
-                      {item.fwversion || "-"}
-                    </td>
-                    <td className="px-6 py-3 text-center hidden 2xl:table-cell">
-                      {item.usercount ?? "-"}
-                    </td>
-                    <td className="px-6 py-3 text-center hidden 2xl:table-cell">
-                      {item.fpcount ?? "-"}
-                    </td>
-                    <td className="px-6 py-3 text-center hidden lg:table-cell">
+                    <td className="px-6 py-3 text-center hidden lg:table-cell text-gray-600">
                       {item.transactioncount ?? "-"}
                     </td>
-                    <td className="px-6 py-3 text-center flex justify-center mt-1">
+                    <td className="px-6 py-3 text-center flex justify-center">
                       <FaEye
                         onClick={() => {
                           setSelectedItem(item);
                           setopenModal(true);
                         }}
-                        className="text-blue-600 hover:text-blue-800 cursor-pointer"
+                        className="text-blue-600 hover:text-blue-800 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
                       />
                     </td>
                   </tr>
@@ -335,7 +337,7 @@ const DeviceCommunication = () => {
 
         {/* Pagination */}
         <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-          <span className="text-sm text-gray-600">
+          <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
             Showing{" "}
             <span className="text-gray-900 font-semibold">
               {filtereddevicecommunication.length === 0 ? "0" : startIndex + 1}
@@ -350,19 +352,18 @@ const DeviceCommunication = () => {
             </span>{" "}
             entries
           </span>
-
           <div className="flex gap-2">
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
             >
               First
             </button>
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(currentPage - 1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
             >
               <GrPrevious />
             </button>
@@ -372,14 +373,14 @@ const DeviceCommunication = () => {
             <button
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(currentPage + 1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
             >
               <GrNext />
             </button>
             <button
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(totalPages)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
             >
               Last
             </button>
@@ -387,78 +388,53 @@ const DeviceCommunication = () => {
         </div>
       </div>
 
+      {/* Modal */}
       {openModal && selectedItem && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-2 overflow-y-auto"
-          style={{ scrollbarWidth: "none" }}
+          onClick={() => setopenModal(false)}
         >
           <div
-            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8"
-            style={{ scrollbarWidth: "none" }}
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
+            onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
-            <div className="flex justify-between items-center pb-4 border-b border-blue-100/30">
-              <h2 className="text-xl font-bold text-gray-900">
+            <div className="flex justify-between items-center pb-4 border-b border-blue-100/30 mb-6">
+              <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
                 Device Communication Details
               </h2>
               <button
                 onClick={() => setopenModal(false)}
-                className="text-gray-400 hover:text-gray-600 transition"
+                className="text-gray-400 hover:text-red-600 transition"
               >
                 <RxCross2 className="text-2xl" />
               </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 ">
-              <div>
-                <p className={labelStyle}>Status</p>
-                <p className={inputStyle}>{selectedItem.status}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>Serial No</p>
-                <p className={inputStyle}>{selectedItem.serialno}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>Device Name</p>
-                <p className={inputStyle}>{selectedItem.devicename}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>Transfer Time</p>
-                <p className={inputStyle}>{selectedItem.transfername}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>Interval</p>
-                <p className={inputStyle}>{selectedItem.interval}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>Last Activity</p>
-                <p className={inputStyle}>{selectedItem.lastactivity}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>FW Version</p>
-                <p className={inputStyle}>{selectedItem.fwversion}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>User Count</p>
-                <p className={inputStyle}>{selectedItem.usercount}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>FP Count</p>
-                <p className={inputStyle}>{selectedItem.fpcount}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>Transaction Count</p>
-                <p className={inputStyle}>{selectedItem.transactioncount}</p>
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {[
+                { label: "Status", value: selectedItem.status },
+                { label: "Serial No", value: selectedItem.serialno },
+                { label: "Device Name", value: selectedItem.devicename },
+                { label: "Transfer Time", value: selectedItem.transfername },
+                { label: "Interval", value: selectedItem.interval },
+                { label: "Last Activity", value: selectedItem.lastactivity },
+                { label: "FW Version", value: selectedItem.fwversion },
+                { label: "User Count", value: selectedItem.usercount },
+                { label: "FP Count", value: selectedItem.fpcount },
+                {
+                  label: "Transaction Count",
+                  value: selectedItem.transactioncount,
+                },
+              ].map((field) => (
+                <div key={field.label}>
+                  <p className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-1">
+                    {field.label}
+                  </p>
+                  <p className="w-full bg-blue-50/50 border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl">
+                    {field.value || "-"}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

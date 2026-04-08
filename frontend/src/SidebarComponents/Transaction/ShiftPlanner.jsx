@@ -7,10 +7,10 @@ const ShiftPlanner = () => {
   const [activeTab, setActiveTab] = useState("calendar");
 
   return (
-    <div className="mb-6">
+    <div className="mb-6 max-w-[1920px] mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center gap-2 h-[30px] text-lg font-semibold text-gray-800">
+        <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
           <FaAngleRight className="text-blue-500 text-base" />
           <span className="text-gray-500">Transaction</span>
           <FaAngleRight className="text-blue-500 text-base" />
@@ -27,7 +27,7 @@ const ShiftPlanner = () => {
         <div className="flex gap-6 px-6 pt-6 border-b border-blue-100/30">
           <button
             onClick={() => setActiveTab("calendar")}
-            className={`pb-3 text-[16px] font-semibold transition-all relative
+            className={`pb-3 text-[16px] xl:text-[20px] font-semibold transition-all relative
           ${
             activeTab === "calendar"
               ? "text-blue-600"
@@ -42,7 +42,7 @@ const ShiftPlanner = () => {
 
           <button
             onClick={() => setActiveTab("employee")}
-            className={`pb-3 text-[16px] font-semibold transition-all relative
+            className={`pb-3 text-[16px] xl:text-[20px] font-semibold transition-all relative
           ${
             activeTab === "employee"
               ? "text-blue-600"

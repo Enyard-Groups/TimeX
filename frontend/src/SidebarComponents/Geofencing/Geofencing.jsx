@@ -25,7 +25,7 @@ const Geofencing = ({ user }) => {
               isgeofencingActive ? activeClass : hoverClass
             }`}
           >
-            <div className="flex items-center gap-4 text-[18px]">
+            <div className="flex items-center gap-4 text-[18px] xl:text-[21px]">
               <IoMdLocate />
               <span>Geofencing</span>
             </div>
@@ -38,7 +38,7 @@ const Geofencing = ({ user }) => {
 
           {/* Sub Menu */}
           {openGeofencing && (
-            <div className="mt-3 flex flex-col pl-10 gap-2 text-md ">
+            <div className="mt-3 flex flex-col pl-10 gap-2 text-md xl:text-[19px]">
               <NavLink
                 to="/geofencing/geofencing-master"
                 className={({ isActive }) =>
