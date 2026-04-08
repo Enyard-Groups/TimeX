@@ -141,7 +141,7 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
 
   return (
     <div className="absolute z-50 mt-2 bg-white shadow-2xl rounded-2xl px-4 sm:px-6 py-5 w-fit">
-      <div className="text-blue-500 text-lg font-medium text-center mb-3">
+      <div className="text-[oklch(0.645_0.246_16.439)] text-lg font-medium text-center mb-3">
         {headerLabel}
       </div>
 
@@ -163,7 +163,7 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
               let v = e.target.value.replace(/\D/g, "");
               if (v.length <= 2) setTempDay(v);
             }}
-            className="w-10 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-blue-500 focus:outline-none"
+            className="w-10 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-[oklch(0.645_0.246_16.439)] focus:outline-none"
           />
 
           <button
@@ -201,7 +201,7 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
                 setTempMonth(match);
               }
             }}
-            className="w-12 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-blue-500 focus:outline-none"
+            className="w-12 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-[oklch(0.645_0.246_16.439)] focus:outline-none"
           />
 
           <button
@@ -229,7 +229,7 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
               let v = e.target.value.replace(/\D/g, "");
               if (v.length <= 4) setTempYear(v);
             }}
-            className="w-12 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-blue-500 focus:outline-none"
+            className="w-12 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-[oklch(0.645_0.246_16.439)] focus:outline-none"
           />
 
           <button
@@ -253,7 +253,7 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
 
         <button
           onClick={handleOk}
-          className="px-5 py-1 rounded-lg bg-blue-500 text-white hover:opacity-90"
+          className="px-5 py-1 rounded-lg bg-[oklch(0.645_0.246_16.439)]  text-white hover:opacity-90"
         >
           OK
         </button>

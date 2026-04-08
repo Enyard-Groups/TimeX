@@ -24,7 +24,6 @@ const WfhApproval = () => {
       setLoading(true);
       const res = await axios.get(`${API_BASE}/requests/wfh`);
       setRequests(res.data);
-      console.log
     } catch (error) {
       console.error("Failed to fetch WFH requests", error);
       toast.error("Failed to load requests");

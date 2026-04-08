@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaAngleRight, FaEye } from "react-icons/fa6";
+import { FaAngleRight } from "react-icons/fa6";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -8,7 +8,6 @@ import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { GrPrevious, GrNext } from "react-icons/gr";
-import { RxCross2 } from "react-icons/rx";
 
 const Monitoring = () => {
   const [monitoring] = useState([
@@ -111,16 +110,9 @@ const Monitoring = () => {
     leave: 8,
   };
 
-  const inputStyle =
-    "w-full bg-white border border-gray-200 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm";
-
-  const labelStyle = "text-sm font-semibold text-gray-700 mb-2 block";
-
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [openModal, setOpenModal] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
 
   const filteredmonitoring = monitoring.filter((device) =>
     device.employee.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -248,132 +240,246 @@ const Monitoring = () => {
   return (
     <div className="mb-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center gap-2 h-[30px] text-lg font-semibold text-gray-900">
-          <FaAngleRight className="text-blue-500 text-base" />
-          <p className="text-gray-500">Transaction</p>
-          <FaAngleRight className="text-blue-500 text-base" />
-          <p className="text-blue-600">Monitoring</p>
+      <div className="sm:flex sm:justify-between">
+        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
+          <FaAngleRight />
+          Transaction
+          <FaAngleRight />
+          Monitoring
         </h1>
       </div>
 
-      {/* Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        {[
-          { label: "Total Employees", value: attendanceData.total },
-          { label: "Present Today", value: attendanceData.present },
-          { label: "Absent", value: attendanceData.absent },
-          { label: "Leave Requests", value: attendanceData.leave },
-        ].map((item, idx) => (
-          <div
-            key={idx}
-            className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-2xl border border-blue-100/50 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
-          >
-            <p className="text-sm text-gray-500 mb-2">{item.label}</p>
-            <h3 className="text-2xl font-bold text-gray-800">{item.value}</h3>
-            <div className="mt-3 h-1 w-10 bg-blue-500 rounded-full" />
-          </div>
-        ))}
-      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
+        {/* Total Employees */}
+        <div
+          className="
+          hover:scale-105 active:scale-95 transition-all duration-300
+    relative group
+    p-6 rounded-3xl
+    bg-white/60 backdrop-blur-xl
+    border border-white/60
+    shadow-[0_8px_30px_rgba(0,0,0,0.06)]
+    hover:shadow-[0_15px_50px_rgba(0,0,0,0.08)]
+    transition-all duration-300
+  "
+        >
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />
 
-      {/* Main Container */}
-      <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl">
-        {/* Header */}
-        <div className="p-6 text-center border-b border-blue-100/30">
-          <h2 className="text-xl font-semibold text-blue-600">
-            Attendance Monitoring
-          </h2>
+          <p
+            className="text-md mb-2"
+            style={{ color: "oklch(0.2 0.004 49.25)" }}
+          >
+            Total Employees
+          </p>
+          <h3
+            className="text-3xl font-semibold tracking-tight"
+            style={{ color: "oklch(0.3 0.004 49.25)" }}
+          >
+            {attendanceData.total}
+          </h3>
+
+          <div
+            className="mt-3 h-1 w-12 rounded-full"
+            style={{ backgroundColor: "oklch(0.3 0.004 49.25)" }}
+          />
         </div>
 
-        {/* Controls */}
-        <div className="p-6 border-b border-blue-100/30">
-          <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-600">
-                Display
-              </label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className="bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg text-sm"
+        {/* Present Today */}
+        <div
+          className="
+          hover:scale-105 active:scale-95 transition-all duration-300
+    relative group
+    p-6 rounded-3xl
+    bg-white/60 backdrop-blur-xl
+    border border-white/60
+    shadow-[0_8px_30px_rgba(0,0,0,0.06)]
+    hover:shadow-[0_15px_50px_rgba(0,0,0,0.08)]
+    transition-all duration-300
+  "
+        >
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />
+
+          <p
+            className="text-md mb-2"
+            style={{ color: "oklch(0.2 0.004 49.25)" }}
+          >
+            Present Today
+          </p>
+          <h3
+            className="text-3xl font-semibold tracking-tight "
+            style={{ color: "oklch(0.6 0.246 16.439)" }}
+          >
+            {attendanceData.present}
+          </h3>
+
+          <div
+            className="mt-3 h-1 w-12 rounded-full"
+            style={{ backgroundColor: "oklch(0.6 0.246 16.439)" }}
+          />
+        </div>
+
+        {/* Absent */}
+        <div
+          className="
+          hover:scale-105 active:scale-95 transition-all duration-300
+    relative group
+    p-6 rounded-3xl
+    bg-white/60 backdrop-blur-xl
+    border border-white/60
+    shadow-[0_8px_30px_rgba(0,0,0,0.06)]
+    hover:shadow-[0_15px_50px_rgba(0,0,0,0.08)]
+    transition-all duration-300
+  "
+        >
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />
+
+          <p
+            className="text-md mb-2"
+            style={{ color: "oklch(0.2 0.004 49.25)" }}
+          >
+            Absent
+          </p>
+          <h3
+            className="text-3xl font-semibold tracking-tight"
+            style={{ color: "oklch(0.72 0.245 27.325)" }}
+          >
+            {attendanceData.absent}
+          </h3>
+
+          <div
+            className="mt-3 h-1 w-12 rounded-full"
+            style={{ backgroundColor: "oklch(0.72 0.245 27.325)" }}
+          />
+        </div>
+
+        {/* Leave Requests */}
+        <div
+          className="
+          hover:scale-105 active:scale-95 transition-all duration-300
+    relative group
+    p-6 rounded-3xl
+    bg-white/60 backdrop-blur-xl
+    border border-white/60
+    shadow-[0_8px_30px_rgba(0,0,0,0.06)]
+    hover:shadow-[0_15px_50px_rgba(0,0,0,0.08)]
+    transition-all duration-300
+  "
+        >
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />
+
+          <p
+            className="text-md mb-2"
+            style={{ color: "oklch(0.2 0.004 49.25)" }}
+          >
+            Leave Requests
+          </p>
+          <h3
+            className="text-3xl font-semibold tracking-tight "
+            style={{ color: "oklch(0.45 0.004 49.25)" }}
+          >
+            {attendanceData.leave}
+          </h3>
+
+          <div
+            className="mt-3 h-1 w-12 rounded-full"
+            style={{ backgroundColor: "oklch(0.45 0.004 49.25)" }}
+          />
+        </div>
+      </div>
+
+      <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)]  p-6">
+        <h1 className="border-b-2 mb-4 text-xl w-fit border-[oklch(0.8_0.001_106.424)] text-[oklch(0.6_0.246_16.439)]">
+          Attendance Monitoring
+        </h1>
+
+        {/* Top Controls */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+          <div>
+            <label className="mr-2 text-sm">Show</label>
+            <select
+              value={entriesPerPage}
+              onChange={(e) => {
+                setEntriesPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+            <span className="ml-2 text-md">entries</span>
+          </div>
+          <div className="flex flex-wrap gap-2 items-center justify-center">
+            <input
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+            />
+            <div className="flex">
+              <button
+                onClick={handleCopy}
+                className="text-xl px-3 py-1 cursor-pointer text-gray-800"
               >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <p className="text-sm font-medium text-gray-600">entries</p>
-            </div>
+                <GoCopy />
+              </button>
 
-            <div className="flex flex-wrap gap-3 items-center justify-center">
-              <input
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
-              />
+              <button
+                onClick={handleExcel}
+                className="text-xl px-3 py-1 cursor-pointer text-green-700"
+              >
+                <FaFileExcel />
+              </button>
 
-              <div className="flex gap-2">
-                <button
-                  onClick={handleCopy}
-                  className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 p-2 rounded-lg"
-                >
-                  <GoCopy className="text-lg" />
-                </button>
-                <button
-                  onClick={handleExcel}
-                  className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 p-2 rounded-lg"
-                >
-                  <FaFileExcel className="text-lg" />
-                </button>
-                <button
-                  onClick={handlePDF}
-                  className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 p-2 rounded-lg"
-                >
-                  <FaFilePdf className="text-lg" />
-                </button>
-              </div>
+              <button
+                onClick={handlePDF}
+                className="text-xl px-3 py-1 cursor-pointer text-red-600"
+              >
+                <FaFilePdf />
+              </button>
             </div>
           </div>
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto min-h-[250px]">
-          <table className="w-full text-[16px]">
-            <thead>
-              <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
-                <th className="px-6 py-3 text-center font-semibold text-gray-700">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700">
-                  Employee
-                </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden sm:table-cell">
+        <div
+          className="overflow-x-auto min-h-[300px]"
+          style={{ scrollbarWidth: "none" }}
+        >
+          <table className="w-full text-lg border-collapse">
+            <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
+              <tr>
+                <th className="py-2 px-6 font-semibold">Status</th>
+
+                <th className="py-2 px-6 font-semibold">Employee</th>
+
+                <th className="py-2 px-6 font-semibold  hidden sm:table-cell">
                   Date
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden lg:table-cell">
+
+                <th className="py-2 px-6 font-semibold hidden lg:table-cell">
                   Day
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden lg:table-cell">
+
+                <th className="py-2 px-6 font-semibold hidden lg:table-cell">
                   Login
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden lg:table-cell">
+
+                <th className="py-2 px-6 font-semibold hidden lg:table-cell">
                   Logout
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden sm:table-cell">
-                  Hours
+
+                <th className="py-2 px-6 font-semibold whitespace-nowrap  hidden sm:table-cell">
+                  Working Hours
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden lg:table-cell">
+
+                <th className="py-2 px-6 font-semibold hidden lg:table-cell">
                   Location
-                </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700">
-                  Action
                 </th>
               </tr>
             </thead>
@@ -381,50 +487,45 @@ const Monitoring = () => {
             <tbody>
               {currentmonitoring.map((item) => (
                 <tr
-                  className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
                   key={item.id}
+                  className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                 >
                   <td className="text-center">
                     <div
                       className={`w-3 h-3 rounded-full mx-auto ${
-                        item.status === "Online" ? "bg-green-600" : "bg-red-600"
+                        item.status === "Online" ? "bg-green-700" : "bg-red-700"
                       }`}
-                    />
+                    ></div>
                   </td>
 
-                  <td className="px-6 py-2 text-center">{item.employee}</td>
-                  <td className="px-6 py-2 hidden sm:table-cell text-center">
+                  <td className="py-2 px-6 whitespace-nowrap">
+                    {item.employee}
+                  </td>
+
+                  <td className="py-2 px-6 whitespace-nowrap  hidden sm:table-cell">
                     {item.date.toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-2 hidden lg:table-cell text-center">
+
+                  <td className="py-2 px-6 whitespace-nowrap hidden lg:table-cell">
                     {item.date.toLocaleDateString("en-US", {
                       weekday: "long",
                     })}
                   </td>
-                  <td className="px-6 py-2 hidden lg:table-cell text-center">
+
+                  <td className="py-2 px-6 hidden lg:table-cell">
                     {item.login}
                   </td>
-                  <td className="px-6 py-2 hidden lg:table-cell text-center">
+
+                  <td className="py-2 px-6 hidden lg:table-cell">
                     {item.logout}
                   </td>
-                  <td className="px-6 py-2 hidden sm:table-cell text-center">
+
+                  <td className="py-2 px-6  hidden sm:table-cell">
                     {calculateWH(item.login, item.logout)}
                   </td>
-                  <td className="px-6 py-2 hidden lg:table-cell text-center">
+
+                  <td className="py-2 px-6 whitespace-nowrap hidden lg:table-cell">
                     {item.location}
-                  </td>
-                  {/* Action */}
-                  <td className="px-4 py-2 text-center">
-                    <button
-                      onClick={() => {
-                        setSelectedItem(item);
-                        setOpenModal(true);
-                      }}
-                      className="text-blue-500 hover:text-blue-700 hover:bg-blue-100 p-1.5 rounded-lg transition-all"
-                      title="View"
-                    >
-                      <FaEye className="text-lg" />
-                    </button>
                   </td>
                 </tr>
               ))}
@@ -433,125 +534,50 @@ const Monitoring = () => {
         </div>
 
         {/* Pagination */}
-        <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-gray-600">
-            Showing {filteredmonitoring.length === 0 ? 0 : startIndex + 1} to{" "}
+        <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
+          <span>
+            Showing {filteredmonitoring.length === 0 ? "0" : startIndex + 1} to{" "}
             {Math.min(endIndex, filteredmonitoring.length)} of{" "}
-            {filteredmonitoring.length}
-          </p>
+            {filteredmonitoring.length} entries
+          </span>
 
-          <div className="flex gap-2">
+          <div className="flex flex-row space-x-1">
             <button
-              disabled={currentPage === 1}
+              disabled={currentPage == 1}
               onClick={() => setCurrentPage(1)}
-              className="bg-blue-50 border border-blue-200 px-3 py-1 rounded-lg"
+              className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
             >
               First
             </button>
+
             <button
-              disabled={currentPage === 1}
+              disabled={currentPage == 1}
               onClick={() => setCurrentPage(currentPage - 1)}
-              className="bg-blue-50 border border-blue-200 p-2 rounded-lg"
+              className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
             >
               <GrPrevious />
             </button>
 
-            <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg">
-              {currentPage}
-            </div>
+            <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
 
             <button
-              disabled={currentPage === totalPages}
+              disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(currentPage + 1)}
-              className="bg-blue-50 border border-blue-200 p-2 rounded-lg"
+              className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
             >
               <GrNext />
             </button>
+
             <button
-              disabled={currentPage === totalPages}
+              disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(totalPages)}
-              className="bg-blue-50 border border-blue-200 px-3 py-1 rounded-lg"
+              className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
             >
               Last
             </button>
           </div>
         </div>
       </div>
-
-      {openModal && selectedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8">
-            {/* Close */}
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
-              <h2 className="text-xl font-bold text-gray-900">
-                Attendance Overview
-              </h2>
-              <button
-                onClick={() => setOpenModal(false)}
-                className="text-gray-400 hover:text-gray-600 transition"
-              >
-                <RxCross2 className="text-2xl" />
-              </button>
-            </div>
-
-            {/* Content */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-              <p>
-                <p className={labelStyle}>Employee:</p>{" "}
-                <p className={inputStyle}>{selectedItem.employee}</p>
-              </p>
-              <p>
-                <p className={labelStyle}>Date:</p>{" "}
-                <p className={inputStyle}>
-                  {selectedItem.date.toLocaleDateString()}
-                </p>
-              </p>
-              <p>
-                <p className={labelStyle}>Day:</p>{" "}
-                <p className={inputStyle}>
-                  {selectedItem.date.toLocaleDateString("en-US", {
-                    weekday: "long",
-                  })}
-                </p>
-              </p>
-              <p>
-                <p className={labelStyle}>Login Time:</p>{" "}
-                <p className={inputStyle}>{selectedItem.login}</p>
-              </p>
-              <p>
-                <p className={labelStyle}>Logout Time:</p>{" "}
-                <p className={inputStyle}>{selectedItem.logout}</p>
-              </p>
-              <p>
-                <p className={labelStyle}>Working Hours:</p>{" "}
-                <p className={inputStyle}>
-                  {calculateWH(selectedItem.login, selectedItem.logout)}
-                </p>
-              </p>
-              <p>
-                <p className={labelStyle}>Location:</p>{" "}
-                <p className={inputStyle}>{selectedItem.location}</p>
-              </p>
-              <p>
-                <p className={labelStyle}>Status:</p>{" "}
-                <p
-                  className={`font-semibold ${
-                    selectedItem.status === "Online"
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }`}
-                >
-                  <p className={inputStyle}>
-                    {selectedItem.status === "Online"
-                      ? "● Online"
-                      : "○ Offline"}
-                  </p>
-                </p>
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

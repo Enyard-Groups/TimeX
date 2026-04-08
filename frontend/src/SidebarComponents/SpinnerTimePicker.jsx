@@ -120,7 +120,7 @@ export default function SpinnerTimePicker({ value, onChange, onClose }) {
         </button>
         <button
           onClick={handleOk}
-          className="px-5 py-1 rounded-lg bg-blue-500 text-white hover:opacity-90"
+          className="px-5 py-1 rounded-lg bg-[oklch(0.645_0.246_16.439)] text-white hover:opacity-90"
         >
           OK
         </button>

@@ -22,7 +22,7 @@ const BusinessTravelApproval = () => {
   const fetchPendingTravel = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${API_BASE}/requests/travel?status=pending`);
+      const res = await axios.get(`${API_BASE}/requests/travel?status=Pending`);
       setRequests(res.data);
     } catch (error) {
       console.error("Failed to fetch pending travel requests", error);

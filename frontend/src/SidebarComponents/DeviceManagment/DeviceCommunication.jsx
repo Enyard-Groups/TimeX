@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FaAngleRight, FaEye } from "react-icons/fa6";
+import { FaAngleRight } from "react-icons/fa6";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -9,7 +9,6 @@ import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { GrPrevious, GrNext } from "react-icons/gr";
-import { RxCross2 } from "react-icons/rx";
 
 const API_BASE = "http://localhost:3000/api";
 
@@ -17,8 +16,6 @@ const DeviceCommunication = () => {
   const [devicecommunication, setDeviceCommunication] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [openModal, setopenModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
   const fetchCommunications = async () => {
@@ -43,11 +40,6 @@ const DeviceCommunication = () => {
   useEffect(() => {
     fetchCommunications();
   }, []);
-
-  const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm";
-
-  const labelStyle = "text-sm font-semibold text-gray-700 mb-2 block";
 
   const filtereddevicecommunication = devicecommunication.filter(
     (device) =>
@@ -149,182 +141,152 @@ const DeviceCommunication = () => {
   return (
     <div className="mb-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center gap-2 h-[30px] text-lg font-semibold text-gray-800">
-          <FaAngleRight className="text-blue-500 text-base" />
-          <span className="text-gray-500">Device Management</span>
-          <FaAngleRight className="text-blue-500 text-base" />
-          <span className="text-blue-600">Device Communication</span>
+      <div className="sm:flex sm:justify-between">
+        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
+          <FaAngleRight />
+          Device Management
+          <FaAngleRight />
+          Device Communication
         </h1>
       </div>
 
-      {/* Main Container */}
-      <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl">
+      <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)]  p-6">
         {/* Top Controls */}
-        <div className="p-6 border-b border-blue-100/30">
-          <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-600">
-                Display
-              </label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm cursor-pointer hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 transition-all"
+        <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+          <div>
+            <label className="mr-2 text-sm">Show</label>
+            <select
+              value={entriesPerPage}
+              onChange={(e) => {
+                setEntriesPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+            <span className="ml-2 text-md">entries</span>
+          </div>
+          <div className="flex flex-wrap gap-2 items-center justify-center">
+            <input
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+            />
+            <div className="flex">
+              <button
+                onClick={handleCopy}
+                className="text-xl px-3 py-1 cursor-pointer text-gray-800"
               >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="text-sm font-medium text-gray-600">entries</span>
-            </div>
-
-            <div className="flex flex-wrap gap-3 items-center justify-center">
-              <input
-                placeholder="Search device name..."
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
-              />
-              <div className="flex gap-2">
-                <button
-                  onClick={handleCopy}
-                  className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
-                  title="Copy to clipboard"
-                >
-                  <GoCopy className="text-lg" />
-                </button>
-                <button
-                  onClick={handleExcel}
-                  className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
-                  title="Export to Excel"
-                >
-                  <FaFileExcel className="text-lg" />
-                </button>
-                <button
-                  onClick={handlePDF}
-                  className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
-                  title="Export to PDF"
-                >
-                  <FaFilePdf className="text-lg" />
-                </button>
-              </div>
+                <GoCopy />
+              </button>
+              <button
+                onClick={handleExcel}
+                className="text-xl px-3 py-1 cursor-pointer text-green-700"
+              >
+                <FaFileExcel />
+              </button>
+              <button
+                onClick={handlePDF}
+                className="text-xl px-3 py-1 cursor-pointer text-red-600"
+              >
+                <FaFilePdf />
+              </button>
             </div>
           </div>
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto min-h-[300px]">
-          <table className="w-full text-[16px]">
-            <thead>
-              <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
-                <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
+        <div
+          className="overflow-x-auto min-h-[300px]"
+          style={{ scrollbarWidth: "none" }}
+        >
+          <table className="w-full text-lg border-collapse">
+            <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
+              <tr>
+                <th className="py-2 px-6 font-semibold">Status</th>
+                <th className="py-2 px-6 font-semibold hidden sm:table-cell">
                   Serial No
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700">
-                  Device Name
-                </th>
-                <th className="px-6 py-3 text-center hidden 2xl:table-cell font-semibold text-gray-700">
+                <th className="py-2 px-6 font-semibold">Device Name</th>
+                <th className="py-2 px-6 font-semibold hidden xl:table-cell">
                   Transfer Time
                 </th>
-                <th className="px-6 py-3 text-center hidden 2xl:table-cell font-semibold text-gray-700">
+                <th className="py-2 px-6 font-semibold hidden xl:table-cell">
                   Interval
                 </th>
-                <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
+                <th className="py-2 px-6 font-semibold hidden lg:table-cell">
                   Last Activity
                 </th>
-                <th className="px-6 py-3 text-center hidden 2xl:table-cell font-semibold text-gray-700">
+                <th className="py-2 px-6 font-semibold hidden xl:table-cell">
                   FW Version
                 </th>
-                <th className="px-6 py-3 text-center hidden 2xl:table-cell font-semibold text-gray-700">
+                <th className="py-2 px-6 font-semibold hidden xl:table-cell">
                   User Count
                 </th>
-                <th className="px-6 py-3 text-center hidden 2xl:table-cell font-semibold text-gray-700">
+                <th className="py-2 px-6 font-semibold hidden xl:table-cell">
                   FP Count
                 </th>
-                <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
+                <th className="py-2 px-6 font-semibold hidden lg:table-cell">
                   Transaction Count
-                </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700">
-                  Action
                 </th>
               </tr>
             </thead>
-
             <tbody>
               {currentdevicecommunication.length === 0 ? (
                 <tr>
-                  <td colSpan="10" className="px-4 py-12 text-center">
-                    <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="text-4xl opacity-40">📭</div>
-                      <p className="text-gray-500 text-base">
-                        No Data Available
-                      </p>
-                    </div>
+                  <td colSpan="10" className="sm:text-center p-10">
+                    No Data Available
                   </td>
                 </tr>
               ) : (
                 currentdevicecommunication.map((item) => (
                   <tr
                     key={item.id}
-                    className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
+                    className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                   >
-                    <td className="px-6 py-3 text-center hidden sm:table-cell">
+                    <td className="py-2 px-6">
                       <span
-                        className={`px-3 py-1 rounded-full text-sm font-semibold border whitespace-nowrap ${
+                        className={
                           item.status === "Online"
-                            ? "bg-green-100 text-green-700 border-green-300"
-                            : "bg-red-100 text-red-700 border-red-300"
-                        }`}
+                            ? "bg-green-100 text-green-700 rounded-xl px-2 py-1"
+                            : "bg-red-100 text-red-700 rounded-xl px-2 py-1"
+                        }
                       >
-                        {item.status === "Online" ? "● Online" : "○ Offline"}
+                        {item.status}
                       </span>
                     </td>
-                    <td className="px-6 py-3 text-center hidden sm:table-cell">
-                      {item.serialno || "-"}
+                    <td className="py-2 px-6 hidden sm:table-cell">
+                      {item.serialno}
                     </td>
-                    <td className="px-6 py-3 text-center">
-                      {item.devicename || "-"}
+                    <td className="py-2 px-6">{item.devicename}</td>
+                    <td className="py-2 px-6 hidden xl:table-cell">
+                      {item.transfername}
                     </td>
-                    <td className="px-6 py-3 text-center hidden 2xl:table-cell whitespace-nowrap">
-                      {item.transfername || "-"}
+                    <td className="py-2 px-6 hidden xl:table-cell">
+                      {item.interval}
                     </td>
-                    <td className="px-6 py-3 text-center hidden 2xl:table-cell whitespace-nowrap">
-                      {item.interval || "-"}
+                    <td className="py-2 px-6 hidden lg:table-cell">
+                      {item.lastactivity}
                     </td>
-                    <td className="px-6 py-3 text-center hidden lg:table-cell whitespace-nowrap">
-                      {item.lastactivity || "-"}
+                    <td className="py-2 px-6 hidden xl:table-cell">
+                      {item.fwversion}
                     </td>
-                    <td className="px-6 py-3 text-center hidden 2xl:table-cell">
-                      {item.fwversion || "-"}
+                    <td className="py-2 px-6 hidden xl:table-cell">
+                      {item.usercount}
                     </td>
-                    <td className="px-6 py-3 text-center hidden 2xl:table-cell">
-                      {item.usercount ?? "-"}
+                    <td className="py-2 px-6 hidden xl:table-cell">
+                      {item.fpcount}
                     </td>
-                    <td className="px-6 py-3 text-center hidden 2xl:table-cell">
-                      {item.fpcount ?? "-"}
-                    </td>
-                    <td className="px-6 py-3 text-center hidden lg:table-cell">
-                      {item.transactioncount ?? "-"}
-                    </td>
-                    <td className="px-6 py-3 text-center flex justify-center mt-1">
-                      <FaEye
-                        onClick={() => {
-                          setSelectedItem(item);
-                          setopenModal(true);
-                        }}
-                        className="text-blue-600 hover:text-blue-800 cursor-pointer"
-                      />
+                    <td className="py-2 px-6 hidden lg:table-cell">
+                      {item.transactioncount}
                     </td>
                   </tr>
                 ))
@@ -334,135 +296,46 @@ const DeviceCommunication = () => {
         </div>
 
         {/* Pagination */}
-        <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-          <span className="text-sm text-gray-600">
+        <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
+          <span>
             Showing{" "}
-            <span className="text-gray-900 font-semibold">
-              {filtereddevicecommunication.length === 0 ? "0" : startIndex + 1}
-            </span>{" "}
-            to{" "}
-            <span className="text-gray-900 font-semibold">
-              {Math.min(endIndex, filtereddevicecommunication.length)}
-            </span>{" "}
-            of{" "}
-            <span className="text-gray-900 font-semibold">
-              {filtereddevicecommunication.length}
-            </span>{" "}
-            entries
+            {filtereddevicecommunication.length === 0 ? "0" : startIndex + 1} to{" "}
+            {Math.min(endIndex, filtereddevicecommunication.length)} of{" "}
+            {filtereddevicecommunication.length} entries
           </span>
-
-          <div className="flex gap-2">
+          <div className="flex flex-row space-x-1">
             <button
-              disabled={currentPage === 1}
+              disabled={currentPage == 1}
               onClick={() => setCurrentPage(1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+              className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
             >
               First
             </button>
             <button
-              disabled={currentPage === 1}
+              disabled={currentPage == 1}
               onClick={() => setCurrentPage(currentPage - 1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+              className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
             >
               <GrPrevious />
             </button>
-            <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
-              {currentPage}
-            </div>
+            <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
             <button
-              disabled={currentPage === totalPages}
+              disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(currentPage + 1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+              className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
             >
               <GrNext />
             </button>
             <button
-              disabled={currentPage === totalPages}
+              disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(totalPages)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+              className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
             >
               Last
             </button>
           </div>
         </div>
       </div>
-
-      {openModal && selectedItem && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-2 overflow-y-auto"
-          style={{ scrollbarWidth: "none" }}
-        >
-          <div
-            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8"
-            style={{ scrollbarWidth: "none" }}
-          >
-            {/* Close Button */}
-            <div className="flex justify-between items-center pb-4 border-b border-blue-100/30">
-              <h2 className="text-xl font-bold text-gray-900">
-                Device Communication Details
-              </h2>
-              <button
-                onClick={() => setopenModal(false)}
-                className="text-gray-400 hover:text-gray-600 transition"
-              >
-                <RxCross2 className="text-2xl" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 ">
-              <div>
-                <p className={labelStyle}>Status</p>
-                <p className={inputStyle}>{selectedItem.status}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>Serial No</p>
-                <p className={inputStyle}>{selectedItem.serialno}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>Device Name</p>
-                <p className={inputStyle}>{selectedItem.devicename}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>Transfer Time</p>
-                <p className={inputStyle}>{selectedItem.transfername}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>Interval</p>
-                <p className={inputStyle}>{selectedItem.interval}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>Last Activity</p>
-                <p className={inputStyle}>{selectedItem.lastactivity}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>FW Version</p>
-                <p className={inputStyle}>{selectedItem.fwversion}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>User Count</p>
-                <p className={inputStyle}>{selectedItem.usercount}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>FP Count</p>
-                <p className={inputStyle}>{selectedItem.fpcount}</p>
-              </div>
-
-              <div>
-                <p className={labelStyle}>Transaction Count</p>
-                <p className={inputStyle}>{selectedItem.transactioncount}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

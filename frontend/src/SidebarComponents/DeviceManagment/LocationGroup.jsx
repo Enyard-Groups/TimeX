@@ -147,6 +147,8 @@ const LocationGroup = () => {
         toast.success("Data Added");
       }
 
+
+
       await fetchLocationGroups();
       setOpenModal(false);
       setEditId(null);
@@ -178,9 +180,7 @@ const LocationGroup = () => {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       };
 
-      await axios.delete(`${API_BASE}/master/location-groups/${id}`, {
-        headers,
-      });
+      await axios.delete(`${API_BASE}/master/location-groups/${id}`, { headers });
       toast.success("Deleted Successfully");
       fetchLocationGroups();
     } catch (error) {
@@ -255,36 +255,32 @@ const LocationGroup = () => {
 
   return (
     <div className="mb-6">
-      {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center gap-2 h-[30px] text-lg font-semibold text-gray-800">
-          <FaAngleRight className="text-blue-500 text-base" />
-          <span className="text-gray-500">Device Management</span>
-          <FaAngleRight className="text-blue-500 text-base" />
-          <div
-            onClick={() => setOpenModal(false)}
-            className="cursor-pointer text-blue-600 hover:text-blue-700"
-          >
+      {/* Header */}
+      <div className="sm:flex sm:justify-between">
+        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
+          <FaAngleRight />
+          Device Management
+          <FaAngleRight />
+          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
             Location Group
           </div>
         </h1>
-
         {!openModal && (
           <div className="flex justify-end">
             <button
-              onClick={() => {
-                setMode("");
-                setEditId(null);
+              onClick={() => (
+                setMode(""),
+                setEditId(null),
                 setFormData({
                   group_name: "",
                   company: "",
                   description: "",
                   site_manager: "",
                   time_keeper: "",
-                });
-                setOpenModal(true);
-              }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+                }),
+                setOpenModal(true)
+              )}
+              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
             >
               + Add New
             </button>
@@ -292,137 +288,126 @@ const LocationGroup = () => {
         )}
       </div>
 
-      {/* Main Container */}
-      <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl">
+      <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6">
         {/* Top Controls */}
-        <div className="p-6 border-b border-blue-100/30">
-          <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-600">
-                Display
-              </label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm cursor-pointer hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 transition-all"
+        <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+          <div>
+            <label className="mr-2 text-md">Show</label>
+            <select
+              value={entriesPerPage}
+              onChange={(e) => {
+                setEntriesPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+            <span className="ml-2 text-md">entries</span>
+          </div>
+          <div className="flex flex-wrap gap-2 items-center justify-center">
+            <input
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+            />
+            <div className="flex">
+              <button
+                onClick={handleCopy}
+                className="text-xl px-3 py-1 cursor-pointer text-gray-800"
               >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="text-sm font-medium text-gray-600">entries</span>
-            </div>
+                <GoCopy />
+              </button>
 
-            <div className="flex flex-wrap gap-3 items-center justify-center">
-              <input
-                placeholder="Search location group..."
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
-              />
-              <div className="flex gap-2">
-                <button
-                  onClick={handleCopy}
-                  className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
-                  title="Copy to clipboard"
-                >
-                  <GoCopy className="text-lg" />
-                </button>
-                <button
-                  onClick={handleExcel}
-                  className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
-                  title="Export to Excel"
-                >
-                  <FaFileExcel className="text-lg" />
-                </button>
-                <button
-                  onClick={handlePDF}
-                  className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
-                  title="Export to PDF"
-                >
-                  <FaFilePdf className="text-lg" />
-                </button>
-              </div>
+              <button
+                onClick={handleExcel}
+                className="text-xl px-3 py-1 cursor-pointer text-green-700"
+              >
+                <FaFileExcel />
+              </button>
+
+              <button
+                onClick={handlePDF}
+                className="text-xl px-3 py-1 cursor-pointer text-red-600"
+              >
+                <FaFilePdf />
+              </button>
             </div>
           </div>
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto min-h-[300px]">
-          <table className="w-full text-[16px]">
-            <thead>
-              <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
-                <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
+        <div
+          className="overflow-x-auto min-h-[250px]"
+          style={{ scrollbarWidth: "none" }}
+        >
+          <table className="w-full text-lg border-collapse">
+            <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
+              <tr>
+                <th className="p-2 font-semibold hidden sm:table-cell">
                   SL.NO
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700">
-                  Location Group Name
+                <th className="p-2 font-semibold ">Location Group Name</th>
+                <th className="p-2 font-semibold hidden lg:table-cell">
+                  Location Group Description
                 </th>
-                <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
-                  Description
-                </th>
-                <th className="px-6 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
+                <th className="p-2 font-semibold hidden md:table-cell">
                   Time Keeper Name
                 </th>
-                <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
+                <th className="p-2 font-semibold hidden lg:table-cell">
                   Site Manager Name
                 </th>
-                <th className="px-6 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
+                <th className="p-2 font-semibold hidden xl:table-cell">
                   Company
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700">
-                  Actions
-                </th>
+                <th className="py-2 px-6 font-semibold">Action</th>
               </tr>
             </thead>
-
             <tbody>
               {currentlocationGroup.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="px-4 py-12 text-center">
-                    <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="text-4xl opacity-40">📭</div>
-                      <p className="text-gray-500 text-base">
-                        No Data Available
-                      </p>
-                    </div>
+                  <td colSpan="9" className="sm:text-center p-10">
+                    No Data Available
                   </td>
                 </tr>
               ) : (
                 currentlocationGroup.map((item, index) => (
                   <tr
                     key={getLocationGroupId(item) ?? index}
-                    className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
+                    className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
                   >
-                    <td className="px-6 py-2 text-center hidden sm:table-cell">
+                    <td className="py-2 px-6 hidden sm:table-cell">
                       {index + 1}
                     </td>
-                    <td className="px-6 py-2 text-center">
-                      {item.group_name || "-"}
+
+                    <td className="py-2 px-6 ">{item.group_name}</td>
+
+                    <td className="py-2 px-6 hidden lg:table-cell">
+                      {item.description}
                     </td>
-                    <td className="px-6 py-2 text-center hidden lg:table-cell">
-                      {item.description || "-"}
+
+                    <td className="py-2 px-6 hidden md:table-cell">
+                      {item.time_keeper}
                     </td>
-                    <td className="px-6 py-2 text-center hidden md:table-cell">
-                      {item.time_keeper || "-"}
+
+                    <td className="py-2 px-6 hidden lg:table-cell">
+                      {item.site_manager}
                     </td>
-                    <td className="px-6 py-2 text-center hidden lg:table-cell">
-                      {item.site_manager || "-"}
+
+                    <td className="py-2 px-6 hidden xl:table-cell">
+                      {item.company}
                     </td>
-                    <td className="px-6 py-2 text-center hidden xl:table-cell">
-                      {item.company || "-"}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <div className="flex justify-center gap-2">
+                    <td className="py-2 px-6">
+                      <div className="flex flex-row space-x-3 justify-center ">
                         {/* View */}
-                        <button
+                        <FaEye
                           onClick={() => {
                             setFormData({
                               group_name: item.group_name ?? "",
@@ -434,14 +419,11 @@ const LocationGroup = () => {
                             setMode("view");
                             setOpenModal(true);
                           }}
-                          className="text-blue-500 hover:text-blue-700 hover:bg-blue-100 p-1.5 rounded-lg transition-all"
-                          title="View"
-                        >
-                          <FaEye className="text-lg" />
-                        </button>
+                          className="inline text-blue-500 cursor-pointer text-lg"
+                        />
 
                         {/* Edit */}
-                        <button
+                        <FaPen
                           onClick={() => {
                             setFormData({
                               group_name: item.group_name ?? "",
@@ -454,20 +436,14 @@ const LocationGroup = () => {
                             setMode("edit");
                             setOpenModal(true);
                           }}
-                          className="text-green-500 hover:text-green-700 hover:bg-green-100 p-1.5 rounded-lg transition-all"
-                          title="Edit"
-                        >
-                          <FaPen className="text-lg" />
-                        </button>
+                          className="inline text-green-500 cursor-pointer text-lg"
+                        />
 
                         {/* Delete */}
-                        <button
+                        <MdDeleteForever
                           onClick={() => handleDelete(getLocationGroupId(item))}
-                          className="text-red-500 hover:text-red-700 hover:bg-red-100 p-1.5 rounded-lg transition-all"
-                          title="Delete"
-                        >
-                          <MdDeleteForever className="text-xl" />
-                        </button>
+                          className="inline text-red-500 cursor-pointer text-xl"
+                        />
                       </div>
                     </td>
                   </tr>
@@ -478,52 +454,44 @@ const LocationGroup = () => {
         </div>
 
         {/* Pagination */}
-        <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-          <span className="text-sm text-gray-600">
-            Showing{" "}
-            <span className="text-gray-900 font-semibold">
-              {filteredlocationGroup.length === 0 ? "0" : startIndex + 1}
-            </span>{" "}
-            to{" "}
-            <span className="text-gray-900 font-semibold">
-              {Math.min(endIndex, filteredlocationGroup.length)}
-            </span>{" "}
-            of{" "}
-            <span className="text-gray-900 font-semibold">
-              {filteredlocationGroup.length}
-            </span>{" "}
-            entries
+        <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
+          <span>
+            Showing {filteredlocationGroup.length === 0 ? "0" : startIndex + 1}{" "}
+            to {Math.min(endIndex, filteredlocationGroup.length)} of{" "}
+            {filteredlocationGroup.length} entries
           </span>
 
-          <div className="flex gap-2">
+          <div className="flex flex-row space-x-1">
             <button
-              disabled={currentPage === 1}
+              disabled={currentPage == 1}
               onClick={() => setCurrentPage(1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+              className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
             >
               First
             </button>
+
             <button
-              disabled={currentPage === 1}
+              disabled={currentPage == 1}
               onClick={() => setCurrentPage(currentPage - 1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+              className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
             >
               <GrPrevious />
             </button>
-            <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
-              {currentPage}
-            </div>
+
+            <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+
             <button
-              disabled={currentPage === totalPages}
+              disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(currentPage + 1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+              className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
             >
               <GrNext />
             </button>
+
             <button
-              disabled={currentPage === totalPages}
+              disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(totalPages)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+              className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
             >
               Last
             </button>
@@ -531,81 +499,74 @@ const LocationGroup = () => {
         </div>
       </div>
 
-      {/* Modal */}
       {openModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8"
+            className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
             style={{ scrollbarWidth: "none" }}
           >
-            {/* Modal Header */}
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
-              <h2 className="text-xl font-bold text-gray-900">
-                {mode === "view"
-                  ? "View Location Group"
-                  : mode === "edit"
-                    ? "Edit Location Group"
-                    : "Add New Location Group"}
-              </h2>
-              <button
+            {/* Close */}
+            <div className="flex justify-end">
+              <RxCross2
                 onClick={() => setOpenModal(false)}
-                className="text-gray-400 hover:text-gray-600 transition"
-              >
-                <RxCross2 className="text-2xl" />
-              </button>
+                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
+              />
             </div>
 
-            {/* Form Fields */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {/* Company */}
+            {/* LOCATION GROUP INFORMATION */}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                  Company <span className="text-red-500">*</span>
+                <label className={labelStyle}>
+                  Company
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
                 </label>
                 <input
                   name="company"
                   value={formData.company}
                   onChange={handleChange}
                   disabled={mode === "view"}
-                  placeholder="Enter company"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                  placeholder="Company"
+                  className={inputStyle}
+                  required
                 />
               </div>
 
-              {/* Location Group Name */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                  Location Group Name <span className="text-red-500">*</span>
+                <label className={labelStyle}>
+                  Location Group Name
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
                 </label>
                 <input
                   name="group_name"
                   value={formData.group_name}
                   onChange={handleChange}
                   disabled={mode === "view"}
-                  placeholder="Enter location group name"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                  placeholder="Location Group Name"
+                  className={inputStyle}
+                  required
                 />
               </div>
 
-              {/* Description */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                  Description <span className="text-red-500">*</span>
+                <label className={labelStyle}>
+                  Description
+                  <span className="text-[oklch(0.577_0.245_27.325)]"> * </span>
                 </label>
                 <input
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
                   disabled={mode === "view"}
-                  placeholder="Enter description"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                  placeholder="Description"
+                  className={inputStyle}
+                  required
                 />
               </div>
 
-              {/* Site Manager */}
               <div>
                 <SearchDropdown
                   label="Site Manager Name"
@@ -615,12 +576,11 @@ const LocationGroup = () => {
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
-                  inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                  labelStyle="text-sm font-bold text-gray-700 mb-2 block"
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
                 />
               </div>
 
-              {/* Time Keeper */}
               <div>
                 <SearchDropdown
                   label="Time Keeper Name"
@@ -630,24 +590,18 @@ const LocationGroup = () => {
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
-                  inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                  labelStyle="text-sm font-bold text-gray-700 mb-2 block"
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
                 />
               </div>
             </div>
 
-            {/* Action Buttons */}
+            {/* Save */}
             {mode !== "view" && (
-              <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-blue-100/30">
-                <button
-                  onClick={() => setOpenModal(false)}
-                  className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-50 font-semibold transition-all"
-                >
-                  Cancel
-                </button>
+              <div className="flex justify-end mt-10">
                 <button
                   onClick={handleSubmit}
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+                  className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
                 >
                   Save
                 </button>
