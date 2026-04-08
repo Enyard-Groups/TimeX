@@ -97,7 +97,7 @@ export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
             <div className="flex justify-end mb-4">
               <button
                 onClick={() => setRightSidebarOpen(false)}
-                className="cursor-pointer"
+                className="cursor-pointer text-sm lg:text-lg 3xl:text-2xl"
               >
                 ✕
               </button>
