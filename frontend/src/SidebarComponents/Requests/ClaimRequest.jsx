@@ -30,17 +30,7 @@ const emptyForm = {
 const ClaimRequest = () => {
   const [mode, setMode] = useState("");
   const [openModal, setOpenModal] = useState(false);
-  const [claims, setClaims] = useState([
-    {
-      id: 1,
-      employee_name: "John Doe",
-      claim_category: "Travel",
-      date: "2024-06-15",
-      amount: 150.0,
-      purpose: "Client meeting in another city",
-      status: "Pending",
-    },
-  ]);
+  const [claims, setClaims] = useState([]);
   const [employeeOptions, setEmployeeOptions] = useState([]);
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [loading, setLoading] = useState(false);

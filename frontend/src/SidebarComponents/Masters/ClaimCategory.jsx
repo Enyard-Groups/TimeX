@@ -422,14 +422,16 @@ const ClaimCategory = () => {
                     </td>
                   </tr>
                 ) : currentcategory.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan="6"
-                      className="px-4 py-12 text-center text-gray-500 font-medium"
-                    >
-                      No Data Available
-                    </td>
-                  </tr>
+                   <tr>
+                  <td colSpan="6" className="px-4 py-12 text-center">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <div className="text-4xl opacity-40">💸</div>
+                      <p className="text-gray-500 text-base font-medium">
+                        No claim data 
+                      </p>
+                    </div>
+                  </td>
+                </tr>
                 ) : (
                   currentcategory.map((item, index) => (
                     <tr

@@ -413,11 +413,13 @@ const Leave = () => {
                   </tr>
                 ) : currentleave.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan="6"
-                      className="px-4 py-12 text-center text-gray-500 font-medium"
-                    >
-                      No Data Available
+                    <td colSpan="6" className="px-4 py-12 text-center">
+                      <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="text-4xl opacity-40">🍃</div>
+                        <p className="text-gray-500 text-base font-medium">
+                          No leave data
+                        </p>
+                      </div>
                     </td>
                   </tr>
                 ) : (

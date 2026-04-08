@@ -79,7 +79,7 @@ const AdminDashboard = ({ user }) => {
       <div className="md:flex md:items-center justify-between w-full mb-4">
         {/* LEFT - Welcome */}
         <div className="flex-1 flex justify-center md:justify-start text-center mt-10 sm:mt-0 md:pl-10 lg:pl-0 md:whitespace-nowrap md:mr-10">
-          <h2 className="text-2xl font-bold tracking-tight text-[#0f172a]">
+          <h2 className="text-2xl lg:text-3xl 3xl:text-5xl font-bold tracking-tight text-[#0f172a]">
             Dashboard
             {/* Welcome back,{" "}
             <span className="bg-clip-text font-bold text-transparent bg-blue-900">
@@ -90,11 +90,11 @@ const AdminDashboard = ({ user }) => {
 
         {/* CENTER - Search */}
         <div className="flex-1 flex justify-center my-2 md:my-0">
-          <div className="flex items-center border border-gray-200 rounded-xl px-3 py-2 w-full max-w-[300px] shadow-md">
+          <div className="flex items-center border border-gray-200 rounded-xl px-3 py-2 w-full max-w-[300px] lg:max-w-[500px] shadow-md">
             <input
               type="text"
               placeholder="Search..."
-              className="bg-transparent outline-none text-sm w-full placeholder-gray-400"
+              className="bg-transparent outline-none text-sm lg:text-lg 3xl:text-2xl w-full placeholder-gray-400"
             />
           </div>
         </div>
@@ -104,20 +104,20 @@ const AdminDashboard = ({ user }) => {
       </div>
 
       {/* Today Attendance */}
-      <div className="bg-white rounded " style={{ scrollbarWidth: "none" }}>
+      <div className="bg-white rounded mt-8" style={{ scrollbarWidth: "none" }}>
         <EmployeeAttendance attendanceData={attendanceData} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 items-start">
         {/* Line Chart */}
         <div
-          className="md:col-span-2 bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200 min-h-[425px]"
+          className="md:col-span-2 bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200 min-h-[430px]"
           style={{ scrollbarWidth: "none" }}
         >
           <AttendanceLineChart attendanceData={attendanceData} />
         </div>
         <div
-          className=" bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200 min-h-[425px]"
+          className=" bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200 min-h-[430px]"
           style={{ scrollbarWidth: "none" }}
         >
           <DeviceStats data={userData} />

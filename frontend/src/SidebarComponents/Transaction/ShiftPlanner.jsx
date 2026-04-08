@@ -7,7 +7,7 @@ const ShiftPlanner = () => {
   const [activeTab, setActiveTab] = useState("calendar");
 
   return (
-    <div className="mb-6">
+    <div className="mb-6 max-w-[1920px] mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
         <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">

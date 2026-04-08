@@ -11,148 +11,7 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import { RxCross2 } from "react-icons/rx";
 
 const Performance = () => {
-  const [performance] = useState([
-    {
-      id: 1,
-      serialno: "EMP001",
-      firstname: "Sharma",
-      dailyhours: 8,
-      dailytarget: 8,
-      dailystatus: "Good",
-      totalweeklyhours: 40,
-      targetweekly: 40,
-      weeklystatus: "Good",
-      totalmonthlyhours: 160,
-      targetmonthly: 160,
-      monthlystatus: "Good",
-    },
-    {
-      id: 2,
-      serialno: "EMP002",
-      firstname: "Drishti",
-      dailyhours: 6,
-      dailytarget: 8,
-      dailystatus: "Poor",
-      totalweeklyhours: 32,
-      targetweekly: 40,
-      weeklystatus: "Poor",
-      totalmonthlyhours: 120,
-      targetmonthly: 160,
-      monthlystatus: "Poor",
-    },
-    {
-      id: 3,
-      serialno: "EMP003",
-      firstname: "Rahul",
-      dailyhours: 7,
-      dailytarget: 8,
-      dailystatus: "Average",
-      totalweeklyhours: 36,
-      targetweekly: 40,
-      weeklystatus: "Average",
-      totalmonthlyhours: 145,
-      targetmonthly: 160,
-      monthlystatus: "Average",
-    },
-    {
-      id: 4,
-      serialno: "EMP004",
-      firstname: "Priya",
-      dailyhours: 8,
-      dailytarget: 8,
-      dailystatus: "Good",
-      totalweeklyhours: 41,
-      targetweekly: 40,
-      weeklystatus: "Good",
-      totalmonthlyhours: 165,
-      targetmonthly: 160,
-      monthlystatus: "Good",
-    },
-    {
-      id: 5,
-      serialno: "EMP005",
-      firstname: "Amit",
-      dailyhours: 5,
-      dailytarget: 8,
-      dailystatus: "Poor",
-      totalweeklyhours: 30,
-      targetweekly: 40,
-      weeklystatus: "Poor",
-      totalmonthlyhours: 110,
-      targetmonthly: 160,
-      monthlystatus: "Poor",
-    },
-    {
-      id: 6,
-      serialno: "EMP006",
-      firstname: "Neha",
-      dailyhours: 8,
-      dailytarget: 8,
-      dailystatus: "Good",
-      totalweeklyhours: 40,
-      targetweekly: 40,
-      weeklystatus: "Good",
-      totalmonthlyhours: 158,
-      targetmonthly: 160,
-      monthlystatus: "Average",
-    },
-    {
-      id: 7,
-      serialno: "EMP007",
-      firstname: "Karan",
-      dailyhours: 7,
-      dailytarget: 8,
-      dailystatus: "Average",
-      totalweeklyhours: 37,
-      targetweekly: 40,
-      weeklystatus: "Average",
-      totalmonthlyhours: 150,
-      targetmonthly: 160,
-      monthlystatus: "Average",
-    },
-    {
-      id: 8,
-      serialno: "EMP008",
-      firstname: "Anjali",
-      dailyhours: 9,
-      dailytarget: 8,
-      dailystatus: "Excellent",
-      totalweeklyhours: 44,
-      targetweekly: 40,
-      weeklystatus: "Excellent",
-      totalmonthlyhours: 170,
-      targetmonthly: 160,
-      monthlystatus: "Excellent",
-    },
-    {
-      id: 9,
-      serialno: "EMP009",
-      firstname: "Rohit",
-      dailyhours: 6,
-      dailytarget: 8,
-      dailystatus: "Poor",
-      totalweeklyhours: 33,
-      targetweekly: 40,
-      weeklystatus: "Poor",
-      totalmonthlyhours: 125,
-      targetmonthly: 160,
-      monthlystatus: "Poor",
-    },
-    {
-      id: 10,
-      serialno: "EMP010",
-      firstname: "Sneha",
-      dailyhours: 8,
-      dailytarget: 8,
-      dailystatus: "Good",
-      totalweeklyhours: 40,
-      targetweekly: 40,
-      weeklystatus: "Good",
-      totalmonthlyhours: 160,
-      targetmonthly: 160,
-      monthlystatus: "Good",
-    },
-  ]);
+  const [performance] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -363,40 +222,40 @@ const Performance = () => {
             <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
               <thead>
                 <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
-                  <th className="px-4 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
                     SL.NO
                   </th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-center font-semibold text-gray-700">
                     Employee Name
                   </th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-700 hidden sm:table-cell">
+                  <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden sm:table-cell">
                     Daily Hrs
                   </th>
-                  <th className="px-4 py-3 text-center hidden 2xl:table-cell font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-center hidden 2xl:table-cell font-semibold text-gray-700">
                     Daily Target
                   </th>
-                  <th className="px-4 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
                     Daily Status
                   </th>
-                  <th className="px-4 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
                     Weekly Hrs
                   </th>
-                  <th className="px-4 py-3 text-center hidden 2xl:table-cell font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-center hidden 2xl:table-cell font-semibold text-gray-700">
                     Weekly Target
                   </th>
-                  <th className="px-4 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
                     Weekly Status
                   </th>
-                  <th className="px-4 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
                     Monthly Hrs
                   </th>
-                  <th className="px-4 py-3 text-center hidden 2xl:table-cell font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-center hidden 2xl:table-cell font-semibold text-gray-700">
                     Monthly Target
                   </th>
-                  <th className="px-4 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
                     Monthly Status
                   </th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-center font-semibold text-gray-700">
                     Actions
                   </th>
                 </tr>
@@ -416,11 +275,13 @@ const Performance = () => {
                   </tr>
                 ) : currentperformance.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan="12"
-                      className="px-4 py-12 text-center text-gray-500 font-medium"
-                    >
-                      No Data Available
+                    <td colSpan="12" className="px-4 py-12 text-center">
+                      <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="text-4xl opacity-40">🎯</div>
+                        <p className="text-gray-500 text-base font-medium">
+                          No performance data
+                        </p>
+                      </div>
                     </td>
                   </tr>
                 ) : (

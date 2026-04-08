@@ -84,10 +84,10 @@ const Timeline = ({ userData = [] }) => {
   return (
     <div className="bg-white rounded-3xl p-6 w-full relative overflow-hidden">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-md font-bold text-gray-800 tracking-tight">
+        <h2 className="text-md lg:text-[18px] 3xl:text-[20px] font-bold text-gray-600 tracking-tight">
           Live Attendance Feed
         </h2>
-        <div className="flex gap-4 text-[10px] font-bold uppercase tracking-wider">
+        <div className="flex gap-4 text-[10px] lg:text-[13px] 3xl:text-[16px] font-bold uppercase tracking-wider">
           <div className="flex items-center gap-1.5 text-[#3572ff]">
             <div className="w-2 h-2 rounded-full bg-[#3572ff] animate-pulse" />{" "}
             Check-in
@@ -118,7 +118,7 @@ const Timeline = ({ userData = [] }) => {
             {timeLabels.map((time) => (
               <div
                 key={time}
-                className="flex-none text-[10px] font-extrabold text-gray-400 py-3 border-r border-gray-100 last:border-0"
+                className="flex-none text-[10px] lg:text-[13px] 3xl:text-[16px] font-extrabold text-gray-400 py-3 border-r border-gray-100 last:border-0"
                 style={{ width: `${hourWidth}px`, paddingLeft: "10px" }}
               >
                 {time}
@@ -145,7 +145,7 @@ const Timeline = ({ userData = [] }) => {
               className="absolute top-0 bottom-0 flex flex-col items-start z-30 pointer-events-none transition-all duration-1000 linear"
               style={{ left: `${nowPosition}%` }}
             >
-              <div className="bg-indigo-950 text-white text-[9px] font-black px-2 py-0.5 rounded-r-full mt-1 shadow-lg uppercase">
+              <div className="bg-indigo-950 text-white text-[9px] lg:text-[12px] 3xl:text-[15px] font-black px-2 py-0.5 rounded-r-full mt-1 shadow-lg uppercase">
                 Now
               </div>
               <div className="w-0 h-full border-l-2 border-dashed border-indigo-400 opacity-60"></div>
@@ -153,7 +153,7 @@ const Timeline = ({ userData = [] }) => {
 
             {sortedEvents.map((event, index) => {
               const leftPos = getPosition(event.timeSecs);
-              const rowTop = 25 + index * 60;
+              const rowTop = 25 + index * 80;
               const isCheckIn = event.type === "IN";
 
               return (
@@ -173,15 +173,15 @@ const Timeline = ({ userData = [] }) => {
                     }`}
                     style={{ left: `${leftPos}%`, top: `${rowTop}px` }}
                   >
-                    <div className="w-7 h-7 rounded-full bg-white flex justify-center items-center font-bold text-[10px]">
+                    <div className="w-10 h-10 rounded-full bg-white flex justify-center items-center font-bold text-[10px] lg:text-[12px] 3xl:text-[14px]">
                       {event.name.charAt(0).toUpperCase()}
                     </div>
-                    <div className="flex flex-col leading-tight whitespace-nowrap">
-                      <span className="text-[10px] font-bold text-gray-800">
+                    <div className="flex flex-col leading-tight whitespace-nowrap gap-1">
+                      <span className="text-[10px] lg:text-[14px] 3xl:text-[18px] font-bold text-gray-800">
                         {event.name}
                       </span>
                       <span
-                        className={`text-[9px] font-extrabold ${isCheckIn ? "text-[#3572ff]" : "text-[#11a5ac]"}`}
+                        className={`text-[9px] lg:text-[10px] 3xl:text-[13px] font-extrabold ${isCheckIn ? "text-[#3572ff]" : "text-[#11a5ac]"}`}
                       >
                         {event.type} • {event.displayTime}
                       </span>
