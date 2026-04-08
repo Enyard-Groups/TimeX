@@ -20,9 +20,11 @@ const DeviceCommunication = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [openModal, setopenModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const fetchCommunications = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem("token");
       const headers = {
         "Content-Type": "application/json",
@@ -37,6 +39,8 @@ const DeviceCommunication = () => {
     } catch (error) {
       console.error("Failed to fetch device communications", error);
       toast.error("Failed to load data");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,9 +49,9 @@ const DeviceCommunication = () => {
   }, []);
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm";
 
-  const labelStyle = "text-sm font-semibold text-gray-700 mb-2 block";
+  const labelStyle = "text-sm xl:text-lg font-semibold text-gray-700 mb-2 block";
 
   const filtereddevicecommunication = devicecommunication.filter(
     (device) =>
@@ -150,7 +154,7 @@ const DeviceCommunication = () => {
     <div className="mb-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center gap-2 h-[30px] text-lg font-semibold text-gray-800">
+        <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
           <FaAngleRight className="text-blue-500 text-base" />
           <span className="text-gray-500">Device Management</span>
           <FaAngleRight className="text-blue-500 text-base" />
@@ -164,7 +168,7 @@ const DeviceCommunication = () => {
         <div className="p-6 border-b border-blue-100/30">
           <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-600">
+              <label className="text-sm xl:text-base font-medium text-gray-600">
                 Display
               </label>
               <select
@@ -180,7 +184,9 @@ const DeviceCommunication = () => {
                 <option value={50}>50</option>
                 <option value={100}>100</option>
               </select>
-              <span className="text-sm font-medium text-gray-600">entries</span>
+              <span className="text-sm xl:text-base font-medium text-gray-600">
+                entries
+              </span>
             </div>
 
             <div className="flex flex-wrap gap-3 items-center justify-center">
@@ -191,7 +197,7 @@ const DeviceCommunication = () => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
               />
               <div className="flex gap-2">
                 <button
@@ -221,8 +227,8 @@ const DeviceCommunication = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto min-h-[300px]">
-          <table className="w-full text-[16px]">
+        <div className="overflow-x-auto min-h-[350px]">
+          <table className="w-full text-[16px] xl:text-[20px]">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
                 <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
@@ -262,13 +268,25 @@ const DeviceCommunication = () => {
             </thead>
 
             <tbody>
-              {currentdevicecommunication.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan="10"
+                    className="px-4 py-12 text-center text-gray-500"
+                  >
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                      <span>Loading...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : currentdevicecommunication.length === 0 ? (
                 <tr>
                   <td colSpan="10" className="px-4 py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="text-4xl opacity-40">📭</div>
-                      <p className="text-gray-500 text-base">
-                        No Data Available
+                      <div className="text-4xl opacity-40">💻</div>
+                      <p className="text-gray-500 text-base font-medium">
+                        No Device available
                       </p>
                     </div>
                   </td>
@@ -281,7 +299,7 @@ const DeviceCommunication = () => {
                   >
                     <td className="px-6 py-3 text-center hidden sm:table-cell">
                       <span
-                        className={`px-3 py-1 rounded-full text-sm font-semibold border whitespace-nowrap ${
+                        className={`px-3 py-1 rounded-full text-sm xl:text-base font-semibold border whitespace-nowrap ${
                           item.status === "Online"
                             ? "bg-green-100 text-green-700 border-green-300"
                             : "bg-red-100 text-red-700 border-red-300"
@@ -335,7 +353,7 @@ const DeviceCommunication = () => {
 
         {/* Pagination */}
         <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-          <span className="text-sm text-gray-600">
+          <span className="text-sm xl:text-base text-gray-600">
             Showing{" "}
             <span className="text-gray-900 font-semibold">
               {filtereddevicecommunication.length === 0 ? "0" : startIndex + 1}

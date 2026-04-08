@@ -33,7 +33,7 @@ const Reports = ({ user }) => {
               isreportsActive ? activeClass : hoverClass
             }`}
           >
-            <div className="flex items-center gap-4 text-[18px]">
+            <div className="flex items-center gap-4 text-[18px] xl:text-[20px]">
               <MdOutlineStorage />
               <span>Reports</span>
             </div>
@@ -46,7 +46,7 @@ const Reports = ({ user }) => {
 
           {/* Sub Menu */}
           {openReports && (
-            <div className="mt-2 flex flex-col pl-10 gap-2 text-md ">
+            <div className="mt-2 flex flex-col pl-10 gap-2 text-md xl:text-lg">
               <NavLink
                 to="/reports/employee-report"
                 className={({ isActive }) =>

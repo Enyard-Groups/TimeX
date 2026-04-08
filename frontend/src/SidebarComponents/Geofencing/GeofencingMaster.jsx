@@ -57,6 +57,7 @@ const GeofencingMaster = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [mapCenter, setMapCenter] = useState({
     lat: 28.4595,
     lng: 77.0266,
@@ -80,6 +81,7 @@ const GeofencingMaster = () => {
 
   const fetchLocations = async () => {
     try {
+      setLoading(true);
       const res = await axios.get(`${API_BASE}/master/geofencing`, {
         headers: getHeaders(),
       });
@@ -96,6 +98,8 @@ const GeofencingMaster = () => {
     } catch (error) {
       console.error("Failed to fetch geofencing locations", error);
       toast.error("Unable to load geofencing locations");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -240,6 +244,21 @@ const GeofencingMaster = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_BASE}/master/geofencing/${id}`, {
+        headers: getHeaders(),
+      });
+      setLocation((prev) => prev.filter((v) => v.id !== id));
+      toast.success("Location deleted");
+    } catch (error) {
+      console.error("Failed to delete geofencing location", error);
+      toast.error(
+        error.response?.data?.message || "Unable to delete geofencing location",
+      );
+    }
+  };
+
   const handleCopy = () => {
     const header = ["SL.NO", "Location Name", "Latitude", "Longitude"].join(
       "\t",
@@ -298,30 +317,34 @@ const GeofencingMaster = () => {
     <>
       <div className="mb-6">
         {/* Header */}
-        <div className="sm:flex sm:justify-between">
-          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-            <FaAngleRight />
-            Geofencing
-            <FaAngleRight />
-            <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+        <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+          <h1 className="flex items-center h-[30px] gap-2 text-lg xl:text-xl font-semibold text-gray-900">
+            <FaAngleRight className="text-blue-500 text-base" />
+            <span className="text-gray-500">Geofencing</span>
+            <FaAngleRight className="text-blue-500 text-base" />
+            <div
+              onClick={() => setOpenModal(false)}
+              className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+            >
               Geofencing Master
             </div>
           </h1>
+
           {!openModal && (
             <div className="flex justify-end">
               <button
-                onClick={() => (
-                  setMode(""),
-                  setEditId(null),
+                onClick={() => {
+                  setMode("");
+                  setEditId(null);
                   setFormData({
                     name: "",
                     latitude: "",
                     longitude: "",
                     searchradius: "",
-                  }),
-                  setOpenModal(true)
-                )}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+                  });
+                  setOpenModal(true);
+                }}
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
               >
                 + Add New
               </button>
@@ -329,168 +352,163 @@ const GeofencingMaster = () => {
           )}
         </div>
 
-        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6 ">
+        {/* Container */}
+        <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl">
           {/* Top Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <div>
-              <label className="mr-2 text-md">Show</label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="ml-2 text-md">entries</span>
-            </div>
-
-            <div className="flex flex-wrap gap-2 items-center justify-center">
-              <input
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-              />
-              <div className="flex">
-                <button
-                  onClick={handleCopy}
-                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+          <div className="p-6 border-b border-blue-100/30">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm xl:text-base font-medium text-gray-600">
+                  Display
+                </label>
+                <select
+                  value={entriesPerPage}
+                  onChange={(e) => {
+                    setEntriesPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/60"
                 >
-                  <GoCopy />
-                </button>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+                <span className="text-sm xl:text-base text-gray-600">
+                  entries
+                </span>
+              </div>
 
-                <button
-                  onClick={handleExcel}
-                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
-                >
-                  <FaFileExcel />
-                </button>
+              <div className="flex flex-wrap gap-3 items-center justify-center">
+                <input
+                  placeholder="Search location..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm xl:text-base placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                />
 
-                <button
-                  onClick={handlePDF}
-                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
-                >
-                  <FaFilePdf />
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopy}
+                    className="bg-blue-50 hover:bg-blue-100 border border-blue-200 p-2 rounded-lg text-blue-600"
+                  >
+                    <GoCopy className="text-lg" />
+                  </button>
+                  <button
+                    onClick={handleExcel}
+                    className="bg-green-50 hover:bg-green-100 border border-green-200 p-2 rounded-lg text-green-600"
+                  >
+                    <FaFileExcel className="text-lg" />
+                  </button>
+                  <button
+                    onClick={handlePDF}
+                    className="bg-red-50 hover:bg-red-100 border border-red-200 p-2 rounded-lg text-red-600"
+                  >
+                    <FaFilePdf className="text-lg" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Table */}
-          <div
-            className="overflow-x-auto min-h-[250px]"
-            style={{ scrollbarWidth: "none" }}
-          >
-            <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="p-2 font-semibold hidden sm:table-cell">
+          <div className="overflow-x-auto min-h-[350px]">
+            <table className="w-full text-[16px] xl:text-[20px] text-gray-700">
+              <thead>
+                <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
+                  <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden sm:table-cell">
                     SL.NO
                   </th>
-                  <th className="p-2 font-semibold ">Location Name</th>
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="px-6 text-center font-semibold text-gray-700 py-3">
+                    Location Name
+                  </th>
+                  <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden md:table-cell">
                     Latitude
                   </th>
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden md:table-cell">
                     Longitude
                   </th>
-                  <th className="p-2 font-semibold">Action</th>
+                  <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                    Action
+                  </th>
                 </tr>
               </thead>
+
               <tbody>
-                {currentlocation.length === 0 ? (
+                {loading ? (
                   <tr>
-                    <td colSpan="6" className="sm:text-center p-10">
-                      No Data Available
+                    <td
+                      colSpan="5"
+                      className="px-4 py-12 text-center text-gray-500"
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        <span>Loading...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : currentlocation.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="px-4 py-12 text-center">
+                      <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="text-4xl opacity-40">📍</div>
+                        <p className="text-gray-500 text-base font-medium">
+                          No Geofencing Location
+                        </p>
+                      </div>
                     </td>
                   </tr>
                 ) : (
                   currentlocation.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                      className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition"
                     >
-                      <td className="p-2 hidden sm:table-cell">{index + 1}</td>
-                      <td className="p-2">{item.name}</td>
-                      <td className="p-2 hidden md:table-cell ">
+                      <td className="text-center hidden sm:table-cell">
+                        {index + 1}
+                      </td>
+                      <td className="text-center font-medium">{item.name}</td>
+                      <td className="text-center hidden md:table-cell">
                         {item.latitude}
                       </td>
-                      <td className="p-2 hidden md:table-cell">
+                      <td className="text-center hidden md:table-cell">
                         {item.longitude}
                       </td>
-                      <td className="p-2">
-                        <div className="flex flex-row space-x-3 justify-center ">
-                          {/* View */}
-                          <FaEye
+
+                      <td className="text-center">
+                        <div className="flex justify-center gap-2">
+                          <button
                             onClick={() => {
                               setFormData(item);
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />
+                            className="text-blue-500 hover:bg-blue-100 p-1.5 rounded-lg"
+                          >
+                            <FaEye />
+                          </button>
 
-                          {/* Edit */}
-                          <FaPen
+                          <button
                             onClick={() => {
-                              setFormData({
-                                name: item.name,
-                                latitude: item.latitude,
-                                longitude: item.longitude,
-                                searchradius: "",
-                              });
-
-                              setMarkerPosition({
-                                lat: Number(item.latitude),
-                                lng: Number(item.longitude),
-                              });
-
-                              setMapCenter({
-                                lat: Number(item.latitude),
-                                lng: Number(item.longitude),
-                              });
-
+                              setFormData(item);
                               setEditId(item.id);
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="inline text-green-500 cursor-pointer text-lg"
-                          />
+                            className="text-green-500 hover:bg-green-100 p-1.5 rounded-lg"
+                          >
+                            <FaPen />
+                          </button>
 
-                          {/* Delete */}
-                          <MdDeleteForever
-                            onClick={async () => {
-                              try {
-                                await axios.delete(
-                                  `${API_BASE}/master/geofencing/${item.id}`,
-                                  { headers: getHeaders() },
-                                );
-                                setLocation((prev) =>
-                                  prev.filter((v) => v.id !== item.id),
-                                );
-                                toast.success("Location deleted");
-                              } catch (error) {
-                                console.error(
-                                  "Failed to delete geofencing location",
-                                  error,
-                                );
-                                toast.error(
-                                  error.response?.data?.message ||
-                                    "Unable to delete geofencing location",
-                                );
-                              }
-                            }}
-                            className="inline text-red-500 cursor-pointer text-xl"
-                          />
+                          <button
+                            onClick={() => handleDelete(item.id)}
+                            className="text-red-500 hover:bg-red-100 p-1.5 rounded-lg"
+                          >
+                            <MdDeleteForever />
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -500,45 +518,53 @@ const GeofencingMaster = () => {
             </table>
           </div>
 
-          {/* Pagination */}
-          <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-            <span>
-              Showing {filteredlocation.length === 0 ? "0" : startIndex + 1} to{" "}
-              {Math.min(endIndex, filteredlocation.length)} of{" "}
-              {filteredlocation.length} entries
+          {/* Pagination Section */}
+          <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <span className="text-sm xl:text-base text-gray-600">
+              Showing{" "}
+              <span className="text-gray-900 font-semibold">
+                {filteredlocation.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
+              to{" "}
+              <span className="text-gray-900 font-semibold">
+                {Math.min(endIndex, filteredlocation.length)}
+              </span>{" "}
+              of{" "}
+              <span className="text-gray-900 font-semibold">
+                {filteredlocation.length}
+              </span>{" "}
+              entries
             </span>
 
-            <div className="flex flex-row space-x-1">
+            <div className="flex gap-2">
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
               >
                 First
               </button>
-
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
               >
                 <GrPrevious />
               </button>
-
-              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
-
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
+                {currentPage}
+              </div>
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
               >
                 <GrNext />
               </button>
-
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
               >
                 Last
               </button>
@@ -548,113 +574,106 @@ const GeofencingMaster = () => {
 
         {openModal && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
             style={{ scrollbarWidth: "none" }}
           >
             <div
-              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+              className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-6xl max-h-[90vh] overflow-y-auto p-8"
               style={{ scrollbarWidth: "none" }}
             >
-              {/* Close */}
-              <div className="flex justify-end">
-                <RxCross2
+              {/* Modal Header */}
+              <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+                <h2 className="text-xl font-bold text-gray-900">
+                  {mode === "view"
+                    ? "View Geofencing Location"
+                    : mode === "edit"
+                      ? "Edit Geofencing Location"
+                      : "Add New Geofencing Location"}
+                </h2>
+                <button
                   onClick={() => setOpenModal(false)}
-                  className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-                />
+                  className="text-gray-400 hover:text-rose-500 transition-colors"
+                >
+                  <RxCross2 className="text-2xl" />
+                </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6">
+              {/* Form Fields */}
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 items-end">
                 <div>
-                  <label className={labelStyle}>
-                    latitude
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
+                  <label className="text-xs xl:text-sm font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                    Latitude <span className="text-rose-500">*</span>
                   </label>
                   <input
                     name="latitude"
                     value={formData.latitude}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    placeholder="latitude"
-                    className={inputStyle}
+                    placeholder="0.0000"
+                    className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all text-sm xl:text-base"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className={labelStyle}>
-                    longitude
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
+                  <label className="text-xs xl:text-sm font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                    Longitude <span className="text-rose-500">*</span>
                   </label>
                   <input
                     name="longitude"
                     value={formData.longitude}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    placeholder="latitude"
-                    className={inputStyle}
+                    placeholder="0.0000"
+                    className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all text-sm xl:text-base"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className={labelStyle}>
-                    Location Name
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
+                  <label className="text-xs xl:text-sm font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                    Location Name <span className="text-rose-500">*</span>
                   </label>
                   <input
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    placeholder="Name"
-                    className={inputStyle}
+                    placeholder="Office Branch"
+                    className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all font-medium text-sm xl:text-base"
                     required
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className={labelStyle}>
-                    Radius
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
+                  <label className="text-xs xl:text-sm font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                    Radius (Meters) <span className="text-rose-500">*</span>
                   </label>
-                  <div className="flex flex-row">
+                  <div className="flex gap-2">
                     <input
                       name="searchradius"
                       value={formData.searchradius}
                       onChange={handleChange}
                       disabled={mode === "view"}
-                      placeholder="Enter search area radius"
-                      className={inputStyle}
+                      placeholder="e.g. 100"
+                      className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all font-medium text-sm xl:text-base"
                     />
-
                     <button
                       disabled={mode === "view"}
                       onClick={handleSearchLocation}
-                      className="bg-gray-200 px-4 py-1 rounded ml-2"
+                      className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded-xl font-bold transition-colors disabled:opacity-50"
                     >
                       Search
                     </button>
                   </div>
                 </div>
 
-                {/* Save */}
+                {/* Action Button */}
                 {mode !== "view" && (
                   <div className="flex justify-center items-center">
                     <button
                       onClick={handleSubmit}
-                      className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+                      className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all duration-200"
                     >
                       Assign
                     </button>
@@ -662,11 +681,14 @@ const GeofencingMaster = () => {
                 )}
               </div>
 
-              <div className="mt-6">
+              {/* Map Section */}
+              <div className="mt-8 w-full h-[450px] rounded-2xl overflow-hidden border-4 border-white shadow-inner relative group">
+                <div className="absolute inset-0 bg-slate-200 animate-pulse group-data-[loaded=true]:hidden"></div>
                 <MapContainer
                   center={[mapCenter.lat, mapCenter.lng]}
                   zoom={10}
-                  style={{ height: "400px", width: "100%" }}
+                  className="h-full w-full z-0"
+                  data-loaded="true"
                 >
                   <TileLayer
                     attribution=""
@@ -688,10 +710,20 @@ const GeofencingMaster = () => {
                     <Circle
                       center={[markerPosition.lat, markerPosition.lng]}
                       radius={Number(formData.searchradius)}
-                      pathOptions={{ color: "red" }}
+                      pathOptions={{
+                        color: "#3b82f6",
+                        fillColor: "#3b82f6",
+                        fillOpacity: 0.2,
+                        weight: 2,
+                      }}
                     />
                   )}
                 </MapContainer>
+
+                {/* Map Overlay Info (Optional) */}
+                <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-3 py-1.5 rounded-lg text-[10px] font-bold text-slate-500 shadow-sm pointer-events-none uppercase tracking-widest border border-slate-200">
+                  Click map to set location
+                </div>
               </div>
             </div>
           </div>

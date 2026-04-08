@@ -68,7 +68,7 @@ const RightSidebar = ({ user }) => {
       <div className="fixed bottom-0 mb-6 mt-1 flex justify-between px-4 gap-4 border-t border-gray-200">
         <button
           onClick={handleLogout}
-          className="h-fit px-3 mt-2 py-0.5 cursor-pointer flex flex-row gap-2 rounded-full shadow text-xs"
+          className="h-fit px-3 mt-2 py-0.5 cursor-pointer flex flex-row gap-2 rounded-full shadow text-xs xl:text-[16px] "
         >
           <span className="pt-1">Logout</span>
           <span className="text-[15px] bg-[#00173d] rounded-full text-white p-1">
@@ -76,7 +76,7 @@ const RightSidebar = ({ user }) => {
           </span>
         </button>
 
-        <button className="px-3 mt-1 py-0.5 cursor-pointer rounded-full shadow text-xs">
+        <button className="px-3 mt-1 py-0.5 cursor-pointer rounded-full shadow text-xs xl:text-[16px] ">
           Change Password
         </button>
       </div>

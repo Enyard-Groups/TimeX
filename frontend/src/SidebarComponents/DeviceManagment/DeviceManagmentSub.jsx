@@ -24,6 +24,7 @@ const DeviceManagementSub = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     devicemodel: "",
     name: "",
@@ -39,12 +40,6 @@ const DeviceManagementSub = () => {
     isActive: false,
   });
 
-  const inputStyle =
-    "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
-
-  const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
-
   const getHeaders = () => {
     const token = localStorage.getItem("token");
     return {
@@ -55,6 +50,7 @@ const DeviceManagementSub = () => {
 
   const fetchDevices = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(`${API_BASE}/device/devices`, {
         headers: getHeaders(),
       });
@@ -78,6 +74,8 @@ const DeviceManagementSub = () => {
     } catch (error) {
       console.error("Failed to fetch devices", error);
       toast.error("Failed to load data");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -265,7 +263,7 @@ const DeviceManagementSub = () => {
     <div className="mb-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center gap-2 h-[30px] text-lg font-semibold text-gray-800">
+        <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
           <FaAngleRight className="text-blue-500 text-base" />
           <span className="text-gray-500">Device Management</span>
           <FaAngleRight className="text-blue-500 text-base" />
@@ -313,7 +311,7 @@ const DeviceManagementSub = () => {
         <div className="p-6 border-b border-blue-100/30">
           <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-600">
+              <label className="text-sm xl:text-base font-medium text-gray-600">
                 Display
               </label>
               <select
@@ -329,7 +327,9 @@ const DeviceManagementSub = () => {
                 <option value={50}>50</option>
                 <option value={100}>100</option>
               </select>
-              <span className="text-sm font-medium text-gray-600">entries</span>
+              <span className="text-sm xl:text-base font-medium text-gray-600">
+                entries
+              </span>
             </div>
 
             <div className="flex flex-wrap gap-3 items-center justify-center">
@@ -340,7 +340,7 @@ const DeviceManagementSub = () => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm xl:text-base placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
               />
               <div className="flex gap-2">
                 <button
@@ -370,8 +370,8 @@ const DeviceManagementSub = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto min-h-[300px]">
-          <table className="w-full text-[16px]">
+        <div className="overflow-x-auto min-h-[350px]">
+          <table className="w-full text-[16px] xl:text-[20px]">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
                 <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
@@ -411,13 +411,25 @@ const DeviceManagementSub = () => {
             </thead>
 
             <tbody>
-              {currentdevicemanagement.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan="11"
+                    className="px-4 py-12 text-center text-gray-500"
+                  >
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                      <span>Loading...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : currentdevicemanagement.length === 0 ? (
                 <tr>
                   <td colSpan="11" className="px-4 py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="text-4xl opacity-40">📭</div>
-                      <p className="text-gray-500 text-base">
-                        No Data Available
+                      <div className="text-4xl opacity-40">🛠️</div>
+                      <p className="text-gray-500 text-base font-medium">
+                        No Device data
                       </p>
                     </div>
                   </td>
@@ -503,7 +515,7 @@ const DeviceManagementSub = () => {
 
         {/* Pagination */}
         <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-          <span className="text-sm text-gray-600">
+          <span className="text-sm xl:text-base text-gray-600">
             Showing{" "}
             <span className="text-gray-900 font-semibold">
               {filteredDevicemanagement.length === 0 ? "0" : startIndex + 1}
@@ -586,7 +598,7 @@ const DeviceManagementSub = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Device Serial Number */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
                   Device Serial Number <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -595,13 +607,13 @@ const DeviceManagementSub = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Enter serial number"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg xl:text-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                 />
               </div>
 
               {/* Name */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
                   Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -610,7 +622,7 @@ const DeviceManagementSub = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Enter device name"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                  className="w-full bg-white border border-gray-200 xl:text-lg text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                 />
               </div>
 
@@ -631,14 +643,14 @@ const DeviceManagementSub = () => {
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
-                  inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                  labelStyle="text-sm font-bold text-gray-700 mb-2 block"
+                  inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl xl:text-lg placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
+                  labelStyle="text-sm xl:text-lg font-bold text-gray-700 mb-2 block"
                 />
               </div>
 
               {/* Device IP */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
                   Device IP <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -647,13 +659,13 @@ const DeviceManagementSub = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="e.g. 192.168.1.1"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                  className="w-full bg-white border border-gray-200 xl:text-lg text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                 />
               </div>
 
               {/* Company */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
                   Company <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -662,13 +674,13 @@ const DeviceManagementSub = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Enter company"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                  className="w-full bg-white border border-gray-200 xl:text-lg text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                 />
               </div>
 
               {/* Longitude */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
                   Longitude
                 </label>
                 <input
@@ -677,13 +689,13 @@ const DeviceManagementSub = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="0"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none xl:text-lg focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                 />
               </div>
 
               {/* Latitude */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
                   Latitude
                 </label>
                 <input
@@ -692,7 +704,7 @@ const DeviceManagementSub = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="0"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                  className="w-full bg-white border border-gray-200 text-gray-900 xl:text-lg px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                 />
               </div>
             </div>
@@ -718,7 +730,7 @@ const DeviceManagementSub = () => {
                     disabled={mode === "view"}
                     className="w-5 h-5 cursor-pointer accent-blue-500 disabled:cursor-not-allowed"
                   />
-                  <label className="text-gray-700 font-semibold text-sm cursor-pointer">
+                  <label className="text-gray-700 font-semibold text-sm xl:text-lg cursor-pointer">
                     {label}
                   </label>
                 </div>
@@ -730,13 +742,13 @@ const DeviceManagementSub = () => {
               <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-blue-100/30">
                 <button
                   onClick={() => setOpenModal(false)}
-                  className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-50 font-semibold transition-all"
+                  className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:text-gray-900 xl:text-lg hover:border-gray-400 hover:bg-gray-50 font-semibold transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold xl:text-lg px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                 >
                   Save
                 </button>

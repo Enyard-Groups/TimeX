@@ -169,10 +169,10 @@ const Companies = () => {
 
   return (
     <>
-      <div className="mb-6">
+      <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-          <h1 className="flex items-center h-[30px] gap-2 text-lg font-semibold text-gray-900 ">
+          <h1 className="flex items-center h-[30px] gap-2 text-lg lg:text-xl 3xl:text-2xl font-semibold text-gray-900 ">
             <FaAngleRight className="text-blue-500 text-base" />
             <span className="text-gray-500">Masters</span>
             <FaAngleRight className="text-blue-500 text-base" />
@@ -199,7 +199,7 @@ const Companies = () => {
 
                   setOpenModal(true);
                 }}
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
               >
                 + Add New
               </button>
@@ -213,7 +213,7 @@ const Companies = () => {
           <div className="p-6 border-b border-blue-100/30">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-600">
+                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
                   Display
                 </label>
                 <select
@@ -229,7 +229,7 @@ const Companies = () => {
                   <option value={50}>50</option>
                   <option value={100}>100</option>
                 </select>
-                <span className="text-sm font-medium text-gray-600">
+                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
                   entries
                 </span>
               </div>
@@ -242,7 +242,7 @@ const Companies = () => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
                 />
                 <div className="flex gap-2">
                   <button
@@ -274,8 +274,8 @@ const Companies = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto min-h-[300px]">
-            <table className="w-full text-[16px]">
+          <div className="overflow-x-auto min-h-[350px]">
+            <table className="w-full text-[16px] lg:text-[19px] 3xl:text-[22px]">
               <thead>
                 <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
                   <th className="px-4 py-3 text-center font-semibold text-gray-700 hidden sm:table-cell">
@@ -297,21 +297,24 @@ const Companies = () => {
               </thead>
               <tbody>
                 {loading ? (
-                  <tr>
-                    <td
-                      colSpan="6"
-                      className="sm:text-center p-10 text-gray-400"
-                    >
-                      Loading...
-                    </td>
-                  </tr>
-                ) : currentcompany.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="px-4 py-12 text-center text-gray-500"
+                  >
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                      <span>Loading...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : currentcompany.length === 0 ? (
                   <tr>
                     <td colSpan="6" className="px-4 py-12 text-center">
                       <div className="flex flex-col items-center justify-center gap-3">
-                        <div className="text-4xl opacity-40">📭</div>
-                        <p className="text-gray-500 text-base">
-                          No Data Available
+                        <div className="text-4xl opacity-40">🏢</div>
+                        <p className="text-gray-500 text-base font-medium">
+                          No Company data found
                         </p>
                       </div>
                     </td>
@@ -334,7 +337,7 @@ const Companies = () => {
                       <td className="px-4 py-3 hidden lg:table-cell text-center">
                         <div className="flex justify-center">
                           <span
-                            className={`px-3 py-1 rounded-full text-sm font-semibold border ${
+                            className={`px-3 py-1 rounded-full text-sm lg:text-base 3xl:text-lg font-semibold border ${
                               item.is_active
                                 ? "bg-green-100 text-green-700 border-green-300"
                                 : "bg-gray-100 text-gray-700 border-gray-300"
@@ -356,7 +359,7 @@ const Companies = () => {
                             className="text-blue-500 hover:text-blue-700 hover:bg-blue-100 p-1.5 rounded-lg transition-all"
                             title="View"
                           >
-                            <FaEye className="text-lg" />
+                            <FaEye className="text-lg lg:text-xl  3xl:text-2xl" />
                           </button>
 
                           {/* Edit */}
@@ -370,7 +373,7 @@ const Companies = () => {
                             className="text-green-500 hover:text-green-700 hover:bg-green-100 p-1.5 rounded-lg transition-all"
                             title="Edit"
                           >
-                            <FaPen className="text-lg" />
+                            <FaPen className="text-lg lg:text-xl  3xl:text-2xl" />
                           </button>
 
                           {/* Delete */}
@@ -379,7 +382,7 @@ const Companies = () => {
                             className="text-red-500 hover:text-red-700 hover:bg-red-100 p-1.5 rounded-lg transition-all"
                             title="Delete"
                           >
-                            <MdDeleteForever className="text-xl" />
+                            <MdDeleteForever className="text-lg lg:text-xl 3xl:text-2xl" />
                           </button>
                         </div>
                       </td>
@@ -392,7 +395,7 @@ const Companies = () => {
 
           {/* Pagination */}
           <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-            <span className="text-sm text-gray-600">
+            <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
               Showing{" "}
               <span className="text-gray-900 font-semibold">
                 {filteredcompany.length === 0 ? "0" : startIndex + 1}
@@ -475,7 +478,7 @@ const Companies = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                  <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
                     Company Name
                     <span className="text-red-500"> *</span>
                   </label>
@@ -485,13 +488,13 @@ const Companies = () => {
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Enter company name"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                  <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
                     Company Code
                     <span className="text-red-500"> *</span>
                   </label>
@@ -501,13 +504,13 @@ const Companies = () => {
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Enter company code"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 lg:text-lg 3xl:text-xl text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                     required
                   />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                  <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
                     Description
                   </label>
                   <input
@@ -516,7 +519,7 @@ const Companies = () => {
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Enter description"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
                 </div>
 
@@ -529,7 +532,7 @@ const Companies = () => {
                     disabled={mode === "view"}
                     className="w-5 h-5 cursor-pointer accent-blue-500 disabled:cursor-not-allowed"
                   />
-                  <label className="text-gray-700 font-medium cursor-pointer">
+                  <label className="text-gray-700 font-medium lg:text-lg 3xl:text-xl cursor-pointer">
                     Active
                   </label>
                 </div>
@@ -540,13 +543,13 @@ const Companies = () => {
                 <div className="flex justify-end gap-3">
                   <button
                     onClick={() => setOpenModal(false)}
-                    className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-50 font-medium transition-all"
+                    className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 lg:text-lg 3xl:text-xl hover:bg-gray-50 font-medium transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSubmit}
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg lg:text-lg 3xl:text-xl hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                   >
                     Save
                   </button>

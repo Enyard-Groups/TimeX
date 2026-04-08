@@ -11,98 +11,7 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import { RxCross2 } from "react-icons/rx";
 
 const Monitoring = () => {
-  const [monitoring] = useState([
-    {
-      id: 1,
-      employee: "Sharma",
-      date: new Date("2026-03-07"),
-      login: "10:30:00",
-      logout: "18:30:00",
-      location: "Home",
-      status: "Online",
-    },
-    {
-      id: 2,
-      employee: "Drishti",
-      date: new Date("2026-03-06"),
-      login: "09:15:00",
-      logout: "17:30:00",
-      location: "Office",
-      status: "Offline",
-    },
-    {
-      id: 3,
-      employee: "Amit",
-      date: new Date("2026-03-05"),
-      login: "10:00:00",
-      logout: "18:00:00",
-      location: "Home",
-      status: "Online",
-    },
-    {
-      id: 4,
-      employee: "Neha",
-      date: new Date("2026-03-04"),
-      login: "09:45:00",
-      logout: "18:10:00",
-      location: "Office",
-      status: "Online",
-    },
-    {
-      id: 5,
-      employee: "Priya",
-      date: new Date("2026-03-03"),
-      login: "11:00:00",
-      logout: "19:00:00",
-      location: "Home",
-      status: "Offline",
-    },
-    {
-      id: 6,
-      employee: "Vikas",
-      date: new Date("2026-03-02"),
-      login: "09:30:00",
-      logout: "17:45:00",
-      location: "Office",
-      status: "Online",
-    },
-    {
-      id: 7,
-      employee: "Anjali",
-      date: new Date("2026-03-01"),
-      login: "10:20:00",
-      logout: "18:10:00",
-      location: "Home",
-      status: "Online",
-    },
-    {
-      id: 8,
-      employee: "Rohit",
-      date: new Date("2026-02-28"),
-      login: "09:10:00",
-      logout: "17:20:00",
-      location: "Office",
-      status: "Offline",
-    },
-    {
-      id: 9,
-      employee: "Karan",
-      date: new Date("2026-02-27"),
-      login: "10:40:00",
-      logout: "18:50:00",
-      location: "Home",
-      status: "Online",
-    },
-    {
-      id: 10,
-      employee: "Meena",
-      date: new Date("2026-02-26"),
-      login: "09:50:00",
-      logout: "18:00:00",
-      location: "Office",
-      status: "Offline",
-    },
-  ]);
+  const [monitoring] = useState([]);
 
   const attendanceData = {
     total: 100,
@@ -120,6 +29,7 @@ const Monitoring = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [openModal, setOpenModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
   const filteredmonitoring = monitoring.filter((device) =>
@@ -249,7 +159,7 @@ const Monitoring = () => {
     <div className="mb-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center gap-2 h-[30px] text-lg font-semibold text-gray-900">
+        <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-900">
           <FaAngleRight className="text-blue-500 text-base" />
           <p className="text-gray-500">Transaction</p>
           <FaAngleRight className="text-blue-500 text-base" />
@@ -269,7 +179,7 @@ const Monitoring = () => {
             key={idx}
             className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-2xl border border-blue-100/50 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
           >
-            <p className="text-sm text-gray-500 mb-2">{item.label}</p>
+            <p className="text-sm xl:text-lg text-gray-500 mb-2">{item.label}</p>
             <h3 className="text-2xl font-bold text-gray-800">{item.value}</h3>
             <div className="mt-3 h-1 w-10 bg-blue-500 rounded-full" />
           </div>
@@ -289,7 +199,7 @@ const Monitoring = () => {
         <div className="p-6 border-b border-blue-100/30">
           <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-600">
+              <label className="text-sm xl:text-base font-medium text-gray-600">
                 Display
               </label>
               <select
@@ -305,7 +215,7 @@ const Monitoring = () => {
                 <option value={50}>50</option>
                 <option value={100}>100</option>
               </select>
-              <p className="text-sm font-medium text-gray-600">entries</p>
+              <p className="text-sm xl:text-base font-medium text-gray-600">entries</p>
             </div>
 
             <div className="flex flex-wrap gap-3 items-center justify-center">
@@ -316,7 +226,7 @@ const Monitoring = () => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm xl:text-base placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
               />
 
               <div className="flex gap-2">
@@ -344,8 +254,8 @@ const Monitoring = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto min-h-[250px]">
-          <table className="w-full text-[16px]">
+        <div className="overflow-x-auto min-h-[350px]">
+          <table className="w-full text-[16px] xl:text-[20px]">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
                 <th className="px-6 py-3 text-center font-semibold text-gray-700">
@@ -379,7 +289,30 @@ const Monitoring = () => {
             </thead>
 
             <tbody>
-              {currentmonitoring.map((item) => (
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan="9"
+                    className="px-4 py-12 text-center text-gray-500"
+                  >
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                      <span>Loading...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : currentmonitoring.length === 0 ? (
+                  <tr>
+                    <td colSpan="9" className="px-4 py-12 text-center">
+                      <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="text-4xl opacity-40">📅</div>
+                        <p className="text-gray-500 text-base font-medium">
+                         No attendance data found
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : ( currentmonitoring.map((item) => (
                 <tr
                   className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
                   key={item.id}
@@ -427,7 +360,7 @@ const Monitoring = () => {
                     </button>
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </div>

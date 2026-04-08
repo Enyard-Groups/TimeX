@@ -23,6 +23,7 @@ const DeviceModel = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     company: "",
@@ -40,18 +41,26 @@ const DeviceModel = () => {
 
   const fetchDeviceModels = async () => {
     try {
+      setLoading(true);
+
       const response = await axios.get(`${API_BASE}/device/device-models`, {
         headers: getHeaders(),
       });
       const payload = response?.data?.data ?? response?.data;
       const mapped = (Array.isArray(payload) ? payload : []).map((d) => ({
         ...d,
-        active: d.active ?? false,
+        active:
+          d.active === true ||
+          d.active === 1 ||
+          d.active === "true" ||
+          d.active === "Y",
       }));
       setDeviceModel(mapped);
     } catch (error) {
       console.error("Failed to fetch device models", error);
       toast.error("Failed to load data");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -177,7 +186,7 @@ const DeviceModel = () => {
     <div className="mb-6">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center gap-2 h-[30px] text-lg font-semibold text-gray-800">
+        <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
           <FaAngleRight className="text-blue-500 text-base" />
           <span className="text-gray-500">Device Management</span>
           <FaAngleRight className="text-blue-500 text-base" />
@@ -199,7 +208,7 @@ const DeviceModel = () => {
                   company: "",
                   name: "",
                   code: "",
-                  isActive: false,
+                  active: false,
                 });
                 setOpenModal(true);
               }}
@@ -217,7 +226,7 @@ const DeviceModel = () => {
         <div className="p-6 border-b border-blue-100/30">
           <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-600">
+              <label className="text-sm xl:text-base font-medium text-gray-600">
                 Display
               </label>
               <select
@@ -233,7 +242,9 @@ const DeviceModel = () => {
                 <option value={50}>50</option>
                 <option value={100}>100</option>
               </select>
-              <span className="text-sm font-medium text-gray-600">entries</span>
+              <span className="text-sm xl:text-base font-medium text-gray-600">
+                entries
+              </span>
             </div>
 
             <div className="flex flex-wrap gap-3 items-center justify-center">
@@ -244,7 +255,7 @@ const DeviceModel = () => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm xl:text-base placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
               />
               <div className="flex gap-2">
                 <button
@@ -274,8 +285,8 @@ const DeviceModel = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto min-h-[300px]">
-          <table className="w-full text-[16px]">
+        <div className="overflow-x-auto min-h-[350px]">
+          <table className="w-full text-[16px] xl:text-[20px]">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
                 <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
@@ -300,13 +311,25 @@ const DeviceModel = () => {
             </thead>
 
             <tbody>
-              {currentdeviceModel.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="px-4 py-12 text-center text-gray-500"
+                  >
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                      <span>Loading...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : currentdeviceModel.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="px-4 py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="text-4xl opacity-40">📭</div>
-                      <p className="text-gray-500 text-base">
-                        No Data Available
+                      <div className="text-4xl opacity-40">📟</div>
+                      <p className="text-gray-500 text-base font-medium">
+                        No device data
                       </p>
                     </div>
                   </td>
@@ -332,13 +355,13 @@ const DeviceModel = () => {
                     <td className="px-4 py-3 hidden lg:table-cell text-center">
                       <div className="flex justify-center">
                         <span
-                          className={`px-3 py-1 rounded-full text-sm font-semibold border ${
-                            item.isActive
+                          className={`px-3 py-1 rounded-full text-sm xl:text-base font-semibold border ${
+                            item.active
                               ? "bg-green-100 text-green-700 border-green-300"
                               : "bg-gray-100 text-gray-700 border-gray-300"
                           }`}
                         >
-                          {item.isActive ? "✓ Active" : "○ Inactive"}
+                          {item.active ? "✓ Active" : "○ Inactive"}
                         </span>
                       </div>
                     </td>
@@ -385,7 +408,7 @@ const DeviceModel = () => {
 
         {/* Pagination */}
         <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-          <span className="text-sm text-gray-600">
+          <span className="text-sm xl:text-base text-gray-600">
             Showing{" "}
             <span className="text-gray-900 font-semibold">
               {filtereddeviceModel.length === 0 ? "0" : startIndex + 1}
@@ -468,7 +491,7 @@ const DeviceModel = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {/* Name */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
                   Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -477,13 +500,13 @@ const DeviceModel = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Enter name"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                  className="w-full bg-white border border-gray-200 xl:text-lg text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                 />
               </div>
 
               {/* Code */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
                   Code <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -492,13 +515,13 @@ const DeviceModel = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Enter code"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                  className="w-full xl:text-lg bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                 />
               </div>
 
               {/* Company */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
                   Company <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -507,7 +530,7 @@ const DeviceModel = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Enter company"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                  className="w-full xl:text-lg bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                 />
               </div>
 
@@ -515,13 +538,13 @@ const DeviceModel = () => {
               <div className="flex items-center gap-3 px-4 py-3 rounded-xl h-fit md:mt-6">
                 <input
                   type="checkbox"
-                  name="isActive"
-                  checked={formData.isActive}
+                  name="active"
+                  checked={formData.active}
                   onChange={handleChange}
                   disabled={mode === "view"}
                   className="w-5 h-5 cursor-pointer accent-blue-500 disabled:cursor-not-allowed"
                 />
-                <label className="text-gray-700 font-semibold cursor-pointer">
+                <label className="text-gray-700 font-semibold xl:text-lg cursor-pointer">
                   Active
                 </label>
               </div>
@@ -532,13 +555,13 @@ const DeviceModel = () => {
               <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-blue-100/30">
                 <button
                   onClick={() => setOpenModal(false)}
-                  className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-50 font-semibold transition-all"
+                  className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:text-gray-900 xl:text-lg hover:border-gray-400 hover:bg-gray-50 font-semibold transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                 >
                   Save
                 </button>

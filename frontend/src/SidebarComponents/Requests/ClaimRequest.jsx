@@ -30,7 +30,17 @@ const emptyForm = {
 const ClaimRequest = () => {
   const [mode, setMode] = useState("");
   const [openModal, setOpenModal] = useState(false);
-  const [claims, setClaims] = useState([]);
+  const [claims, setClaims] = useState([
+    {
+      id: 1,
+      employee_name: "John Doe",
+      claim_category: "Travel",
+      date: "2024-06-15",
+      amount: 150.0,
+      purpose: "Client meeting in another city",
+      status: "Pending",
+    },
+  ]);
   const [employeeOptions, setEmployeeOptions] = useState([]);
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -222,21 +232,22 @@ const ClaimRequest = () => {
     doc.save("ClaimRequestData.pdf");
   };
 
-  const inputStyle =
-    "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
-  const labelStyle = "text-lg font-medium mb-1 block";
-
   return (
     <div className="mb-6">
-      <div className="sm:flex sm:justify-between">
-        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-          <FaAngleRight />
-          Requests
-          <FaAngleRight />
-          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+        <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
+          <FaAngleRight className="text-blue-500 text-base" />
+          <span className="text-gray-500">Requests</span>
+          <FaAngleRight className="text-blue-500 text-base" />
+          <div
+            onClick={() => setOpenModal(false)}
+            className="cursor-pointer text-blue-600 hover:text-blue-700"
+          >
             Claim Request
           </div>
         </h1>
+
         {!openModal && (
           <div className="flex justify-end">
             <button
@@ -246,7 +257,7 @@ const ClaimRequest = () => {
                 setFormData(emptyForm);
                 setOpenModal(true);
               }}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -254,105 +265,140 @@ const ClaimRequest = () => {
         )}
       </div>
 
-      <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-          <div>
-            <label className="mr-2 text-md">Show</label>
-            <select
-              value={entriesPerPage}
-              onChange={(e) => {
-                setEntriesPerPage(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-              className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
-            >
-              <option value={10}>10</option>
-              <option value={25}>25</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-            </select>
-            <span className="ml-2 text-md">entries</span>
-          </div>
-          <div className="flex flex-wrap gap-2 items-center justify-center">
-            <input
-              placeholder="Search"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="shadow-sm px-3 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-            />
-            <div className="flex">
-              <button
-                onClick={handleCopy}
-                className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+      {/* Main Container */}
+      <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl">
+        {/* Top Controls */}
+        <div className="p-6 border-b border-blue-100/30">
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-2">
+              <label className="text-sm xl:text-base font-medium text-gray-600">
+                Display
+              </label>
+              <select
+                value={entriesPerPage}
+                onChange={(e) => {
+                  setEntriesPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm cursor-pointer hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 transition-all"
               >
-                <GoCopy />
-              </button>
-              <button
-                onClick={handleExcel}
-                className="text-xl px-3 py-1 cursor-pointer text-green-700"
-              >
-                <FaFileExcel />
-              </button>
-              <button
-                onClick={handlePDF}
-                className="text-xl px-3 py-1 cursor-pointer text-red-600"
-              >
-                <FaFilePdf />
-              </button>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+              <span className="text-sm xl:text-base font-medium text-gray-600">
+                entries
+              </span>
+            </div>
+
+            <div className="flex flex-wrap gap-3 items-center justify-center">
+              <input
+                placeholder="Search claims..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm xl:text-base placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={handleCopy}
+                  className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
+                  title="Copy to clipboard"
+                >
+                  <GoCopy className="text-lg" />
+                </button>
+                <button
+                  onClick={handleExcel}
+                  className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
+                  title="Export to Excel"
+                >
+                  <FaFileExcel className="text-lg" />
+                </button>
+                <button
+                  onClick={handlePDF}
+                  className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
+                  title="Export to PDF"
+                >
+                  <FaFilePdf className="text-lg" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        <div
-          className="overflow-x-auto min-h-[250px]"
-          style={{ scrollbarWidth: "none" }}
-        >
-          <table className="w-full text-lg border-collapse">
-            <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-              <tr>
-                <th className="py-2 px-6 font-semibold">Employee</th>
-                <th className="py-2 px-6 font-semibold hidden sm:table-cell">
+        {/* Table */}
+        <div className="overflow-x-auto min-h-[350px]">
+          <table className="w-full text-[16px] xl:text-[20px] text-gray-900">
+            <thead>
+              <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
+                <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                  Employee
+                </th>
+                <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
                   Category
                 </th>
-                <th className="py-2 px-6 font-semibold hidden lg:table-cell">
+                <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
                   Date
                 </th>
-                <th className="py-2 px-6 font-semibold hidden xl:table-cell">
+                <th className="px-6 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
                   Amount
                 </th>
-                <th className="py-2 px-6 font-semibold">Status</th>
-                <th className="py-2 px-6 font-semibold">Action</th>
+                <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
-              {currentClaims.length === 0 ? (
+              {loading ? (
                 <tr>
-                  <td colSpan="6" className="text-center p-10">
-                    No Data Available
+                  <td
+                    colSpan="6"
+                    className="px-4 py-12 text-center text-gray-500"
+                  >
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                      <span>Loading...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : currentClaims.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="px-4 py-12 text-center">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <div className="text-4xl opacity-40">💰</div>
+                      <p className="text-gray-500 text-base font-medium">
+                        No Claims Requests
+                      </p>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 currentClaims.map((item) => (
                   <tr
                     key={item.id}
-                    className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                    className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
                   >
-                    <td className="py-2 px-6">{item.employee_name}</td>
-                    <td className="py-2 px-6 hidden sm:table-cell">
+                    <td className="px-6 py-2 text-center">
+                      {item.employee_name}
+                    </td>
+                    <td className="px-6 py-2 text-center hidden sm:table-cell">
                       {item.claim_category}
                     </td>
-                    <td className="py-2 px-6 hidden lg:table-cell">
+                    <td className="px-6 py-2 text-center hidden lg:table-cell">
                       {item.date}
                     </td>
-                    <td className="py-2 px-6 hidden xl:table-cell">
-                      {item.amount}
+                    <td className="px-6 py-2 text-center hidden xl:table-cell font-medium">
+                      ₹{item.amount}
                     </td>
-                    <td className="py-2 px-6">
+                    <td className="px-6 py-2 text-center">
                       <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        className={`px-3 py-1 rounded-full text-xs xl:text-sm font-bold ${
                           item.status === "Approved"
                             ? "bg-green-100 text-green-700"
                             : item.status === "Rejected"
@@ -363,31 +409,40 @@ const ClaimRequest = () => {
                         {item.status}
                       </span>
                     </td>
-                    <td className="p-2">
-                      <div className="flex gap-2 justify-center">
-                        <FaEye
+                    <td className="px-4 py-3 text-center">
+                      <div className="flex justify-center gap-2">
+                        <button
                           onClick={() => {
                             setFormData(item);
                             setMode("view");
                             setOpenModal(true);
                           }}
-                          className="text-blue-500 cursor-pointer text-lg mt-2 mr-2"
-                        />
+                          className="text-blue-500 hover:text-blue-700 hover:bg-blue-100 p-1.5 rounded-lg transition-all"
+                          title="View"
+                        >
+                          <FaEye className="text-lg" />
+                        </button>
                         {item.status === "Pending" && (
                           <>
-                            <FaPen
+                            <button
                               onClick={() => {
                                 setEditId(item.id);
                                 setFormData(item);
                                 setMode("edit");
                                 setOpenModal(true);
                               }}
-                              className="text-green-600 cursor-pointer text-lg mt-2 mr-2"
-                            />
-                            <MdDeleteForever
+                              className="text-green-500 hover:text-green-700 hover:bg-green-100 p-1.5 rounded-lg transition-all"
+                              title="Edit"
+                            >
+                              <FaPen className="text-lg" />
+                            </button>
+                            <button
                               onClick={() => handleDelete(item.id)}
-                              className="text-red-500 cursor-pointer text-2xl mt-1.5"
-                            />
+                              className="text-red-500 hover:text-red-700 hover:bg-red-100 p-1.5 rounded-lg transition-all"
+                              title="Delete"
+                            >
+                              <MdDeleteForever className="text-xl" />
+                            </button>
                           </>
                         )}
                       </div>
@@ -399,39 +454,53 @@ const ClaimRequest = () => {
           </table>
         </div>
 
-        <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-          <span>
-            Showing {filteredClaims.length === 0 ? "0" : startIndex + 1} to{" "}
-            {Math.min(endIndex, filteredClaims.length)} of{" "}
-            {filteredClaims.length} entries
+        {/* Pagination */}
+        <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+          <span className="text-sm xl:text-base text-gray-600">
+            Showing{" "}
+            <span className="text-gray-900 font-semibold">
+              {filteredClaims.length === 0 ? "0" : startIndex + 1}
+            </span>{" "}
+            to{" "}
+            <span className="text-gray-900 font-semibold">
+              {Math.min(endIndex, filteredClaims.length)}
+            </span>{" "}
+            of{" "}
+            <span className="text-gray-900 font-semibold">
+              {filteredClaims.length}
+            </span>{" "}
+            entries
           </span>
-          <div className="flex flex-row space-x-1">
+
+          <div className="flex gap-2">
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(1)}
-              className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
             >
               First
             </button>
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(currentPage - 1)}
-              className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
             >
               <GrPrevious />
             </button>
-            <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+            <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
+              {currentPage}
+            </div>
             <button
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(currentPage + 1)}
-              className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
             >
               <GrNext />
             </button>
             <button
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(totalPages)}
-              className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
             >
               Last
             </button>
@@ -439,89 +508,88 @@ const ClaimRequest = () => {
         </div>
       </div>
 
+      {/* Modal */}
       {openModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
-          style={{ scrollbarWidth: "none" }}
-        >
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl p-6 text-[oklch(0.147_0.004_49.25)] overflow-y-auto max-h-[90vh]">
-            <div className="flex justify-end">
-              <RxCross2
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8">
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+              <h2 className="text-xl font-bold text-gray-900">
+                {mode === "view"
+                  ? "View Claim Request"
+                  : editId
+                    ? "Edit Claim Request"
+                    : "Add New Claim Request"}
+              </h2>
+              <button
                 onClick={() => setOpenModal(false)}
-                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-              />
+                className="text-gray-400 hover:text-gray-600 transition"
+              >
+                <RxCross2 className="text-2xl" />
+              </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <SearchDropdown
-                  label={
-                    <>
-                      Employee <span className="text-red-500">*</span>
-                    </>
-                  }
-                  name="employee_id"
-                  value={formData.employee_id}
-                  displayValue={formData.employee_name || ""}
-                  options={employeeOptions}
-                  labelKey="full_name"
-                  valueKey="id"
-                  formData={formData}
-                  setFormData={setFormData}
-                  disabled={mode === "view"}
-                  inputStyle={inputStyle}
-                  labelStyle={labelStyle}
-                />
-              </div>
+              <SearchDropdown
+                label={
+                  <>
+                    Employee <span className="text-red-500">*</span>
+                  </>
+                }
+                name="employee_id"
+                value={formData.employee_id}
+                displayValue={formData.employee_name || ""}
+                options={employeeOptions}
+                labelKey="full_name"
+                valueKey="id"
+                formData={formData}
+                setFormData={setFormData}
+                disabled={mode === "view"}
+                inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 transition-all shadow-sm font-medium"
+                labelStyle="text-sm xl:text-lg font-bold text-gray-700 mb-2 block"
+              />
+
+              <SearchDropdown
+                label={
+                  <>
+                    Claim Category <span className="text-red-500">*</span>
+                  </>
+                }
+                name="claim_category"
+                value={formData.claim_category}
+                options={categoryOptions}
+                labelKey="name"
+                valueKey="name"
+                formData={formData}
+                setFormData={setFormData}
+                disabled={mode === "view"}
+                inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 transition-all shadow-sm font-medium"
+                labelStyle="text-sm xl:text-lg font-bold text-gray-700 mb-2 block"
+              />
 
               <div>
-                <SearchDropdown
-                  label={
-                    <>
-                      Claim Category <span className="text-red-500">*</span>
-                    </>
-                  }
-                  name="claim_category"
-                  value={formData.claim_category}
-                  options={categoryOptions}
-                  labelKey="name"
-                  valueKey="name"
-                  formData={formData}
-                  setFormData={setFormData}
-                  disabled={mode === "view"}
-                  inputStyle={inputStyle}
-                  labelStyle={labelStyle}
-                />
-              </div>
-
-              <div>
-                <label className={labelStyle}>
+                <label className="text-sm xl:text-lg font-bold text-gray-700 mb-2 block">
                   Date <span className="text-red-500">*</span>
                 </label>
-                <div className="relative">
-                  <input
-                    name="date"
+                <input
+                  name="date"
+                  value={formData.date}
+                  onClick={() => mode !== "view" && setDateSpinner(true)}
+                  disabled={mode === "view"}
+                  readOnly
+                  placeholder="dd/mm/yyyy"
+                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                />
+                {dateSpinner && (
+                  <SpinnerDatePicker
                     value={formData.date}
-                    onClick={() => mode !== "view" && setDateSpinner(true)}
-                    disabled={mode === "view"}
-                    placeholder="dd/mm/yyyy"
-                    readOnly
-                    className={`${inputStyle} cursor-pointer`}
+                    onChange={(date) => setFormData({ ...formData, date })}
+                    onClose={() => setDateSpinner(false)}
                   />
-                  {dateSpinner && (
-                    <SpinnerDatePicker
-                      value={formData.date}
-                      onChange={(date) =>
-                        setFormData({ ...formData, date: date })
-                      }
-                      onClose={() => setDateSpinner(false)}
-                    />
-                  )}
-                </div>
+                )}
               </div>
 
               <div>
-                <label className={labelStyle}>
+                <label className="text-sm xl:text-lg font-bold text-gray-700 mb-2 block">
                   Amount <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -530,13 +598,13 @@ const ClaimRequest = () => {
                   value={formData.amount}
                   onChange={handleChange}
                   disabled={mode === "view"}
-                  className={inputStyle}
+                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
                   placeholder="Enter amount"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className={labelStyle}>
+                <label className="text-sm xl:text-lg font-bold text-gray-700 mb-2 block">
                   Purpose <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -544,37 +612,39 @@ const ClaimRequest = () => {
                   value={formData.purpose}
                   onChange={handleChange}
                   disabled={mode === "view"}
-                  className={`${inputStyle} h-11`}
+                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
                   placeholder="Enter purpose of claim"
                 />
               </div>
 
               <div className="md:col-span-3">
-                <label className={labelStyle}>Remarks</label>
+                <label className="text-sm xl:text-lg font-bold text-gray-700 mb-2 block">
+                  Remarks
+                </label>
                 <textarea
                   name="remarks"
                   value={formData.remarks}
                   onChange={handleChange}
                   disabled={mode === "view"}
-                  className={`${inputStyle} h-20`}
+                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2 xl:text-lg rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm h-24"
                   placeholder="Enter optional remarks..."
                 />
               </div>
             </div>
 
             {mode !== "view" && (
-              <div className="flex justify-end gap-3 mt-8">
+              <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-blue-100/30">
                 <button
                   onClick={() => setOpenModal(false)}
-                  className="px-6 py-2 border border-gray-300 rounded-md hover:bg-gray-50 font-medium"
+                  className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-50 font-semibold transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="px-6 py-2 bg-[oklch(0.645_0.246_16.439)] text-white rounded-md hover:opacity-90 font-medium"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                 >
-                  {editId ? "Update Request" : "Submit Request"}
+                  Save
                 </button>
               </div>
             )}

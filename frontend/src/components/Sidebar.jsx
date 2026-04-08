@@ -39,7 +39,7 @@ const Sidebar = ({ user }) => {
   return (
     <div className="h-screen flex flex-col bg-[#0f172a]">
       {/* TOP */}
-      <div className=" pl-10 py-4 mt-2">
+      <div className=" pl-13 pt-7 py-12 mt-2">
         <Link to="/dashboard">
           <img
             src="../timexlogo.png"
@@ -63,7 +63,7 @@ const Sidebar = ({ user }) => {
                 isdashboardActive ? activeClass : hoverClass
               }`}
             >
-              <div className="flex items-center gap-4 text-[18px] pl-2">
+              <div className="flex items-center gap-4 text-[18px] xl:text-[20px] pl-2">
                 <RxDashboard />
                 <Link to="/dashboard">Dashboard</Link>
               </div>
@@ -102,7 +102,7 @@ const Sidebar = ({ user }) => {
       <div className="p-4 mt-4">
         <button
           onClick={handleLogout}
-          className="w-full flex pl-2 items-center gap-2 font-semibold text-blue-100 hover:text-white transition-all gap-3"
+          className="w-full xl:text-lg flex pl-2 items-center gap-2 font-semibold text-blue-100 hover:text-white transition-all gap-3"
         >
           <span className="text-lg bg-[#1E3A8A] rounded-full p-1 text-white">
             <IoIosLogOut />

@@ -328,26 +328,30 @@ const LeaveRequest = () => {
   return (
     <>
       <div className="mb-6">
-        {/* Header */}
-        <div className="sm:flex sm:justify-between">
-          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-            <FaAngleRight />
-            Requests
-            <FaAngleRight />
-            <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+          <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
+            <FaAngleRight className="text-blue-500 text-base" />
+            <span className="text-gray-500">Requests</span>
+            <FaAngleRight className="text-blue-500 text-base" />
+            <div
+              onClick={() => setOpenModal(false)}
+              className="cursor-pointer text-blue-600 hover:text-blue-700"
+            >
               Leave Request
             </div>
           </h1>
+
           {!openModal && (
             <div className="flex justify-end">
               <button
-                onClick={() => (
-                  setMode(""),
-                  setEditId(null),
-                  setFormData(emptyForm),
-                  setOpenModal(true)
-                )}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+                onClick={() => {
+                  setMode("");
+                  setEditId(null);
+                  setFormData(emptyForm);
+                  setOpenModal(true);
+                }}
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
               >
                 + Add New
               </button>
@@ -355,160 +359,198 @@ const LeaveRequest = () => {
           )}
         </div>
 
-        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">
+        {/* Main Container */}
+        <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl">
           {/* Top Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <div>
-              <label className="mr-2 text-md">Show</label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="ml-2 text-md">entries</span>
-            </div>
-            <div className="flex flex-wrap gap-2 items-center justify-center">
-              <input
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-              />
-              <div className="flex">
-                <button
-                  onClick={handleCopy}
-                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+          <div className="p-6 border-b border-blue-100/30">
+            <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm xl:text-base font-medium text-gray-600">
+                  Display
+                </label>
+                <select
+                  value={entriesPerPage}
+                  onChange={(e) => {
+                    setEntriesPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm cursor-pointer hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 transition-all"
                 >
-                  <GoCopy />
-                </button>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+                <span className="text-sm xl:text-base font-medium text-gray-600">
+                  entries
+                </span>
+              </div>
 
-                <button
-                  onClick={handleExcel}
-                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
-                >
-                  <FaFileExcel />
-                </button>
-
-                <button
-                  onClick={handlePDF}
-                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
-                >
-                  <FaFilePdf />
-                </button>
+              <div className="flex flex-wrap gap-3 items-center justify-center">
+                <input
+                  placeholder="Search leave request..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm xl:text-base placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopy}
+                    className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
+                    title="Copy to clipboard"
+                  >
+                    <GoCopy className="text-lg" />
+                  </button>
+                  <button
+                    onClick={handleExcel}
+                    className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
+                    title="Export to Excel"
+                  >
+                    <FaFileExcel className="text-lg" />
+                  </button>
+                  <button
+                    onClick={handlePDF}
+                    className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
+                    title="Export to PDF"
+                  >
+                    <FaFilePdf className="text-lg" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Table */}
-          <div
-            className="overflow-x-auto min-h-[250px]"
-            style={{ scrollbarWidth: "none" }}
-          >
-            <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="p-2 font-semibold">Employee</th>
-                  <th className="p-2 hidden sm:table-cell font-semibold whitespace-nowrap">
+          <div className="overflow-x-auto min-h-[350px]">
+            <table className="w-full text-[16px] xl:text-[20px] text-gray-700">
+              <thead>
+                <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
+                  <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                    Employee
+                  </th>
+                  <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700 whitespace-nowrap">
                     Leave Type
                   </th>
-                  <th className="p-2 hidden lg:table-cell font-semibold">
+                  <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
                     From
                   </th>
-                  <th className="p-2 hidden lg:table-cell font-semibold">To</th>
-                  <th className="p-2 hidden sm:table-cell font-semibold whitespace-nowrap">
+                  <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
+                    To
+                  </th>
+                  <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700 whitespace-nowrap">
                     Resume On
                   </th>
-                  <th className="p-2 hidden md:table-cell font-semibold whitespace-nowrap">
+                  <th className="px-6 py-3 text-center hidden md:table-cell font-semibold text-gray-700 whitespace-nowrap">
                     Leave Reason
                   </th>
-
-                  <th className="p-2 font-semibold">Action</th>
+                  <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                    Actions
+                  </th>
                 </tr>
               </thead>
 
               <tbody>
-                {currentLeave.length === 0 ? (
+                {loading ? (
                   <tr>
-                    <td colSpan="14" className="text-center p-10">
-                      No Data Available
+                    <td
+                      colSpan="7"
+                      className="px-4 py-12 text-center text-gray-500"
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        <span>Loading...</span>
+                      </div>
                     </td>
                   </tr>
+                ) : currentLeave.length === 0 ? (
+                  <tr>
+                  <td colSpan="7" className="px-4 py-12 text-center">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <div className="text-4xl opacity-40">🍃</div>
+                      <p className="text-gray-500 text-base font-medium">
+                        No Leave Requests
+                      </p>
+                    </div>
+                  </td>
+                </tr>
                 ) : (
                   currentLeave.map((item) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                      className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="p-2">{item.employee_name}</td>
-
-                      <td className="p-2 hidden sm:table-cell whitespace-nowraps">
-                        {item.leave_type}
+                      <td className="px-6 py-2 text-center">
+                        {item.employee_name || "-"}
                       </td>
 
-                      <td className="p-2 hidden lg:table-cell whitespace-nowrap">
-                        {item.start_date}
+                      <td className="px-6 py-2 text-center hidden sm:table-cell whitespace-nowrap">
+                        {item.leave_type || "-"}
                       </td>
 
-                      <td className="p-2 hidden lg:table-cell whitespace-nowrap">
-                        {item.end_date}
+                      <td className="px-6 py-2 text-center hidden lg:table-cell whitespace-nowrap">
+                        {item.start_date || "-"}
                       </td>
 
-                      <td className="p-2 hidden sm:table-cell whitespace-nowrap">
-                        {item.resume_date}
+                      <td className="px-6 py-2 text-center hidden lg:table-cell whitespace-nowrap">
+                        {item.end_date || "-"}
                       </td>
 
-                      <td className="p-2 hidden md:table-cell whitespace-nowrap">
+                      <td className="px-6 py-2 text-center hidden sm:table-cell whitespace-nowrap">
+                        {item.resume_date || "-"}
+                      </td>
+
+                      <td className="px-6 py-2 text-center hidden md:table-cell whitespace-nowrap">
                         {item.reason
                           ? `${item.leave_type} - ${item.reason}`
                           : `${item.leave_type} - NIL`}
                       </td>
 
-                      {/* Actions */}
-                      <td className="p-2 flex flex-row space-x-3 justify-center  whitespace-nowrap">
-                        {" "}
-                        {/* View */}{" "}
-                        <FaEye
-                          onClick={() => {
-                            setSelectedID(item.id);
-                            setFormData(item);
-                            setMode("view");
-                            setOpenModal(true);
-                          }}
-                          className="inline text-blue-500 cursor-pointer text-lg mt-1"
-                        />{" "}
-                        {item.status === "Pending" ? (
-                          <div className="flex flex-row space-x-3 justify-center mt-1">
-                            {" "}
-                            {/* Edit */}{" "}
-                            <FaPen
-                              onClick={() => {
-                                setFormData(item);
-                                setEditId(item.id);
-                                setMode("edit");
-                                setOpenModal(true);
-                              }}
-                              className="inline text-green-500 cursor-pointer text-lg"
-                            />{" "}
-                            {/* Delete */}{" "}
-                            <MdDeleteForever
-                              onClick={() => handleDelete(item.id)}
-                              className="inline text-red-500 cursor-pointer text-xl"
-                            />{" "}
-                          </div>
-                        ) : (
-                          <div></div>
-                        )}
+                      <td className="px-4 py-3 text-center">
+                        <div className="flex justify-center gap-2">
+                          {/* View */}
+                          <button
+                            onClick={() => {
+                              setSelectedID(item.id);
+                              setFormData(item);
+                              setMode("view");
+                              setOpenModal(true);
+                            }}
+                            className="text-blue-500 hover:text-blue-700 hover:bg-blue-100 p-1.5 rounded-lg transition-all"
+                            title="View"
+                          >
+                            <FaEye className="text-lg" />
+                          </button>
+
+                          {item.status === "Pending" && (
+                            <>
+                              {/* Edit */}
+                              <button
+                                onClick={() => {
+                                  setFormData(item);
+                                  setEditId(item.id);
+                                  setMode("edit");
+                                  setOpenModal(true);
+                                }}
+                                className="text-green-500 hover:text-green-700 hover:bg-green-100 p-1.5 rounded-lg transition-all"
+                                title="Edit"
+                              >
+                                <FaPen className="text-lg" />
+                              </button>
+
+                              {/* Delete */}
+                              <button
+                                onClick={() => handleDelete(item.id)}
+                                className="text-red-500 hover:text-red-700 hover:bg-red-100 p-1.5 rounded-lg transition-all"
+                                title="Delete"
+                              >
+                                <MdDeleteForever className="text-xl" />
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -518,44 +560,52 @@ const LeaveRequest = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-            <span>
-              Showing {filteredLeave.length === 0 ? "0" : startIndex + 1} to{" "}
-              {Math.min(endIndex, filteredLeave.length)} of{" "}
-              {filteredLeave.length} entries
+          <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <span className="text-sm xl:text-base text-gray-600">
+              Showing{" "}
+              <span className="text-gray-900 font-semibold">
+                {filteredLeave.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
+              to{" "}
+              <span className="text-gray-900 font-semibold">
+                {Math.min(endIndex, filteredLeave.length)}
+              </span>{" "}
+              of{" "}
+              <span className="text-gray-900 font-semibold">
+                {filteredLeave.length}
+              </span>{" "}
+              entries
             </span>
 
-            <div className="flex flex-row space-x-1">
+            <div className="flex gap-2">
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className=" p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
               >
                 First
               </button>
-
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
               >
                 <GrPrevious />
               </button>
-
-              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
-
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
+                {currentPage}
+              </div>
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
               >
                 <GrNext />
               </button>
-
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className=" p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
               >
                 Last
               </button>
@@ -563,23 +613,34 @@ const LeaveRequest = () => {
           </div>
         </div>
 
+        {/* Modal */}
         {openModal && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
             style={{ scrollbarWidth: "none" }}
           >
             <div
-              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+              className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8"
               style={{ scrollbarWidth: "none" }}
             >
-              {/* Close */}
-              <div className="flex justify-end">
-                <RxCross2
+              {/* Modal Header */}
+              <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+                <h2 className="text-xl font-bold text-gray-900">
+                  {mode === "view"
+                    ? "View Leave Request"
+                    : mode === "edit"
+                      ? "Edit Leave Request"
+                      : "Add New Leave Request"}
+                </h2>
+                <button
                   onClick={() => setOpenModal(false)}
-                  className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-                />
+                  className="text-gray-400 hover:text-gray-600 transition"
+                >
+                  <RxCross2 className="text-2xl" />
+                </button>
               </div>
 
+              {/* Form Fields */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Employee */}
                 <div>
@@ -599,8 +660,8 @@ const LeaveRequest = () => {
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
-                    inputStyle={inputStyle}
-                    labelStyle={labelStyle}
+                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
+                    labelStyle="text-sm xl:text-lg font-bold text-gray-700 mb-2 block"
                   />
                 </div>
 
@@ -620,18 +681,17 @@ const LeaveRequest = () => {
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
-                    inputStyle={inputStyle}
-                    labelStyle={labelStyle}
+                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
+                    labelStyle="text-sm xl:text-lg font-bold text-gray-700 mb-2 block"
                   />
                 </div>
 
-                {/* From Date */}
+                {/* First Date of Absence */}
                 <div>
-                  <label className={labelStyle}>
-                    First Date of Absence
-                    <span className="text-[oklch(0.577_0.245_27.325)]"> *</span>
+                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+                    First Date of Absence{" "}
+                    <span className="text-red-500">*</span>
                   </label>
-
                   <input
                     name="start_date"
                     value={formData.start_date}
@@ -639,9 +699,8 @@ const LeaveRequest = () => {
                     onClick={() => setFromDateSpinner(true)}
                     disabled={mode === "view"}
                     placeholder="dd/mm/yyyy"
-                    className={inputStyle}
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
-
                   {fromDateSpinner && (
                     <SpinnerDatePicker
                       value={formData.start_date}
@@ -653,13 +712,11 @@ const LeaveRequest = () => {
                   )}
                 </div>
 
-                {/* To Date */}
+                {/* Last Date of Absence */}
                 <div>
-                  <label className={labelStyle}>
-                    Last Date of Absence
-                    <span className="text-[oklch(0.577_0.245_27.325)]"> *</span>
+                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+                    Last Date of Absence <span className="text-red-500">*</span>
                   </label>
-
                   <input
                     name="end_date"
                     value={formData.end_date}
@@ -667,9 +724,8 @@ const LeaveRequest = () => {
                     onClick={() => setToDateSpinner(true)}
                     disabled={mode === "view"}
                     placeholder="dd/mm/yyyy"
-                    className={inputStyle}
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
-
                   {toDateSpinner && (
                     <SpinnerDatePicker
                       value={formData.end_date}
@@ -681,10 +737,11 @@ const LeaveRequest = () => {
                   )}
                 </div>
 
-                {/* Resume On */}
+                {/* Resume Duty On */}
                 <div>
-                  <label className={labelStyle}>Resume Duty On</label>
-
+                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+                    Resume Duty On
+                  </label>
                   <input
                     name="resume_date"
                     value={formData.resume_date}
@@ -692,9 +749,8 @@ const LeaveRequest = () => {
                     onClick={() => setShowResumeSpinner(true)}
                     disabled={mode === "view"}
                     placeholder="dd/mm/yyyy"
-                    className={inputStyle}
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
-
                   {showResumeSpinner && (
                     <SpinnerDatePicker
                       value={formData.resume_date}
@@ -706,165 +762,193 @@ const LeaveRequest = () => {
                   )}
                 </div>
 
+                {/* Number of Days */}
                 <div>
-                  <label className={labelStyle}>
-                    Number of Days
-                    <span className="text-[oklch(0.577_0.245_27.325)]"> *</span>
+                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+                    Number of Days <span className="text-red-500">*</span>
                   </label>
-
                   <input
                     name="number_of_days"
                     value={formData.number_of_days}
-                    className={inputStyle}
                     placeholder="Number of Days"
                     disabled
+                    className="w-full bg-gray-100 border border-gray-200 text-gray-500 px-3 py-2 xl:text-lg rounded-lg cursor-not-allowed transition-all shadow-sm"
                   />
                 </div>
 
+                {/* Leave Pending of Approvals */}
                 <div>
-                  <label className={labelStyle}>
+                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
                     Leave Pending of Approvals (No of Days)
                   </label>
-
                   <input
                     name="pendingDays"
                     value={formData.pendingDays}
                     onChange={handleChange}
-                    className={inputStyle}
                     placeholder="Leave Pending of Approvals (No of Days)"
                     disabled={mode === "view"}
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
                 </div>
 
+                {/* Leave Balance */}
                 <div>
-                  <label className={labelStyle}>Leave Balance</label>
-
+                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+                    Leave Balance
+                  </label>
                   <input
                     name="leaveBalance"
                     value={formData.leaveBalance}
                     onChange={handleChange}
-                    className={inputStyle}
                     placeholder="Leave Balance"
                     disabled={mode === "view"}
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
                 </div>
 
+                {/* Contact */}
                 <div>
-                  <label className={labelStyle}>
-                    Contact{" "}
-                    <span className="text-[oklch(0.577_0.245_27.325)]"> *</span>
+                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+                    Contact <span className="text-red-500">*</span>
                   </label>
-
                   <input
                     name="contact_number"
                     value={formData.contact_number}
                     onChange={handleChange}
-                    className={inputStyle}
                     placeholder="Contact"
                     disabled={mode === "view"}
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
                 </div>
 
+                {/* Email */}
                 <div>
-                  <label className={labelStyle}>
-                    Email{" "}
-                    <span className="text-[oklch(0.577_0.245_27.325)]"> *</span>
+                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+                    Email <span className="text-red-500">*</span>
                   </label>
-
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className={inputStyle}
                     placeholder="Email"
                     disabled={mode === "view"}
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
                 </div>
 
                 {/* Leave Reason */}
                 <div className="lg:col-span-2">
-                  <label className={labelStyle}>Leave Reason</label>
-
+                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+                    Leave Reason
+                  </label>
                   <input
                     name="reason"
                     value={formData.reason}
                     onChange={handleChange}
                     placeholder="Reason for Leave"
-                    className={inputStyle}
                     disabled={mode === "view"}
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
                 </div>
 
-                <div className="flex items-center gap-2 mt-6">
-                  <label className={labelStyle}>Is HalfDay</label>
+                {/* Is HalfDay */}
+                <div className="flex items-center gap-3 px-4 py-3 rounded-xl h-fit md:mt-6">
                   <input
                     type="checkbox"
                     name="is_half_day"
                     checked={formData.is_half_day}
                     onChange={handleChange}
                     disabled={mode === "view"}
+                    className="w-5 h-5 cursor-pointer accent-blue-500 disabled:cursor-not-allowed"
                   />
+                  <label className="text-gray-700 text-sm xl:text-lg font-semibold cursor-pointer">
+                    Is HalfDay
+                  </label>
                 </div>
               </div>
 
-              {/* Save Button */}
-              {mode !== "view" && (
-                <div className="flex justify-end mt-10">
-                  <button
-                    onClick={handleSubmit}
-                    className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
-                  >
-                    Save
-                  </button>
-                </div>
-              )}
-
+              {/* Approval Status (view mode only) */}
               {mode === "view" &&
                 selectedId &&
                 (() => {
                   const item = currentLeave.find(
                     (entry) => entry.id === selectedId,
                   );
-
                   return item ? (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
-                      <div>
-                        <h1 className={labelStyle}>FA</h1>
-                        <p
-                          className={`${inputStyle} ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
-                        >
-                          {item.fa || "⏳"}
-                        </p>
+                    <>
+                      <div className="mt-8 pt-6 border-t border-blue-100/30">
+                        <h3 className="text-base font-bold text-gray-700 mb-4">
+                          Approval Status
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          <div>
+                            <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                              FA
+                            </label>
+                            <p
+                              className={`w-full bg-gray-50 border border-gray-200 px-3 py-2 rounded-lg text-sm ${item.fa ? (item.fa === "✔" ? "text-green-600" : "text-red-500") : "text-gray-400"}`}
+                            >
+                              {item.fa || "⏳"}
+                            </p>
+                          </div>
+                          <div>
+                            <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                              FA Name
+                            </label>
+                            <p className="w-full bg-gray-50 border border-gray-200 px-3 py-2 rounded-lg text-sm text-gray-700">
+                              {item.faname || "⏳"}
+                            </p>
+                          </div>
+                          <div>
+                            <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                              SA
+                            </label>
+                            <p
+                              className={`w-full bg-gray-50 border border-gray-200 px-3 py-2 rounded-lg text-sm ${item.sa ? (item.sa === "✔" ? "text-green-600" : "text-red-500") : "text-gray-400"}`}
+                            >
+                              {item.sa || "⏳"}
+                            </p>
+                          </div>
+                          <div>
+                            <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                              SA Name
+                            </label>
+                            <p className="w-full bg-gray-50 border border-gray-200 px-3 py-2 rounded-lg text-sm text-gray-700">
+                              {item.saname || "⏳"}
+                            </p>
+                          </div>
+                          <div className="lg:col-span-2">
+                            <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                              Rejected Reason
+                            </label>
+                            <p className="w-full bg-gray-50 border border-gray-200 px-3 py-2 rounded-lg text-sm text-gray-700">
+                              {item.rejectedreason || "⏳"}
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <h1 className={labelStyle}>FA Name</h1>
-                        <p className={`${inputStyle}`}>{item.faname || "⏳"}</p>
-                      </div>
-
-                      <div>
-                        <h1 className={labelStyle}>SA</h1>
-                        <p
-                          className={`${inputStyle} ${item.fa ? (item.fa == "✔" ? "text-green-600" : "text-red-500") : ""}`}
-                        >
-                          {item.sa || "⏳"}
-                        </p>
-                      </div>
-
-                      <div>
-                        <h1 className={labelStyle}>SA Name</h1>
-                        <p className={`${inputStyle}`}>{item.saname || "⏳"}</p>
-                      </div>
-
-                      <div className="lg:col-span-2">
-                        <h1 className={labelStyle}>Rejected Reason</h1>
-                        <p className={`${inputStyle}`}>
-                          {item.rejectedreason || "⏳"}
-                        </p>
-                      </div>
-                    </div>
+                    </>
                   ) : null;
                 })()}
+
+              {/* Action Buttons */}
+              {mode !== "view" && (
+                <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-blue-100/30">
+                  <button
+                    onClick={() => setOpenModal(false)}
+                    className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-50 font-semibold transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSubmit}
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+                  >
+                    Save
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
