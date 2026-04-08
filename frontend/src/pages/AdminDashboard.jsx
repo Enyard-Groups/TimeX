@@ -104,7 +104,7 @@ const AdminDashboard = ({ user }) => {
       </div>
 
       {/* Today Attendance */}
-      <div className="bg-white rounded " style={{ scrollbarWidth: "none" }}>
+      <div className="bg-white rounded mt-8" style={{ scrollbarWidth: "none" }}>
         <EmployeeAttendance attendanceData={attendanceData} />
       </div>
 
