@@ -5,6 +5,7 @@ export const getCompanies = async (req, res) => {
     const result = await db.query('SELECT * FROM companies ORDER BY created_at DESC');
     res.json(result.rows);
   } catch (error) {
+    console.log("error in getcompanies",error.message);
     res.status(500).json({ message: error.message });
   }
 };

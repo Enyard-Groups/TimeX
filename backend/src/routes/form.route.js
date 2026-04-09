@@ -41,7 +41,11 @@ import {
   getPatrollingChecklist,
   createPatrollingChecklist,  
   updatePatrollingChecklist,
-  deletePatrollingChecklist
+  deletePatrollingChecklist,
+  getMonthlyFireSafety,
+  createMonthlyFireSafety,
+  updateMonthlyFireSafety,
+  deleteMonthlyFireSafety
 } from "../controllers/form.controller.js";
 
 const formRoute = express.Router();
@@ -81,6 +85,8 @@ formRoute.delete("/shiftHandOver/:id", deleteShiftOver);
 
 formRoute.get("/staffTraining", getStaffTraining);
 formRoute.post("/staffTraining", createStaffTraining);
+
+
 formRoute.put("/staffTraining/:id", updateStaffTraining);
 formRoute.delete("/staffTraining/:id", deleteStaffTraining);
 
@@ -98,6 +104,11 @@ formRoute.get("/patrollingChecklist", getPatrollingChecklist);
 formRoute.post("/patrollingChecklist", createPatrollingChecklist);
 formRoute.put("/patrollingChecklist/:id", updatePatrollingChecklist);
 formRoute.delete("/patrollingChecklist/:id", deletePatrollingChecklist);
+
+formRoute.get("/monthlyFireSafety", getMonthlyFireSafety);
+formRoute.post("/monthlyFireSafety", createMonthlyFireSafety);
+formRoute.put("/monthlyFireSafety/:id", updateMonthlyFireSafety);
+formRoute.delete("/monthlyFireSafety/:id", deleteMonthlyFireSafety);
 
 
 

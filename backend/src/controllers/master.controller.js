@@ -4,17 +4,17 @@ import db from "../lib/db.js";
 
 export const getDepartments = async (req, res) => {
   try {
-   const result = await db.query(`
+    const result = await db.query(`
   SELECT d.*, c.name AS company_name
   FROM departments d
   LEFT JOIN companies c ON d.company = c.id
   ORDER BY d.created_at DESC
 `);
-console.log(result.rows)
+    console.log(result.rows)
     res.json(result.rows);
 
   } catch (error) {
-    console.log("Erro in get departments:",error.message)
+    console.log("Erro in get departments:", error.message)
     res.status(500).json({ message: error.message });
   }
 };
@@ -30,7 +30,7 @@ export const createDepartment = async (req, res) => {
     res.status(201).json(result.rows[0]);
   } catch (error) {
     res.status(500).json({ message: error.message });
-    console.log("error in createDepartment", error.message);  
+    console.log("error in createDepartment", error.message);
   }
 };
 
@@ -61,11 +61,14 @@ export const deleteDepartment = async (req, res) => {
 export const getDesignations = async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT ds.*, c.name as company_name
+      SELECT ds.*, c.name as company_name, d.name as department_name
+
       FROM designations ds
-      LEFT JOIN companies c ON ds.company = c.id
+      LEFT JOIN companies c ON ds.company_id = c.id
+      LEFT JOIN departments d ON ds.department_id = d.id
       ORDER BY ds.created_at DESC
     `);
+
     res.json(result.rows);
 
   } catch (error) {
@@ -77,7 +80,7 @@ export const createDesignation = async (req, res) => {
   const { name, code, company, department, description, is_active } = req.body;
   try {
     const result = await db.query(
-      'INSERT INTO designations (name, code, company,  department, description, is_active) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      'INSERT INTO designations (name, code, company_id,  department_id, description, is_active) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
       [name, code, company, department, description, is_active]
     );
     res.status(201).json(result.rows[0]);
@@ -89,11 +92,11 @@ export const createDesignation = async (req, res) => {
 
 export const updateDesignation = async (req, res) => {
   const { id } = req.params;
-  const { name, code, company, department,  description, is_active } = req.body;
+  const { name, code, company, department, description, is_active } = req.body;
   try {
     const result = await db.query(
       'UPDATE designations SET name=$1, code=$2, company=$3, description=$4, is_active=$5 WHERE id=$6 RETURNING *',
-      [name, code, company,department, description, is_active, id]
+      [name, code, company, department, description, is_active, id]
     );
     res.json(result.rows[0]);
   } catch (error) {
@@ -101,7 +104,7 @@ export const updateDesignation = async (req, res) => {
   }
 };
 
- export const deleteDesignation = async (req, res) => {
+export const deleteDesignation = async (req, res) => {
   const { id } = req.params;
   try {
     await db.query('DELETE FROM designations WHERE id = $1', [id]);
@@ -120,7 +123,7 @@ export const getShifts = async (req, res) => {
       LEFT JOIN companies c ON s.company = c.id
       ORDER BY s.created_at DESC
     `);
-
+    console.log(result.rows)
     res.json(result.rows);
   } catch (error) {
     console.log("error in getShifts", error.message);
@@ -130,7 +133,8 @@ export const getShifts = async (req, res) => {
 
 export const createShift = async (req, res) => {
   const { shift_name, shift_code, start_time, end_time, grace_period, is_active, company } = req.body;
-  
+  console.log(req.body);
+
   try {
     const result = await db.query(
       'INSERT INTO shifts (shift_name, shift_code, start_time, end_time, grace_period, is_active, company) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
@@ -156,7 +160,7 @@ export const updateShift = async (req, res) => {
   }
 };
 
- export const deleteShift = async (req, res) => {
+export const deleteShift = async (req, res) => {
   const { id } = req.params;
   try {
     await db.query('DELETE FROM shifts WHERE id = $1', [id]);
@@ -201,25 +205,14 @@ export const getHolidays = async (req, res) => {
 
 export const createHoliday = async (req, res) => {
   const { name, code, holidaystart, holidayend, company, location, is_active } = req.body;
-
-  // Parse dates from dd/mm/yyyy to yyyy-mm-dd format
-  const parseDate = (dateStr) => {
-    if (!dateStr) return null;
-    const [day, month, year] = dateStr.split('/');
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-  };
-
-  const formattedStart = parseDate(holidaystart);
-  const formattedEnd = parseDate(holidayend);
-
+  // Dates arrive as yyyy-mm-dd from the frontend — pass through directly
   try {
     const result = await db.query(
       'INSERT INTO holidays (name, code, holidaystart, holidayend, company, location, is_active) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, name, code, holidaystart, holidayend, company, location, is_active',
-      [name, code, formattedStart, formattedEnd, company, location, is_active]
+      [name, code, holidaystart || null, holidayend || null, company, location, is_active]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
-   
     console.log("error in createholidays", error.message);
     res.status(500).json({ message: error.message });
   }
@@ -228,21 +221,11 @@ export const createHoliday = async (req, res) => {
 export const updateHoliday = async (req, res) => {
   const { id } = req.params;
   const { name, code, holidaystart, holidayend, company, location, is_active } = req.body;
-
-  // Parse dates from dd/mm/yyyy to yyyy-mm-dd format
-  const parseDate = (dateStr) => {
-    if (!dateStr) return null;
-    const [day, month, year] = dateStr.split('/');
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-  };
-
-  const formattedStart = parseDate(holidaystart);
-  const formattedEnd = parseDate(holidayend);
-
+  // Dates arrive as yyyy-mm-dd from the frontend — pass through directly
   try {
     const result = await db.query(
       'UPDATE holidays SET name=$1, code=$2, holidaystart=$3, holidayend=$4, company=$5, location=$6, is_active=$7 WHERE id=$8 RETURNING id, name, code, holidaystart, holidayend, company, location, is_active',
-      [name, code, formattedStart, formattedEnd, company, location, is_active, id]
+      [name, code, holidaystart || null, holidayend || null, company, location, is_active, id]
     );
     res.json(result.rows[0]);
   } catch (error) {
@@ -420,7 +403,7 @@ export const getGeofencingLocations = async (req, res) => {
     const result = await db.query('SELECT * FROM geofencing_masters ORDER BY created_at DESC');
     res.json(result.rows);
   } catch (error) {
-    console.log("Error in get geo fencing :",error.message)
+    console.log("Error in get geo fencing :", error.message)
     res.status(500).json({ message: error.message });
   }
 };
@@ -478,7 +461,7 @@ export const getEmployeeGeofencing = async (req, res) => {
     `);
     res.json(result.rows);
   } catch (error) {
-    console.log("Error in get employee geofencing :",error.message);
+    console.log("Error in get employee geofencing :", error.message);
     res.status(500).json({ message: error.message });
   }
 };
@@ -560,7 +543,7 @@ export const deleteLocationGroup = async (req, res) => {
 
 export const assignGeofencingToEmployees = async (req, res) => {
   const { employeeIds, geofencingIds } = req.body; // geofencingIds should be an array
-  
+
   if (!employeeIds || !Array.isArray(employeeIds) || !geofencingIds || !Array.isArray(geofencingIds)) {
     return res.status(400).json({ message: "Invalid payload: employeeIds and geofencingIds must be arrays." });
   }
@@ -568,11 +551,11 @@ export const assignGeofencingToEmployees = async (req, res) => {
   const client = await db.connect();
   try {
     await client.query('BEGIN');
-    
+
     for (const empId of employeeIds) {
       // Clear existing assignments for this employee
       await client.query('DELETE FROM employee_geofencing WHERE employee_id = $1', [empId]);
-      
+
       // Insert new assignments
       for (const geoId of geofencingIds) {
         if (geoId) {
@@ -583,7 +566,7 @@ export const assignGeofencingToEmployees = async (req, res) => {
         }
       }
     }
-    
+
     await client.query('COMMIT');
     res.json({ message: "Geofencing assigned successfully" });
   } catch (error) {

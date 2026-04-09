@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -487,6 +488,20 @@ const MonthlyFireSafetyInspections = () => {
     }));
   };
 
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/form/monthlyFireSafety");
+      setInspectionData(response.data);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to fetch data");
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   useEffect(() => {
     return () => {
       if (formData.signaturePreview) {
@@ -496,7 +511,7 @@ const MonthlyFireSafetyInspections = () => {
   }, [formData.signaturePreview]);
 
   // Handle submit
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const { employee, location, createdDate, signature, signhere } = formData;
 
     if (!employee || !location || !createdDate || (!signature && !signhere)) {
@@ -505,48 +520,37 @@ const MonthlyFireSafetyInspections = () => {
     }
 
     const newEntry = {
-      id: editId ? editId : Date.now(),
       ...formData,
     };
 
-    if (editId) {
-      const updated = inspectionData.map((item) =>
-        item.id === editId ? { ...item, ...newEntry } : item,
-      );
-
-      setInspectionData(updated);
-
-      // Backend version
-      // await axios.put(`/api/manual-entry/${editId}`, newEntry)
-
-      toast.success("Request Updated");
-    } else {
-      const updated = [...inspectionData, newEntry];
-      setInspectionData(updated);
-
-      // Backend version
-      // await axios.post("/api/manual-entry-request", newEntry)
-
-      toast.success("Request Submitted");
+    try {
+      if (editId) {
+        await axios.put(`http://localhost:3000/api/form/monthlyFireSafety/${editId}`, newEntry);
+        toast.success("Request Updated");
+      } else {
+        await axios.post("http://localhost:3000/api/form/monthlyFireSafety", newEntry);
+        toast.success("Request Submitted");
+      }
+      fetchData();
+      setOpenModal(false);
+      setEditId(null);
+      setFormData(defaultFormData);
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred");
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData(defaultFormData);
   };
 
   // Handle delete
-  const handleDelete = (id) => {
-    const updated = inspectionData.filter((v) => v.id !== id);
-
-    setInspectionData(
-      updated.map((item) => ({
-        ...item,
-      })),
-    );
-
-    toast.success("Deleted Successfully");
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/form/monthlyFireSafety/${id}`);
+      fetchData();
+      toast.success("Deleted Successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete");
+    }
   };
 
   const handleCopy = () => {

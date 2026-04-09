@@ -25,7 +25,7 @@ const SearchDropdown = ({
 
   const filtered = options.filter((o) => {
     const l = getLabel(o);
-    return l && l.toLowerCase().includes(search.toLowerCase());
+    return l && typeof l === 'string' && l.toLowerCase().includes(search.toLowerCase());
   });
 
   //  MULTI + SINGLE HANDLER

@@ -132,7 +132,7 @@ try{
   }
 
 
-  const allowedRoles=["admin","employee","hr","manager","supervisor","approver"];
+  const allowedRoles=["admin","employee","hr","manager","supervisor","approver","finance","timekeeper"];
 
 if(!allowedRoles.includes(role)){
   return res.status(400).json({message:"Invalid roles",success:false});
