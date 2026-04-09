@@ -33,6 +33,7 @@ const Designation = () => {
     company_name: "",
     code: "",
     department: "",
+    department_name: "",
     description: "",
     isActive: false,
   });
@@ -49,7 +50,7 @@ const Designation = () => {
       const res = await axios.get(`${API_BASE}/master/designation`, {
         headers,
       });
-
+console.log("Fetched designations:", res.data);
       const data = Array.isArray(res.data) ? res.data : [];
 
       setDesignation(
@@ -59,7 +60,8 @@ const Designation = () => {
           code: d.code || "",
           company: d.company || "",
           company_name: d.company_name || "",
-          department: d.department || "",
+          department: d.department_name || "",
+          department_name: d.department_name || "",
           description: d.description || "",
           isActive:
             d.is_active === true ||
@@ -177,6 +179,7 @@ const Designation = () => {
           company: res.data.company || "",
           company_name: res.data.company_name || "",
           department: res.data.department || "",
+          department_name: res.data.department_name || "",
           description: res.data.description || "",
           isActive:
             res.data.is_active === true ||
@@ -206,6 +209,7 @@ const Designation = () => {
           company: res.data.company || "",
           company_name: res.data.company_name || "",
           department: res.data.department || "",
+          department_name: res.data.department_name || "",
           description: res.data.description || "",
           isActive:
             res.data.is_active === true ||
@@ -228,6 +232,7 @@ const Designation = () => {
         name: "",
         code: "",
         department: "",
+        department_name: "",
         description: "",
         isActive: false,
       });
@@ -365,9 +370,11 @@ const Designation = () => {
                   setEditId(null);
                   setFormData({
                     company: "",
+                    company_name: "",
                     name: "",
                     code: "",
                     department: "",
+                    department_name: "",
                     description: "",
                     isActive: false,
                   });
@@ -683,7 +690,8 @@ const Designation = () => {
                   displayValue={formData.company_name}
                   options={companyOptions}
                   labelKey="name"
-                  valueKey="name"
+                  valueKey="id"
+                  labelName="company_name"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
@@ -699,10 +707,11 @@ const Designation = () => {
                   }
                   name="department"
                   value={formData.department}
-                  displayValue={formData.department}
+                  displayValue={formData.department_name}
                   options={departmentOptions}
                   labelKey="name"
-                  valueKey="name"
+                  valueKey="id"
+                  labelName="department_name"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}

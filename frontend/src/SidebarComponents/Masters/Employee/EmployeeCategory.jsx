@@ -24,12 +24,30 @@ const EmployeeCategory = () => {
   const [editId, setEditId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showWorkHoursPicker, setShowWorkHoursPicker] = useState(false);
+  const [companyOptions, setCompanyOptions] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     company: "",
+    company_name: "",
     workhours: null,
     isActive: false,
   });
+
+  const fetchCompanies = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get("http://localhost:3000/api/companies");
+      setCompanyOptions(res.data || []);
+    } catch (error) {
+      console.error("Failed to fetch companies", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCompanies();
+  }, []);
 
   const inputStyle =
     "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
@@ -40,7 +58,9 @@ const EmployeeCategory = () => {
   const filteredemployeeCategory = employeeCategory.filter(
     (x) =>
       x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.company.toLowerCase().startsWith(searchTerm.toLowerCase()),
+      (x.company_name || x.company || "")
+        .toLowerCase()
+        .startsWith(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -99,6 +119,7 @@ const EmployeeCategory = () => {
 
     setFormData({
       company: "",
+      company_name: "",
       name: "",
       workhours: null,
       isActive: false,
@@ -348,13 +369,13 @@ const EmployeeCategory = () => {
                       {item.name || "-"}
                     </td>
                     <td className="px-6 py-2 text-center hidden md:table-cell text-gray-600">
-                      {item.company || "-"}
+                      {item.company_name || item.company || "-"}
                     </td>
                     <td className="px-6 py-2 text-center hidden md:table-cell text-gray-600">
                       {item.workhours
                         ? item.workhours.toLocaleTimeString([], {
-                            hour12: false,
-                          })
+                          hour12: false,
+                        })
                         : "-"}
                     </td>
                     <td className="px-4 py-3 hidden lg:table-cell text-center">
@@ -504,7 +525,11 @@ const EmployeeCategory = () => {
                 }
                 name="company"
                 value={formData.company}
-                options={["Company 1", "Company 2"]}
+                displayValue={formData.company_name}
+                options={companyOptions}
+                labelKey="name"
+                valueKey="id"
+                labelName="company_name"
                 formData={formData}
                 setFormData={setFormData}
                 disabled={mode === "view"}
@@ -524,8 +549,8 @@ const EmployeeCategory = () => {
                 >
                   {formData.workhours
                     ? formData.workhours.toLocaleTimeString([], {
-                        hour12: false,
-                      })
+                      hour12: false,
+                    })
                     : "HH:MM:SS"}
                 </div>
                 {showWorkHoursPicker && (

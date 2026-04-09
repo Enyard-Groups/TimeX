@@ -109,10 +109,11 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
 
     const monthNumber = months.indexOf(tempMonth) + 1;
 
+    // yyyy-mm-dd format required by PostgreSQL
     const formatted =
-      `${tempDay}/` +
-      `${String(monthNumber).padStart(2, "0")}/` +
-      `${tempYear}`;
+      `${tempYear}-` +
+      `${String(monthNumber).padStart(2, "0")}-` +
+      `${String(tempDay).padStart(2, "0")}`;
 
     onChange && onChange(formatted);
 

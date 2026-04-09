@@ -597,6 +597,9 @@ const Leave = () => {
                   value={formData.company}
                   displayValue={formData.company_name}
                   options={companyOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  labelName="company_name"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}

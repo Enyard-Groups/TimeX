@@ -464,20 +464,7 @@ const DeviceManagementSub = () => {
                         )}
                       </div>
                     </td>
-<<<<<<< HEAD
-                    <td className="px-6 py-2 text-center hidden xl:table-cell">
-                      <BoolBadge value={item.isFingerprint} />
-                    </td>
-                    <td className="px-6 py-2 text-center hidden 2xl:table-cell">
-                      <BoolBadge value={item.isCardNo} />
-                    </td>
-                    <td className="px-6 py-2 text-center hidden 2xl:table-cell">
-                      <BoolBadge value={item.isPinNo} />
-                    </td>
-                    <td className="px-6 py-2 text-center hidden 2xl:table-cell">
-=======
                     <td className="px-6 py-2 text-center hidden 2xl:table-cell text-gray-600">
->>>>>>> 3411cc474c135c304879d0bb4504e2fe248f4555
                       {item.company || "-"}
                     </td>
                     <td className="px-4 py-3 hidden md:table-cell text-center">
@@ -603,119 +590,6 @@ const DeviceManagementSub = () => {
               </button>
             </div>
 
-<<<<<<< HEAD
-            {/* Form Fields */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Device Serial Number */}
-              <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                  Device Serial Number <span className="text-red-500">*</span>
-                </label>
-                <input
-                  name="deviceserialno"
-                  value={formData.deviceserialno}
-                  onChange={handleChange}
-                  disabled={mode === "view"}
-                  placeholder="Enter serial number"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
-                />
-              </div>
-
-              {/* Name */}
-              <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                  Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  disabled={mode === "view"}
-                  placeholder="Enter device name"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
-                />
-              </div>
-
-              {/* Device Model */}
-
-              <div>
-                <SearchDropdown
-                  label={<>Device Model</>}
-                  name="devicemodel"
-                  value={formData.devicemodel}
-                  displayValue={formData.devicemodel}
-                  options={deviceModels}
-                  onChange={handleChange}
-                  labelKey="name"
-                  valueKey="name"
-                  formData={formData}
-                  setFormData={setFormData}
-                  disabled={mode === "view"}
-                  inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                  labelStyle="text-sm font-bold text-gray-700 mb-2 block"
-                />
-              </div>
-
-              {/* Device IP */}
-              <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                  Device IP <span className="text-red-500">*</span>
-                </label>
-                <input
-                  name="deviceip"
-                  value={formData.deviceip}
-                  onChange={handleChange}
-                  disabled={mode === "view"}
-                  placeholder="e.g. 192.168.1.1"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
-                />
-              </div>
-
-              {/* Company */}
-              <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                  Company <span className="text-red-500">*</span>
-                </label>
-                <input
-                  name="company"
-                  value={formData.company}
-                  onChange={handleChange}
-                  disabled={mode === "view"}
-                  placeholder="Enter company"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
-                />
-              </div>
-
-              {/* Longitude */}
-              <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                  Longitude
-                </label>
-                <input
-                  name="longitude"
-                  value={formData.longitude}
-                  onChange={handleChange}
-                  disabled={mode === "view"}
-                  placeholder="0"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
-                />
-              </div>
-
-              {/* Latitude */}
-              <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                  Latitude
-                </label>
-                <input
-                  name="latitude"
-                  value={formData.latitude}
-                  onChange={handleChange}
-                  disabled={mode === "view"}
-                  placeholder="0"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
-                />
-              </div>
-=======
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {[
                 {
@@ -772,7 +646,6 @@ const DeviceManagementSub = () => {
                 inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm font-medium"
                 labelStyle="text-sm lg:text-lg 3xl:text-xl font-bold text-gray-700 mb-2 block"
               />
->>>>>>> 3411cc474c135c304879d0bb4504e2fe248f4555
             </div>
 
             {/* Checkboxes Grid */}

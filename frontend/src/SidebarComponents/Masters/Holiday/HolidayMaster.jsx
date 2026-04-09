@@ -30,6 +30,7 @@ const HolidayMaster = () => {
   const [showHendSpinner, setShowHendSpinner] = useState(false);
 
   const [companyOptions, setCompanyOptions] = useState([]);
+  const [locationOptions, setLocationOptions] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     code: "",
@@ -38,15 +39,20 @@ const HolidayMaster = () => {
     company: "",
     company_name: "",
     location: "",
+    location_name: "",
     isActive: false,
   });
 
   const fetchCompanies = async () => {
     try {
-      const res = await axios.get(`${API_BASE}/companies`);
-      setCompanyOptions(res.data || []);
+      const [compRes, locRes] = await Promise.all([
+        axios.get(`${API_BASE}/companies`),
+        axios.get(`${API_BASE}/master/location-groups`),
+      ]);
+      setCompanyOptions(compRes.data || []);
+      setLocationOptions(locRes.data?.data || locRes.data || []);
     } catch (error) {
-      console.error("Failed to fetch companies", error);
+      console.error("Failed to fetch companies/locations", error);
     }
   };
 
@@ -197,6 +203,7 @@ const HolidayMaster = () => {
       company: "",
       company_name: "",
       location: "",
+      location_name: "",
       isActive: false,
     });
   };
@@ -323,6 +330,7 @@ const HolidayMaster = () => {
                   company: "",
                   company_name: "",
                   location: "",
+                  location_name: "",
                   isActive: false,
                 }),
                 setOpenModal(true)
@@ -452,7 +460,7 @@ const HolidayMaster = () => {
                     <div className="flex flex-col items-center justify-center gap-3">
                       <div className="text-4xl opacity-40">📅</div>
                       <p className="text-gray-500 text-base font-medium">
-                        No holiday data 
+                        No holiday data
                       </p>
                     </div>
                   </td>
@@ -704,7 +712,11 @@ const HolidayMaster = () => {
                 label="Location"
                 name="location"
                 value={formData.location}
-                options={["Location 1", "Location 2"]}
+                displayValue={formData.location_name}
+                options={locationOptions}
+                labelKey="group_name"
+                valueKey="id"
+                labelName="location_name"
                 formData={formData}
                 setFormData={setFormData}
                 disabled={mode === "view"}

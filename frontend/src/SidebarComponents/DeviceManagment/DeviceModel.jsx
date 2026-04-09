@@ -23,11 +23,7 @@ const DeviceModel = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
-<<<<<<< HEAD
-  const [companyOptions, setCompanyOptions] = useState([]);
-=======
   const [loading, setLoading] = useState(false);
->>>>>>> 3411cc474c135c304879d0bb4504e2fe248f4555
   const [formData, setFormData] = useState({
     name: "",
     company: "",
@@ -54,15 +50,11 @@ const DeviceModel = () => {
       const payload = response?.data?.data ?? response?.data;
       const mapped = (Array.isArray(payload) ? payload : []).map((d) => ({
         ...d,
-<<<<<<< HEAD
-        isActive: d.is_active ?? d.active ?? false,
-=======
         active:
           d.active === true ||
           d.active === 1 ||
           d.active === "true" ||
           d.active === "Y",
->>>>>>> 3411cc474c135c304879d0bb4504e2fe248f4555
       }));
       setDeviceModel(mapped);
     } catch (error) {

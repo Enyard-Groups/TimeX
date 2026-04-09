@@ -25,7 +25,9 @@ const emptyForm = {
   dob: "",
   doj: "",
   company: "",
+  company_name: "",
   location: "",
+  location_name: "",
   designation: "",
   shift: "",
   first_approver: "",
@@ -36,7 +38,9 @@ const emptyForm = {
   is_active: false,
   is_mobile_user: false,
   department_id: "",
+  department_id_name: "",
   designation_id: "",
+  designation_id_name: "",
   shift_id: "",
   leave_plan: [],
   leave_plan_name: [],
@@ -61,6 +65,7 @@ const EmployeeMaster = () => {
   const [approverOptions, setApproverOptions] = useState([]);
   const [leavePlanOptions, setLeavePLanOptions] = useState([]);
   const [companyOptions, setCompanyOptions] = useState([]);
+  const [locationOptions, setLocationOptions] = useState([]);
 
   const [formData, setFormData] = useState(emptyForm);
 
@@ -88,13 +93,14 @@ const EmployeeMaster = () => {
   // ── Fetch dropdown options from backend ───────────────────────────────────
   const fetchDropdowns = async () => {
     try {
-      const [deptRes, desRes, shiftRes, appRes, levRes, compRes] = await Promise.all([
+      const [deptRes, desRes, shiftRes, appRes, levRes, compRes, locRes] = await Promise.all([
         axios.get(`${API_BASE}/master/departments`),
         axios.get(`${API_BASE}/master/designation`),
         axios.get(`${API_BASE}/master/shifts`),
         axios.get(`${API_BASE}/users/approvers`, { withCredentials: true }),
         axios.get(`${API_BASE}/master/leave-types`, { withCredentials: true }),
         axios.get(`${API_BASE}/companies`),
+        axios.get(`${API_BASE}/master/location-groups`),
       ]);
       setDepartmentOptions(deptRes.data || []);
       setDesignationOptions(desRes.data || []);
@@ -102,6 +108,7 @@ const EmployeeMaster = () => {
       setApproverOptions(appRes.data || []);
       setLeavePLanOptions(levRes.data || []);
       setCompanyOptions(compRes.data || []);
+      setLocationOptions(locRes.data?.data || locRes.data || []);
     } catch (error) {
       console.error("Failed to fetch dropdowns", error);
     }
@@ -679,6 +686,7 @@ const EmployeeMaster = () => {
                   options={companyOptions}
                   labelKey="name"
                   valueKey="id"
+                  labelName="company_name"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
@@ -689,7 +697,11 @@ const EmployeeMaster = () => {
                   label="Location"
                   name="location"
                   value={formData.location}
-                  options={["Location1", "Location2", "Location3"]}
+                  displayValue={formData.location_name}
+                  options={locationOptions}
+                  labelKey="group_name"
+                  valueKey="id"
+                  labelName="location_name"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
@@ -704,6 +716,7 @@ const EmployeeMaster = () => {
                   options={departmentOptions}
                   labelKey="name"
                   valueKey="id"
+                  labelName="department_id_name"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
@@ -718,6 +731,7 @@ const EmployeeMaster = () => {
                   options={designationOptions}
                   labelKey="name"
                   valueKey="id"
+                  labelName="designation_id_name"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}

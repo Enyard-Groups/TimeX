@@ -323,20 +323,6 @@ const ClaimRequest = () => {
           </div>
         </div>
 
-<<<<<<< HEAD
-        <div
-          className="overflow-x-auto min-h-[250px]"
-          style={{ scrollbarWidth: "none" }}
-        >
-          <table className="w-full text-lg border-collapse">
-            <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-              <tr>
-                <th className="py-2 px-6 font-semibold">Employee</th>
-                <th className="py-2 px-6 font-semibold hidden md:table-cell">
-                  Company
-                </th>
-                <th className="py-2 px-6 font-semibold hidden sm:table-cell">
-=======
         {/* Table */}
         <div className="overflow-x-auto min-h-[350px]">
           <table className="w-full text-[16px] xl:text-[20px] text-gray-900">
@@ -346,7 +332,6 @@ const ClaimRequest = () => {
                   Employee
                 </th>
                 <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
->>>>>>> 3411cc474c135c304879d0bb4504e2fe248f4555
                   Category
                 </th>
                 <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
@@ -393,18 +378,10 @@ const ClaimRequest = () => {
                     key={item.id}
                     className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
                   >
-<<<<<<< HEAD
-                    <td className="py-2 px-6">{item.employee_name}</td>
-                    <td className="py-2 px-6 hidden md:table-cell">
-                      {item.name || "N/A"}
-                    </td>
-                    <td className="py-2 px-6 hidden sm:table-cell">
-=======
                     <td className="px-6 py-2 text-center">
                       {item.employee_name}
                     </td>
                     <td className="px-6 py-2 text-center hidden sm:table-cell">
->>>>>>> 3411cc474c135c304879d0bb4504e2fe248f4555
                       {item.claim_category}
                     </td>
                     <td className="px-6 py-2 text-center hidden lg:table-cell">

@@ -27,7 +27,8 @@ const MonthlyFireSafetyInspections = () => {
   const [showDateSpinner, setShowDateSpinner] = useState(false);
   const defaultFormData = {
     employee: "",
-    location: "",
+    location_id: "",
+    location_name: "",
     createdDate: "",
 
     fireHazards: {
@@ -426,10 +427,14 @@ const MonthlyFireSafetyInspections = () => {
   const labelStyle =
     " text-[16px] font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
+  const [locationOptions, setLocationOptions] = useState([]);
+
   const filteredinspectionData = inspectionData.filter(
     (x) =>
       x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.location.toLowerCase().startsWith(searchTerm.toLowerCase()),
+      (x.location_name || x.location || "")
+        .toLowerCase()
+        .startsWith(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -488,6 +493,15 @@ const MonthlyFireSafetyInspections = () => {
     }));
   };
 
+  const fetchLocations = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/master/location-groups");
+      setLocationOptions(response.data?.data || response.data || []);
+    } catch (error) {
+      console.error("Failed to fetch locations", error);
+    }
+  };
+
   const fetchData = async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/form/monthlyFireSafety");
@@ -500,6 +514,7 @@ const MonthlyFireSafetyInspections = () => {
 
   useEffect(() => {
     fetchData();
+    fetchLocations();
   }, []);
 
   useEffect(() => {
@@ -512,9 +527,9 @@ const MonthlyFireSafetyInspections = () => {
 
   // Handle submit
   const handleSubmit = async () => {
-    const { employee, location, createdDate, signature, signhere } = formData;
+    const { employee, location_id, createdDate, signature, signhere } = formData;
 
-    if (!employee || !location || !createdDate || (!signature && !signhere)) {
+    if (!employee || !location_id || !createdDate || (!signature && !signhere)) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -558,7 +573,7 @@ const MonthlyFireSafetyInspections = () => {
 
     const rows = filteredinspectionData
       .map((item) => {
-        return [item.location, item.employee, item.createdDate].join("\t");
+        return [item.location_name || item.location, item.employee, item.createdDate].join("\t");
       })
       .join("\n");
 
@@ -570,7 +585,7 @@ const MonthlyFireSafetyInspections = () => {
 
   const handleExcel = () => {
     const excelData = filteredinspectionData.map((item) => ({
-      Location: item.location,
+      Location: item.location_name || item.location,
       InspectedBy: item.employee,
       Date: item.createdDate,
     }));
@@ -591,7 +606,7 @@ const MonthlyFireSafetyInspections = () => {
     const tableRows = [];
 
     filteredinspectionData.forEach((item) => {
-      const row = [item.location, item.employee, item.createdDate];
+      const row = [item.location_name || item.location, item.employee, item.createdDate];
 
       tableRows.push(row);
     });
@@ -731,7 +746,7 @@ const MonthlyFireSafetyInspections = () => {
                         {index + 1}
                       </td>
 
-                      <td className="p-2">{item.location}</td>
+                      <td className="p-2">{item.location_name || item.location}</td>
 
                       <td className="p-2 hidden md:table-cell">
                         {item.createdDate ? item.createdDate : "Missed Entry"}
@@ -872,9 +887,13 @@ const MonthlyFireSafetyInspections = () => {
                             Location <span className="text-red-500">*</span>
                           </>
                         }
-                        name="location"
-                        value={formData.location}
-                        options={["Head Office"]}
+                        name="location_id"
+                        value={formData.location_id}
+                        displayValue={formData.location_name}
+                        options={locationOptions}
+                        labelKey="group_name"
+                        valueKey="id"
+                        labelName="location_name"
                         formData={formData}
                         setFormData={setFormData}
                         disabled={mode === "view"}
@@ -998,7 +1017,7 @@ const MonthlyFireSafetyInspections = () => {
                               className="w-full border rounded px-2 py-1"
                               value={
                                 formData[sectionItem.section].remarks[
-                                  field.key
+                                field.key
                                 ] || ""
                               }
                               disabled={mode === "view"}
@@ -1127,11 +1146,10 @@ const MonthlyFireSafetyInspections = () => {
                                 signatureMode: "upload",
                               })
                             }
-                            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                              formData.signatureMode === "upload"
-                                ? "bg-[#0f172a] text-white border-[#0f172a]"
-                                : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                            }`}
+                            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.signatureMode === "upload"
+                              ? "bg-[#0f172a] text-white border-[#0f172a]"
+                              : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                              }`}
                           >
                             Upload
                           </button>
@@ -1143,11 +1161,10 @@ const MonthlyFireSafetyInspections = () => {
                                 signatureMode: "draw",
                               })
                             }
-                            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                              formData.signatureMode === "draw"
-                                ? "bg-[#0f172a] text-white border-[#0f172a]"
-                                : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                            }`}
+                            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.signatureMode === "draw"
+                              ? "bg-[#0f172a] text-white border-[#0f172a]"
+                              : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                              }`}
                           >
                             Sign Here
                           </button>

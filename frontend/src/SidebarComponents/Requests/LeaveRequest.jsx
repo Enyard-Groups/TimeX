@@ -430,18 +430,6 @@ const LeaveRequest = () => {
           </div>
 
           {/* Table */}
-<<<<<<< HEAD
-          <div
-            className="overflow-x-auto min-h-[250px]"
-            style={{ scrollbarWidth: "none" }}
-          >
-            <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="p-2 font-semibold">Employee</th>
-                  <th className="p-2 hidden md:table-cell font-semibold">Company</th>
-                  <th className="p-2 hidden sm:table-cell font-semibold whitespace-nowrap">
-=======
           <div className="overflow-x-auto min-h-[350px]">
             <table className="w-full text-[16px] xl:text-[20px] text-gray-700">
               <thead>
@@ -450,7 +438,6 @@ const LeaveRequest = () => {
                     Employee
                   </th>
                   <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700 whitespace-nowrap">
->>>>>>> 3411cc474c135c304879d0bb4504e2fe248f4555
                     Leave Type
                   </th>
                   <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
@@ -501,16 +488,8 @@ const LeaveRequest = () => {
                       key={item.id}
                       className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
                     >
-<<<<<<< HEAD
-                      <td className="p-2">{item.employee_name}</td>
-                      <td className="p-2 hidden md:table-cell">{item.company_name || "N/A"}</td>
-
-                      <td className="p-2 hidden sm:table-cell whitespace-nowraps">
-                        {item.leave_type}
-=======
                       <td className="px-6 py-2 text-center">
                         {item.employee_name || "-"}
->>>>>>> 3411cc474c135c304879d0bb4504e2fe248f4555
                       </td>
 
                       <td className="px-6 py-2 text-center hidden sm:table-cell whitespace-nowrap">

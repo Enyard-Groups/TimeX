@@ -350,16 +350,6 @@ const BusinessTravelRequest = () => {
           className="overflow-x-auto min-h-[350px]"
           style={{ scrollbarWidth: "none" }}
         >
-<<<<<<< HEAD
-          <table className="w-full text-lg border-collapse">
-            <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-              <tr>
-                <th className="py-2 px-6 font-semibold">Employee</th>
-                <th className="py-2 px-6 font-semibold hidden md:table-cell">
-                  Company
-                </th>
-                <th className="py-2 px-6 font-semibold hidden lg:table-cell">
-=======
           <table className="w-full text-[16px] xl:text-[20px]">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
@@ -367,7 +357,6 @@ const BusinessTravelRequest = () => {
                   Employee
                 </th>
                 <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
->>>>>>> 3411cc474c135c304879d0bb4504e2fe248f4555
                   From Date
                 </th>
                 <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
@@ -412,17 +401,8 @@ const BusinessTravelRequest = () => {
                     key={item.id}
                     className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
                   >
-<<<<<<< HEAD
-                    <td className="py-2 px-6">{item.employee_name}</td>
-                    <td className="py-2 px-6 hidden md:table-cell">
-                      {item.name || "N/A"}
-                    </td>
-                    <td className="py-2 px-6 hidden lg:table-cell">
-                      {item.start_date}
-=======
                     <td className="px-6 py-2 text-center">
                       {item.employee_name || "-"}
->>>>>>> 3411cc474c135c304879d0bb4504e2fe248f4555
                     </td>
 
                     <td className="px-6 py-2 text-center hidden lg:table-cell">

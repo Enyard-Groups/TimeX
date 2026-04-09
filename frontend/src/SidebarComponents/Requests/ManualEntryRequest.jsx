@@ -53,11 +53,7 @@ const ManualEntryRequest = () => {
         axios.get(`${API_BASE}/requests/manual`),
         axios.get(`${API_BASE}/employee`),
       ]);
-<<<<<<< HEAD
-      console.log(manualRes.data)
-=======
       console.log(manualRes.data);
->>>>>>> 3411cc474c135c304879d0bb4504e2fe248f4555
       setManualEntry(manualRes.data);
       setEmployeeOptions(empRes.data);
     } catch (error) {
@@ -79,11 +75,7 @@ const ManualEntryRequest = () => {
       if (emp) {
         setFormData((prev) => ({
           ...prev,
-<<<<<<< HEAD
-          enrollment_id: emp.device_enrollment_id|| "N/A",
-=======
           enrollment_id: emp.device_enrollment_id || "N/A",
->>>>>>> 3411cc474c135c304879d0bb4504e2fe248f4555
         }));
       }
     }
@@ -396,25 +388,11 @@ const ManualEntryRequest = () => {
                     key={item.id}
                     className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                   >
-<<<<<<< HEAD
-                    <td className="p-2 text-left pl-6">{item.employee_name}</td>
-                    <td className="p-2">{item.location}</td>
-                    <td className="p-2 whitespace-nowrap">
-                      {item.in_time
-                        ? item.in_time
-                        : "-"}
-                    </td>
-                    <td className="p-2 whitespace-nowrap">
-                      {item.out_time
-                        ? item.out_time
-                        : "-"}
-=======
                     <td className="px-6 py-2.5 text-center font-medium text-gray-800">
                       {item.employee_name}
                     </td>
                     <td className="px-6 py-2.5 text-center text-gray-600">
                       {item.location}
->>>>>>> 3411cc474c135c304879d0bb4504e2fe248f4555
                     </td>
                     <td className="px-6 py-2.5 text-center text-gray-600 font-mono text-sm">
                       {item.in_time || "-"}

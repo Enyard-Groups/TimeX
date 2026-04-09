@@ -12,6 +12,7 @@ import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../SearchDropdown";
+import axios from "axios";
 
 const UserMaster = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
@@ -23,6 +24,7 @@ const UserMaster = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [companyOptions, setCompanyOptions] = useState([]);
   const [menuData, setMenuData] = useState([
     {
       parentMenuID: 0,
@@ -206,6 +208,7 @@ const UserMaster = () => {
     empname: "",
     enrollmentId: "",
     company: "",
+    company_name: "",
     password: "",
     active: false,
     role: "Company Admin",
@@ -303,6 +306,7 @@ const UserMaster = () => {
         empname: "",
         enrollmentId: "",
         company: "",
+        company_name: "",
         password: "",
         active: false,
         role: "User",
@@ -359,6 +363,9 @@ const UserMaster = () => {
 
   useEffect(() => {
     fetchUsers();
+    axios.get(`${API_BASE}/companies`)
+      .then(res => setCompanyOptions(res.data || []))
+      .catch(err => console.error("Failed to fetch companies", err));
   }, []);
 
   const handleCheckbox = (id) => {
@@ -375,8 +382,7 @@ const UserMaster = () => {
     const rows = filteredUsers
       .map(
         (u, i) =>
-          `${i + 1}\t${u.userName}\t${u.empname}\t${u.enrollmentId}\t${u.role}\t${
-            u.active ? "Y" : "N"
+          `${i + 1}\t${u.userName}\t${u.empname}\t${u.enrollmentId}\t${u.role}\t${u.active ? "Y" : "N"
           }`,
       )
       .join("\n");
@@ -462,6 +468,7 @@ const UserMaster = () => {
                     empname: "",
                     enrollmentId: "",
                     company: "",
+                    company_name: "",
                     password: "",
                     active: false,
                     role: "User",
@@ -583,15 +590,15 @@ const UserMaster = () => {
                   </tr>
                 ) : currentUsers.length === 0 ? (
                   <tr>
-                  <td colSpan="7" className="px-4 py-12 text-center">
-                    <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="text-4xl opacity-40">👤</div>
-                      <p className="text-gray-500 text-base font-medium">
-                        No user data
-                      </p>
-                    </div>
-                  </td>
-                </tr>
+                    <td colSpan="7" className="px-4 py-12 text-center">
+                      <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="text-4xl opacity-40">👤</div>
+                        <p className="text-gray-500 text-base font-medium">
+                          No user data
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
                 ) : (
                   currentUsers.map((user, index) => (
                     <tr
@@ -809,7 +816,11 @@ const UserMaster = () => {
                       }
                       name="company"
                       value={formData.company}
-                      options={["Company 1", "Company 2"]}
+                      displayValue={formData.company_name}
+                      options={companyOptions}
+                      labelKey="name"
+                      valueKey="id"
+                      labelName="company_name"
                       formData={formData}
                       setFormData={setFormData}
                       disabled={mode === "view"}
@@ -861,7 +872,7 @@ const UserMaster = () => {
                       }
                       name="role"
                       value={formData.role}
-                      options={["admin", "employee", "hr", "manager"]}
+                      options={["admin", "employee", "hr", "manager","timekeeper","approver"]}
                       formData={formData}
                       setFormData={setFormData}
                       disabled={mode === "view"}

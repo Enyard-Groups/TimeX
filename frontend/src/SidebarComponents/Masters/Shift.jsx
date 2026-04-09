@@ -76,6 +76,7 @@ const Shift = () => {
 
       const res = await axios.get(`${API_BASE}/master/shifts`, { headers });
       const data = Array.isArray(res.data) ? res.data : [];
+      console.log("Fetched shifts:", data);
 
       setShift(
         data.map((d) => ({
@@ -276,13 +277,13 @@ const Shift = () => {
           item.code,
           item.intime
             ? item.intime.toLocaleTimeString([], {
-                hour12: false,
-              })
+              hour12: false,
+            })
             : "",
           item.outtime
             ? item.outtime.toLocaleTimeString([], {
-                hour12: false,
-              })
+              hour12: false,
+            })
             : "",
           item.company_name || item.company,
           item.isActive ? "Y" : "N",
@@ -510,7 +511,7 @@ const Shift = () => {
                       <div className="flex flex-col items-center justify-center gap-3">
                         <div className="text-4xl opacity-40">🌗</div>
                         <p className="text-gray-500 text-base font-medium">
-                          No shift data 
+                          No shift data
                         </p>
                       </div>
                     </td>
@@ -533,15 +534,15 @@ const Shift = () => {
                       <td className="px-6 py-2 text-center hidden md:table-cell text-gray-600">
                         {item.intime
                           ? item.intime.toLocaleTimeString([], {
-                              hour12: false,
-                            })
+                            hour12: false,
+                          })
                           : "-"}
                       </td>
                       <td className="px-6 py-2 text-center hidden xl:table-cell text-gray-600">
                         {item.outtime
                           ? item.outtime.toLocaleTimeString([], {
-                              hour12: false,
-                            })
+                            hour12: false,
+                          })
                           : "-"}
                       </td>
                       <td className="px-6 py-2 text-center hidden xl:table-cell text-gray-600">
@@ -711,8 +712,8 @@ const Shift = () => {
                   >
                     {formData.intime
                       ? formData.intime.toLocaleTimeString([], {
-                          hour12: false,
-                        })
+                        hour12: false,
+                      })
                       : "HH:MM:SS"}
                   </div>
                   {showInTimePicker && (
@@ -738,8 +739,8 @@ const Shift = () => {
                   >
                     {formData.outtime
                       ? formData.outtime.toLocaleTimeString([], {
-                          hour12: false,
-                        })
+                        hour12: false,
+                      })
                       : "HH:MM:SS"}
                   </div>
                   {showOutTimePicker && (
@@ -764,7 +765,8 @@ const Shift = () => {
                   displayValue={formData.company_name}
                   options={companyOptions}
                   labelKey="name"
-                  valueKey="name"
+                  valueKey="id"
+                  labelName="company_name"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
