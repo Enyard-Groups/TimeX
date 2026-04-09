@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
@@ -41,10 +40,9 @@ const AbsenceSummaryReport = () => {
   });
 
   const inputStyle =
-    "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-lg py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
-
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
+    "text-sm lg:text-base 3xl:text-xl font-semibold text-gray-700 mb-2 block";
 
   const absentences = absenceSummaryReport.filter(
     (x) =>
@@ -115,28 +113,28 @@ const AbsenceSummaryReport = () => {
 
   return (
     <>
-      <div className="mb-6">
-        {/* Header */}
-        <div className="sm:flex sm:justify-between">
-          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-            <FaAngleRight />
-            Reports
-            <FaAngleRight />
-            Absence Reports
-            <FaAngleRight />
-            Absence Summary Report
+      <div className="mb-6 max-w-[1920px] mx-auto">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+          <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900 ">
+            <FaAngleRight className="text-blue-500 text-base" />
+            <span className="text-gray-500">Reports</span>
+            <FaAngleRight className="text-blue-500 text-base" />
+            <span className="text-gray-500">Absence Reports</span>
+            <FaAngleRight className="text-blue-500 text-base" />
+            <div
+              onClick={() => setOpenModal(false)}
+              className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+            >
+              Absence Summary Report
+            </div>
           </h1>
         </div>
 
-        <div
-          className="flex items-center justify-center p-4 overflow-y-auto"
-          style={{ scrollbarWidth: "none" }}
-        >
-          <div
-            className="bg-white rounded-xl shadow-sm w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
-            style={{ scrollbarWidth: "none" }}
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Filter Section */}
+        {!openModal && (
+          <div className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-2xl border border-blue-100/50 shadow-xl mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <div>
                 <SearchDropdown
                   label="Company"
@@ -158,8 +156,6 @@ const AbsenceSummaryReport = () => {
                   options={[
                     "All Category",
                     "Full Time Equivalent",
-                    "Contingent",
-                    "Freelence",
                     "Contract",
                     "Permanent",
                   ]}
@@ -188,30 +184,7 @@ const AbsenceSummaryReport = () => {
                   label="Designation"
                   name="department"
                   value={formData.department}
-                  options={[
-                    "Regional Sales Support Manager",
-                    "Operations Support Officer",
-                    "Finance Assistant",
-                    "Trade Finance Specialist",
-                    "Banking Operations Officer",
-                    "Sales Support Officer",
-                    "Banking Operations Officer",
-                    "Project Manager",
-                    "Administrative Assistant",
-                    "Sales Officer",
-                    "Banking Officer",
-                    "Sales Manager",
-                    "Senior Banking Officer",
-                    "Client Service Manager",
-                    "Senior Director – Banking Operations",
-                    "Relationship Officer",
-                    "Accountant",
-                    "Director – Sales Excellence",
-                    "Service Sales Support Officer",
-                    "HR Manager",
-                    "Sales & Logistics Officer",
-                    "Operation Officer",
-                  ]}
+                  options={["Regional Sales Support Manager", "HR Manager"]}
                   formData={formData}
                   setFormData={setFormData}
                   inputStyle={inputStyle}
@@ -224,17 +197,13 @@ const AbsenceSummaryReport = () => {
                 <input
                   name="fromPunchDate"
                   value={
-                    formData.fromPunchDate
-                      ? formData.fromPunchDate
-                      : new Date().toLocaleDateString()
+                    formData.fromPunchDate || new Date().toLocaleDateString()
                   }
-                  onClick={() => {
-                    setShowPunchDateSpinner(true);
-                  }}
+                  onClick={() => setShowPunchDateSpinner(true)}
+                  readOnly
                   placeholder="dd/mm/yyyy"
                   className={inputStyle}
                 />
-
                 {showPunchDateSpinner && (
                   <SpinnerDatePicker
                     value={formData.fromPunchDate}
@@ -251,17 +220,13 @@ const AbsenceSummaryReport = () => {
                 <input
                   name="toPunchDate"
                   value={
-                    formData.toPunchDate
-                      ? formData.toPunchDate
-                      : new Date().toLocaleDateString()
+                    formData.toPunchDate || new Date().toLocaleDateString()
                   }
-                  onClick={() => {
-                    setShowToPunchDateSpinner(true);
-                  }}
+                  onClick={() => setShowToPunchDateSpinner(true)}
+                  readOnly
                   placeholder="dd/mm/yyyy"
                   className={inputStyle}
                 />
-
                 {showToPunchDateSpinner && (
                   <SpinnerDatePicker
                     value={formData.toPunchDate}
@@ -274,57 +239,61 @@ const AbsenceSummaryReport = () => {
               </div>
             </div>
 
-            {/* Save */}
-
             <div className="flex justify-end mt-10">
               <button
-                onClick={() => {
-                  setOpenModal(true);
-                }}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+                onClick={() => setOpenModal(true)}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md lg:text-lg 3xl:text-xl transition-all duration-200"
               >
                 Generate Report
               </button>
             </div>
           </div>
-        </div>
+        )}
 
+        {/* Results Table Section */}
         {openModal && (
-          <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6 ">
-            {/* Close */}
-            <div className="flex justify-end">
-              <RxCross2
-                onClick={() => setOpenModal(false)}
-                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-              />
+          <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
+            <div className="p-6 border-b border-blue-100/30">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl lg:text-2xl 3xl:text-3xl font-bold text-gray-800">
+                  Absence Summary Report
+                </h2>
+                <RxCross2
+                  onClick={() => setOpenModal(false)}
+                  className="text-2xl text-gray-400 hover:text-red-500 cursor-pointer transition-colors"
+                />
+              </div>
             </div>
 
-            {/* Table  */}
-            <div className="overflow-x-auto mt-6 min-h-[300px]">
-              <h1 className="text-[oklch(0.577_0.245_27.325)] text-xl mb-4 text-center">
-                Absence Summary Report
-              </h1>
-              <table className="min-w-full border border-gray-300 text-sm">
-                <thead className="bg-red-100">
-                  <tr>
-                    <th className="border border-red-300 px-3 py-2">Date</th>
-
+            <div
+              className="overflow-x-auto min-h-[350px]"
+              style={{ scrollbarWidth: "none" }}
+            >
+              <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px] border-collapse">
+                <thead>
+                  <tr className="bg-slate-100 border-b border-blue-100/50">
+                    <th className="px-4 py-3 text-left font-bold text-gray-700 border-r border-blue-100">
+                      Date
+                    </th>
                     {locations.map((loc, i) => (
-                      <th key={i} className="border border-red-300 px-3 py-2">
+                      <th
+                        key={i}
+                        className="px-4 py-3 text-center font-bold text-gray-700 border-r border-blue-100"
+                      >
                         {loc}
                       </th>
                     ))}
-
-                    <th className="border border-red-300 px-3 py-2">TOTAL</th>
+                    <th className="px-4 py-3 text-center font-bold text-red-600">
+                      TOTAL
+                    </th>
                   </tr>
                 </thead>
-
                 <tbody>
                   {dateRange.length === 0 ? (
                     <tr>
                       <td
                         colSpan={locations.length + 2}
-                        className="text-center py-4"
+                        className="p-12 text-center text-gray-500 font-medium"
                       >
                         No Data Found
                       </td>
@@ -332,38 +301,42 @@ const AbsenceSummaryReport = () => {
                   ) : (
                     dateRange.map((date, idx) => {
                       const key = date.toDateString();
-
-                      // total per date
                       const rowTotal = locations.reduce(
                         (sum, loc) => sum + (summary[loc]?.[key] || 0),
                         0,
                       );
 
                       return (
-                        <tr key={idx}>
-                          {/* DATE COLUMN */}
-                          <td className="border border-gray-300 px-3 py-2 font-semibold">
+                        <tr
+                          key={idx}
+                          className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
+                        >
+                          <td className="px-4 py-3 text-left font-semibold text-gray-900 border-r border-blue-100/50">
                             {date.toLocaleDateString()}
                             <br />
-                            <span className="text-xs">
+                            <span className="text-xs lg:text-sm 3xl:text-lg font-normal text-gray-500">
                               {date.toLocaleDateString("en-US", {
                                 weekday: "long",
                               })}
                             </span>
                           </td>
-
-                          {/* LOCATION COLUMNS */}
                           {locations.map((loc, i) => (
                             <td
                               key={i}
-                              className="border border-gray-300 px-3 py-2 text-center"
+                              className="px-4 py-3 text-center text-gray-700 border-r border-blue-100/50"
                             >
-                              {summary[loc]?.[key] || 0}
+                              <span
+                                className={
+                                  summary[loc]?.[key] > 0
+                                    ? "font-bold text-gray-900"
+                                    : "text-gray-400"
+                                }
+                              >
+                                {summary[loc]?.[key] || 0}
+                              </span>
                             </td>
                           ))}
-
-                          {/* ROW TOTAL */}
-                          <td className="border border-gray-300 px-3 py-2 text-center text-red-500 font-bold">
+                          <td className="px-4 py-3 text-center text-red-600 font-bold bg-red-50/30">
                             {rowTotal}
                           </td>
                         </tr>

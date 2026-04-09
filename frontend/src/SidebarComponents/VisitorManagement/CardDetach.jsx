@@ -79,10 +79,9 @@ const CardDetach = () => {
   }, []);
 
   const inputStyle =
-    "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
-
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
+    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const handleSearch = () => {
     const { searchType, searchValue } = formData;
@@ -370,22 +369,28 @@ const CardDetach = () => {
 
   return (
     <>
-      <div className="mb-6">
-        {/* Header */}
-        <div className="sm:flex sm:justify-between">
-          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-            <FaAngleRight />
-            Visitor
-            <FaAngleRight />
-            <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+      <div className="mb-6 max-w-[1920px] mx-auto">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+          <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900 ">
+            <FaAngleRight className="text-blue-500 text-base" />
+            <span className="text-gray-500">Visitor</span>
+            <FaAngleRight className="text-blue-500 text-base" />
+            <div
+              onClick={() => setOpenModal(false)}
+              className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+            >
               Card Detach
             </div>
           </h1>
           {!openModal && (
             <div className="flex justify-end">
               <button
-                onClick={() => setOpenModal(true)}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+                onClick={() => {
+                  setMode("add");
+                  setOpenModal(true);
+                }}
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
               >
                 + Add New
               </button>
@@ -393,93 +398,112 @@ const CardDetach = () => {
           )}
         </div>
 
-        <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6">
+        {/* Main Table Container */}
+        <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl">
           {/* Top Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <div>
-              <label className="mr-2 text-md">Show</label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="ml-2 text-md">entries</span>
-            </div>
-            <div className="flex flex-wrap gap-2 items-center justify-center">
-              <input
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-              />
-              <div className="flex">
-                <button
-                  onClick={handleCopy}
-                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+          <div className="p-6 border-b border-blue-100/30">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  Show
+                </label>
+                <select
+                  value={entriesPerPage}
+                  onChange={(e) => {
+                    setEntriesPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60"
                 >
-                  <GoCopy />
-                </button>
+                  {[10, 25, 50, 100].map((v) => (
+                    <option key={v} value={v}>
+                      {v}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  entries
+                </span>
+              </div>
 
-                <button
-                  onClick={handleExcel}
-                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
-                >
-                  <FaFileExcel />
-                </button>
-
-                <button
-                  onClick={handlePDF}
-                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
-                >
-                  <FaFilePdf />
-                </button>
+              <div className="flex flex-wrap gap-3 items-center justify-center">
+                <input
+                  placeholder="Search visitor code or name..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopy}
+                    className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 p-2.5 rounded-lg transition-all"
+                    title="Copy"
+                  >
+                    <GoCopy className="text-lg lg:text-xl 3xl:text-3xl" />
+                  </button>
+                  <button
+                    onClick={handleExcel}
+                    className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 p-2.5 rounded-lg transition-all"
+                    title="Excel"
+                  >
+                    <FaFileExcel className="text-lg lg:text-xl 3xl:text-3xl" />
+                  </button>
+                  <button
+                    onClick={handlePDF}
+                    className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 p-2.5 rounded-lg transition-all"
+                    title="PDF"
+                  >
+                    <FaFilePdf className="text-lg lg:text-xl 3xl:text-3xl" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Table */}
+          {/* Table Content */}
           <div
-            className="overflow-x-auto min-h-[320px]"
+            className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="py-2 px-6 font-semibold hidden sm:table-cell">
+            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+              <thead>
+                <tr className="bg-slate-50 border-b border-blue-100/50">
+                  <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
                     SL.NO
                   </th>
-                  <th className="py-2 px-6 font-semibold hidden md:table-cell">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
                     Visitor Code
                   </th>
-                  <th className="py-2 px-6 font-semibold">Visitor Name</th>
-                  <th className="py-2 px-6 font-semibold hidden xl:table-cell">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-left">
+                    Visitor Name
+                  </th>
+                  <th className="py-3 px-6 hidden xl:table-cell font-semibold text-gray-700">
                     Visitor Company
                   </th>
-                  <th className="py-2 px-6 font-semibold hidden md:table-cell">
-                    Visitor Phone
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
+                    Phone
                   </th>
-                  <th className="py-2 px-6 font-semibold hidden lg:table-cell whitespace-nowrap">
+                  <th className="py-3 px-6 hidden lg:table-cell font-semibold text-gray-700">
                     Meeting Person
                   </th>
-                  <th className="py-2 px-6 font-semibold">Status</th>
-                  <th className="py-2 px-6 font-semibold">Action</th>
+                  <th className="py-3 px-6 font-semibold text-gray-700">
+                    Status
+                  </th>
+                  <th className="py-3 px-6 font-semibold text-gray-700">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {currentVisitors.length === 0 ? (
                   <tr>
-                    <td colSpan="12" className="lg:text-center p-10">
+                    <td
+                      colSpan="8"
+                      className="p-12 text-center text-gray-500 font-medium"
+                    >
                       No Data Available
                     </td>
                   </tr>
@@ -487,27 +511,29 @@ const CardDetach = () => {
                   currentVisitors.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)] "
+                      className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="py-2 px-6 hidden sm:table-cell">
-                        {index + 1}
+                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900">
+                        {startIndex + index + 1}
                       </td>
-                      <td className="py-2 px-6 hidden md:table-cell">
+                      <td className="py-3 px-6 hidden md:table-cell text-blue-600 font-medium">
                         {item.visitorCode}
                       </td>
-                      <td className="py-2 px-6 ">{item.visitorName}</td>
-                      <td className="py-2 px-6 hidden xl:table-cell">
+                      <td className="py-3 px-6 font-medium text-gray-900 text-left">
+                        {item.visitorName}
+                      </td>
+                      <td className="py-3 px-6 hidden xl:table-cell text-gray-600">
                         {item.organization}
                       </td>
-                      <td className="py-2 px-6 hidden md:table-cell">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
                         {item.mobile_no}
                       </td>
-                      <td className="py-2 px-6 hidden lg:table-cell">
+                      <td className="py-3 px-6 hidden lg:table-cell text-gray-600">
                         {item.point_of_contact}
                       </td>
-                      <td className="py-2 px-6 whitespace-nowrap">
+                      <td className="py-3 px-6">
                         <span
-                          className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                          className={`px-3 py-1 rounded-full text-xs lg:text-sm font-semibold whitespace-nowrap ${
                             item.status === "booked"
                               ? "bg-blue-100 text-blue-800"
                               : item.status === "checked-out"
@@ -518,29 +544,26 @@ const CardDetach = () => {
                           {item.status}
                         </span>
                       </td>
-                      <td className="py-2 px-6">
-                        <div className="flex flex-row space-x-3 justify-center ">
-                          {/* Detach */}
+                      <td className="py-3 px-6 text-center">
+                        <div className="flex justify-center gap-3">
                           {item.status === "booked" && item.access_card && (
                             <button
                               onClick={() => handleDetach(item.id)}
                               title="Detach Card"
-                              className="text-orange-500 hover:text-orange-700"
+                              className="text-orange-500 hover:text-orange-700 font-bold text-sm lg:text-base"
                             >
                               Det.
                             </button>
                           )}
-                          {/* View */}
                           <FaEye
                             onClick={() => {
                               setFormData(item);
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
+                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            title="View"
                           />
-
-                          {/* Edit */}
                           <FaPen
                             onClick={() => {
                               setFormData(item);
@@ -548,13 +571,13 @@ const CardDetach = () => {
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="inline text-green-500 cursor-pointer text-lg"
+                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            title="Edit"
                           />
-
-                          {/* Delete */}
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="inline text-red-500 cursor-pointer text-xl"
+                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            title="Delete"
                           />
                         </div>
                       </td>
@@ -566,44 +589,49 @@ const CardDetach = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-            <span>
-              Showing {filteredVisitors.length === 0 ? "0" : startIndex + 1} to{" "}
-              {Math.min(endIndex, filteredVisitors.length)} of{" "}
-              {filteredVisitors.length} entries
+          <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
+              Showing{" "}
+              <span className="font-bold text-gray-900">{startIndex + 1}</span>{" "}
+              to{" "}
+              <span className="font-bold text-gray-900">
+                {Math.min(endIndex, filteredVisitors.length)}
+              </span>{" "}
+              of{" "}
+              <span className="font-bold text-gray-900">
+                {filteredVisitors.length}
+              </span>{" "}
+              entries
             </span>
-
-            <div className="flex flex-row space-x-1">
+            <div className="flex gap-2">
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50 transition-all"
               >
                 First
               </button>
-
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="p-2.5 border rounded-lg bg-white disabled:opacity-50 hover:bg-blue-50"
               >
                 <GrPrevious />
               </button>
-
-              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
-
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm lg:text-base 3xl:text-xl min-w-[45px] text-center">
+                {currentPage}
+              </div>
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="p-2.5 border rounded-lg bg-white disabled:opacity-50 hover:bg-blue-50"
               >
                 <GrNext />
               </button>
-
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50 transition-all"
               >
                 Last
               </button>
@@ -611,315 +639,284 @@ const CardDetach = () => {
           </div>
         </div>
 
+        {/* Modal Section */}
         {openModal && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
             style={{ scrollbarWidth: "none" }}
           >
             <div
-              className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+              className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-6xl max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
               style={{ scrollbarWidth: "none" }}
             >
-              {/* Close */}
-              <div className="flex justify-end">
-                <RxCross2
-                  onClick={() => setOpenModal(false)}
-                  className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-                />
-              </div>
-
-              {/* Search Section */}
-              <div className="flex flex-col md:flex-row gap-4 mt-4">
-                <select
-                  name="searchType"
-                  value={formData.searchType}
-                  onChange={handleChange}
-                  disabled={mode === "view"}
-                  className={inputStyle}
-                >
-                  <option>Mobile no.</option>
-                  <option>CICPA no.</option>
-                  <option>EID no.</option>
-                  <option>Visitor</option>
-                  <option>QR Code</option>
-                </select>
-
-                <input
-                  name="searchValue"
-                  value={formData.searchValue}
-                  onChange={handleChange}
-                  disabled={mode === "view"}
-                  placeholder="Value"
-                  className={inputStyle}
-                  required
-                />
-
+              <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+                <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+                  {mode === "view"
+                    ? "Visitor Card Details"
+                    : mode === "edit"
+                      ? "Edit Card Link"
+                      : "Link New Visitor Card"}
+                </h2>
                 <button
-                  onClick={handleSearch}
-                  className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md"
+                  onClick={() => setOpenModal(false)}
+                  className="text-gray-400 hover:text-red-600 transition-colors"
                 >
-                  Search
+                  <RxCross2 className="text-2xl" />
                 </button>
               </div>
 
-              {/* VISITOR INFORMATION */}
-              <h2 className="text-center font-semibold mt-8 mb-4">
-                VISITOR INFORMATION
-              </h2>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div>
-                  <label className={labelStyle}>
-                    Visitor Name
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <input
-                    name="visitor_name"
-                    value={formData.visitor_name}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                    placeholder="Visitor Name"
-                    className={inputStyle}
-                    required
-                  />
+              {/* Search Helper Section */}
+              {mode !== "view" && (
+                <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 mb-8 flex flex-col md:flex-row gap-4 items-end">
+                  <div className="w-full md:w-1/4">
+                    <label className={labelStyle}>Search Method</label>
+                    <select
+                      name="searchType"
+                      value={formData.searchType}
+                      onChange={handleChange}
+                      className={inputStyle}
+                    >
+                      <option>Mobile no.</option>
+                      <option>CICPA no.</option>
+                      <option>EID no.</option>
+                      <option>Visitor</option>
+                      <option>QR Code</option>
+                    </select>
+                  </div>
+                  <div className="w-full md:w-1/2">
+                    <input
+                      name="searchValue"
+                      value={formData.searchValue}
+                      onChange={handleChange}
+                      placeholder="Enter value..."
+                      className={inputStyle}
+                    />
+                  </div>
+                  <button
+                    onClick={handleSearch}
+                    className="bg-blue-600 text-white px-8 py-2 rounded-lg font-bold hover:bg-blue-700 transition shadow-md"
+                  >
+                    Find Visitor
+                  </button>
                 </div>
+              )}
 
-                <div>
-                  <label className={labelStyle}>
-                    Company
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <input
-                    name="company"
-                    value={formData.company}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                    placeholder="Company"
-                    className={inputStyle}
-                    required
-                  />
+              {/* Section: Basic Information */}
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="h-8 w-1 bg-blue-500 rounded-full"></div>
+                  <h3 className="text-lg lg:text-xl 3xl:text-3xl font-bold text-gray-800 uppercase tracking-wider">
+                    Visitor Information
+                  </h3>
                 </div>
-
-                <div>
-                  <label className={labelStyle}>
-                    Mobile No
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <input
-                    type="number"
-                    name="mobile_no"
-                    value={formData.mobile_no}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                    placeholder="Contact No"
-                    className={inputStyle}
-                    required
-                  />
-                </div>
-
-                <div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div>
+                    <label className={labelStyle}>
+                      Visitor Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      name="visitor_name"
+                      value={formData.visitor_name}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className={labelStyle}>
+                      Company <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      name="company"
+                      value={formData.company}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className={labelStyle}>
+                      Mobile No <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="mobile_no"
+                      value={formData.mobile_no}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className={labelStyle}>
+                      Email <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                      required
+                    />
+                  </div>
                   <SearchDropdown
                     label={
                       <>
-                        F1 Point of Contact{" "}
-                        <span className="text-red-500">*</span>
+                        Meeting Person <span className="text-red-500">*</span>
                       </>
                     }
                     name="point_of_contact"
                     value={formData.point_of_contact}
-                    options={["Name 1", "Name 2", "Name 3"]}
+                    options={["Name 1", "Name 2"]}
                     formData={formData}
                     setFormData={setFormData}
                     inputStyle={inputStyle}
                     labelStyle={labelStyle}
-                  />
-                </div>
-
-                <div>
-                  <label className={labelStyle}>
-                    E-Mail
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
                     disabled={mode === "view"}
-                    placeholder="E-Mail"
-                    className={inputStyle}
-                    required
                   />
                 </div>
               </div>
 
-              {/* CICPA SECTION */}
-              <h2 className="text-center font-semibold mt-10 mb-4">
-                CICPA INFORMATION
-              </h2>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div>
-                  <label className={labelStyle}>
-                    CICPA Card No
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <input
-                    name="cicpa_card_no"
-                    value={formData.cicpa_card_no}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                    placeholder="CICPA Card Number"
-                    className={inputStyle}
-                  />
+              {/* Section: CICPA */}
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="h-8 w-1 bg-teal-500 rounded-full"></div>
+                  <h3 className="text-lg lg:text-xl 3xl:text-3xl font-bold text-gray-800 uppercase tracking-wider">
+                    CICPA Information
+                  </h3>
                 </div>
-
-                <div>
-                  <label className={labelStyle}>
-                    Company Code
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <input
-                    name="company_code"
-                    value={formData.company_code}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                    placeholder="Company Code"
-                    className={inputStyle}
-                  />
-                </div>
-
-                <div className="relative">
-                  <label className={labelStyle}>
-                    CICPA Expiry Date
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <input
-                    name="cicpa_expiry_date"
-                    value={formData.cicpa_expiry_date}
-                    onChange={handleChange}
-                    onClick={() => setShowCicpaExpiryPicker(true)}
-                    disabled={mode === "view"}
-                    placeholder="dd/mm/yyyy"
-                    className={inputStyle}
-                  />
-                  {showCicpaExpiryPicker && (
-                    <SpinnerDatePicker
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div>
+                    <label className={labelStyle}>
+                      CICPA Card <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      name="cicpa_card_no"
+                      value={formData.cicpa_card_no}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelStyle}>
+                      Company Code <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      name="company_code"
+                      value={formData.company_code}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                    />
+                  </div>
+                  <div className="relative">
+                    <label className={labelStyle}>
+                      CICPA Expiry <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      name="cicpa_expiry_date"
                       value={formData.cicpa_expiry_date}
-                      onChange={(date) =>
-                        setFormData({ ...formData, cicpa_expiry_date: date })
+                      onClick={() =>
+                        mode !== "view" && setShowCicpaExpiryPicker(true)
                       }
-                      onClose={() => setShowCicpaExpiryPicker(false)}
+                      readOnly
+                      disabled={mode === "view"}
+                      className={inputStyle}
                     />
-                  )}
+                    {showCicpaExpiryPicker && (
+                      <SpinnerDatePicker
+                        value={formData.cicpa_expiry_date}
+                        onChange={(date) =>
+                          setFormData({ ...formData, cicpa_expiry_date: date })
+                        }
+                        onClose={() => setShowCicpaExpiryPicker(false)}
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
 
-              {/* ID SECTION */}
-              <h2 className="text-center font-semibold mt-10 mb-4">
-                ID INFORMATION
-              </h2>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div>
-                  <label className={labelStyle}>
-                    EID Number
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <input
-                    name="id_number"
-                    value={formData.id_number}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                    placeholder="ID Number"
-                    className={inputStyle}
-                    required
-                  />
+              {/* Section: ID Information */}
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="h-8 w-1 bg-purple-500 rounded-full"></div>
+                  <h3 className="text-lg lg:text-xl 3xl:text-3xl font-bold text-gray-800 uppercase tracking-wider">
+                    ID Information
+                  </h3>
                 </div>
-
-                <div>
-                  <label className={labelStyle}>
-                    Nationality
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <input
-                    name="nationality"
-                    value={formData.nationality}
-                    onChange={handleChange}
-                    disabled={mode === "view"}
-                    placeholder="Nationality"
-                    className={inputStyle}
-                    required
-                  />
-                </div>
-
-                <div className="relative">
-                  <label className={labelStyle}>
-                    Expiry Date
-                    <span className="text-[oklch(0.577_0.245_27.325)]">
-                      {" "}
-                      *{" "}
-                    </span>
-                  </label>
-                  <input
-                    name="id_expiry_date"
-                    value={formData.id_expiry_date}
-                    onChange={handleChange}
-                    onClick={() => setShowIdExpiryPicker(true)}
-                    disabled={mode === "view"}
-                    placeholder="dd/mm/yyyy"
-                    className={inputStyle}
-                  />
-                  {showIdExpiryPicker && (
-                    <SpinnerDatePicker
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div>
+                    <label className={labelStyle}>
+                      EID Number <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      name="id_number"
+                      value={formData.id_number}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className={labelStyle}>
+                      Nationality <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      name="nationality"
+                      value={formData.nationality}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                      required
+                    />
+                  </div>
+                  <div className="relative">
+                    <label className={labelStyle}>
+                      ID Expiry Date <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      name="id_expiry_date"
                       value={formData.id_expiry_date}
-                      onChange={(date) =>
-                        setFormData({ ...formData, id_expiry_date: date })
+                      onClick={() =>
+                        mode !== "view" && setShowIdExpiryPicker(true)
                       }
-                      onClose={() => setShowIdExpiryPicker(false)}
+                      readOnly
+                      disabled={mode === "view"}
+                      className={inputStyle}
                     />
-                  )}
+                    {showIdExpiryPicker && (
+                      <SpinnerDatePicker
+                        value={formData.id_expiry_date}
+                        onChange={(date) =>
+                          setFormData({ ...formData, id_expiry_date: date })
+                        }
+                        onClose={() => setShowIdExpiryPicker(false)}
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
 
-              {/* ACCESS CARD */}
-              <h2 className="text-center font-semibold mt-10 mb-4">
-                ACCESS CARD INFORMATION
-              </h2>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div>
+              {/* Section: Access Card */}
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="h-8 w-1 bg-orange-500 rounded-full"></div>
+                  <h3 className="text-lg lg:text-xl 3xl:text-3xl font-bold text-gray-800 uppercase tracking-wider">
+                    Access Control
+                  </h3>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <SearchDropdown
                     label={
                       <>
-                        Access card <span className="text-red-500">*</span>
+                        Access Card <span className="text-red-500">*</span>
                       </>
                     }
                     name="access_card"
@@ -929,29 +926,38 @@ const CardDetach = () => {
                     setFormData={setFormData}
                     inputStyle={inputStyle}
                     labelStyle={labelStyle}
-                  />
-                </div>
-
-                <div className="flex items-center gap-2 mt-6">
-                  <input
-                    type="checkbox"
-                    name="is_permanent"
-                    checked={formData.is_permanent}
-                    onChange={handleChange}
                     disabled={mode === "view"}
                   />
-                  <span>Is Permanent</span>
+                  <div className="flex items-center gap-3 mt-8">
+                    <input
+                      type="checkbox"
+                      name="is_permanent"
+                      checked={formData.is_permanent}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className="w-5 h-5 accent-blue-600"
+                    />
+                    <span className="font-semibold text-gray-700 lg:text-lg">
+                      Set as Permanent Visitor
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {/* Save */}
+              {/* Footer Actions */}
               {mode !== "view" && (
-                <div className="flex justify-end mt-10">
+                <div className="flex justify-end gap-3 pt-6 border-t border-blue-100/30">
+                  <button
+                    onClick={() => setOpenModal(false)}
+                    className="px-8 py-2.5 rounded-lg border-2 border-gray-300 text-gray-700 font-bold lg:text-lg 3xl:text-xl hover:bg-gray-50 transition-all"
+                  >
+                    Cancel
+                  </button>
                   <button
                     onClick={handleSubmit}
-                    className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+                    className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-10 py-2.5 rounded-lg font-bold lg:text-lg 3xl:text-xl shadow-lg hover:shadow-blue-200 hover:-translate-y-0.5 transition-all"
                   >
-                    Save
+                    Save Card Link
                   </button>
                 </div>
               )}

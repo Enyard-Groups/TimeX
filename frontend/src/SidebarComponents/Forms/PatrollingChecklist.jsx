@@ -46,10 +46,10 @@ const PatrollingChecklist = () => {
     fetchData();
   }, []);
 
-  const labelStyle = "text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 w-1/2";
-
   const inputStyle =
-    "text-[16px] w-full border border-[oklch(0.923_0.003_48.717)]  bg-white  rounded-md px-3 py-1 text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+  const labelStyle =
+    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const defaultFormData = {
     name: "",
@@ -261,27 +261,30 @@ const PatrollingChecklist = () => {
   };
 
   return (
-    <div className="mb-6">
-      {/* Header */}
-      <div className="sm:flex sm:justify-between">
-        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-          <FaAngleRight />
-          Forms
-          <FaAngleRight />
-          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+    <div className="mb-6 max-w-[1920px] mx-auto">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+        <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+          <FaAngleRight className="text-blue-500 text-base" />
+          <span className="text-gray-500">Forms</span>
+          <FaAngleRight className="text-blue-500 text-base" />
+          <div
+            onClick={() => setOpenModal(false)}
+            className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+          >
             Patrolling Checklist
           </div>
         </h1>
         {!openModal && (
           <div className="flex justify-end">
             <button
-              onClick={() => (
-                setMode(""),
-                setEditId(null),
-                setFormData(defaultFormData),
-                setOpenModal(true)
-              )}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              onClick={() => {
+                setMode("");
+                setEditId(null);
+                setFormData(defaultFormData);
+                setOpenModal(true);
+              }}
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -289,86 +292,96 @@ const PatrollingChecklist = () => {
         )}
       </div>
 
+      {/* Main Table Container */}
       {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">
-          {/* Top Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <div>
-              <label className="mr-2 text-md">Show</label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="ml-2 text-md">entries</span>
-            </div>
-            <div className="flex flex-wrap gap-2 items-center justify-center">
-              <div className="flex">
-                <button
-                  onClick={handleCopy}
-                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+        <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
+          <div className="p-6 border-b border-blue-100/30">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  Show
+                </label>
+                <select
+                  value={entriesPerPage}
+                  onChange={(e) => {
+                    setEntriesPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
-                  <GoCopy />
-                </button>
+                  {[10, 25, 50, 100].map((v) => (
+                    <option key={v} value={v}>
+                      {v}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  entries
+                </span>
+              </div>
 
-                <button
-                  onClick={handleExcel}
-                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
-                >
-                  <FaFileExcel />
-                </button>
-
-                <button
-                  onClick={handlePDF}
-                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
-                >
-                  <FaFilePdf />
-                </button>
+              <div className="flex flex-wrap gap-3 items-center justify-center">
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopy}
+                    className="text-xl px-3 py-1 text-gray-800 hover:text-blue-600 transition-colors"
+                    title="Copy"
+                  >
+                    <GoCopy />
+                  </button>
+                  <button
+                    onClick={handleExcel}
+                    className="text-xl px-3 py-1 text-green-700 hover:text-green-800 transition-colors"
+                    title="Excel"
+                  >
+                    <FaFileExcel />
+                  </button>
+                  <button
+                    onClick={handlePDF}
+                    className="text-xl px-3 py-1 text-red-600 hover:text-red-800 transition-colors"
+                    title="PDF"
+                  >
+                    <FaFilePdf />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Table */}
           <div
-            className="overflow-x-auto min-h-[250px]"
+            className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="p-2 font-semibold hidden sm:table-cell">
+            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+              <thead>
+                <tr className="bg-slate-50 border-b border-blue-100/50">
+                  <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700 text-center">
                     SL.No
                   </th>
-
-                  <th className="p-2 font-semibold">Name</th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
+                    Employee Name
+                  </th>
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Staff Id
                   </th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     School Name
                   </th>
-
-                  <th className="p-2 font-semibold hidden lg:table-cell">
-                    ShiftTiming
+                  <th className="py-3 px-6 hidden lg:table-cell font-semibold text-gray-700 text-center">
+                    Shift Timing
                   </th>
-
-                  <th className="p-2 font-semibold">Action</th>
+                  <th className="py-3 px-6 font-semibold text-gray-700">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {currentrequestData.length === 0 ? (
                   <tr>
-                    <td colSpan="14" className="lg:text-center p-10 ">
+                    <td
+                      colSpan="6"
+                      className="p-12 text-center text-gray-500 font-medium"
+                    >
                       No Data Available
                     </td>
                   </tr>
@@ -376,39 +389,42 @@ const PatrollingChecklist = () => {
                   currentrequestData.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                      className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="p-2 whitespace-nowrap hidden sm:table-cell">
-                        {index + 1}
+                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900 text-center">
+                        {startIndex + index + 1}
                       </td>
-
-                      <td className="p-2">{item.name}</td>
-
-                      <td className="p-2 hidden md:table-cell">
+                      <td className="py-3 px-6 font-medium text-gray-900">
+                        {item.name}
+                      </td>
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono">
                         {item.staff_id}
                       </td>
-                      <td className="p-2 hidden md:table-cell">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
                         {item.school_name}
                       </td>
-
-                      <td className="p-2 hidden lg:table-cell">
-                        {item.shift_timing}
+                      <td className="py-3 px-6 hidden lg:table-cell text-gray-600 text-center font-mono">
+                        {item.shift_timing
+                          ? item.shift_timing instanceof Date
+                            ? item.shift_timing.toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                              })
+                            : item.shift_timing
+                          : "-"}
                       </td>
-
-                      <td className="p-2 flex flex-row space-x-3 justify-center whitespace-nowrap">
-                        {" "}
-                        <div className="flex flex-row space-x-3 justify-center mt-1">
-                          {/* View */}{" "}
+                      <td className="py-3 px-6">
+                        <div className="flex justify-center gap-3">
                           <FaEye
                             onClick={() => {
                               setFormData(item);
-
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />{" "}
-                          {/* Edit */}
+                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            title="View"
+                          />
                           <FaPen
                             onClick={() => {
                               setFormData(item);
@@ -416,12 +432,13 @@ const PatrollingChecklist = () => {
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="inline text-green-500 cursor-pointer text-lg"
+                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            title="Edit"
                           />
-                          {/* Delete */}
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="inline text-red-500 cursor-pointer text-xl"
+                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            title="Delete"
                           />
                         </div>
                       </td>
@@ -433,44 +450,60 @@ const PatrollingChecklist = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-            <span>
-              Showing {requestData.length === 0 ? "0" : startIndex + 1} to{" "}
-              {Math.min(endIndex, requestData.length)} of {requestData.length}{" "}
+          <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <span className="text-sm lg:text-base 3xl:text-xl text-gray-600">
+              Showing{" "}
+              <span className="text-gray-900 font-semibold">
+                {requestData.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
+              to{" "}
+              <span className="text-gray-900 font-semibold">
+                {Math.min(endIndex, requestData.length)}
+              </span>{" "}
+              of{" "}
+              <span className="text-gray-900 font-semibold">
+                {requestData.length}
+              </span>{" "}
               entries
             </span>
 
-            <div className="flex flex-row space-x-1">
+            <div className="flex gap-2">
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="First page"
               >
                 First
               </button>
 
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Previous page"
               >
                 <GrPrevious />
               </button>
 
-              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
+                {currentPage}
+              </div>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Next page"
               >
                 <GrNext />
               </button>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="Last page"
               >
                 Last
               </button>
@@ -479,464 +512,364 @@ const PatrollingChecklist = () => {
         </div>
       )}
 
+      {/* Modal Section */}
       {openModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-white rounded-xl shadow-xl w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-6"
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
             style={{ scrollbarWidth: "none" }}
           >
-            {/* Close */}
-            <div className="flex justify-end mb-4">
-              <RxCross2
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+              <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+                {mode === "view"
+                  ? "Patrolling Record Details"
+                  : mode === "edit"
+                    ? "Edit Checklist"
+                    : "New Patrolling Checklist"}
+              </h2>
+              <button
                 onClick={() => setOpenModal(false)}
-                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-              />
+                className="text-gray-400 hover:text-red-600 transition-colors"
+              >
+                <RxCross2 className="text-2xl" />
+              </button>
             </div>
 
-            <div className="border p-4 rounded-xl border-gray-400 shadow">
-              <div className="flex justify-center">
-                <div
-                  className="max-h-[75vh] max-w-[1200px] overflow-y-auto pr-2 text-[16px]"
-                  style={{ scrollbarWidth: "none" }}
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mt-4 gap-4">
-                    <div className="flex flex-row gap-4">
-                      <label className={labelStyle}>Guard Name</label>
-                      <div className={inputStyle}>
-                        <SearchDropdown
-                          name="name"
-                          value={formData.name}
-                          options={["Employee 1", "Employee 2"]}
-                          formData={formData}
-                          setFormData={setFormData}
-                          disabled={mode === "view"}
-                          className={inputStyle}
-                        />
-                      </div>
+            <div className="border p-8 rounded-2xl border-gray-400/20 shadow-inner bg-white">
+              <div
+                className="max-h-[75vh] overflow-y-auto pr-2 text-sm lg:text-base 3xl:text-xl"
+                style={{ scrollbarWidth: "none" }}
+              >
+                {/* Staff Information Section */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                  <div className="flex flex-col gap-2">
+                    <label className={labelStyle}>Guard Name</label>
+                    <SearchDropdown
+                      name="name"
+                      value={formData.name}
+                      options={["Employee 1", "Employee 2"]}
+                      formData={formData}
+                      setFormData={setFormData}
+                      disabled={mode === "view"}
+                      inputStyle={inputStyle}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className={labelStyle}>Staff ID</label>
+                    <input
+                      name="staff_id"
+                      value={formData.staff_id}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className={labelStyle}>School Name</label>
+                    <input
+                      name="school_name"
+                      value={formData.school_name}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2 relative">
+                    <label className={labelStyle}>Shift Timing</label>
+                    <div
+                      className={`${inputStyle} cursor-pointer`}
+                      onClick={() =>
+                        mode !== "view" && setShowInTimePicker(true)
+                      }
+                    >
+                      {formData.shift_timing
+                        ? formData.shift_timing instanceof Date
+                          ? formData.shift_timing.toLocaleTimeString([], {
+                              hour12: false,
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })
+                          : formData.shift_timing
+                        : "HH:MM:SS"}
                     </div>
 
-                    <div className="flex flex-row gap-4">
-                      <label className={labelStyle}>Staff ID</label>
-
-                      <input
-                        name="staff_id"
-                        value={formData.staff_id}
-                        onChange={handleChange}
-                        className={inputStyle}
-                        disabled={mode === "view"}
-                      />
-                    </div>
-
-                    <div className="flex flex-row gap-4">
-                      <label className={labelStyle}>School Name</label>
-
-                      <input
-                        name="school_name"
-                        value={formData.school_name}
-                        onChange={handleChange}
-                        className={inputStyle}
-                        disabled={mode === "view"}
-                      />
-                    </div>
-
-                    <div className="flex flex-row gap-4">
-                      <label className={labelStyle}>Shift Timing</label>
-                      <div
-                        className={inputStyle}
-                        onClick={() => {
-                          if (mode !== "view") {
-                            setShowInTimePicker(true);
-                          }
-                        }}
-                      >
-                        {formData.shift_timing
-                          ? formData.shift_timing instanceof Date
-                            ? formData.shift_timing.toLocaleTimeString([], {
-                                hour12: false,
-                              })
-                            : formData.shift_timing
-                          : "HH:MM:SS"}
-                      </div>
-                      {showInTimePicker && (
+                    {showInTimePicker && (
+                      <div className="absolute z-10 top-22">
                         <SpinnerTimePicker
                           value={formData.shift_timing}
-                          onChange={(date) =>
-                            setFormData({ ...formData, shift_timing: date })
+                          onChange={(d) =>
+                            setFormData({ ...formData, shift_timing: d })
                           }
                           onClose={() => setShowInTimePicker(false)}
                         />
-                      )}
-                    </div>
-
-                    <div className="flex flex-row gap-4 ">
-                      <label className={labelStyle}>Date</label>
-                      <input
-                        name="date"
-                        value={formData.date || ""}
-                        onChange={handleChange}
-                        onClick={() => setShowDateSpinner(true)}
-                        disabled={mode === "view"}
-                        placeholder="dd/mm/yyyy"
-                        className={inputStyle}
-                      />
-
-                      {showDateSpinner && (
-                        <div className="absolute mt-10 ml-8 sm:ml-14 md:ml-16 lg:ml-20  ">
-                          <SpinnerDatePicker
-                            value={formData.date}
-                            onChange={(date) =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                date: date,
-                              }))
-                            }
-                            onClose={() => setShowDateSpinner(false)}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <p className="mt-4">
-                    *Proceed patrolling in the given order, category wise, If
-                    everything is normal during patrolling then tick the "status
-                    ok" box, if you find anything wrong then cross the box and
-                    report to Manager School Operation /OCC Executive in the
-                    Operation Control & command Centre
-                  </p>
-                  <p>
-                    Check all the following categories according to Managing
-                    Patrolling at Schools Work instruction(SC001-J3-FO-014) and
-                    record details in the Security Log Book (SC001-J3-LB-001)
-                  </p>
-
-                  <div className="p-6">
-                    {/* ===== TOP FORM ===== */}
-                    <div className="border border-gray-400 p-4 mb-6 rounded">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        {/* Section */}
-                        <div className="flex flex-row">
-                          <label className={labelStyle}>Section</label>
-                          <div className={inputStyle}>
-                            <SearchDropdown
-                              name="section"
-                              value={formData.section}
-                              options={[
-                                "Section A - Internal Area",
-                                "Section B - Common Area",
-                                "Section C - External Area",
-                              ]}
-                              formData={formData}
-                              setFormData={setFormData}
-                              disabled={mode === "view"}
-                              className={inputStyle}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Task List */}
-                        <div className="flex flex-row">
-                          <label className={labelStyle}>Task List</label>
-                          <div className={inputStyle}>
-                            <SearchDropdown
-                              name="taskList"
-                              value={formData.taskList}
-                              options={["Task 1", "Task 2"]}
-                              formData={formData}
-                              setFormData={setFormData}
-                              disabled={mode === "view"}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="flex flex-row gap-6">
-                          <label className={labelStyle}>Unattended OK</label>
-                          <input
-                            type="checkbox"
-                            name="unattended_ok"
-                            checked={formData.unattended_ok}
-                            onChange={handleChange}
-                            className="pt-1"
-                          />
-                        </div>
-
-                        <div className="flex flex-row">
-                          <label className={labelStyle}>
-                            Unattended Reported to OCC
-                          </label>
-                          <input
-                            name="unattended_reported_to"
-                            value={formData.unattended_reported_to}
-                            onChange={handleChange}
-                            className={`mt-2 ${inputStyle}`}
-                          />
-                        </div>
-
-                        <div className="flex flex-row gap-6">
-                          <label className={`mt-4 ${labelStyle}`}>
-                            Hazardous OK
-                          </label>
-                          <input
-                            type="checkbox"
-                            name="hazardous_ok"
-                            checked={formData.hazardous_ok}
-                            onChange={handleChange}
-                          />
-                        </div>
-
-                        <div className="flex flex-row">
-                          <label className={labelStyle}>
-                            Hazardous Reported to OCC
-                          </label>
-                          <input
-                            name="hazardous_reported_to"
-                            value={formData.hazardous_reported_to}
-                            onChange={handleChange}
-                            className={`mt-2 ${inputStyle}`}
-                          />
-                        </div>
-
-                        <div className="flex flex-row gap-6">
-                          <label className={labelStyle}>IAS OK</label>
-                          <input
-                            type="checkbox"
-                            name="ias_ok"
-                            checked={formData.ias_ok}
-                            onChange={handleChange}
-                            className="pt-1"
-                          />
-                        </div>
-
-                        <div className="flex flex-row">
-                          <label className={labelStyle}>
-                            IAS Reported to OCC
-                          </label>
-                          <input
-                            name="ias_reported_to"
-                            value={formData.ias_reported_to}
-                            onChange={handleChange}
-                            className={`mt-2 ${inputStyle}`}
-                          />
-                        </div>
-
-                        <div className="flex flex-row gap-6">
-                          <label className={`mt-4 ${labelStyle}`}>
-                            Gems Assets OK
-                          </label>
-                          <input
-                            type="checkbox"
-                            name="gems_assets_ok"
-                            checked={formData.gems_assets_ok}
-                            onChange={handleChange}
-                          />
-                        </div>
-
-                        <div className="flex flex-row">
-                          <label className={labelStyle}>
-                            Gems Assets Reported to OCC
-                          </label>
-                          <input
-                            name="gems_assets_reported_to"
-                            value={formData.gems_assets_reported_to}
-                            onChange={handleChange}
-                            className={`mt-2 ${inputStyle}`}
-                          />
-                        </div>
-
-                        <div className="flex flex-row gap-6">
-                          <label className={labelStyle}>
-                            Vehicle Parking OK
-                          </label>
-                          <input
-                            type="checkbox"
-                            name="vehicle_parking_ok"
-                            checked={formData.vehicle_parking_ok}
-                            onChange={handleChange}
-                            className="pt-1"
-                          />
-                        </div>
-
-                        <div className="flex flex-row">
-                          <label className={labelStyle}>
-                            Vehicle Parking Reported to OCC
-                          </label>
-                          <input
-                            name="vehicle_parking_reported_to"
-                            value={formData.vehicle_parking_reported_to}
-                            onChange={handleChange}
-                            className={`mt-2 ${inputStyle}`}
-                          />
-                        </div>
-
-                        <div className="flex flex-row gap-6">
-                          <label className={`mt-4 ${labelStyle}`}>PTW OK</label>
-                          <input
-                            type="checkbox"
-                            name="ptw_ok"
-                            checked={formData.ptw_ok}
-                            onChange={handleChange}
-                          />
-                        </div>
-
-                        <div className="flex flex-row">
-                          <label className={labelStyle}>
-                            PTW Reported to OCC
-                          </label>
-                          <input
-                            name="ptw_reported_to"
-                            value={formData.ptw_reported_to}
-                            onChange={handleChange}
-                            className={`mt-2 ${inputStyle}`}
-                          />
-                        </div>
                       </div>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2 relative">
+                    <label className={labelStyle}>Date</label>
+                    <input
+                      value={formData.date || ""}
+                      onClick={() =>
+                        mode !== "view" && setShowDateSpinner(true)
+                      }
+                      readOnly
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                      placeholder="dd/mm/yyyy"
+                    />
+                    {showDateSpinner && (
+                      <div className="absolute z-10 top-20">
+                        <SpinnerDatePicker
+                          value={formData.date}
+                          onChange={(d) =>
+                            setFormData((p) => ({ ...p, date: d }))
+                          }
+                          onClose={() => setShowDateSpinner(false)}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-900 rounded-r-xl mb-10 text-sm lg:text-base italic leading-relaxed">
+                  *Proceed patrolling in the given order, category wise. If
+                  everything is normal tick the "status ok" box. If you find
+                  anything wrong, cross the box and report to Manager School
+                  Operation/OCC Executive. Check all following categories
+                  according to Work Instruction (SC001-J3-FO-014) and record in
+                  Log Book (SC001-J3-LB-001).
+                </div>
+                {/* Patrolling Table Entry Section */}
+                <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-lg mb-10">
+                  <div className="bg-slate-100 p-6 border-b border-gray-200">
+                    <h3 className="font-bold text-gray-800 uppercase tracking-widest">
+                      Entry Panel
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+                      <div className="flex flex-col gap-1">
+                        <label className={labelStyle}>Section</label>
+                        <SearchDropdown
+                          name="section"
+                          value={formData.section}
+                          options={[
+                            "Section A - Internal Area",
+                            "Section B - Common Area",
+                            "Section C - External Area",
+                          ]}
+                          formData={formData}
+                          setFormData={setFormData}
+                          disabled={mode === "view"}
+                          inputStyle={inputStyle}
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <label className={labelStyle}>Task List</label>
+                        <SearchDropdown
+                          name="taskList"
+                          value={formData.taskList}
+                          options={["Task 1", "Task 2"]}
+                          formData={formData}
+                          setFormData={setFormData}
+                          disabled={mode === "view"}
+                          inputStyle={inputStyle}
+                        />
+                      </div>
+                    </div>
 
-                      {/* Buttons */}
-                      <div className="mt-4 flex gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mt-6 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                      {[
+                        { label: "Unattended", id: "unattended" },
+                        { label: "Hazardous", id: "hazardous" },
+                        { label: "IAS", id: "ias" },
+                        { label: "Gems Assets", id: "gems_assets" },
+                        { label: "Vehicle Parking", id: "vehicle_parking" },
+                        { label: "PTW", id: "ptw" },
+                      ].map((item) => (
+                        <div
+                          key={item.id}
+                          className="flex flex-col gap-4 p-2 border-r last:border-0 border-slate-100"
+                        >
+                          <label className="text-[15px] font-black text-gray-500">
+                            {item.label}
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name={`${item.id}_ok`}
+                              checked={formData[`${item.id}_ok`]}
+                              onChange={handleChange}
+                              disabled={mode === "view"}
+                              className="w-4 h-4 accent-green-600"
+                            />
+                            <span className="text-sm font-bold text-gray-400">
+                              OK
+                            </span>
+                          </div>
+                          <input
+                            name={`${item.id}_reported_to`}
+                            value={formData[`${item.id}_reported_to`]}
+                            onChange={handleChange}
+                            disabled={mode === "view"}
+                            placeholder="Report to..."
+                            className="text-lg border-b border-gray-200 outline-none focus:border-blue-500 pb-1 italic"
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                    {mode !== "view" && (
+                      <div className="mt-6 flex gap-3">
                         <button
                           onClick={handleAddRow}
-                          className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded"
+                          className="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 shadow-md transition-all"
                         >
-                          Add New Row
+                          + Add to List
                         </button>
-
                         <button
                           onClick={handleClear}
-                          className="bg-gray-400 text-white px-4 py-2 rounded"
+                          className="bg-gray-400 text-white px-6 py-2 rounded-lg font-bold hover:bg-gray-500 transition-all"
                         >
-                          Clear
+                          Clear Form
                         </button>
                       </div>
-                    </div>
+                    )}
+                  </div>
 
-                    <table className="w-full border border-gray-400 text-center">
-                      <thead className="bg-gray-100">
-                        {/* TOP HEADER */}
-                        <tr>
-                          <th className="hidden sm:table-cell p-2">SL No</th>
-                          <th className="p-2">Section</th>
-                          <th className="p-2">Task</th>
-
-                          <th className="hidden xl:table-cell p-2" colSpan="2">
+                  {/* Table Result Display */}
+                  <div
+                    className="overflow-x-auto"
+                    style={{ scrollbarWidth: "none" }}
+                  >
+                    <table className="w-full text-center text-sm lg:text-base">
+                      <thead>
+                        <tr className="bg-slate-50 text-gray-400 text-[16px]  tracking-tighter">
+                          <th className="p-3 border-b border-r border-gray-100 hidden sm:table-cell">
+                            #
+                          </th>
+                          <th className="p-3 border-b border-r border-gray-100">
+                            Section/Task
+                          </th>
+                          <th
+                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            colSpan="2"
+                          >
                             Unattended
                           </th>
-                          <th className="hidden xl:table-cell p-2" colSpan="2">
+                          <th
+                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            colSpan="2"
+                          >
                             Hazardous
                           </th>
-                          <th className="hidden xl:table-cell p-2" colSpan="2">
+                          <th
+                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            colSpan="2"
+                          >
                             IAS
                           </th>
-                          <th className="hidden xl:table-cell p-2" colSpan="2">
+                          <th
+                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            colSpan="2"
+                          >
                             Gems Assets
                           </th>
-                          <th className="hidden xl:table-cell p-2" colSpan="2">
-                            Vehicle Parking
+                          <th
+                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            colSpan="2"
+                          >
+                            Vehicle
                           </th>
-                          <th className="hidden xl:table-cell p-2" colSpan="2">
+                          <th
+                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            colSpan="2"
+                          >
                             PTW
                           </th>
-
-                          <th className="p-2">Action</th>
+                          <th className="p-3 border-b">Action</th>
                         </tr>
-
-                        {/* SUB HEADER */}
-                        <tr>
-                          <th className="hidden sm:table-cell"></th>
-                          <th></th>
-                          <th></th>
-
-                          <th className="hidden xl:table-cell">OK</th>
-                          <th className="hidden xl:table-cell">OCC</th>
-
-                          <th className="hidden xl:table-cell">OK</th>
-                          <th className="hidden xl:table-cell">OCC</th>
-
-                          <th className="hidden xl:table-cell">OK</th>
-                          <th className="hidden xl:table-cell">OCC</th>
-
-                          <th className="hidden xl:table-cell">OK</th>
-                          <th className="hidden xl:table-cell">OCC</th>
-
-                          <th className="hidden xl:table-cell">OK</th>
-                          <th className="hidden xl:table-cell">OCC</th>
-
-                          <th className="hidden xl:table-cell">OK</th>
-                          <th className="hidden xl:table-cell">OCC</th>
-
+                        <tr className="bg-slate-50/50 text-[13px] font-black text-slate-400">
+                          <th className="border-r hidden sm:table-cell"></th>
+                          <th className="border-r"></th>
+                          <th className="border-r hidden xl:table-cell">OK</th>
+                          <th className="border-r hidden xl:table-cell">OCC</th>
+                          <th className="border-r hidden xl:table-cell">OK</th>
+                          <th className="border-r hidden xl:table-cell">OCC</th>
+                          <th className="border-r hidden xl:table-cell">OK</th>
+                          <th className="border-r hidden xl:table-cell">OCC</th>
+                          <th className="border-r hidden xl:table-cell">OK</th>
+                          <th className="border-r hidden xl:table-cell">OCC</th>
+                          <th className="border-r hidden xl:table-cell">OK</th>
+                          <th className="border-r hidden xl:table-cell">OCC</th>
+                          <th className="border-r hidden xl:table-cell">OK</th>
+                          <th className="border-r hidden xl:table-cell">OCC</th>
                           <th></th>
                         </tr>
                       </thead>
-
                       <tbody>
                         {formData.rows.length === 0 ? (
                           <tr>
-                            <td colSpan="16" className="p-3 text-[16px]">
-                              No Data Available
+                            <td colSpan="16" className="p-10 text-gray-300">
+                              No entries added yet
                             </td>
                           </tr>
                         ) : (
                           formData.rows.map((row, index) => (
                             <tr
                               key={index}
-                              className="border-b border-gray-300"
+                              className="border-b border-gray-50 hover:bg-blue-50 transition-colors font-medium"
                             >
-                              <td className="hidden sm:table-cell p-2">
+                              <td className="p-3 border-r border-gray-50 hidden sm:table-cell text-gray-400 font-mono">
                                 {index + 1}
                               </td>
-
-                              <td className="p-2">{row.section}</td>
-                              <td className="p-2">{row.taskList}</td>
-
-                              {/* Hidden on small */}
-                              <td className="hidden xl:table-cell">
-                                {row.unattended_ok ? "OK" : "-"}
+                              <td className="p-3 border-r border-gray-50 text-center">
+                                <span className="text-blue-700 font-bold block text-sm">
+                                  {row.section}
+                                </span>
+                                <span className="text-gray-900">
+                                  {row.taskList}
+                                </span>
                               </td>
-                              <td className="hidden xl:table-cell">
-                                {row.unattended_reported_to}
+                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                                {row.unattended_ok ? "✅" : "❌"}
                               </td>
-
-                              <td className="hidden xl:table-cell">
-                                {row.hazardous_ok ? "OK" : "-"}
+                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                                {row.unattended_reported_to || "-"}
                               </td>
-                              <td className="hidden xl:table-cell">
-                                {row.hazardous_reported_to}
+                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                                {row.hazardous_ok ? "✅" : "❌"}
                               </td>
-
-                              <td className="hidden xl:table-cell">
-                                {row.ias_ok ? "OK" : "-"}
+                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                                {row.hazardous_reported_to || "-"}
                               </td>
-                              <td className="hidden xl:table-cell">
-                                {row.ias_reported_to}
+                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                                {row.ias_ok ? "✅" : "❌"}
                               </td>
-
-                              <td className="hidden xl:table-cell">
-                                {row.gems_assets_ok ? "OK" : "-"}
+                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                                {row.ias_reported_to || "-"}
                               </td>
-                              <td className="hidden xl:table-cell">
-                                {row.gems_assets_reported_to}
+                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                                {row.gems_assets_ok ? "✅" : "❌"}
                               </td>
-
-                              <td className="hidden xl:table-cell">
-                                {row.vehicle_parking_ok ? "OK" : "-"}
+                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                                {row.gems_assets_reported_to || "-"}
                               </td>
-                              <td className="hidden xl:table-cell">
-                                {row.vehicle_parking_reported_to}
+                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                                {row.vehicle_parking_ok ? "✅" : "❌"}
                               </td>
-
-                              <td className="hidden xl:table-cell">
-                                {row.ptw_ok ? "OK" : "-"}
+                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                                {row.vehicle_parking_reported_to || "-"}
                               </td>
-                              <td className="hidden xl:table-cell">
-                                {row.ptw_reported_to}
+                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                                {row.ptw_ok ? "✅" : "❌"}
                               </td>
-
-                              {/* Action */}
-                              <td className="p-2">
+                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                                {row.ptw_reported_to || "-"}
+                              </td>
+                              <td className="p-3">
                                 <FaEye
-                                  className="text-blue-500 cursor-pointer mx-auto text-lg"
+                                  className="text-blue-400 hover:text-blue-600 cursor-pointer mx-auto lg:text-xl"
                                   onClick={() => {
                                     setViewRow(row);
                                     setOpenViewModal(true);
@@ -949,134 +882,82 @@ const PatrollingChecklist = () => {
                       </tbody>
                     </table>
                   </div>
+                </div>
+                {/* Signature Area */}
+                <div>
+                  <div className="flex flex-col mt-4">
+                    <label className="text-sm lg:text-base font-bold text-gray-500 uppercase tracking-widest mb-4">
+                      Official E-Signature
+                    </label>
 
-                  {openViewModal && viewRow && (
-                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                      <div className="bg-white p-6 rounded-lg w-[90%] max-w-xl">
-                        <h2 className="text-lg font-bold mb-4">Details</h2>
+                    {/* Toggle Tabs */}
+                    {mode !== "view" && (
+                      <div className="flex gap-2 mb-4 mt-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              eSignMode: "upload",
+                            }))
+                          }
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                            formData.eSignMode === "upload"
+                              ? "bg-[#0f172a] text-white border-[#0f172a]"
+                              : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                          }`}
+                        >
+                          Upload
+                        </button>
 
-                        <div className="grid grid-cols-2 gap-3 text-[16px]">
-                          <p>
-                            <b>Section:</b> {viewRow.section}
-                          </p>
-                          <p>
-                            <b>Task:</b> {viewRow.taskList}
-                          </p>
-
-                          <p>
-                            <b>Unattended:</b>{" "}
-                            {viewRow.unattended_ok ? "OK" : "-"}
-                          </p>
-                          <p>
-                            <b>Unattended OCC:</b>{" "}
-                            {viewRow.unattended_reported_to}
-                          </p>
-
-                          <p>
-                            <b>Hazardous:</b>{" "}
-                            {viewRow.hazardous_ok ? "OK" : "-"}
-                          </p>
-                          <p>
-                            <b>Hazardous OCC:</b>{" "}
-                            {viewRow.hazardous_reported_to}
-                          </p>
-
-                          <p>
-                            <b>IAS:</b> {viewRow.ias_ok ? "OK" : "-"}
-                          </p>
-                          <p>
-                            <b>IAS OCC:</b> {viewRow.ias_reported_to}
-                          </p>
-
-                          <p>
-                            <b>Gems:</b> {viewRow.gems_assets_ok ? "OK" : "-"}
-                          </p>
-                          <p>
-                            <b>Gems OCC:</b> {viewRow.gems_assets_reported_to}
-                          </p>
-
-                          <p>
-                            <b>Vehicle:</b>{" "}
-                            {viewRow.vehicle_parking_ok ? "OK" : "-"}
-                          </p>
-                          <p>
-                            <b>Vehicle OCC:</b>{" "}
-                            {viewRow.vehicle_parking_reported_to}
-                          </p>
-
-                          <p>
-                            <b>PTW:</b> {viewRow.ptw_ok ? "OK" : "-"}
-                          </p>
-                          <p>
-                            <b>PTW OCC:</b> {viewRow.ptw_reported_to}
-                          </p>
-                        </div>
-
-                        <div className="text-right mt-4">
-                          <button
-                            onClick={() => setOpenViewModal(false)}
-                            className="bg-red-500 text-white px-4 py-1 rounded"
-                          >
-                            Close
-                          </button>
-                        </div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              eSignMode: "draw",
+                            }))
+                          }
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                            formData.eSignMode === "draw"
+                              ? "bg-[#0f172a] text-white border-[#0f172a]"
+                              : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                          }`}
+                        >
+                          Sign Here
+                        </button>
                       </div>
-                    </div>
-                  )}
-                  <div>
-                    <div className="flex flex-col mt-4">
-                      <label className={labelStyle}>E-signature</label>
+                    )}
 
-                      {/* Toggle Tabs */}
-                      {mode !== "view" && (
-                        <div className="flex gap-2 mb-4 mt-2">
-                          <button
-                            type="button"
-                            onClick={() =>
+                    {/* Upload Area */}
+                    {formData.eSignMode === "upload" && (
+                      <div>
+                        <input
+                          type="file"
+                          id="eSignatureUpload"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
                               setFormData((prev) => ({
                                 ...prev,
-                                eSignMode: "upload",
-                              }))
+                                signature: file,
+                                eSignaturePreview: URL.createObjectURL(file),
+                              }));
                             }
-                            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                              formData.eSignMode === "upload"
-                                ? "bg-[#0f172a] text-white border-[#0f172a]"
-                                : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                            }`}
-                          >
-                            Upload
-                          </button>
+                          }}
+                        />
 
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                eSignMode: "draw",
-                              }))
-                            }
-                            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                              formData.eSignMode === "draw"
-                                ? "bg-[#0f172a] text-white border-[#0f172a]"
-                                : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                            }`}
-                          >
-                            Sign Here
-                          </button>
-                        </div>
-                      )}
-
-                      {/* Upload Area */}
-                      {formData.eSignMode === "upload" && (
-                        <div>
-                          <input
-                            type="file"
-                            id="eSignatureUpload"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) => {
-                              const file = e.target.files[0];
-                              if (file) {
+                        {/* Drag & Drop */}
+                        {mode !== "view" && (
+                          <label
+                            htmlFor="eSignatureUpload"
+                            onDragOver={(e) => e.preventDefault()}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              const file = e.dataTransfer.files[0];
+                              if (file && file.type.startsWith("image/")) {
                                 setFormData((prev) => ({
                                   ...prev,
                                   signature: file,
@@ -1084,105 +965,156 @@ const PatrollingChecklist = () => {
                                 }));
                               }
                             }}
-                          />
+                            className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                          >
+                            <svg
+                              className="w-8 h-8 text-gray-400 mb-2"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                              />
+                            </svg>
+                            <p className="text-sm text-gray-500">
+                              Drag & drop or{" "}
+                              <span className="text-[#0f172a] font-medium underline">
+                                browse
+                              </span>
+                            </p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              PNG, JPG, SVG supported
+                            </p>
+                          </label>
+                        )}
 
-                          {/* Drag & Drop */}
-                          {mode !== "view" && (
-                            <label
-                              htmlFor="eSignatureUpload"
-                              onDragOver={(e) => e.preventDefault()}
-                              onDrop={(e) => {
-                                e.preventDefault();
-                                const file = e.dataTransfer.files[0];
-                                if (file && file.type.startsWith("image/")) {
+                        {/* Preview */}
+                        {formData.eSignaturePreview && (
+                          <div className="mt-4 flex items-center gap-3">
+                            <img
+                              src={formData.eSignaturePreview}
+                              alt="Signature Preview"
+                              className="h-16 border rounded bg-white p-2 shadow-sm"
+                            />
+                            {mode !== "view" && (
+                              <button
+                                type="button"
+                                onClick={() =>
                                   setFormData((prev) => ({
                                     ...prev,
-                                    signature: file,
-                                    eSignaturePreview:
-                                      URL.createObjectURL(file),
-                                  }));
+                                    signature: null,
+                                    eSignaturePreview: null,
+                                  }))
                                 }
-                              }}
-                              className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
-                            >
-                              <svg
-                                className="w-8 h-8 text-gray-400 mb-2"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                                className="text-xs text-red-500 hover:underline"
                               >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={1.5}
-                                  d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
-                                />
-                              </svg>
-                              <p className="text-sm text-gray-500">
-                                Drag & drop or{" "}
-                                <span className="text-[#0f172a] font-medium underline">
-                                  browse
-                                </span>
-                              </p>
-                              <p className="text-xs text-gray-400 mt-1">
-                                PNG, JPG, SVG supported
-                              </p>
-                            </label>
-                          )}
+                                Remove
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
 
-                          {/* Preview */}
-                          {formData.eSignaturePreview && (
-                            <div className="mt-4 flex items-center gap-3">
-                              <img
-                                src={formData.eSignaturePreview}
-                                alt="Signature Preview"
-                                className="h-16 border rounded bg-white p-2 shadow-sm"
-                              />
-                              {mode !== "view" && (
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    setFormData((prev) => ({
-                                      ...prev,
-                                      signature: null,
-                                      eSignaturePreview: null,
-                                    }))
-                                  }
-                                  className="text-xs text-red-500 hover:underline"
-                                >
-                                  Remove
-                                </button>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Draw Area */}
-                      {formData.eSignMode === "draw" && (
-                        <SignPad
-                          fieldName="signature_drawn"
-                          formData={formData}
-                          setFormData={setFormData}
-                          mode={mode}
-                        />
-                      )}
-                    </div>
+                    {/* Draw Area */}
+                    {formData.eSignMode === "draw" && (
+                      <SignPad
+                        fieldName="signature_drawn"
+                        formData={formData}
+                        setFormData={setFormData}
+                        mode={mode}
+                      />
+                    )}
                   </div>
+                </div>
 
-                  {/* Save */}
+                <div className="flex justify-end">
                   {mode !== "view" && (
-                    <div className="flex justify-end mt-10">
+                    <div className="w-full md:w-fit flex justify-end items-end">
                       <button
                         onClick={handleSubmit}
-                        className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md mb-6"
+                        className="w-full md:w-auto bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-4 rounded-2xl font-bold lg:text-xl shadow-xl hover:shadow-blue-200 hover:-translate-y-1 transition-all"
                       >
-                        Save
+                        Submit Checklist
                       </button>
                     </div>
                   )}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Row Detail Quick View Modal */}
+      {openViewModal && viewRow && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+          <div className="bg-white p-8 rounded-3xl w-full max-w-2xl shadow-2xl animate-in zoom-in duration-200">
+            <h2 className="text-xl lg:text-2xl font-black text-gray-900 mb-6 border-b pb-4 flex items-center gap-2">
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-ping"></div>{" "}
+              Patrolling Item Details
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm lg:text-lg">
+              <div className="col-span-2 p-3 bg-slate-50 rounded-xl mb-2">
+                <span className="text-xs font-bold text-gray-400 block uppercase">
+                  Section & Task
+                </span>
+                <p className="font-bold text-gray-800">
+                  {viewRow.section} - {viewRow.taskList}
+                </p>
+              </div>
+              {[
+                {
+                  l: "Unattended",
+                  k: "unattended_ok",
+                  r: "unattended_reported_to",
+                },
+                {
+                  l: "Hazardous",
+                  k: "hazardous_ok",
+                  r: "hazardous_reported_to",
+                },
+                { l: "IAS", k: "ias_ok", r: "ias_reported_to" },
+                {
+                  l: "Gems Assets",
+                  k: "gems_assets_ok",
+                  r: "gems_assets_reported_to",
+                },
+                {
+                  l: "Vehicle Parking",
+                  k: "vehicle_parking_ok",
+                  r: "vehicle_parking_reported_to",
+                },
+                { l: "PTW", k: "ptw_ok", r: "ptw_reported_to" },
+              ].map((d) => (
+                <div key={d.l} className="p-3 border-b border-slate-100">
+                  <span className="font-bold text-gray-500 text-sm block uppercase">
+                    {d.l}
+                  </span>
+                  <div className="flex items-center justify-between mt-1">
+                    <span
+                      className={`font-black ${viewRow[d.k] ? "text-green-600" : "text-red-500"}`}
+                    >
+                      {viewRow[d.k] ? "OK" : "NOT OK"}
+                    </span>
+                    <span className="text-lg text-slate-400 italic">
+                      {viewRow[d.r] || "N/A"}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="text-right mt-8">
+              <button
+                onClick={() => setOpenViewModal(false)}
+                className="bg-red-500 hover:bg-red-600 text-white px-8 py-2 rounded-xl font-bold transition-all shadow-lg shadow-red-100"
+              >
+                Close View
+              </button>
             </div>
           </div>
         </div>

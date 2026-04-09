@@ -541,7 +541,10 @@ const UserMaster = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto min-h-[350px]">
+          <div
+            className="overflow-x-auto min-h-[350px]"
+            style={{ scrollbarWidth: "none" }}
+          >
             <table className="w-full text-[16px] lg:text-[19px] 3xl:text-[22px]">
               <thead>
                 <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
@@ -583,15 +586,15 @@ const UserMaster = () => {
                   </tr>
                 ) : currentUsers.length === 0 ? (
                   <tr>
-                  <td colSpan="7" className="px-4 py-12 text-center">
-                    <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="text-4xl opacity-40">👤</div>
-                      <p className="text-gray-500 text-base font-medium">
-                        No user data
-                      </p>
-                    </div>
-                  </td>
-                </tr>
+                    <td colSpan="7" className="px-4 py-12 text-center">
+                      <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="text-4xl opacity-40">👤</div>
+                        <p className="text-gray-500 text-base font-medium">
+                          No user data
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
                 ) : (
                   currentUsers.map((user, index) => (
                     <tr
@@ -724,8 +727,14 @@ const UserMaster = () => {
 
         {/* Modal */}
         {openModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
-            <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8">
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
+            <div
+              className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8"
+              style={{ scrollbarWidth: "none" }}
+            >
               {/* Tabs Header */}
               <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
                 <div className="flex gap-6">

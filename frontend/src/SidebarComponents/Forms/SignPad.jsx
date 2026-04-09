@@ -51,10 +51,10 @@ const SignPad = ({ fieldName, name, formData, setFormData, mode }) => {
               className="w-[230px] h-[150px] border mt-2"
             />
           ) : (
-            <div className="border border-gray-400 w-[180px] h-[100px] mt-2">
+            <div className="border border-gray-400 w-full max-w-[500px] h-[150px] mt-2">
               <SignatureCanvas
                 penColor="black"
-                canvasProps={{ width: 180, height: 100 }}
+                canvasProps={{ width: "full", height: 100 }}
                 ref={sigRef}
               />
             </div>

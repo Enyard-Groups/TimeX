@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
@@ -62,10 +61,9 @@ const EarlyOutReport = () => {
   });
 
   const inputStyle =
-    "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-lg py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
-
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
+    "text-sm lg:text-base 3xl:text-xl font-semibold text-gray-700 mb-2 block";
 
   const filteredReport = earlyOutReport.filter((emp) => {
     const punchDate = new Date(emp.createdDate);
@@ -116,27 +114,25 @@ const EarlyOutReport = () => {
 
   return (
     <>
-      <div className="mb-6">
+      <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header */}
-        <div className="sm:flex sm:justify-between">
-          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-            <FaAngleRight />
-            Reports
-            <FaAngleRight />
-            Early Out Report
-            <FaAngleRight />
-            Early Out Report
+        <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+          <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900 ">
+            <FaAngleRight className="text-blue-500 text-base" />
+            <span className="text-gray-500">Reports</span>
+            <FaAngleRight className="text-blue-500 text-base" />
+            <div
+              onClick={() => setOpenModal(false)}
+              className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+            >
+              Early Out Report
+            </div>
           </h1>
         </div>
 
-        <div
-          className="flex items-center justify-center p-4 overflow-y-auto"
-          style={{ scrollbarWidth: "none" }}
-        >
-          <div
-            className="bg-white rounded-xl shadow-sm w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
-            style={{ scrollbarWidth: "none" }}
-          >
+        {/* Filter Section Area */}
+        {!openModal && (
+          <div className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-2xl border border-blue-100/50 shadow-xl mb-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <div>
                 <SearchDropdown
@@ -159,8 +155,6 @@ const EarlyOutReport = () => {
                   options={[
                     "All Category",
                     "Full Time Equivalent",
-                    "Contingent",
-                    "Freelence",
                     "Contract",
                     "Permanent",
                   ]}
@@ -189,30 +183,7 @@ const EarlyOutReport = () => {
                   label="Designation"
                   name="department"
                   value={formData.department}
-                  options={[
-                    "Regional Sales Support Manager",
-                    "Operations Support Officer",
-                    "Finance Assistant",
-                    "Trade Finance Specialist",
-                    "Banking Operations Officer",
-                    "Sales Support Officer",
-                    "Banking Operations Officer",
-                    "Project Manager",
-                    "Administrative Assistant",
-                    "Sales Officer",
-                    "Banking Officer",
-                    "Sales Manager",
-                    "Senior Banking Officer",
-                    "Client Service Manager",
-                    "Senior Director – Banking Operations",
-                    "Relationship Officer",
-                    "Accountant",
-                    "Director – Sales Excellence",
-                    "Service Sales Support Officer",
-                    "HR Manager",
-                    "Sales & Logistics Officer",
-                    "Operation Officer",
-                  ]}
+                  options={["Manager", "Officer", "Specialist"]}
                   formData={formData}
                   setFormData={setFormData}
                   inputStyle={inputStyle}
@@ -225,13 +196,7 @@ const EarlyOutReport = () => {
                   label="Employee"
                   name="employee"
                   value={formData.employee}
-                  options={[
-                    "Employee 1",
-                    "Employee 2",
-                    "Employee 3",
-                    "Employee 4",
-                    "Employee 5",
-                  ]}
+                  options={["Employee 1", "Employee 2", "Employee 3"]}
                   formData={formData}
                   setFormData={setFormData}
                   inputStyle={inputStyle}
@@ -244,13 +209,11 @@ const EarlyOutReport = () => {
                 <input
                   name="fromPunchDate"
                   value={formData.fromPunchDate}
-                  onClick={() => {
-                    setShowPunchDateSpinner(true);
-                  }}
+                  onClick={() => setShowPunchDateSpinner(true)}
+                  readOnly
                   placeholder="dd/mm/yyyy"
                   className={inputStyle}
                 />
-
                 {showPunchDateSpinner && (
                   <SpinnerDatePicker
                     value={formData.fromPunchDate}
@@ -261,9 +224,9 @@ const EarlyOutReport = () => {
                   />
                 )}
               </div>
-
               <div>
                 <label className={labelStyle}>To Punch Date</label>
+
                 <input
                   name="toPunchDate"
                   value={formData.toPunchDate}
@@ -286,163 +249,166 @@ const EarlyOutReport = () => {
               </div>
             </div>
 
-            {/* Save */}
-
             <div className="flex justify-end mt-10">
               <button
-                onClick={() => {
-                  setOpenModal(true);
-                }}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md"
+                onClick={() => setOpenModal(true)}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md lg:text-lg 3xl:text-xl transition-all duration-200"
               >
                 Generate Report
               </button>
             </div>
           </div>
-        </div>
+        )}
 
+        {/* Results Table Section */}
         {openModal && (
-          <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6 ">
-            {/* Close */}
-            <div className="flex justify-end">
-              <RxCross2
-                onClick={() => setOpenModal(false)}
-                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-              />
-            </div>
-
-            {/* Top Controls */}
-            <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-              <div>
-                <label className="mr-2 text-md">Show</label>
-                <select
-                  value={entriesPerPage}
-                  onChange={(e) => {
-                    setEntriesPerPage(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                  className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
-                >
-                  <option value={10}>10</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </select>
-                <span className="ml-2 text-md">entries</span>
-              </div>
-
-              <div className="flex flex-wrap gap-2 items-center justify-center">
-                <input
-                  placeholder="Search"
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+          <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
+            <div className="p-6 border-b border-blue-100/30">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl lg:text-2xl 3xl:text-3xl font-bold text-gray-800">
+                  Early Out Summary
+                </h2>
+                <RxCross2
+                  onClick={() => setOpenModal(false)}
+                  className="text-2xl text-gray-400 hover:text-red-500 cursor-pointer transition-colors"
                 />
               </div>
+
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                    Display
+                  </label>
+                  <select
+                    value={entriesPerPage}
+                    onChange={(e) => {
+                      setEntriesPerPage(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl"
+                  >
+                    {[10, 25, 50, 100].map((v) => (
+                      <option key={v} value={v}>
+                        {v}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                    entries
+                  </span>
+                </div>
+
+                <div className="flex gap-3">
+                  <input
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all"
+                  />
+                </div>
+              </div>
             </div>
 
-            {/* Table */}
             <div
-              className="overflow-x-auto min-h-[250px]"
+              className="overflow-x-auto min-h-[350px]"
               style={{ scrollbarWidth: "none" }}
             >
-              <h1 className="text-[oklch(0.577_0.245_27.325)] text-xl mb-4 text-center">
-                Early Out Report
-              </h1>
-              <table className="w-full text-lg border-collapse">
-                <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                  <tr>
-                    <th className="p-2 font-semibold  hidden sm:table-cell">
+              <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-blue-100/50">
+                    <th className="px-4 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
                       Enrollment ID
                     </th>
-                    <th className="p-2 font-semibold">Name</th>
-                    <th className="p-2 font-semibold whitespace-nowrap hidden md:table-cell">
+                    <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                      Name
+                    </th>
+                    <th className="px-4 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
                       Date
                     </th>
-                    <th className="p-2 font-semibold whitespace-nowrap hidden lg:table-cell">
+                    <th className="px-4 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
                       Shift Hours
                     </th>
-                    <th className="p-2 font-semibold whitespace-nowrap hidden xl:table-cell">
+                    <th className="px-4 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
                       Total Hours
                     </th>
-                    <th className="p-2 font-semibold whitespace-nowrap hidden md:table-cell">
+                    <th className="px-4 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
                       Missed Hours
                     </th>
-                    <th className="p-2 font-semibold whitespace-nowrap hidden xl:table-cell">
+                    <th className="px-4 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
                       Status
                     </th>
-                    <th className="p-2 font-semibold">Action</th>
+                    <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {currentearlyOutReport.length === 0 ? (
                     <tr>
-                      <td colSpan="6" className="sm:text-center p-10">
+                      <td
+                        colSpan="8"
+                        className="p-12 text-center text-gray-500 font-medium"
+                      >
                         No Data Available
                       </td>
                     </tr>
                   ) : (
                     currentearlyOutReport.map((item) => {
                       let totalhours = "";
-
                       if (item.intime && item.outtime) {
-                        const inT = new Date(item.intime).toLocaleTimeString();
-                        const outT = new Date(
-                          item.outtime,
-                        ).toLocaleTimeString();
-                        totalhours = getTimeDiff(inT, outT);
+                        totalhours = getTimeDiff(
+                          new Date(item.intime).toLocaleTimeString(),
+                          new Date(item.outtime).toLocaleTimeString(),
+                        );
                       }
-
+                      const timeDiff = totalhours
+                        ? getTimeDiff(totalhours, "07:00:00")
+                        : "-";
                       return (
                         <tr
                           key={item.id}
-                          className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                          className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                         >
-                          <td className="p-2 hidden sm:table-cell">
+                          <td className="px-4 py-3 text-center hidden sm:table-cell text-gray-600">
                             {item.employeeId}
                           </td>
-
-                          <td className="p-2 whitespace-nowrap">
+                          <td className="px-4 py-3 text-center font-medium text-gray-900">
                             {item.employee}
                           </td>
-
-                          <td className="p-2 hidden md:table-cell">
+                          <td className="px-4 py-3 text-center hidden md:table-cell text-gray-600">
                             {new Date(item.createdDate).toLocaleDateString()}
                           </td>
-
-                          <td className="p-2 hidden lg:table-cell">
-                            {"07:00:00"}
+                          <td className="px-4 py-3 text-center hidden lg:table-cell text-gray-500">
+                            07:00:00
                           </td>
-
-                          <td className="p-2 hidden xl:table-cell">
+                          <td className="px-4 py-3 text-center hidden xl:table-cell text-gray-900 font-medium">
                             {totalhours || "-"}
                           </td>
-
-                          <td className="p-2 hidden md:table-cell">
-                            {totalhours
-                              ? getTimeDiff(totalhours, "07:00:00")
-                              : "00:00:00"}
+                          <td
+                            className={`px-4 py-3 text-center hidden md:table-cell ${timeDiff !== "00:00:00" ? "text-red-500 font-bold" : "font-semibold text-green-600"}`}
+                          >
+                            {timeDiff || "-"}
                           </td>
-
-                          <td className="p-2 hidden xl:table-cell">
-                            {item.intime && item.outtime
-                              ? "Normal Shift"
-                              : "Missed Punch"}
+                          <td className="px-4 py-3 text-center hidden xl:table-cell">
+                            <span
+                              className={`px-3 py-1 rounded-full text-xs font-semibold ${item.intime && item.outtime ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+                            >
+                              {item.intime && item.outtime
+                                ? "Normal Shift"
+                                : "Missed Punch"}
+                            </span>
                           </td>
-
-                          <td className="p-2">
-                            <div className="flex gap-2 justify-center">
-                              <FaEye
-                                onClick={() => {
-                                  setSelectedId(item.id);
-                                  setModalOpenSelectedItem(true);
-                                }}
-                                className="text-blue-500 cursor-pointer text-lg mt-2 mr-2"
-                              />
-                            </div>
+                          <td className="px-4 py-3 text-center">
+                            <FaEye
+                              onClick={() => {
+                                setSelectedId(item.id);
+                                setModalOpenSelectedItem(true);
+                              }}
+                              className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer mx-auto"
+                            />
                           </td>
                         </tr>
                       );
@@ -453,47 +419,51 @@ const EarlyOutReport = () => {
             </div>
 
             {/* Pagination */}
-            <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-              <span>
+            <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+              <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
                 Showing{" "}
-                {filteredearlyOutReport.length === 0 ? "0" : startIndex + 1} to{" "}
-                {Math.min(endIndex, filteredearlyOutReport.length)} of{" "}
-                {filteredearlyOutReport.length} entries
+                <span className="font-bold text-gray-900">
+                  {startIndex + 1}
+                </span>{" "}
+                to{" "}
+                <span className="font-bold text-gray-900">
+                  {Math.min(endIndex, filteredearlyOutReport.length)}
+                </span>{" "}
+                of{" "}
+                <span className="font-bold text-gray-900">
+                  {filteredearlyOutReport.length}
+                </span>{" "}
+                entries
               </span>
-
-              <div className="flex flex-row space-x-1">
+              <div className="flex gap-2">
                 <button
-                  disabled={currentPage == 1}
+                  disabled={currentPage === 1}
                   onClick={() => setCurrentPage(1)}
-                  className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50"
                 >
                   First
                 </button>
-
                 <button
-                  disabled={currentPage == 1}
+                  disabled={currentPage === 1}
                   onClick={() => setCurrentPage(currentPage - 1)}
-                  className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                  className="p-2.5 border rounded-lg bg-white disabled:opacity-50"
                 >
                   <GrPrevious />
                 </button>
-
-                <div className="p-3 px-4 shadow rounded-full">
+                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm lg:text-base 3xl:text-xl">
                   {currentPage}
                 </div>
-
                 <button
-                  disabled={currentPage == totalPages}
+                  disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(currentPage + 1)}
-                  className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                  className="p-2.5 border rounded-lg bg-white disabled:opacity-50"
                 >
                   <GrNext />
                 </button>
-
                 <button
-                  disabled={currentPage == totalPages}
+                  disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(totalPages)}
-                  className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50"
                 >
                   Last
                 </button>
@@ -502,48 +472,55 @@ const EarlyOutReport = () => {
           </div>
         )}
 
+        {/* Selection Detail Modal */}
         {modalOpenSelectedItem &&
           selectedItem &&
           (() => {
             let totalhours = "";
-
             if (selectedItem.intime && selectedItem.outtime) {
-              const inT = new Date(selectedItem.intime).toLocaleTimeString();
-              const outT = new Date(selectedItem.outtime).toLocaleTimeString();
-              totalhours = getTimeDiff(inT, outT);
+              totalhours = getTimeDiff(
+                new Date(selectedItem.intime).toLocaleTimeString(),
+                new Date(selectedItem.outtime).toLocaleTimeString(),
+              );
             }
-
             return (
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
+              <div
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
+                style={{ scrollbarWidth: "none" }}
+                onClick={() => {
+                  setModalOpenSelectedItem(false);
+                  setSelectedId(null);
+                }}
+              >
                 <div
-                  className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
+                  className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-5xl max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
                   style={{ scrollbarWidth: "none" }}
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-semibold">
-                      {selectedItem.employee} Details
+                  <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+                    <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+                      {selectedItem.employee} Early Out Details
                     </h2>
-
-                    <RxCross2
+                    <button
                       onClick={() => {
                         setModalOpenSelectedItem(false);
                         setSelectedId(null);
                       }}
-                      className="cursor-pointer text-xl text-red-500"
-                    />
+                      className="text-gray-400 hover:text-red-600 transition-colors"
+                    >
+                      <RxCross2 className="text-2xl" />
+                    </button>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-lg">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     <div>
                       <p className={labelStyle}>Name</p>
                       <p className={inputStyle}>{selectedItem.employee}</p>
                     </div>
-
                     <div>
                       <p className={labelStyle}>Employee ID</p>
                       <p className={inputStyle}>{selectedItem.employeeId}</p>
                     </div>
-
                     <div>
                       <p className={labelStyle}>Date</p>
                       <p className={inputStyle}>
@@ -552,7 +529,6 @@ const EarlyOutReport = () => {
                         ).toLocaleDateString()}
                       </p>
                     </div>
-
                     <div>
                       <p className={labelStyle}>Check in</p>
                       <p className={inputStyle}>
@@ -561,7 +537,6 @@ const EarlyOutReport = () => {
                           : "No Checkin"}
                       </p>
                     </div>
-
                     <div>
                       <p className={labelStyle}>Check out</p>
                       <p className={inputStyle}>
@@ -570,17 +545,14 @@ const EarlyOutReport = () => {
                           : "No Checkout"}
                       </p>
                     </div>
-
                     <div>
                       <p className={labelStyle}>Shift Hours</p>
-                      <p className={inputStyle}>{"07:00:00"}</p>
+                      <p className={inputStyle}>07:00:00</p>
                     </div>
-
                     <div>
                       <p className={labelStyle}>Work Hours</p>
                       <p className={inputStyle}>{totalhours || "-"}</p>
                     </div>
-
                     <div>
                       <p className={labelStyle}>Missed Hours</p>
                       <p className={inputStyle}>
@@ -589,10 +561,11 @@ const EarlyOutReport = () => {
                           : "00:00:00"}
                       </p>
                     </div>
-
                     <div>
                       <p className={labelStyle}>Status</p>
-                      <p className={inputStyle}>
+                      <p
+                        className={`py-1 px-3 w-fit rounded lg:text-lg 3xl:text-xl font-semibold border ${selectedItem.intime && selectedItem.outtime ? "bg-green-100 text-green-700 border-green-200" : "bg-red-100 text-red-700 border-red-200"}`}
+                      >
                         {selectedItem.intime && selectedItem.outtime
                           ? "Normal Shift"
                           : "Missed Punch"}
