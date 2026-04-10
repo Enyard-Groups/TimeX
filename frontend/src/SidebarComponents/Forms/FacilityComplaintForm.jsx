@@ -345,7 +345,7 @@ const FacilityComplaintForm = () => {
                 {loading ? (
                   <tr>
                     <td
-                      colSpan="6"
+                      colSpan="9"
                       className="px-4 py-12 text-center text-gray-500"
                     >
                       <div className="flex flex-col items-center gap-2">
@@ -358,7 +358,7 @@ const FacilityComplaintForm = () => {
                   <tr>
                     <td colSpan="9" className="px-4 py-12 text-center">
                       <div className="flex flex-col items-center justify-center gap-3">
-                        <p className="text-gray-500 text-base">
+                        <p className="text-gray-500 text-lg font-bold ">
                           No complaints recorded
                         </p>
                       </div>

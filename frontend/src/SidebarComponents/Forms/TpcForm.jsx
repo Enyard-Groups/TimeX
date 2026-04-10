@@ -25,6 +25,7 @@ const TpcForm = () => {
   const [requestData, setRequestData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [editId, setEditId] = useState(null);
   const [showDateSpinner, setShowDateSpinner] = useState(false);
 
@@ -51,11 +52,14 @@ const TpcForm = () => {
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(API_URL);
       setRequestData(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to fetch data");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -282,7 +286,19 @@ const TpcForm = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentrequestData.length === 0 ? (
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan="5"
+                      className="px-4 py-12 text-center text-gray-500"
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        <span>Loading...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : currentrequestData.length === 0 ? (
                   <tr>
                     <td
                       colSpan="5"

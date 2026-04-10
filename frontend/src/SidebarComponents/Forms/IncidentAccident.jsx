@@ -358,7 +358,7 @@ const IncidentAccident = () => {
                 {loading ? (
                   <tr>
                     <td
-                      colSpan="6"
+                      colSpan="5"
                       className="px-4 py-12 text-center text-gray-500"
                     >
                       <div className="flex flex-col items-center gap-2">

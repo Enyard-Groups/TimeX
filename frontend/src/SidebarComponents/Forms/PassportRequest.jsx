@@ -24,6 +24,7 @@ const PassportRequest = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [showDateSpinner, setShowDateSpinner] = useState(false);
   const inputStyle =
     "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
@@ -57,11 +58,14 @@ const PassportRequest = () => {
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(API_URL);
       setRequestData(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to fetch data");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -310,7 +314,19 @@ const PassportRequest = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentrequestData.length === 0 ? (
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      className="px-4 py-12 text-center text-gray-500"
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        <span>Loading...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : currentrequestData.length === 0 ? (
                   <tr>
                     <td
                       colSpan="6"
