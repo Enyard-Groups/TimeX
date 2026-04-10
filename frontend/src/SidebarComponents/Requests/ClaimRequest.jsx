@@ -324,7 +324,10 @@ const ClaimRequest = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto min-h-[350px]">
+        <div
+          className="overflow-x-auto min-h-[350px]"
+          style={{ scrollbarWidth: "none" }}
+        >
           <table className="w-full text-[16px] xl:text-[20px] text-gray-900">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
@@ -504,8 +507,14 @@ const ClaimRequest = () => {
 
       {/* Modal */}
       {openModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
+          style={{ scrollbarWidth: "none" }}
+        >
+          <div
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8"
+            style={{ scrollbarWidth: "none" }}
+          >
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
               <h2 className="text-xl font-bold text-gray-900">
                 {mode === "view"

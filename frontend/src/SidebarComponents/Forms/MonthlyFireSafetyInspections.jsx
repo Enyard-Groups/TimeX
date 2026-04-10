@@ -27,8 +27,7 @@ const MonthlyFireSafetyInspections = () => {
   const [showDateSpinner, setShowDateSpinner] = useState(false);
   const defaultFormData = {
     employee: "",
-    location_id: "",
-    location_name: "",
+    location: "",
     createdDate: "",
 
     fireHazards: {
@@ -422,19 +421,15 @@ const MonthlyFireSafetyInspections = () => {
   ];
 
   const inputStyle =
-    " text-[16px] w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
-
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    " text-[16px] font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
+    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
 
-  const [locationOptions, setLocationOptions] = useState([]);
 
   const filteredinspectionData = inspectionData.filter(
     (x) =>
       x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      (x.location_name || x.location || "")
-        .toLowerCase()
-        .startsWith(searchTerm.toLowerCase()),
+      (x.location || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -493,18 +488,12 @@ const MonthlyFireSafetyInspections = () => {
     }));
   };
 
-  const fetchLocations = async () => {
-    try {
-      const response = await axios.get("http://localhost:3000/api/master/location-groups");
-      setLocationOptions(response.data?.data || response.data || []);
-    } catch (error) {
-      console.error("Failed to fetch locations", error);
-    }
-  };
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/form/monthlyFireSafety");
+      const response = await axios.get(
+        "http://localhost:3000/api/form/monthlyFireSafety",
+      );
       setInspectionData(response.data);
     } catch (error) {
       console.error(error);
@@ -514,7 +503,6 @@ const MonthlyFireSafetyInspections = () => {
 
   useEffect(() => {
     fetchData();
-    fetchLocations();
   }, []);
 
   useEffect(() => {
@@ -527,9 +515,9 @@ const MonthlyFireSafetyInspections = () => {
 
   // Handle submit
   const handleSubmit = async () => {
-    const { employee, location_id, createdDate, signature, signhere } = formData;
+    const { employee, location, createdDate, signature, signhere } = formData;
 
-    if (!employee || !location_id || !createdDate || (!signature && !signhere)) {
+    if (!employee || !location || !createdDate || (!signature && !signhere)) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -540,10 +528,16 @@ const MonthlyFireSafetyInspections = () => {
 
     try {
       if (editId) {
-        await axios.put(`http://localhost:3000/api/form/monthlyFireSafety/${editId}`, newEntry);
+        await axios.put(
+          `http://localhost:3000/api/form/monthlyFireSafety/${editId}`,
+          newEntry,
+        );
         toast.success("Request Updated");
       } else {
-        await axios.post("http://localhost:3000/api/form/monthlyFireSafety", newEntry);
+        await axios.post(
+          "http://localhost:3000/api/form/monthlyFireSafety",
+          newEntry,
+        );
         toast.success("Request Submitted");
       }
       fetchData();
@@ -559,7 +553,9 @@ const MonthlyFireSafetyInspections = () => {
   // Handle delete
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/form/monthlyFireSafety/${id}`);
+      await axios.delete(
+        `http://localhost:3000/api/form/monthlyFireSafety/${id}`,
+      );
       fetchData();
       toast.success("Deleted Successfully");
     } catch (error) {
@@ -573,7 +569,7 @@ const MonthlyFireSafetyInspections = () => {
 
     const rows = filteredinspectionData
       .map((item) => {
-        return [item.location_name || item.location, item.employee, item.createdDate].join("\t");
+        return [item.location, item.employee, item.createdDate].join("\t");
       })
       .join("\n");
 
@@ -585,7 +581,7 @@ const MonthlyFireSafetyInspections = () => {
 
   const handleExcel = () => {
     const excelData = filteredinspectionData.map((item) => ({
-      Location: item.location_name || item.location,
+      Location: item.location,
       InspectedBy: item.employee,
       Date: item.createdDate,
     }));
@@ -606,7 +602,7 @@ const MonthlyFireSafetyInspections = () => {
     const tableRows = [];
 
     filteredinspectionData.forEach((item) => {
-      const row = [item.location_name || item.location, item.employee, item.createdDate];
+      const row = [item.location, item.employee, item.createdDate];
 
       tableRows.push(row);
     });
@@ -621,27 +617,30 @@ const MonthlyFireSafetyInspections = () => {
 
   return (
     <>
-      <div className="mb-6">
-        {/* Header */}
-        <div className="sm:flex sm:justify-between">
-          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-            <FaAngleRight />
-            Forms
-            <FaAngleRight />
-            <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+      <div className="mb-6 max-w-[1920px] mx-auto">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+          <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+            <FaAngleRight className="text-blue-500 text-base" />
+            <span className="text-gray-500">Forms</span>
+            <FaAngleRight className="text-blue-500 text-base" />
+            <div
+              onClick={() => setOpenModal(false)}
+              className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+            >
               Monthly Fire Safety Inspections
             </div>
           </h1>
           {!openModal && (
             <div className="flex justify-end">
               <button
-                onClick={() => (
-                  setMode(""),
-                  setEditId(null),
-                  setFormData(defaultFormData),
-                  setOpenModal(true)
-                )}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+                onClick={() => {
+                  setMode("");
+                  setEditId(null);
+                  setFormData(defaultFormData);
+                  setOpenModal(true);
+                }}
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
               >
                 + Add New
               </button>
@@ -649,90 +648,103 @@ const MonthlyFireSafetyInspections = () => {
           )}
         </div>
 
-        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">
+        {/* Main Table Container */}
+        <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl">
           {/* Top Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <div>
-              <label className="mr-2 text-md">Show</label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="ml-2 text-md">entries</span>
-            </div>
-            <div className="flex flex-wrap gap-2 items-center justify-center">
-              <input
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-              />
-              <div className="flex">
-                <button
-                  onClick={handleCopy}
-                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+          <div className="p-6 border-b border-blue-100/30">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  Show
+                </label>
+                <select
+                  value={entriesPerPage}
+                  onChange={(e) => {
+                    setEntriesPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60"
                 >
-                  <GoCopy />
-                </button>
+                  {[10, 25, 50, 100].map((v) => (
+                    <option key={v} value={v}>
+                      {v}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  entries
+                </span>
+              </div>
 
-                <button
-                  onClick={handleExcel}
-                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
-                >
-                  <FaFileExcel />
-                </button>
-
-                <button
-                  onClick={handlePDF}
-                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
-                >
-                  <FaFilePdf />
-                </button>
+              <div className="flex flex-wrap gap-3 items-center justify-center">
+                <input
+                  placeholder="Search inspections..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base focus:outline-none 3xl:text-lg rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopy}
+                    className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 p-2.5 rounded-lg transition-all"
+                    title="Copy"
+                  >
+                    <GoCopy className="text-lg lg:text-xl 3xl:text-3xl" />
+                  </button>
+                  <button
+                    onClick={handleExcel}
+                    className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 p-2.5 rounded-lg transition-all"
+                    title="Excel"
+                  >
+                    <FaFileExcel className="text-lg lg:text-xl 3xl:text-3xl" />
+                  </button>
+                  <button
+                    onClick={handlePDF}
+                    className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 p-2.5 rounded-lg transition-all"
+                    title="PDF"
+                  >
+                    <FaFilePdf className="text-lg lg:text-xl 3xl:text-3xl" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Table */}
+          {/* Table Content */}
           <div
-            className="overflow-x-auto min-h-[250px]"
+            className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="p-2 font-semibold hidden sm:table-cell">
+            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+              <thead>
+                <tr className="bg-slate-50 border-b border-blue-100/50">
+                  <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
                     SL.No
                   </th>
-
-                  <th className="p-2 font-semibold">Location</th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
+                    Location
+                  </th>
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
                     Date
                   </th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
                     Inspected By
                   </th>
-
-                  <th className="p-2 font-semibold">Action</th>
+                  <th className="py-3 px-6 font-semibold text-gray-700">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {currentinspectionData.length === 0 ? (
                   <tr>
-                    <td colSpan="14" className="lg:text-center p-10 ">
+                    <td
+                      colSpan="5"
+                      className="p-12 text-center text-gray-500 font-medium"
+                    >
                       No Data Available
                     </td>
                   </tr>
@@ -740,65 +752,52 @@ const MonthlyFireSafetyInspections = () => {
                   currentinspectionData.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                      className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="p-2 whitespace-nowrap hidden sm:table-cell">
-                        {index + 1}
+                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900">
+                        {startIndex + index + 1}
                       </td>
-
-                      <td className="p-2">{item.location_name || item.location}</td>
-
-                      <td className="p-2 hidden md:table-cell">
-                        {item.createdDate ? item.createdDate : "Missed Entry"}
+                      <td className="py-3 px-6 font-medium text-gray-900">
+                        {item.location}
                       </td>
-
-                      <td className="p-2 hidden md:table-cell">
+                      <td className="py-3 px-6 hidden md:table-cell text-g  ray-600">
+                        {item.createdDate || "Missed Entry"}
+                      </td>
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
                         {item.employee}
                       </td>
-
-                      <td className="p-2 flex flex-row space-x-3 justify-center whitespace-nowrap">
-                        {" "}
-                        <div className="flex flex-row space-x-3 justify-center mt-1">
-                          {/* View */}{" "}
+                      <td className="py-3 px-6 text-center">
+                        <div className="flex justify-center gap-3">
                           <FaEye
                             onClick={() => {
-                              const preview = item.signature
-                                ? URL.createObjectURL(item.signature)
-                                : null;
-
                               setFormData({
-                                ...defaultFormData,
                                 ...item,
-                                signaturePreview: preview,
+                                signaturePreview: item.signature
+                                  ? URL.createObjectURL(item.signature)
+                                  : null,
                               });
-
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />{" "}
-                          {/* Edit */}
+                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                          />
                           <FaPen
                             onClick={() => {
-                              const preview = item.signature
-                                ? URL.createObjectURL(item.signature)
-                                : null;
-
                               setFormData({
-                                ...defaultFormData,
                                 ...item,
-                                signaturePreview: preview,
+                                signaturePreview: item.signature
+                                  ? URL.createObjectURL(item.signature)
+                                  : null,
                               });
                               setEditId(item.id);
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="inline text-green-500 cursor-pointer text-lg"
+                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
                           />
-                          {/* Delete */}
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="inline text-red-500 cursor-pointer text-xl"
+                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
                           />
                         </div>
                       </td>
@@ -810,45 +809,51 @@ const MonthlyFireSafetyInspections = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-            <span>
+          <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
               Showing{" "}
-              {filteredinspectionData.length === 0 ? "0" : startIndex + 1} to{" "}
-              {Math.min(endIndex, filteredinspectionData.length)} of{" "}
-              {filteredinspectionData.length} entries
+              <span className="text-gray-900 font-semibold">
+                {filteredinspectionData.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
+              to{" "}
+              <span className="text-gray-900 font-semibold">
+                {Math.min(endIndex, filteredinspectionData.length)}
+              </span>{" "}
+              of{" "}
+              <span className="text-gray-900 font-semibold">
+                {filteredinspectionData.length}
+              </span>{" "}
+              entries
             </span>
-
-            <div className="flex flex-row space-x-1">
+            <div className="flex gap-2">
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50 transition-all"
               >
                 First
               </button>
-
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="p-2.5 border rounded-lg bg-white disabled:opacity-50"
               >
                 <GrPrevious />
               </button>
-
-              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
-
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm lg:text-base 3xl:text-xl min-w-[45px] text-center">
+                {currentPage}
+              </div>
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="p-2.5 border rounded-lg bg-white disabled:opacity-50"
               >
                 <GrNext />
               </button>
-
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50"
               >
                 Last
               </button>
@@ -856,208 +861,220 @@ const MonthlyFireSafetyInspections = () => {
           </div>
         </div>
 
+        {/* Modal Section */}
         {openModal && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
             style={{ scrollbarWidth: "none" }}
           >
             <div
-              className="bg-white rounded-xl shadow-xl w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-6"
+              className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
               style={{ scrollbarWidth: "none" }}
             >
-              {/* Close */}
-              <div className="flex justify-end">
-                <RxCross2
+              <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+                <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+                  {mode === "view"
+                    ? "Inspection Details"
+                    : mode === "edit"
+                      ? "Edit Inspection"
+                      : "New Safety Inspection"}
+                </h2>
+                <button
                   onClick={() => setOpenModal(false)}
-                  className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer mb-3"
-                />
+                  className="text-gray-400 hover:text-red-600 transition-colors"
+                >
+                  <RxCross2 className="text-2xl" />
+                </button>
               </div>
 
-              <div className="border p-4 rounded-xl border-gray-400 shadow">
-                {/* Form data  */}
-                <div
-                  className="max-h-[75vh] overflow-y-auto pr-2 text-[16px]"
-                  style={{ scrollbarWidth: "none" }}
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                    <div>
-                      <SearchDropdown
-                        label={
-                          <>
-                            Location <span className="text-red-500">*</span>
-                          </>
-                        }
-                        name="location_id"
-                        value={formData.location_id}
-                        displayValue={formData.location_name}
-                        options={locationOptions}
-                        labelKey="group_name"
-                        valueKey="id"
-                        labelName="location_name"
-                        formData={formData}
-                        setFormData={setFormData}
-                        disabled={mode === "view"}
-                        inputStyle={inputStyle}
-                        labelStyle={labelStyle}
-                      />
-                    </div>
-
-                    <div>
-                      <label className={labelStyle}>
-                        {" "}
-                        Inspected By <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        className={inputStyle}
-                        name="employee"
-                        value={formData.employee}
-                        onChange={handleChange}
-                        disabled={mode === "view"}
-                      />
-                    </div>
-
-                    <div>
-                      <label className={labelStyle}>
-                        Date <span className="text-red-500">*</span>
-                      </label>
-
-                      <input
-                        name="createdDate"
+              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                {/* Top Form Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+                  <SearchDropdown
+                    label={
+                      <>
+                        Location <span className="text-red-500">*</span>
+                      </>
+                    }
+                    name="location"
+                    value={formData.location}
+                    options={["Head Office", "Warehouse"]}
+                    formData={formData}
+                    setFormData={setFormData}
+                    disabled={mode === "view"}
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
+                  <div>
+                    <label className={labelStyle}>
+                      Inspected By <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      className={inputStyle}
+                      name="employee"
+                      value={formData.employee}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                    />
+                  </div>
+                  <div className="relative">
+                    <label className={labelStyle}>
+                      Date <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      name="createdDate"
+                      value={formData.createdDate}
+                      onClick={() =>
+                        mode !== "view" && setShowDateSpinner(true)
+                      }
+                      readOnly
+                      disabled={mode === "view"}
+                      placeholder="dd/mm/yyyy"
+                      className={inputStyle}
+                    />
+                    {showDateSpinner && (
+                      <SpinnerDatePicker
                         value={formData.createdDate}
-                        onChange={handleChange}
-                        onClick={() => setShowDateSpinner(true)}
-                        disabled={mode === "view"}
-                        placeholder="dd/mm/yyyy"
-                        className={inputStyle}
+                        onChange={(date) =>
+                          setFormData({ ...formData, createdDate: date })
+                        }
+                        onClose={() => setShowDateSpinner(false)}
                       />
+                    )}
+                  </div>
+                </div>
 
-                      {showDateSpinner && (
-                        <SpinnerDatePicker
-                          value={formData.createdDate}
-                          onChange={(date) =>
-                            setFormData({ ...formData, createdDate: date })
-                          }
-                          onClose={() => setShowDateSpinner(false)}
-                        />
-                      )}
+                {/* Checklist Table */}
+                <div className="border border-gray-200 rounded-xl overflow-hidden mb-8">
+                  <div className="grid grid-cols-12 bg-slate-100 font-bold text-gray-700 lg:text-lg 3xl:text-2xl">
+                    <div className="col-span-5 p-4">
+                      Checklist Category & Item
                     </div>
+                    <div className="col-span-1 text-center p-4">Yes</div>
+                    <div className="col-span-1 text-center p-4">No</div>
+                    <div className="col-span-5 p-4 text-center">Remarks</div>
                   </div>
 
-                  {/* HEADER ROW */}
-                  <div className="grid grid-cols-12 bg-gray-200 font-semibold">
-                    <div className="col-span-5 p-2">Checklist</div>
-                    <div className="col-span-1 text-center p-2">Yes</div>
-                    <div className="col-span-1 text-center p-2">No</div>
-                    <div className="col-span-5 p-2 text-center">Remarks</div>
-                  </div>
-
-                  {checklistConfig.map((sectionItem) => (
-                    <div key={sectionItem.section}>
-                      {/* Section Title */}
-                      <div className="bg-gray-100 font-semibold p-2 mt-4">
-                        {sectionItem.title}
-                      </div>
-
-                      {/* Fields */}
-                      {sectionItem.fields.map((field) => (
-                        <div
-                          key={field.key}
-                          className="grid grid-cols-12 border-b items-center"
-                        >
-                          {/* Label */}
-                          <div className="col-span-5 p-2">{field.label}</div>
-
-                          {/* YES */}
-                          <div className="col-span-1 text-center">
-                            <input
-                              type="radio"
-                              name={`${sectionItem.section}-${field.key}`}
-                              checked={
-                                formData[sectionItem.section][field.key] ===
-                                "yes"
-                              }
-                              disabled={mode === "view"}
-                              onChange={() =>
-                                handleChecklistChange(
-                                  sectionItem.section,
-                                  field.key,
-                                  "yes",
-                                )
-                              }
-                            />
-                          </div>
-
-                          {/* NO */}
-                          <div className="col-span-1 text-center">
-                            <input
-                              type="radio"
-                              name={`${sectionItem.section}-${field.key}`}
-                              checked={
-                                formData[sectionItem.section][field.key] ===
-                                "no"
-                              }
-                              disabled={mode === "view"}
-                              onChange={() =>
-                                handleChecklistChange(
-                                  sectionItem.section,
-                                  field.key,
-                                  "no",
-                                )
-                              }
-                            />
-                          </div>
-
-                          {/* REMARK */}
-                          <div className="col-span-5 p-2 md:flex md:flex-row gap-2">
-                            <label className="w-1/2 mt-1">{field.mark}</label>
-                            <input
-                              type="text"
-                              placeholder="Enter remarks"
-                              className="w-full border rounded px-2 py-1"
-                              value={
-                                formData[sectionItem.section].remarks[
-                                field.key
-                                ] || ""
-                              }
-                              disabled={mode === "view"}
-                              onChange={(e) =>
-                                handleRemarkChange(
-                                  sectionItem.section,
-                                  field.key,
-                                  e.target.value,
-                                )
-                              }
-                            />
-                          </div>
+                  <div
+                    className="max-h-[50vh] overflow-y-auto"
+                    style={{ scrollbarWidth: "none" }}
+                  >
+                    {checklistConfig.map((sectionItem) => (
+                      <div
+                        key={sectionItem.section}
+                        className="border-t border-gray-100"
+                      >
+                        <div className="bg-blue-50/50 font-bold p-3 px-4 text-blue-800 lg:text-lg 3xl:text-2xl uppercase tracking-wide">
+                          {sectionItem.title}
                         </div>
-                      ))}
-                    </div>
-                  ))}
+                        {sectionItem.fields.map((field) => (
+                          <div
+                            key={field.key}
+                            className="grid grid-cols-12 border-b border-gray-50 items-center hover:bg-slate-50 transition-colors"
+                          >
+                            <div className="col-span-5 p-4 text-gray-700 lg:text-base 3xl:text-xl">
+                              {field.label}
+                            </div>
+                            <div className="col-span-1 text-center">
+                              <input
+                                type="radio"
+                                name={`${sectionItem.section}-${field.key}`}
+                                checked={
+                                  formData[sectionItem.section][field.key] ===
+                                  "yes"
+                                }
+                                disabled={mode === "view"}
+                                onChange={() =>
+                                  handleChecklistChange(
+                                    sectionItem.section,
+                                    field.key,
+                                    "yes",
+                                  )
+                                }
+                                className="w-5 h-5 accent-green-600 cursor-pointer"
+                              />
+                            </div>
+                            <div className="col-span-1 text-center">
+                              <input
+                                type="radio"
+                                name={`${sectionItem.section}-${field.key}`}
+                                checked={
+                                  formData[sectionItem.section][field.key] ===
+                                  "no"
+                                }
+                                disabled={mode === "view"}
+                                onChange={() =>
+                                  handleChecklistChange(
+                                    sectionItem.section,
+                                    field.key,
+                                    "no",
+                                  )
+                                }
+                                className="w-5 h-5 accent-red-600 cursor-pointer"
+                              />
+                            </div>
+                            <div className="col-span-5 p-4 flex flex-col md:flex-row gap-3 items-center">
+                              <span className="text-xs font-bold text-blue-400 min-w-[60px]">
+                                {field.mark}
+                              </span>
+                              <input
+                                type="text"
+                                placeholder="Enter specific details..."
+                                className="w-full border-gray-200 rounded-lg lg:text-base 3xl:text-lg focus:ring-blue-500"
+                                value={
+                                  formData[sectionItem.section].remarks[
+                                  field.key
+                                  ] || ""
+                                }
+                                disabled={mode === "view"}
+                                onChange={(e) =>
+                                  handleRemarkChange(
+                                    sectionItem.section,
+                                    field.key,
+                                    e.target.value,
+                                  )
+                                }
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-                  {/* Remark Details */}
-                  <div className="mt-8">
-                    <p className="font-semibold mb-2">
-                      Remarks or any other details:
-                    </p>
-
-                    <table className="w-full border border-gray-500 text-sm focus:outline-none">
-                      <thead className="bg-gray-200">
+                {/* Action Summary Table */}
+                <div className="mb-8">
+                  <h3 className="font-bold mb-4 text-gray-800 lg:text-xl 3xl:text-3xl">
+                    Required Corrective Actions
+                  </h3>
+                  <div
+                    className="overflow-x-auto rounded-xl border border-gray-200"
+                    style={{ scrollbarWidth: "none" }}
+                  >
+                    <table className="w-full text-sm lg:text-base 3xl:text-xl">
+                      <thead className="bg-slate-50 text-gray-600">
                         <tr>
-                          <th className="border p-2">Area</th>
-                          <th className="border p-2">Observation</th>
-                          <th className="border p-2">Action Required</th>
-                          <th className="border p-2">Action By</th>
-                          <th className="border p-2">Target Date</th>
+                          <th className="border-b p-3 text-left">Area</th>
+                          <th className="border-b p-3 text-left">
+                            Observation
+                          </th>
+                          <th className="border-b p-3 text-left">
+                            Action Required
+                          </th>
+                          <th className="border-b p-3 text-left">Action By</th>
+                          <th className="border-b p-3 text-left">
+                            Target Date
+                          </th>
                         </tr>
                       </thead>
-
                       <tbody>
-                        <tr>
-                          <td className="border border-gray-500 p-2">
+                        <tr className="bg-white">
+                          <td className="p-2 border-r">
                             <input
                               type="text"
-                              className="w-full border border-gray-400 px-2 py-1 focus:outline-none"
+                              className={inputStyle}
                               value={formData.remarks[0]?.area || ""}
                               disabled={mode === "view"}
                               onChange={(e) =>
@@ -1065,10 +1082,10 @@ const MonthlyFireSafetyInspections = () => {
                               }
                             />
                           </td>
-
-                          <td className="border border-gray-500 p-2">
+                          <td className="p-2 border-r">
                             <textarea
-                              className="w-full border border-gray-400 px-2 py-1 focus:outline-none"
+                              rows="1"
+                              className={inputStyle}
                               value={formData.remarks[0]?.observation || ""}
                               disabled={mode === "view"}
                               onChange={(e) =>
@@ -1077,13 +1094,13 @@ const MonthlyFireSafetyInspections = () => {
                                   e.target.value,
                                 )
                               }
+                              style={{ scrollbarWidth: "none" }}
                             />
                           </td>
-
-                          <td className="border border-gray-500 p-2">
+                          <td className="p-2 border-r">
                             <input
                               type="text"
-                              className="w-full border border-gray-400 px-2 py-1 focus:outline-none"
+                              className={inputStyle}
                               value={formData.remarks[0]?.actionRequired || ""}
                               disabled={mode === "view"}
                               onChange={(e) =>
@@ -1094,11 +1111,10 @@ const MonthlyFireSafetyInspections = () => {
                               }
                             />
                           </td>
-
-                          <td className="border border-gray-500 p-2">
+                          <td className="p-2 border-r">
                             <input
                               type="text"
-                              className="w-full border border-gray-400 px-2 py-1 focus:outline-none"
+                              className={inputStyle}
                               value={formData.remarks[0]?.actionBy || ""}
                               disabled={mode === "view"}
                               onChange={(e) =>
@@ -1109,11 +1125,10 @@ const MonthlyFireSafetyInspections = () => {
                               }
                             />
                           </td>
-
-                          <td className="border border-gray-500 p-2">
+                          <td className="p-2">
                             <input
                               type="text"
-                              className="w-full border border-gray-400 px-2 py-1 focus:outline-none"
+                              className={inputStyle}
                               value={formData.remarks[0]?.targetDate || ""}
                               disabled={mode === "view"}
                               onChange={(e) =>
@@ -1128,170 +1143,196 @@ const MonthlyFireSafetyInspections = () => {
                       </tbody>
                     </table>
                   </div>
+                </div>
 
-                  {/* Signature */}
-                  <div className="mt-6">
-                    {/* Toggle Tabs */}
-                    {mode !== "view" && (
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        <label className="block text-sm font-medium">
-                          Signature :
-                        </label>
-                        <div className="space-x-1 space-y-1">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setFormData({
-                                ...formData,
-                                signatureMode: "upload",
-                              })
-                            }
-                            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.signatureMode === "upload"
-                              ? "bg-[#0f172a] text-white border-[#0f172a]"
-                              : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
-                          >
-                            Upload
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setFormData({
-                                ...formData,
-                                signatureMode: "draw",
-                              })
-                            }
-                            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.signatureMode === "draw"
-                              ? "bg-[#0f172a] text-white border-[#0f172a]"
-                              : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
-                          >
-                            Sign Here
-                          </button>
-                        </div>
+                {/* Signature */}
+
+                <div className="mt-6 ml-2">
+                  {/* Toggle Tabs */}
+
+                  {mode !== "view" && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      <label className={labelStyle}>Signature :</label>
+
+                      <div className="space-x-1 space-y-1">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFormData({
+                              ...formData,
+
+                              signatureMode: "upload",
+                            })
+                          }
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.signatureMode === "upload"
+                            ? "bg-[#0f172a] text-white border-[#0f172a]"
+                            : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                            }`}
+                        >
+                          Upload
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFormData({
+                              ...formData,
+
+                              signatureMode: "draw",
+                            })
+                          }
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.signatureMode === "draw"
+                            ? "bg-[#0f172a] text-white border-[#0f172a]"
+                            : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                            }`}
+                        >
+                          Sign Here
+                        </button>
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                    {mode === "view" && (
-                      <label className="block text-sm font-medium mb-2">
-                        Signature :
-                      </label>
-                    )}
+                  {mode === "view" && (
+                    <label className="block text-sm font-medium mb-2">
+                      Signature :
+                    </label>
+                  )}
 
-                    {/* Upload Area */}
-                    {formData.signatureMode === "upload" && (
-                      <div>
-                        <input
-                          type="file"
-                          id="signatureUpload"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            if (file) {
+                  {/* Upload Area */}
+
+                  {formData.signatureMode === "upload" && (
+                    <div>
+                      <input
+                        type="file"
+                        id="signatureUpload"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+
+                          if (file) {
+                            setFormData({
+                              ...formData,
+
+                              signature: file,
+
+                              signaturePreview: URL.createObjectURL(file),
+                            });
+                          }
+                        }}
+                      />
+
+                      {/* Drag & Drop Zone */}
+
+                      {mode !== "view" && (
+                        <label
+                          htmlFor="signatureUpload"
+                          onDragOver={(e) => e.preventDefault()}
+                          onDrop={(e) => {
+                            e.preventDefault();
+
+                            const file = e.dataTransfer.files[0];
+
+                            if (file && file.type.startsWith("image/")) {
                               setFormData({
                                 ...formData,
+
                                 signature: file,
+
                                 signaturePreview: URL.createObjectURL(file),
                               });
                             }
                           }}
-                        />
+                          className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                        >
+                          <svg
+                            className="w-8 h-8 text-gray-400 mb-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={1.5}
+                              d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                            />
+                          </svg>
 
-                        {/* Drag & Drop Zone */}
-                        {mode !== "view" && (
-                          <label
-                            htmlFor="signatureUpload"
-                            onDragOver={(e) => e.preventDefault()}
-                            onDrop={(e) => {
-                              e.preventDefault();
-                              const file = e.dataTransfer.files[0];
-                              if (file && file.type.startsWith("image/")) {
+                          <p className="text-sm text-gray-500">
+                            Drag & drop or{" "}
+                            <span className="text-[#0f172a] font-medium underline">
+                              browse
+                            </span>
+                          </p>
+
+                          <p className="text-xs text-gray-400 mt-1">
+                            PNG, JPG, SVG supported
+                          </p>
+                        </label>
+                      )}
+
+                      {/* Preview */}
+
+                      {formData.signaturePreview && (
+                        <div className="mt-4 flex items-center gap-3">
+                          <img
+                            src={formData.signaturePreview}
+                            alt="Signature Preview"
+                            className="h-16 border rounded bg-white p-2 shadow-sm"
+                          />
+
+                          {mode !== "view" && (
+                            <button
+                              type="button"
+                              onClick={() =>
                                 setFormData({
                                   ...formData,
-                                  signature: file,
-                                  signaturePreview: URL.createObjectURL(file),
-                                });
+
+                                  signature: null,
+
+                                  signaturePreview: null,
+                                })
                               }
-                            }}
-                            className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
-                          >
-                            <svg
-                              className="w-8 h-8 text-gray-400 mb-2"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                              className="text-xs text-red-500 hover:underline"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={1.5}
-                                d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
-                              />
-                            </svg>
-                            <p className="text-sm text-gray-500">
-                              Drag & drop or{" "}
-                              <span className="text-[#0f172a] font-medium underline">
-                                browse
-                              </span>
-                            </p>
-                            <p className="text-xs text-gray-400 mt-1">
-                              PNG, JPG, SVG supported
-                            </p>
-                          </label>
-                        )}
-
-                        {/* Preview */}
-                        {formData.signaturePreview && (
-                          <div className="mt-4 flex items-center gap-3">
-                            <img
-                              src={formData.signaturePreview}
-                              alt="Signature Preview"
-                              className="h-16 border rounded bg-white p-2 shadow-sm"
-                            />
-                            {mode !== "view" && (
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setFormData({
-                                    ...formData,
-                                    signature: null,
-                                    signaturePreview: null,
-                                  })
-                                }
-                                className="text-xs text-red-500 hover:underline"
-                              >
-                                Remove
-                              </button>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Draw Area */}
-                    {formData.signatureMode === "draw" && (
-                      <SignPad
-                        fieldName="signhere"
-                        formData={formData}
-                        setFormData={setFormData}
-                        mode={mode}
-                      />
-                    )}
-                  </div>
-
-                  {/* Save */}
-                  {mode !== "view" && (
-                    <div className="flex justify-end mt-10">
-                      <button
-                        onClick={handleSubmit}
-                        className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md mb-6"
-                      >
-                        Save
-                      </button>
+                              Remove
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
+
+                  {/* Draw Area */}
+
+                  {formData.signatureMode === "draw" && (
+                    <SignPad
+                      fieldName="signhere"
+                      formData={formData}
+                      setFormData={setFormData}
+                      mode={mode}
+                    />
+                  )}
                 </div>
+
+                {/* Footer Actions */}
+                {mode !== "view" && (
+                  <div className="flex justify-end gap-3 mt-12 pt-6 border-t border-blue-100/30">
+                    <button
+                      onClick={() => setOpenModal(false)}
+                      className="px-10 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-bold lg:text-lg 3xl:text-2xl hover:bg-gray-100 transition-all"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSubmit}
+                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-12 py-3 rounded-xl font-bold lg:text-lg 3xl:text-2xl shadow-lg hover:shadow-blue-200 hover:-translate-y-1 transition-all"
+                    >
+                      Submit Report
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

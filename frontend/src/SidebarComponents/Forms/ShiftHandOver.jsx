@@ -29,7 +29,10 @@ const ShiftHandOver = () => {
   const [showInTimePicker, setShowInTimePicker] = useState(false);
   const [showOutTimePicker, setShowOutTimePicker] = useState(false);
 
-  const labelStyle = "text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block";
+  const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+  const labelStyle =
+    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const defaultFormData = {
     school_name: "",
@@ -282,27 +285,30 @@ const ShiftHandOver = () => {
   };
 
   return (
-    <div className="mb-6">
-      {/* Header */}
-      <div className="sm:flex sm:justify-between">
-        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-          <FaAngleRight />
-          Forms
-          <FaAngleRight />
-          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+    <div className="mb-6 max-w-[1920px] mx-auto">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+        <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+          <FaAngleRight className="text-blue-500 text-base" />
+          <span className="text-gray-500">Forms</span>
+          <FaAngleRight className="text-blue-500 text-base" />
+          <div
+            onClick={() => setOpenModal(false)}
+            className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+          >
             Shift Hand Over
           </div>
         </h1>
         {!openModal && (
           <div className="flex justify-end">
             <button
-              onClick={() => (
-                setMode(""),
-                setEditId(null),
-                setFormData(defaultFormData),
-                setOpenModal(true)
-              )}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md  whitespace-nowrap"
+              onClick={() => {
+                setMode("");
+                setEditId(null);
+                setFormData(defaultFormData);
+                setOpenModal(true);
+              }}
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -310,86 +316,96 @@ const ShiftHandOver = () => {
         )}
       </div>
 
+      {/* Main Table Container */}
       {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">
-          {/* Top Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <div>
-              <label className="mr-2 text-md">Show</label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="ml-2 text-md">entries</span>
-            </div>
-            <div className="flex flex-wrap gap-2 items-center justify-center">
-              <div className="flex">
-                <button
-                  onClick={handleCopy}
-                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+        <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
+          <div className="p-6 border-b border-blue-100/30">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  Show
+                </label>
+                <select
+                  value={entriesPerPage}
+                  onChange={(e) => {
+                    setEntriesPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
-                  <GoCopy />
-                </button>
+                  {[10, 25, 50, 100].map((v) => (
+                    <option key={v} value={v}>
+                      {v}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  entries
+                </span>
+              </div>
 
-                <button
-                  onClick={handleExcel}
-                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
-                >
-                  <FaFileExcel />
-                </button>
-
-                <button
-                  onClick={handlePDF}
-                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
-                >
-                  <FaFilePdf />
-                </button>
+              <div className="flex flex-wrap gap-3 items-center justify-center">
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopy}
+                    className="text-xl px-3 py-1 text-gray-800 hover:text-blue-600 transition-colors"
+                    title="Copy"
+                  >
+                    <GoCopy />
+                  </button>
+                  <button
+                    onClick={handleExcel}
+                    className="text-xl px-3 py-1 text-green-700 hover:text-green-800 transition-colors"
+                    title="Excel"
+                  >
+                    <FaFileExcel />
+                  </button>
+                  <button
+                    onClick={handlePDF}
+                    className="text-xl px-3 py-1 text-red-600 hover:text-red-800 transition-colors"
+                    title="PDF"
+                  >
+                    <FaFilePdf />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Table */}
           <div
-            className="overflow-x-auto min-h-[250px]"
+            className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="p-2 font-semibold hidden sm:table-cell">
+            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+              <thead>
+                <tr className="bg-slate-50 border-b border-blue-100/50">
+                  <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
                     SL.No
                   </th>
-
-                  <th className="p-2 font-semibold">School Name</th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
+                    School Name
+                  </th>
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Time In
                   </th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Time Out
                   </th>
-
-                  <th className="p-2 font-semibold hidden lg:table-cell">
+                  <th className="py-3 px-6 hidden lg:table-cell font-semibold text-gray-700 text-center">
                     Date
                   </th>
-
-                  <th className="p-2 font-semibold">Action</th>
+                  <th className="py-3 px-6 font-semibold text-gray-700">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {currentrequestData.length === 0 ? (
                   <tr>
-                    <td colSpan="14" className="lg:text-center p-10 ">
+                    <td
+                      colSpan="6"
+                      className="p-12 text-center text-gray-500 font-medium"
+                    >
                       No Data Available
                     </td>
                   </tr>
@@ -397,76 +413,54 @@ const ShiftHandOver = () => {
                   currentrequestData.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                      className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="p-2 whitespace-nowrap hidden sm:table-cell">
-                        {index + 1}
+                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900 text-center">
+                        {startIndex + index + 1}
                       </td>
-
-                      <td className="p-2">{item.school_name}</td>
-
-                      <td className="p-2 hidden md:table-cell">
+                      <td className="py-3 px-6 font-medium text-gray-900 text-center">
+                        {item.school_name}
+                      </td>
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.time_in
                           ? item.time_in.toLocaleTimeString([], {
                               hour: "2-digit",
                               minute: "2-digit",
                               hour12: false,
                             })
-                          : ""}
+                          : "-"}
                       </td>
-                      <td className="p-2 hidden md:table-cell">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.time_out
                           ? item.time_out.toLocaleTimeString([], {
                               hour: "2-digit",
                               minute: "2-digit",
                               hour12: false,
                             })
-                          : ""}
+                          : "-"}
                       </td>
-
-                      <td className="p-2 hidden lg:table-cell">{item.date}</td>
-
-                      <td className="p-2 flex flex-row space-x-3 justify-center whitespace-nowrap">
-                        {" "}
-                        <div className="flex flex-row space-x-3 justify-center mt-1">
-                          {/* View */}{" "}
+                      <td className="py-3 px-6 hidden lg:table-cell text-gray-600 text-center">
+                        {item.date}
+                      </td>
+                      <td className="py-3 px-6">
+                        <div className="flex justify-center gap-3">
                           <FaEye
                             onClick={() => {
-                              const flatData = {
-                                ...item,
-                                ...(item.remarks || {}),
-                                ...(item.equipment_status || {}),
-                              };
-                              delete flatData.remarks;
-                              delete flatData.equipment_status;
-                              setFormData(flatData);
-
-                              setMode("view");
+                              /* View Logic */ setMode("view");
                               setOpenModal(true);
                             }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />{" "}
-                          {/* Edit */}
+                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                          />
                           <FaPen
                             onClick={() => {
-                              const flatData = {
-                                ...item,
-                                ...(item.remarks || {}),
-                                ...(item.equipment_status || {}),
-                              };
-                              delete flatData.remarks;
-                              delete flatData.equipment_status;
-                              setFormData(flatData);
-                              setEditId(item.id);
-                              setMode("edit");
+                              /* Edit Logic */ setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="inline text-green-500 cursor-pointer text-lg"
+                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
                           />
-                          {/* Delete */}
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="inline text-red-500 cursor-pointer text-xl"
+                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
                           />
                         </div>
                       </td>
@@ -477,45 +471,62 @@ const ShiftHandOver = () => {
             </table>
           </div>
 
+          {/* Pagination Footer */}
           {/* Pagination */}
-          <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-            <span>
-              Showing {requestData.length === 0 ? "0" : startIndex + 1} to{" "}
-              {Math.min(endIndex, requestData.length)} of {requestData.length}{" "}
+          <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <span className="text-sm lg:text-base 3xl:text-xl text-gray-600">
+              Showing{" "}
+              <span className="text-gray-900 font-semibold">
+                {requestData.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
+              to{" "}
+              <span className="text-gray-900 font-semibold">
+                {Math.min(endIndex, requestData.length)}
+              </span>{" "}
+              of{" "}
+              <span className="text-gray-900 font-semibold">
+                {requestData.length}
+              </span>{" "}
               entries
             </span>
 
-            <div className="flex flex-row space-x-1">
+            <div className="flex gap-2">
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="First page"
               >
                 First
               </button>
 
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Previous page"
               >
                 <GrPrevious />
               </button>
 
-              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
+                {currentPage}
+              </div>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Next page"
               >
                 <GrNext />
               </button>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="Last page"
               >
                 Last
               </button>
@@ -524,97 +535,114 @@ const ShiftHandOver = () => {
         </div>
       )}
 
+      {/* Modal Section */}
       {openModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-white rounded-xl shadow-xl w-full max-w-[1400px] max-h-[90vh] overflow-y-auto p-6"
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1400px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
             style={{ scrollbarWidth: "none" }}
           >
-            {/* Close */}
-            <div className="flex justify-end mb-4">
-              <RxCross2
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+              <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+                {mode === "view"
+                  ? "Handover Record Details"
+                  : mode === "edit"
+                    ? "Edit Handover Form"
+                    : "New Shift Handover"}
+              </h2>
+              <button
                 onClick={() => setOpenModal(false)}
-                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-              />
+                className="text-gray-400 hover:text-red-600 transition-colors"
+              >
+                <RxCross2 className="text-2xl" />
+              </button>
             </div>
 
-            <div className="border p-4 rounded-xl border-gray-400 shadow">
-              <div className="flex justify-center">
-                <div
-                  className="max-h-[75vh] overflow-y-auto pr-2 text-[16px]"
-                  style={{ scrollbarWidth: "none" }}
-                >
-                  <div className="grid sm:grid-cols-2 gap-4 mt-4">
-                    <div className="flex flex-row">
-                      <label className={`whitespace-nowrap ${labelStyle}`}>
-                        School Name
-                      </label>
-                      <input
-                        type="text"
-                        name="school_name"
-                        value={formData.school_name}
-                        onChange={handleChange}
-                        disabled={mode === "view"}
-                        className="border border-gray-300 px-2 w-30 sm:w-40 mt-1 mx-1   focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                      />
-                    </div>
-                    <div className="flex flex-row">
-                      <label className={labelStyle}>Date</label>
-                      <input
-                        name="date"
-                        value={formData.date || ""}
-                        onChange={handleChange}
-                        onClick={() => setShowDateSpinner(true)}
-                        disabled={mode === "view"}
-                        placeholder="dd/mm/yyyy"
-                        className="sm:w-full mx-1 border border-gray-300 px-2  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                      />
-
-                      {showDateSpinner && (
-                        <div className="absolute mt-10 ml-8 sm:ml-14 md:ml-16 lg:ml-20  ">
-                          <SpinnerDatePicker
-                            value={formData.date}
-                            onChange={(date) =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                date: date,
-                              }))
-                            }
-                            onClose={() => setShowDateSpinner(false)}
-                          />
-                        </div>
-                      )}
-                    </div>
+            <div className="border p-6 rounded-xl border-gray-400/30 shadow-sm bg-white">
+              <div
+                className="max-h-[75vh] overflow-y-auto pr-2"
+                style={{ scrollbarWidth: "none" }}
+              >
+                {/* Header Form Row */}
+                <div className="grid sm:grid-cols-2 gap-8 mt-4 mb-8">
+                  <div className="flex flex-row items-center gap-4">
+                    <label
+                      className={`whitespace-nowrap font-bold text-gray-700 lg:text-lg 3xl:text-2xl`}
+                    >
+                      School Name
+                    </label>
+                    <input
+                      type="text"
+                      name="school_name"
+                      value={formData.school_name}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className="w-full border-b-2 border-gray-200 focus:border-blue-500 px-2 py-1 outline-none lg:text-lg 3xl:text-2xl transition-all"
+                    />
                   </div>
-                  <p className="my-2">
-                    * Make sure that handover note is signed by both parties
-                  </p>
+                  <div className="flex flex-row items-center gap-4 relative">
+                    <label className="font-bold text-gray-700 lg:text-lg 3xl:text-2xl">
+                      Date
+                    </label>
+                    <input
+                      name="date"
+                      value={formData.date || ""}
+                      onClick={() =>
+                        mode !== "view" && setShowDateSpinner(true)
+                      }
+                      readOnly
+                      disabled={mode === "view"}
+                      placeholder="dd/mm/yyyy"
+                      className="w-full border-b-2 border-gray-200 focus:border-blue-500 px-2 py-1 outline-none lg:text-lg 3xl:text-2xl transition-all cursor-pointer"
+                    />
+                    {showDateSpinner && (
+                      <div className="absolute z-10 top-12">
+                        <SpinnerDatePicker
+                          value={formData.date}
+                          onChange={(d) =>
+                            setFormData((p) => ({ ...p, date: d }))
+                          }
+                          onClose={() => setShowDateSpinner(false)}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
 
-                  {/* Shift Section */}
-                  <table className="w-full border border-gray-400 mb-6">
+                <p className="mb-6 p-3 bg-blue-50 text-blue-800 rounded-lg font-medium italic border-l-4 border-blue-500">
+                  * Make sure that handover note is signed by both parties
+                </p>
+
+                {/* Shift Timings Table */}
+                <div className=" rounded-xl border border-gray-200 mb-8 shadow-sm">
+                  <table className="w-full border-collapse">
                     <thead>
-                      <tr className="bg-gray-200">
-                        <th className="border border-gray-400 p-1">Shift</th>
-                        <th className="border border-gray-400 p-1">Outgoing</th>
-                        <th className="border border-gray-400 p-1">Incoming</th>
+                      <tr className="bg-slate-100 text-gray-700">
+                        <th className="p-3 border border-gray-200 text-center font-bold lg:text-lg 3xl:text-2xl">
+                          Shift Detail
+                        </th>
+                        <th className="p-3 border border-gray-200 text-center font-bold lg:text-lg 3xl:text-2xl">
+                          Outgoing Party
+                        </th>
+                        <th className="p-3 border border-gray-200 text-center font-bold lg:text-lg 3xl:text-2xl">
+                          Incoming Party
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td className="border border-gray-400 font-semibold p-1">
-                          Timing
+                        <td className="p-3 border border-gray-200 font-bold bg-slate-50/50 text-gray-600">
+                          Handover Timing
                         </td>
-                        <td className="border border-gray-400">
+                        <td className="p-3 border border-gray-200 relative group">
                           <div
-                            className="w-full p-1 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] cursor-pointer text-center"
-                            onClick={() => {
-                              if (mode !== "view") {
-                                setShowOutTimePicker(true);
-                              }
-                            }}
+                            className="cursor-pointer  text-center font-mono lg:text-xl text-blue-600 hover:bg-blue-50 p-2 rounded transition-all"
+                            onClick={() =>
+                              mode !== "view" && setShowOutTimePicker(true)
+                            }
                           >
                             {formData.time_out
                               ? formData.time_out.toLocaleTimeString([], {
@@ -627,21 +655,19 @@ const ShiftHandOver = () => {
                           {showOutTimePicker && (
                             <SpinnerTimePicker
                               value={formData.time_out}
-                              onChange={(date) =>
-                                setFormData({ ...formData, time_out: date })
+                              onChange={(d) =>
+                                setFormData({ ...formData, time_out: d })
                               }
                               onClose={() => setShowOutTimePicker(false)}
                             />
                           )}
                         </td>
-                        <td className="border border-gray-400">
+                        <td className="p-3 border border-gray-200 relative group">
                           <div
-                            className="w-full p-1 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]  cursor-pointer text-center"
-                            onClick={() => {
-                              if (mode !== "view") {
-                                setShowInTimePicker(true);
-                              }
-                            }}
+                            className="cursor-pointer text-center font-mono lg:text-xl text-blue-600 hover:bg-blue-50 p-2 rounded transition-all"
+                            onClick={() =>
+                              mode !== "view" && setShowInTimePicker(true)
+                            }
                           >
                             {formData.time_in
                               ? formData.time_in.toLocaleTimeString([], {
@@ -654,8 +680,8 @@ const ShiftHandOver = () => {
                           {showInTimePicker && (
                             <SpinnerTimePicker
                               value={formData.time_in}
-                              onChange={(date) =>
-                                setFormData({ ...formData, time_in: date })
+                              onChange={(d) =>
+                                setFormData({ ...formData, time_in: d })
                               }
                               onClose={() => setShowInTimePicker(false)}
                             />
@@ -663,166 +689,187 @@ const ShiftHandOver = () => {
                         </td>
                       </tr>
                       <tr>
-                        <td className="border p-1 font-semibold border-gray-400">
-                          Head Guard / Guard Name
+                        <td className="p-3 border border-gray-200 font-bold bg-slate-50/50 text-gray-600">
+                          Guard Name
                         </td>
-                        <td className="border border-gray-400">
+                        <td className="p-3 border border-gray-200">
                           <input
                             type="text"
                             name="guard_out"
                             value={formData.guard_out}
                             onChange={handleChange}
                             disabled={mode === "view"}
-                            className="w-full p-1  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
+                            className="w-full text-center outline-none focus:bg-blue-50 py-1"
                           />
                         </td>
-                        <td className="border border-gray-400">
+                        <td className="p-3 border border-gray-200">
                           <input
                             type="text"
                             name="guard_in"
                             value={formData.guard_in}
                             onChange={handleChange}
                             disabled={mode === "view"}
-                            className="w-full p-1  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
+                            className="w-full text-center outline-none focus:bg-blue-50 py-1"
                           />
                         </td>
                       </tr>
                       <tr>
-                        <td className="border p-1 font-semibold border-gray-400">
-                          ID Number
+                        <td className="p-3 border border-gray-200 font-bold bg-slate-50/50 text-gray-600">
+                          ID Card Number
                         </td>
-                        <td className="border border-gray-400">
+                        <td className="p-3 border border-gray-200">
                           <input
                             type="number"
                             name="id_out"
                             value={formData.id_out}
                             onChange={handleChange}
                             disabled={mode === "view"}
-                            className="w-full p-1  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                            placeholder="Allow only Numbers"
+                            className="w-full text-center outline-none focus:bg-blue-50 py-1"
+                            placeholder="Numbers only"
                           />
                         </td>
-                        <td className="border border-gray-400">
+                        <td className="p-3 border border-gray-200">
                           <input
                             type="number"
                             name="id_in"
                             value={formData.id_in}
                             onChange={handleChange}
                             disabled={mode === "view"}
-                            className="w-full p-1  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                            placeholder="Allow only Numbers"
+                            className="w-full text-center outline-none focus:bg-blue-50 py-1"
+                            placeholder="Numbers only"
                           />
                         </td>
                       </tr>
                     </tbody>
                   </table>
-                  {/* Details Section */}
-                  <table className="w-full border border-gray-400 mb-6">
+                </div>
+
+                {/* Description/Remarks Table */}
+                <div
+                  className="overflow-y-auto rounded-xl border border-gray-200 mb-8 shadow-sm"
+                  style={{ scrollbarWidth: "none" }}
+                >
+                  <table className="w-full border-collapse">
                     <thead>
-                      <tr className="bg-gray-200">
-                        <th className="border border-gray-400 p-1 w-1/2">
-                          Description
+                      <tr className="bg-slate-100">
+                        <th className="p-3 border border-gray-200 text-left font-bold lg:text-lg 3xl:text-2xl w-1/2">
+                          Key Description Items
                         </th>
-                        <th className="border border-gray-400 p-1 w-1/2">
-                          Remarks
+                        <th className="p-3 border border-gray-200 text-left font-bold lg:text-lg 3xl:text-2xl w-1/2">
+                          Detailed Remarks
                         </th>
                       </tr>
                     </thead>
                     <tbody>
                       {detailsFields.map((item, index) => (
-                        <tr key={index}>
-                          <td className="border border-gray-400 p-1">
+                        <tr
+                          key={index}
+                          className="hover:bg-slate-50 transition-colors"
+                        >
+                          <td className="p-3 border border-gray-200 font-medium text-gray-700">
                             {item.label}
                           </td>
-                          <td className="border border-gray-400 px-1 pt-1">
+                          <td className="p-3 border border-gray-200">
                             <textarea
                               name={item.name}
                               value={formData[item.name]}
                               onChange={handleChange}
                               disabled={mode === "view"}
-                              className="w-full p-1 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+                              className="w-full p-2 outline-none focus:ring-1 focus:ring-blue-500 rounded resize-none min-h-[60px]"
+                              placeholder="Provide details..."
                             />
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                  {/* Equipment Section */}
-                  <table className="w-full border border-gray-400">
+                </div>
+
+                {/* Equipment Section */}
+                <div className="overflow-hidden rounded-xl border border-gray-200 mb-10 shadow-sm">
+                  <table className="w-full border-collapse">
                     <thead>
-                      <tr className="bg-gray-200">
-                        <th className="border border-gray-400 p-1">
-                          Security Equipment
+                      <tr className="bg-slate-100">
+                        <th className="p-3 border border-gray-200 text-left font-bold lg:text-lg 3xl:text-2xl">
+                          Security Equipment Assets
                         </th>
-                        <th className="border border-gray-400 p-1">
-                          Status / Remarks
+                        <th className="p-3 border border-gray-200 text-left font-bold lg:text-lg 3xl:text-2xl">
+                          Status Assessment / Notes
                         </th>
                       </tr>
                     </thead>
                     <tbody>
                       {equipmentFields.map((item, index) => (
-                        <tr key={index}>
-                          <td className="border border-gray-400 p-1">
+                        <tr
+                          key={index}
+                          className="hover:bg-slate-50 transition-colors"
+                        >
+                          <td className="p-3 border border-gray-200 font-medium text-gray-700">
                             {item.label}
                           </td>
-                          <td className="border border-gray-400 p-1">
+                          <td className="p-3 border border-gray-200">
                             <input
                               name={item.name}
                               value={formData[item.name]}
                               onChange={handleChange}
                               disabled={mode === "view"}
-                              className="w-full p-1 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
+                              className="w-full p-2 outline-none focus:bg-blue-50/30 rounded"
+                              placeholder="Functional/Damage details..."
                             />
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
+                </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
+                {/* Signature Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
+                  <div className="flex justify-center">
                     <div>
-                      <label className={`${labelStyle} bg-gray-100 p-2 w-fit`}>
-                        E-Signature
+                      <label className="block text-sm lg:text-base font-bold text-gray-500 uppercase tracking-widest mb-4 text-center">
+                        Prepared By (Outgoing Party)
                       </label>
-                      <div className="flex flex-col">
-                        {/* Toggle Tabs — hidden in view mode */}
-                        {mode !== "view" && (
-                          <div className="flex gap-2 mb-4 mt-2">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  preparedBySignMode: "upload",
-                                }))
-                              }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.preparedBySignMode === "upload"
-                                  ? "bg-[#0f172a] text-white border-[#0f172a]"
-                                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
-                            >
-                              Upload
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  preparedBySignMode: "draw",
-                                }))
-                              }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.preparedBySignMode === "draw"
-                                  ? "bg-[#0f172a] text-white border-[#0f172a]"
-                                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
-                            >
-                              Sign Here
-                            </button>
-                          </div>
-                        )}
-
+                      <div className=" flex flex-col">
+                        <div className="flex justify-center">
+                          {/* Toggle Tabs — hidden in view mode */}
+                          {mode !== "view" && (
+                            <div className="flex gap-2 mb-4 mt-2">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    preparedBySignMode: "upload",
+                                  }))
+                                }
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.preparedBySignMode === "upload"
+                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                Upload
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    preparedBySignMode: "draw",
+                                  }))
+                                }
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.preparedBySignMode === "draw"
+                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                Sign Here
+                              </button>
+                            </div>
+                          )}
+                        </div>
                         {/* Upload Area */}
                         {formData.preparedBySignMode === "upload" && (
                           <div>
@@ -927,12 +974,14 @@ const ShiftHandOver = () => {
                         )}
                       </div>
                     </div>
+                  </div>
 
+                  <div className="flex justify-center">
                     <div>
-                      <label className={`${labelStyle} bg-gray-100 p-2 w-fit`}>
-                        E-Signature
+                      <label className="block text-sm lg:text-base font-bold text-gray-500 uppercase tracking-widest mb-4 text-center">
+                        Acknowledged By (Incoming Party)
                       </label>
-                      <div className="flex flex-col">
+                      <div className=" flex justify-center ">
                         {/* Toggle Tabs — hidden in view mode */}
                         {mode !== "view" && (
                           <div className="flex gap-2 mb-4 mt-2">
@@ -970,18 +1019,38 @@ const ShiftHandOver = () => {
                             </button>
                           </div>
                         )}
+                      </div>
 
-                        {/* Upload Area */}
-                        {formData.acknowledgedBySignMode === "upload" && (
-                          <div>
-                            <input
-                              type="file"
-                              id="acknowledgedBySignUpload"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={(e) => {
-                                const file = e.target.files[0];
-                                if (file) {
+                      {/* Upload Area */}
+                      {formData.acknowledgedBySignMode === "upload" && (
+                        <div>
+                          <input
+                            type="file"
+                            id="acknowledgedBySignUpload"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  acknowledged_by_sign: file,
+                                  acknowledgedBySignPreview:
+                                    URL.createObjectURL(file),
+                                }));
+                              }
+                            }}
+                          />
+
+                          {/* Drag & Drop Zone */}
+                          {mode !== "view" && (
+                            <label
+                              htmlFor="acknowledgedBySignUpload"
+                              onDragOver={(e) => e.preventDefault()}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                const file = e.dataTransfer.files[0];
+                                if (file && file.type.startsWith("image/")) {
                                   setFormData((prev) => ({
                                     ...prev,
                                     acknowledged_by_sign: file,
@@ -990,105 +1059,85 @@ const ShiftHandOver = () => {
                                   }));
                                 }
                               }}
-                            />
+                              className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                            >
+                              <svg
+                                className="w-8 h-8 text-gray-400 mb-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={1.5}
+                                  d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                                />
+                              </svg>
+                              <p className="text-sm text-gray-500">
+                                Drag & drop or{" "}
+                                <span className="text-[#0f172a] font-medium underline">
+                                  browse
+                                </span>
+                              </p>
+                              <p className="text-xs text-gray-400 mt-1">
+                                PNG, JPG, SVG supported
+                              </p>
+                            </label>
+                          )}
 
-                            {/* Drag & Drop Zone */}
-                            {mode !== "view" && (
-                              <label
-                                htmlFor="acknowledgedBySignUpload"
-                                onDragOver={(e) => e.preventDefault()}
-                                onDrop={(e) => {
-                                  e.preventDefault();
-                                  const file = e.dataTransfer.files[0];
-                                  if (file && file.type.startsWith("image/")) {
+                          {/* Preview */}
+                          {formData.acknowledgedBySignPreview && (
+                            <div className="mt-4 flex items-center gap-3">
+                              <img
+                                src={formData.acknowledgedBySignPreview}
+                                alt="Signature Preview"
+                                className="h-16 border rounded bg-white p-2 shadow-sm"
+                              />
+                              {mode !== "view" && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
                                     setFormData((prev) => ({
                                       ...prev,
-                                      acknowledged_by_sign: file,
-                                      acknowledgedBySignPreview:
-                                        URL.createObjectURL(file),
-                                    }));
+                                      acknowledged_by_sign: null,
+                                      acknowledgedBySignPreview: null,
+                                    }))
                                   }
-                                }}
-                                className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
-                              >
-                                <svg
-                                  className="w-8 h-8 text-gray-400 mb-2"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
+                                  className="text-xs text-red-500 hover:underline"
                                 >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={1.5}
-                                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
-                                  />
-                                </svg>
-                                <p className="text-sm text-gray-500">
-                                  Drag & drop or{" "}
-                                  <span className="text-[#0f172a] font-medium underline">
-                                    browse
-                                  </span>
-                                </p>
-                                <p className="text-xs text-gray-400 mt-1">
-                                  PNG, JPG, SVG supported
-                                </p>
-                              </label>
-                            )}
+                                  Remove
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
 
-                            {/* Preview */}
-                            {formData.acknowledgedBySignPreview && (
-                              <div className="mt-4 flex items-center gap-3">
-                                <img
-                                  src={formData.acknowledgedBySignPreview}
-                                  alt="Signature Preview"
-                                  className="h-16 border rounded bg-white p-2 shadow-sm"
-                                />
-                                {mode !== "view" && (
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      setFormData((prev) => ({
-                                        ...prev,
-                                        acknowledged_by_sign: null,
-                                        acknowledgedBySignPreview: null,
-                                      }))
-                                    }
-                                    className="text-xs text-red-500 hover:underline"
-                                  >
-                                    Remove
-                                  </button>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Draw Area */}
-                        {formData.acknowledgedBySignMode === "draw" && (
-                          <SignPad
-                            fieldName="acknowlegedBySign_drawn"
-                            formData={formData}
-                            setFormData={setFormData}
-                            mode={mode}
-                          />
-                        )}
-                      </div>
+                      {/* Draw Area */}
+                      {formData.acknowledgedBySignMode === "draw" && (
+                        <SignPad
+                          fieldName="acknowlegedBySign_drawn"
+                          formData={formData}
+                          setFormData={setFormData}
+                          mode={mode}
+                        />
+                      )}
                     </div>
                   </div>
-
-                  {/* Save */}
-                  {mode !== "view" && (
-                    <div className="flex justify-end mt-10">
-                      <button
-                        onClick={handleSubmit}
-                        className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md mb-6"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  )}
                 </div>
+
+                {/* Save Button */}
+                {mode !== "view" && (
+                  <div className="flex justify-end mt-12 pb-6 border-t pt-8">
+                    <button
+                      onClick={handleSubmit}
+                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-3 rounded-xl font-bold lg:text-xl shadow-xl hover:shadow-blue-200 hover:-translate-y-1 transition-all"
+                    >
+                      Complete Handover
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

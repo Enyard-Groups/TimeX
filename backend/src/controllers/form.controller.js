@@ -673,37 +673,9 @@ export const deletePatrollingChecklist = async (req, res) => {
 
 export const getMonthlyFireSafety = async (req, res) => {
     try {
-        // Ensure table exists
-        await db.query(`
-            CREATE TABLE IF NOT EXISTS monthly_fire_safety_inspections (
-                id SERIAL PRIMARY KEY,
-                employee VARCHAR(255),
-                location_id INTEGER,
-                "createdDate" DATE,
-                "fireHazards" JSONB,
-                "fireAlarm" JSONB,
-                extinguishers JSONB,
-                "fireHose" JSONB,
-                fm200 JSONB,
-                "fireExits" JSONB,
-                "noticeSigns" JSONB,
-                "paSystem" JSONB,
-                pumps JSONB,
-                "smokeExtraction" JSONB,
-                remarks JSONB,
-                signature TEXT,
-                signhere TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-        `);
-
-        // Update: Join with location_groups to get location_name
-        const result = await db.query(`
-            SELECT m.*, lg.group_name as location_name
-            FROM monthly_fire_safety_inspections m
-            LEFT JOIN location_groups lg ON m.location_id = lg.id
-            ORDER BY m.created_at DESC
-        `);
+        const result = await db.query(
+            "SELECT * FROM monthly_fire_safety_inspections ORDER BY created_at DESC"
+        );
         res.json(result.rows);
     } catch (error) {
         console.log("Error in getting monthly fire safety inspections:", error.message);
@@ -713,41 +685,17 @@ export const getMonthlyFireSafety = async (req, res) => {
 
 export const createMonthlyFireSafety = async (req, res) => {
     const {
-        employee, location_id, createdDate,
+        employee, location, createdDate,
         fireHazards, fireAlarm, extinguishers, fireHose, fm200,
         fireExits, noticeSigns, paSystem, pumps, smokeExtraction,
         remarks, signature, signhere
     } = req.body;
 
     try {
-        // Ensure table exists
-        await db.query(`
-            CREATE TABLE IF NOT EXISTS monthly_fire_safety_inspections (
-                id SERIAL PRIMARY KEY,
-                employee VARCHAR(255),
-                location_id INTEGER,
-                "createdDate" DATE,
-                "fireHazards" JSONB,
-                "fireAlarm" JSONB,
-                extinguishers JSONB,
-                "fireHose" JSONB,
-                fm200 JSONB,
-                "fireExits" JSONB,
-                "noticeSigns" JSONB,
-                "paSystem" JSONB,
-                pumps JSONB,
-                "smokeExtraction" JSONB,
-                remarks JSONB,
-                signature TEXT,
-                signhere TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-        `);
-
         const result = await db.query(
-            'INSERT INTO monthly_fire_safety_inspections (employee, location_id, "createdDate", "fireHazards", "fireAlarm", extinguishers, "fireHose", fm200, "fireExits", "noticeSigns", "paSystem", pumps, "smokeExtraction", remarks, signature, signhere) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING *',
+            'INSERT INTO monthly_fire_safety_inspections (employee, location, "createdDate", "fireHazards", "fireAlarm", extinguishers, "fireHose", fm200, "fireExits", "noticeSigns", "paSystem", pumps, "smokeExtraction", remarks, signature, signhere) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING *',
             [
-                employee, location_id, formatToPostgresDate(createdDate),
+                employee, location, formatToPostgresDate(createdDate),
                 JSON.stringify(fireHazards), JSON.stringify(fireAlarm), JSON.stringify(extinguishers),
                 JSON.stringify(fireHose), JSON.stringify(fm200), JSON.stringify(fireExits),
                 JSON.stringify(noticeSigns), JSON.stringify(paSystem), JSON.stringify(pumps),
@@ -765,16 +713,16 @@ export const createMonthlyFireSafety = async (req, res) => {
 export const updateMonthlyFireSafety = async (req, res) => {
     const { id } = req.params;
     const {
-        employee, location_id, createdDate,
+        employee, location, createdDate,
         fireHazards, fireAlarm, extinguishers, fireHose, fm200,
         fireExits, noticeSigns, paSystem, pumps, smokeExtraction,
         remarks, signature, signhere
     } = req.body;
     try {
         const result = await db.query(
-            'UPDATE monthly_fire_safety_inspections SET employee=$1, location_id=$2, "createdDate"=$3, "fireHazards"=$4, "fireAlarm"=$5, extinguishers=$6, "fireHose"=$7, fm200=$8, "fireExits"=$9, "noticeSigns"=$10, "paSystem"=$11, pumps=$12, "smokeExtraction"=$13, remarks=$14, signature=$15, signhere=$16 WHERE id=$17 RETURNING *',
+            'UPDATE monthly_fire_safety_inspections SET employee=$1, location=$2, "createdDate"=$3, "fireHazards"=$4, "fireAlarm"=$5, extinguishers=$6, "fireHose"=$7, fm200=$8, "fireExits"=$9, "noticeSigns"=$10, "paSystem"=$11, pumps=$12, "smokeExtraction"=$13, remarks=$14, signature=$15, signhere=$16 WHERE id=$17 RETURNING *',
             [
-                employee, location_id, formatToPostgresDate(createdDate),
+                employee, location, formatToPostgresDate(createdDate),
                 JSON.stringify(fireHazards), JSON.stringify(fireAlarm), JSON.stringify(extinguishers),
                 JSON.stringify(fireHose), JSON.stringify(fm200), JSON.stringify(fireExits),
                 JSON.stringify(noticeSigns), JSON.stringify(paSystem), JSON.stringify(pumps),

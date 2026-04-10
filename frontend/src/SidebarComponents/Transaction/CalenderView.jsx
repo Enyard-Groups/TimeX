@@ -155,7 +155,7 @@ const CalenderView = () => {
   };
 
   return (
-    <div >
+    <div>
       {/* Filters */}
       <div className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-2xl mb-6">
         <div className="grid md:grid-cols-3 gap-6">
@@ -284,7 +284,7 @@ const CalenderView = () => {
             </button>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto" style={{ scrollbarWidth: "none" }}>
             <div className="min-w-[700px]">
               {/* Week Header */}
               <div className="grid grid-cols-7 gap-4 mb-4 text-center text-sm xl:text-base font-semibold text-gray-500">

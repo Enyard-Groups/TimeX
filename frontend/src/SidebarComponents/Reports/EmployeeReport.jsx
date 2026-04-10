@@ -50,70 +50,27 @@ const EmployeeReport = () => {
   });
 
   const inputStyle =
-    "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-lg py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
+    "text-sm lg:text-base 3xl:text-xl font-semibold text-gray-700 mb-2 block";
 
-  // ─── Fetch dropdown data on mount ──────────────────────────────────────────
-  useEffect(() => {
-    const fetchDropdowns = async () => {
-      try {
-        const [companiesRes, designationsRes, employeesRes] = await Promise.all([
-          axios.get(`${API_BASE}/companies`),
-          axios.get(`${API_BASE}/master/designation`),
-          axios.get(`${API_BASE}/employee`),
-        ]);
-        setCompanyOptions(companiesRes.data);
-        setDesignationOptions(designationsRes.data);
+  const filteredReport = employeeReport.filter((emp) => {
+    return (
+      (formData.company === "" || emp.company === formData.company) &&
+      (formData.employeeCategory === "" ||
+        formData.employeeCategory === "All Category" ||
+        emp.employeeCategory === formData.employeeCategory) &&
+      (formData.location === "" || emp.location === formData.location) &&
+      (formData.department === "" || emp.department === formData.department) &&
+      (formData.finger === "" || emp.finger === formData.finger)
+    );
+  });
 
-        // Build unique location list from employees
-        const locs = [
-          ...new Set(
-            employeesRes.data
-              .map((e) => e.location)
-              .filter(Boolean)
-          ),
-        ];
-        setLocationOptions(locs);
-      } catch (err) {
-        console.error("Failed to load dropdown options:", err);
-        toast.error("Failed to load filter options");
-      }
-    };
-    fetchDropdowns();
-  }, []);
-
-  // ─── Generate Report ────────────────────────────────────────────────────────
-  const handleGenerateReport = async () => {
-    try {
-      setLoading(true);
-      const params = {};
-      if (formData.company_id)       params.company       = formData.company_id;
-      if (
-        formData.employeeCategory &&
-        formData.employeeCategory !== "All Category"
-      )                              params.type          = formData.employeeCategory;
-      if (formData.location)         params.location      = formData.location;
-      if (formData.designation_id)   params.designation_id = formData.designation_id;
-
-      const res = await axios.get(`${API_BASE}/employee/report`, { params });
-      setEmployeeReport(res.data);
-      setCurrentPage(1);
-      setOpenModal(true);
-    } catch (err) {
-      console.error("Failed to generate report:", err);
-      toast.error("Failed to generate report");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // ─── Filtering & Pagination ─────────────────────────────────────────────────
-  const filteredReport = employeeReport.filter((emp) =>
-    (emp.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (emp.company || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (emp.location || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (emp.employeeID || "").toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredemployeeReport = filteredReport.filter(
+    (x) =>
+      x.company.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      x.employeeCategory.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      x.location.toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
   const endIndex   = currentPage * entriesPerPage;
@@ -172,109 +129,120 @@ const EmployeeReport = () => {
 
   return (
     <>
-      <div className="mb-6">
-        {/* Header */}
-        <div className="sm:flex sm:justify-between">
-          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-            <FaAngleRight />
-            Reports
-            <FaAngleRight />
-            Employee Reports
+      <div className="mb-6 max-w-[1920px] mx-auto">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+          <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+            <FaAngleRight className="text-blue-500 text-base" />
+            <span className="text-gray-500">Reports</span>
+            <FaAngleRight className="text-blue-500 text-base" />
+            <div className="text-blue-600 hover:text-blue-700 transition cursor-pointer">
+              Employee Reports
+            </div>
           </h1>
         </div>
 
-        {/* Filter Panel */}
-        <div
-          className="flex items-center justify-center p-4 overflow-y-auto"
-          style={{ scrollbarWidth: "none" }}
-        >
-          <div
-            className="bg-white rounded-xl shadow-sm w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
-            style={{ scrollbarWidth: "none" }}
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-              {/* Company */}
-              <div>
-                <SearchDropdown
-                  label="Company"
-                  name="company"
-                  value={formData.company}
-                  options={companyOptions}
-                  labelKey="name"
-                  valueKey="id"
-                  labelName="company"
-                  formData={formData}
-                  setFormData={(updated) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      company: updated.company,
-                      company_id: updated.company_id ?? updated.company,
-                    }))
-                  }
-                  inputStyle={inputStyle}
-                  labelStyle={labelStyle}
-                />
-              </div>
-
-              {/* Employee Category */}
-              <div>
-                <SearchDropdown
-                  label="Employee Category"
-                  name="employeeCategory"
-                  value={formData.employeeCategory}
-                  options={EMPLOYEE_CATEGORIES}
-                  formData={formData}
-                  setFormData={setFormData}
-                  inputStyle={inputStyle}
-                  labelStyle={labelStyle}
-                />
-              </div>
-
-              {/* Location */}
-              <div>
-                <SearchDropdown
-                  label="Location"
-                  name="location"
-                  value={formData.location}
-                  options={locationOptions}
-                  formData={formData}
-                  setFormData={setFormData}
-                  inputStyle={inputStyle}
-                  labelStyle={labelStyle}
-                />
-              </div>
-
-              {/* Designation */}
-              <div>
-                <SearchDropdown
-                  label="Designation"
-                  name="designation"
-                  value={formData.designation}
-                  options={designationOptions}
-                  labelKey="name"
-                  valueKey="id"
-                  labelName="designation"
-                  formData={formData}
-                  setFormData={(updated) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      designation: updated.designation,
-                      designation_id: updated.designation_id ?? updated.designation,
-                    }))
-                  }
-                  inputStyle={inputStyle}
-                  labelStyle={labelStyle}
-                />
-              </div>
+        {/* Filter Section */}
+        <div className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-2xl border border-blue-100/50 shadow-xl mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div>
+              <SearchDropdown
+                label="Company"
+                name="company"
+                value={formData.company}
+                options={["Company 1", "Company 2"]}
+                formData={formData}
+                setFormData={setFormData}
+                inputStyle={inputStyle}
+                labelStyle={labelStyle}
+              />
             </div>
 
-            {/* Generate Button */}
-            <div className="flex justify-end mt-10">
+            <div>
+              <SearchDropdown
+                label="Employee Category"
+                name="employeeCategory"
+                value={formData.employeeCategory}
+                options={[
+                  "All Category",
+                  "Full Time Equivalent",
+                  "Contingent",
+                  "Freelence",
+                  "Contract",
+                  "Permanent",
+                ]}
+                formData={formData}
+                setFormData={setFormData}
+                inputStyle={inputStyle}
+                labelStyle={labelStyle}
+              />
+            </div>
+
+            <div>
+              <SearchDropdown
+                label="Location"
+                name="location"
+                value={formData.location}
+                options={["Head Office", "Location 2"]}
+                formData={formData}
+                setFormData={setFormData}
+                inputStyle={inputStyle}
+                labelStyle={labelStyle}
+              />
+            </div>
+
+            <div>
+              <SearchDropdown
+                label="Designation"
+                name="department"
+                value={formData.department}
+                options={[
+                  "Regional Sales Support Manager",
+                  "Operations Support Officer",
+                  "Finance Assistant",
+                  "Trade Finance Specialist",
+                  "Banking Operations Officer",
+                  "Sales Support Officer",
+                  "Banking Operations Officer",
+                  "Project Manager",
+                  "Administrative Assistant",
+                  "Sales Officer",
+                  "Banking Officer",
+                  "Sales Manager",
+                  "Senior Banking Officer",
+                  "Client Service Manager",
+                  "Senior Director – Banking Operations",
+                  "Relationship Officer",
+                  "Accountant",
+                  "Director – Sales Excellence",
+                  "Service Sales Support Officer",
+                  "HR Manager",
+                  "Sales & Logistics Officer",
+                  "Operation Officer",
+                ]}
+                formData={formData}
+                setFormData={setFormData}
+                inputStyle={inputStyle}
+                labelStyle={labelStyle}
+              />
+            </div>
+
+            <div>
+              <SearchDropdown
+                label="Finger"
+                name="finger"
+                value={formData.finger}
+                options={["10", "9", "8", "7", "6", "5", "4", "3", "2", "1"]}
+                formData={formData}
+                setFormData={setFormData}
+                inputStyle={inputStyle}
+                labelStyle={labelStyle}
+              />
+            </div>
+            <div className="flex items-end">
               <button
-                onClick={handleGenerateReport}
-                disabled={loading}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md disabled:opacity-60"
+                onClick={() => setOpenModal(true)}
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-4 py-2 lg:text-lg 3xl:text-xl rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
               >
                 {loading ? "Generating..." : "Generate Report"}
               </button>
@@ -282,84 +250,87 @@ const EmployeeReport = () => {
           </div>
         </div>
 
-        {/* Report Table */}
+        {/* Results Section */}
         {openModal && (
-          <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6">
-            {/* Close */}
-            <div className="flex justify-end">
-              <RxCross2
-                onClick={() => setOpenModal(false)}
-                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-              />
-            </div>
+          <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
+            {/* Table Controls */}
+            <div className="p-6 border-b border-blue-100/30">
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                    Display
+                  </label>
+                  <select
+                    value={entriesPerPage}
+                    onChange={(e) => {
+                      setEntriesPerPage(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all"
+                  >
+                    {[10, 25, 50, 100].map((val) => (
+                      <option key={val} value={val}>
+                        {val}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                    entries
+                  </span>
+                </div>
 
-            {/* Top Controls */}
-            <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-              <div>
-                <label className="mr-2 text-md">Show</label>
-                <select
-                  value={entriesPerPage}
-                  onChange={(e) => {
-                    setEntriesPerPage(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                  className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
-                >
-                  <option value={10}>10</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </select>
-                <span className="ml-2 text-md">entries</span>
-              </div>
-
-              <div className="flex flex-wrap gap-2 items-center justify-center">
-                <input
-                  placeholder="Search"
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="shadow-sm px-3 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-                />
-                <div className="flex">
-                  <button onClick={handleCopy} className="text-xl px-3 py-1 cursor-pointer text-gray-800">
-                    <GoCopy />
-                  </button>
-                  <button onClick={handleExcel} className="text-xl px-3 py-1 cursor-pointer text-green-700">
-                    <FaFileExcel />
-                  </button>
-                  <button onClick={handlePDF} className="text-xl px-3 py-1 cursor-pointer text-red-600">
-                    <FaFilePdf />
-                  </button>
+                <div className="flex flex-wrap gap-3 items-center">
+                  <input
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 placeholder-blue-500 focus:outline-none lg:text-base 3xl:text-lg rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all"
+                  />
                 </div>
               </div>
             </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto min-h-[250px]" style={{ scrollbarWidth: "none" }}>
-              <h1 className="text-[oklch(0.577_0.245_27.325)] text-xl mb-4 text-center">
-                Employee Report
-              </h1>
-              <table className="w-full text-lg border-collapse">
-                <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                  <tr>
-                    <th className="p-2 font-semibold hidden sm:table-cell">Sl.No</th>
-                    <th className="p-2 font-semibold hidden md:table-cell">Employee ID</th>
-                    <th className="p-2 font-semibold">Name</th>
-                    <th className="p-2 font-semibold hidden xl:table-cell">Company</th>
-                    <th className="p-2 font-semibold hidden lg:table-cell">Category</th>
-                    <th className="p-2 font-semibold hidden xl:table-cell">Location</th>
-                    <th className="p-2 font-semibold hidden md:table-cell">Designation</th>
-                    <th className="p-2 font-semibold hidden lg:table-cell">Status</th>
-                    <th className="p-2 font-semibold">Action</th>
+            {/* Table Content */}
+            <div
+              className="overflow-x-auto min-h-[350px]"
+              style={{ scrollbarWidth: "none" }}
+            >
+              <table className="w-full text-[16px] lg:text-[19px] 3xl:text-[22px]">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-blue-100/50">
+                    <th className="px-4 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
+                      SL.NO
+                    </th>
+                    <th className="px-4 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
+                      Employee ID
+                    </th>
+                    <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                      Name
+                    </th>
+                    <th className="px-4 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
+                      Company
+                    </th>
+                    <th className="px-4 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
+                      Category
+                    </th>
+                    <th className="px-4 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
+                      Designation
+                    </th>
+                    <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {currentData.length === 0 ? (
                     <tr>
-                      <td colSpan="9" className="text-center p-10">
+                      <td
+                        colSpan="7"
+                        className="p-12 text-center text-gray-500 font-medium"
+                      >
                         No Data Available
                       </td>
                     </tr>
@@ -367,34 +338,34 @@ const EmployeeReport = () => {
                     currentData.map((item, index) => (
                       <tr
                         key={item.id}
-                        className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                        className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                       >
-                        <td className="p-2 hidden sm:table-cell">{startIndex + index + 1}</td>
-                        <td className="p-2 hidden md:table-cell">{item.employeeID}</td>
-                        <td className="p-2">{item.name}</td>
-                        <td className="p-2 hidden xl:table-cell">{item.company}</td>
-                        <td className="p-2 hidden lg:table-cell">{item.employeeCategory}</td>
-                        <td className="p-2 hidden xl:table-cell">{item.location}</td>
-                        <td className="p-2 hidden md:table-cell">{item.department}</td>
-                        <td className="p-2 hidden lg:table-cell">
-                          <span
-                            className={`px-2 py-1 rounded-full text-sm font-medium ${
-                              item.is_active
-                                ? "bg-green-100 text-green-700"
-                                : "bg-red-100 text-red-700"
-                            }`}
-                          >
-                            {item.is_active ? "Active" : "Inactive"}
-                          </span>
+                        <td className="px-4 py-3 text-center hidden sm:table-cell text-gray-900">
+                          {index + 1}
                         </td>
-                        <td className="p-2">
-                          <div className="flex gap-2 justify-center">
+                        <td className="px-4 py-3 text-center hidden md:table-cell text-gray-600">
+                          {item.employeeID}
+                        </td>
+                        <td className="px-4 py-3 text-center font-medium text-gray-900">
+                          {item.name}
+                        </td>
+                        <td className="px-4 py-3 text-center hidden xl:table-cell text-gray-600">
+                          {item.company}
+                        </td>
+                        <td className="px-4 py-3 text-center hidden lg:table-cell text-gray-600">
+                          {item.employeeCategory}
+                        </td>
+                        <td className="px-4 py-3 text-center hidden md:table-cell text-gray-600">
+                          {item.department}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <div className="flex justify-center">
                             <FaEye
                               onClick={() => {
                                 setSelectedId(item.id);
                                 setModalOpenSelectedItem(true);
                               }}
-                              className="text-blue-500 cursor-pointer text-lg mt-2 mr-2"
+                              className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer"
                             />
                           </div>
                         </td>
@@ -406,38 +377,51 @@ const EmployeeReport = () => {
             </div>
 
             {/* Pagination */}
-            <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-              <span>
-                Showing {filteredReport.length === 0 ? "0" : startIndex + 1} to{" "}
-                {Math.min(endIndex, filteredReport.length)} of {filteredReport.length} entries
+            <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+              <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
+                Showing{" "}
+                <span className="font-bold text-gray-900">
+                  {startIndex + 1}
+                </span>{" "}
+                to{" "}
+                <span className="font-bold text-gray-900">
+                  {Math.min(endIndex, filteredemployeeReport.length)}
+                </span>{" "}
+                of{" "}
+                <span className="font-bold text-gray-900">
+                  {filteredemployeeReport.length}
+                </span>{" "}
+                entries
               </span>
-              <div className="flex flex-row space-x-1">
+              <div className="flex gap-2">
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(1)}
-                  className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50"
                 >
                   First
                 </button>
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(currentPage - 1)}
-                  className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                  className="p-2.5 border rounded-lg bg-white disabled:opacity-50"
                 >
                   <GrPrevious />
                 </button>
-                <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm lg:text-base 3xl:text-xl">
+                  {currentPage}
+                </div>
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(currentPage + 1)}
-                  className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                  className="p-2.5 border rounded-lg bg-white disabled:opacity-50"
                 >
                   <GrNext />
                 </button>
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(totalPages)}
-                  className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50"
                 >
                   Last
                 </button>
@@ -446,87 +430,49 @@ const EmployeeReport = () => {
           </div>
         )}
 
-        {/* View Detail Modal */}
+        {/* Selection Detail Modal */}
         {modalOpenSelectedItem && selectedItem && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
             <div
-              className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6"
+              className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
               style={{ scrollbarWidth: "none" }}
             >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold">{selectedItem.name} — Details</h2>
-                <RxCross2
+              <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+                <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+                  {selectedItem.name} Details
+                </h2>
+                <button
                   onClick={() => {
                     setModalOpenSelectedItem(false);
                     setSelectedId(null);
                   }}
-                  className="cursor-pointer text-xl text-red-500"
-                />
+                  className="text-gray-400 hover:text-red-600 transition-colors"
+                >
+                  <RxCross2 className="text-2xl" />
+                </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-lg">
-                <div>
-                  <p className={labelStyle}>Employee ID</p>
-                  <p className={inputStyle}>{selectedItem.employeeID || "—"}</p>
-                </div>
-                <div>
-                  <p className={labelStyle}>Name</p>
-                  <p className={inputStyle}>{selectedItem.name || "—"}</p>
-                </div>
-                <div>
-                  <p className={labelStyle}>Employee Category</p>
-                  <p className={inputStyle}>{selectedItem.employeeCategory || "—"}</p>
-                </div>
-                <div>
-                  <p className={labelStyle}>Designation</p>
-                  <p className={inputStyle}>{selectedItem.department || "—"}</p>
-                </div>
-                <div>
-                  <p className={labelStyle}>Department</p>
-                  <p className={inputStyle}>{selectedItem.department_name || "—"}</p>
-                </div>
-                <div>
-                  <p className={labelStyle}>Company</p>
-                  <p className={inputStyle}>{selectedItem.company || "—"}</p>
-                </div>
-                <div>
-                  <p className={labelStyle}>Location</p>
-                  <p className={inputStyle}>{selectedItem.location || "—"}</p>
-                </div>
-                <div>
-                  <p className={labelStyle}>Shift</p>
-                  <p className={inputStyle}>{selectedItem.shift_name || "—"}</p>
-                </div>
-                <div>
-                  <p className={labelStyle}>Phone</p>
-                  <p className={inputStyle}>{selectedItem.phone || "—"}</p>
-                </div>
-                <div>
-                  <p className={labelStyle}>Date of Birth</p>
-                  <p className={inputStyle}>
-                    {selectedItem.dob ? new Date(selectedItem.dob).toLocaleDateString() : "—"}
-                  </p>
-                </div>
-                <div>
-                  <p className={labelStyle}>Date of Joining</p>
-                  <p className={inputStyle}>
-                    {selectedItem.doj ? new Date(selectedItem.doj).toLocaleDateString() : "—"}
-                  </p>
-                </div>
-                <div>
-                  <p className={labelStyle}>Status</p>
-                  <p className={inputStyle}>
-                    <span
-                      className={`px-2 py-1 rounded-full text-sm font-medium ${
-                        selectedItem.is_active
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {selectedItem.is_active ? "Active" : "Inactive"}
-                    </span>
-                  </p>
-                </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {[
+                  { label: "Employee ID", value: selectedItem.employeeID },
+                  { label: "Category", value: selectedItem.employeeCategory },
+                  { label: "Designation", value: selectedItem.department },
+                  { label: "Company", value: selectedItem.company },
+                  { label: "Location", value: selectedItem.location },
+                  { label: "Finger", value: selectedItem.finger },
+                ].map((field) => (
+                  <div key={field.label} className="space-y-1">
+                    <p className="text-xs lg:text-sm 3xl:text-lg font-bold text-gray-700">
+                      {field.label}
+                    </p>
+                    <p className="bg-white border border-gray-200 p-3 rounded-xl text-gray-800 font-medium lg:text-lg 3xl:text-2xl shadow-sm">
+                      {field.value || "-"}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

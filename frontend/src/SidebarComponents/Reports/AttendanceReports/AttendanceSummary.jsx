@@ -40,104 +40,36 @@ const AttendanceSummary = () => {
     fromPunchDate: "",
     toPunchDate: "",
   });
-
   const inputStyle =
-    "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-lg py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
-
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
+    "text-sm lg:text-base 3xl:text-xl font-semibold text-gray-700 mb-2 block";
 
-  useEffect(() => {
-    const fetchDropdowns = async () => {
-      try {
-        const [companiesRes, employeesRes] = await Promise.all([
-          axios.get(`${API_BASE}/companies`),
-          axios.get(`${API_BASE}/employee`),
-        ]);
-        setCompanyOptions(companiesRes.data);
-        setEmployeeOptions(employeesRes.data);
-      } catch (err) {
-        console.error("Failed to load dropdown options:", err);
-        toast.error("Failed to load filter options");
-      }
-    };
-    fetchDropdowns();
-  }, []);
+  const filteredReport = attendanceSummary.filter((emp) => {
+    const punchDate = new Date(emp.createdDate);
+    const fromDate = parseDate(formData.fromPunchDate);
+    const toDate = parseDate(formData.toPunchDate);
 
-  const getWeekNumber = (date) => {
-    const start = new Date(date.getFullYear(), date.getMonth(), 1);
-    const day = start.getDay();
-    const dateNum = date.getDate();
-    return Math.ceil((dateNum + day) / 7);
-  };
-
-  const calculateHours = (inTime, outTime) => {
-    if (!inTime || !outTime) return 0;
-    try {
-      const [ih, im, is] = inTime.split(":").map(Number);
-      const [oh, om, os] = outTime.split(":").map(Number);
-      const inSec = ih * 3600 + im * 60 + (is || 0);
-      const outSec = oh * 3600 + om * 60 + (os || 0);
-      let diff = outSec - inSec;
-      if (diff < 0) diff += 24 * 3600;
-      return diff / 3600;
-    } catch (e) {
-      return 0;
+    if (toDate) {
+      toDate.setHours(23, 59, 59, 999);
     }
-  };
 
-  const handleGenerateReport = async () => {
-    try {
-      setLoading(true);
-      const params = {};
-      if (formData.company_id) params.company_id = formData.company_id;
-      if (formData.employee_id) params.employee_id = formData.employee_id;
-      if (formData.fromPunchDate) params.from_date = formData.fromPunchDate;
-      if (formData.toPunchDate) params.to_date = formData.toPunchDate;
+    return (
+      (!formData.company || emp.company === formData.company) &&
+      (!formData.employeeCategory ||
+        formData.employeeCategory === "All Category" ||
+        emp.employeeCategory === formData.employeeCategory) &&
+      (!formData.location || emp.location === formData.location) &&
+      (!formData.department || emp.department === formData.department) &&
+      (!formData.employee ||
+        formData.employee === "All" ||
+        emp.employee === formData.employee) &&
+      (!fromDate || punchDate >= fromDate) &&
+      (!toDate || punchDate <= toDate)
+    );
+  });
 
-      const res = await axios.get(`${API_BASE}/requests/manual/report`, { params });
-      
-      // Group by employee
-      const grouped = {};
-      res.data.forEach(item => {
-        const eid = item.employee_id;
-        if (!grouped[eid]) {
-          grouped[eid] = {
-            id: eid,
-            employee_name: item.employee_name,
-            employee_code: item.employee_code,
-            company_name: item.company_name,
-            totalDays: 0,
-            totalHours: 0,
-            weeks: [0, 0, 0, 0, 0, 0] // total hours per week
-          };
-        }
-        
-        const hrs = calculateHours(item.in_time, item.out_time);
-        grouped[eid].totalDays += 1;
-        grouped[eid].totalHours += hrs;
-        
-        const dt = item.created_at ? new Date(item.created_at) : null;
-        if (dt) {
-          const week = getWeekNumber(dt);
-          if (week >= 1 && week <= 6) {
-            grouped[eid].weeks[week-1] += hrs;
-          }
-        }
-      });
-
-      setSummaryData(Object.values(grouped));
-      setCurrentPage(1);
-      setOpenModal(true);
-    } catch (err) {
-      console.error("Failed to generate report:", err);
-      toast.error("Failed to generate report");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filteredReport = summaryData.filter(
+  const filteredattendanceSummary = filteredReport.filter(
     (x) =>
       (x.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
       (x.employee_code || "").toLowerCase().includes(searchTerm.toLowerCase())
@@ -210,21 +142,28 @@ const AttendanceSummary = () => {
 
   return (
     <>
-      <div className="mb-6">
-        <div className="sm:flex sm:justify-between">
-          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-            <FaAngleRight />
-            Reports
-            <FaAngleRight />
-            Attendance Report
-            <FaAngleRight />
-            Attendance Summary
+      <div className="mb-6 max-w-[1920px] mx-auto">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+          <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900 ">
+            <FaAngleRight className="text-blue-500 text-base" />
+            <span className="text-gray-500">Reports</span>
+            <FaAngleRight className="text-blue-500 text-base" />
+            <span className="text-gray-500">Attendance Report</span>
+            <FaAngleRight className="text-blue-500 text-base" />
+            <div
+              onClick={() => setOpenModal(false)}
+              className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+            >
+              Attendance Summary
+            </div>
           </h1>
         </div>
 
-        <div className="flex items-center justify-center p-4 overflow-y-auto" style={{ scrollbarWidth: "none" }}>
-          <div className="bg-white rounded-xl shadow-sm w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6" style={{ scrollbarWidth: "none" }}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Filter Section */}
+        {!openModal && (
+          <div className="bg-gradient-to-br from-white to-slate-50 p-8 rounded-2xl border border-blue-100/50 shadow-xl mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <div>
                 <SearchDropdown
                   label="Company"
@@ -283,78 +222,159 @@ const AttendanceSummary = () => {
                 )}
               </div>
             </div>
-
-            <div className="flex justify-end mt-10">
+            <div className="flex justify-end mt-4">
               <button
-                onClick={handleGenerateReport}
-                disabled={loading}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md disabled:opacity-60"
+                onClick={() => setOpenModal(true)}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md lg:text-lg 3xl:text-xl transition-all duration-200"
               >
                 {loading ? "Generating..." : "Generate Report"}
               </button>
             </div>
           </div>
-        </div>
+        )}
 
+        {/* Results Table Section */}
         {openModal && (
-          <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6 ">
-            <div className="flex justify-end">
-              <RxCross2 onClick={() => setOpenModal(false)} className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer" />
-            </div>
-
-            <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-              <div>
-                <label className="mr-2 text-md">Show</label>
-                <select value={entriesPerPage} onChange={(e) => { setEntriesPerPage(Number(e.target.value)); setCurrentPage(1); }} className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]">
-                  <option value={10}>10</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </select>
-                <span className="ml-2 text-md">entries</span>
+          <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
+            <div className="p-6 border-b border-blue-100/30">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl lg:text-2xl 3xl:text-3xl font-bold text-gray-800">
+                  Attendance Summary
+                </h2>
+                <RxCross2
+                  onClick={() => setOpenModal(false)}
+                  className="text-2xl text-gray-400 hover:text-red-500 cursor-pointer transition-colors"
+                />
               </div>
-              <div className="flex flex-wrap gap-2 items-center justify-center">
-                <input placeholder="Search" value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }} className=" shadow-sm px-3 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]" />
-                 <div className="flex">
-                  <button onClick={handleCopy} className="text-xl px-3 py-1 cursor-pointer text-gray-800"><GoCopy /></button>
-                  <button onClick={handleExcel} className="text-xl px-3 py-1 cursor-pointer text-green-700"><FaFileExcel /></button>
-                  <button onClick={handlePDF} className="text-xl px-3 py-1 cursor-pointer text-red-600"><FaFilePdf /></button>
+
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                    Display
+                  </label>
+                  <select
+                    value={entriesPerPage}
+                    onChange={(e) => {
+                      setEntriesPerPage(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
+                  >
+                    {[10, 25, 50, 100].map((v) => (
+                      <option key={v} value={v}>
+                        {v}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                    entries
+                  </span>
+                </div>
+
+                <div className="flex gap-3">
+                  <input
+                    placeholder="Search employee..."
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                  />
                 </div>
               </div>
             </div>
 
-            <div className="overflow-x-auto min-h-[250px]" style={{ scrollbarWidth: "none" }}>
-              <h1 className="text-[oklch(0.577_0.245_27.325)] text-xl mb-4 text-center"> Attendance Summary </h1>
-              <table className="w-full text-lg border-collapse">
-                <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                  <tr>
-                    <th className="p-2 font-semibold">Name</th>
-                    <th className="p-2 font-semibold whitespace-nowrap hidden md:table-cell">Days Worked</th>
-                    <th className="p-2 font-semibold whitespace-nowrap hidden lg:table-cell">Hrs Worked</th>
-                    <th className="p-2 font-semibold hidden xl:table-cell">W1</th>
-                    <th className="p-2 font-semibold hidden xl:table-cell">W2</th>
-                    <th className="p-2 font-semibold hidden xl:table-cell">W3</th>
-                    <th className="p-2 font-semibold hidden xl:table-cell">W4</th>
-                    <th className="p-2 font-semibold hidden xl:table-cell">W5</th>
-                    <th className="p-2 font-semibold">Action</th>
+            <div
+              className="overflow-x-auto min-h-[350px]"
+              style={{ scrollbarWidth: "none" }}
+            >
+              <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-blue-100/50">
+                    <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                      Name
+                    </th>
+                    <th className="px-4 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
+                      {currentDate}
+                    </th>
+                    <th className="px-4 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
+                      Total Days
+                    </th>
+                    <th className="px-4 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
+                      Total Hours
+                    </th>
+                    <th className="px-4 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
+                      W1
+                    </th>
+                    <th className="px-4 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
+                      W2
+                    </th>
+                    <th className="px-4 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
+                      W3
+                    </th>
+                    <th className="px-4 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
+                      W4
+                    </th>
+                    <th className="px-4 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
+                      W5
+                    </th>
+                    <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {currentData.length === 0 ? (
-                    <tr><td colSpan="9" className="sm:text-center p-10">No Data Available</td></tr>
+                  {currentattendanceSummary.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="10"
+                        className="p-12 text-center text-gray-500 font-medium"
+                      >
+                        No Data Available
+                      </td>
+                    </tr>
                   ) : (
-                    currentData.map((item) => (
-                      <tr key={item.id} className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]">
-                        <td className="p-2 whitespace-nowrap">{item.employee_name}</td>
-                        <td className="p-2 hidden md:table-cell">{item.totalDays}</td>
-                        <td className="p-2 hidden lg:table-cell">{item.totalHours.toFixed(2)}</td>
-                        <td className="p-2 hidden xl:table-cell">{item.weeks[0].toFixed(1)}</td>
-                        <td className="p-2 hidden xl:table-cell">{item.weeks[1].toFixed(1)}</td>
-                        <td className="p-2 hidden xl:table-cell">{item.weeks[2].toFixed(1)}</td>
-                        <td className="p-2 hidden xl:table-cell">{item.weeks[3].toFixed(1)}</td>
-                        <td className="p-2 hidden xl:table-cell">{item.weeks[4].toFixed(1)}</td>
-                        <td className="p-2 ">
-                          <FaEye onClick={() => { setSelectedId(item.id); setModalOpenSelectedItem(true); }} className="text-blue-500 cursor-pointer text-lg mx-auto" />
+                    currentattendanceSummary.map((item, index) => (
+                      <tr
+                        key={item.id}
+                        className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
+                      >
+                        <td className="px-4 py-3 text-center font-medium text-gray-900">
+                          {item.employee}
+                        </td>
+                        <td className="px-4 py-3 text-center hidden md:table-cell text-gray-600">
+                          {currentDate}
+                        </td>
+                        <td className="px-4 py-3 text-center hidden md:table-cell text-gray-600">
+                          {"days"}
+                        </td>
+                        <td className="px-4 py-3 text-center hidden lg:table-cell text-gray-600">
+                          {"hrs"}
+                        </td>
+                        <td className="px-4 py-3 text-center hidden xl:table-cell text-gray-500">
+                          {"1"}
+                        </td>
+                        <td className="px-4 py-3 text-center hidden xl:table-cell text-gray-500">
+                          {"2"}
+                        </td>
+                        <td className="px-4 py-3 text-center hidden xl:table-cell text-gray-500">
+                          {"3"}
+                        </td>
+                        <td className="px-4 py-3 text-center hidden xl:table-cell text-gray-500">
+                          {"4"}
+                        </td>
+                        <td className="px-4 py-3 text-center hidden xl:table-cell text-gray-500">
+                          {"5"}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <FaEye
+                            onClick={() => {
+                              setSelectedId(item.id);
+                              setModalOpenSelectedItem(true);
+                            }}
+                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all mx-auto"
+                          />
                         </td>
                       </tr>
                     ))
@@ -363,36 +383,134 @@ const AttendanceSummary = () => {
               </table>
             </div>
 
-            <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-              <span> Showing {filteredReport.length === 0 ? "0" : startIndex + 1} to {Math.min(startIndex + entriesPerPage, filteredReport.length)} of {filteredReport.length} entries </span>
-              <div className="flex flex-row space-x-1">
-                <button disabled={currentPage === 1} onClick={() => setCurrentPage(1)} className="p-2 bg-gray-200 rounded-full disabled:opacity-50">First</button>
-                <button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)} className="p-3 bg-gray-200 rounded-full disabled:opacity-50"><GrPrevious /></button>
-                <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
-                <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)} className="p-3 bg-gray-200 rounded-full disabled:opacity-50"><GrNext /></button>
-                <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(totalPages)} className="p-2 bg-gray-200 rounded-full disabled:opacity-50">Last</button>
+            {/* Pagination */}
+            <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+              <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
+                Showing{" "}
+                <span className="font-bold text-gray-900">
+                  {startIndex + 1}
+                </span>{" "}
+                to{" "}
+                <span className="font-bold text-gray-900">
+                  {Math.min(endIndex, filteredattendanceSummary.length)}
+                </span>{" "}
+                of{" "}
+                <span className="font-bold text-gray-900">
+                  {filteredattendanceSummary.length}
+                </span>{" "}
+                entries
+              </span>
+              <div className="flex gap-2">
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(1)}
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50 transition-all"
+                >
+                  First
+                </button>
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  className="p-2.5 border rounded-lg bg-white disabled:opacity-50 hover:bg-blue-50"
+                >
+                  <GrPrevious />
+                </button>
+                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm lg:text-base 3xl:text-xl min-w-[45px] text-center">
+                  {currentPage}
+                </div>
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  className="p-2.5 border rounded-lg bg-white disabled:opacity-50 hover:bg-blue-50"
+                >
+                  <GrNext />
+                </button>
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(totalPages)}
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50 transition-all"
+                >
+                  Last
+                </button>
               </div>
             </div>
           </div>
         )}
 
+        {/* Selection Detail Modal */}
         {modalOpenSelectedItem && selectedItem && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6" style={{ scrollbarWidth: "none" }}>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold">{selectedItem.employee_name} Summary</h2>
-                <RxCross2 onClick={() => (setModalOpenSelectedItem(false), setSelectedId(null))} className="cursor-pointer text-xl text-red-500" />
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
+            <div
+              className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-5xl max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
+              style={{ scrollbarWidth: "none" }}
+            >
+              <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+                <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+                  {selectedItem.employee} Summary Details
+                </h2>
+                <button
+                  onClick={() => {
+                    setModalOpenSelectedItem(false);
+                    setSelectedId(null);
+                  }}
+                  className="text-gray-400 hover:text-red-600 transition-colors"
+                >
+                  <RxCross2 className="text-2xl" />
+                </button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-lg">
-                <div><p className={labelStyle}>Employee ID</p><p className={inputStyle}>{selectedItem.employee_code || "—"}</p></div>
-                <div><p className={labelStyle}>Name</p><p className={inputStyle}>{selectedItem.employee_name}</p></div>
-                <div><p className={labelStyle}>Total Days Worked</p><p className={inputStyle}>{selectedItem.totalDays}</p></div>
-                <div><p className={labelStyle}>Total Hrs Worked</p><p className={inputStyle}>{selectedItem.totalHours.toFixed(2)}</p></div>
-                <div><p className={labelStyle}>Week 1 Hrs</p><p className={inputStyle}>{selectedItem.weeks[0].toFixed(2)}</p></div>
-                <div><p className={labelStyle}>Week 2 Hrs</p><p className={inputStyle}>{selectedItem.weeks[1].toFixed(2)}</p></div>
-                <div><p className={labelStyle}>Week 3 Hrs</p><p className={inputStyle}>{selectedItem.weeks[2].toFixed(2)}</p></div>
-                <div><p className={labelStyle}>Week 4 Hrs</p><p className={inputStyle}>{selectedItem.weeks[3].toFixed(2)}</p></div>
-                <div><p className={labelStyle}>Week 5 Hrs</p><p className={inputStyle}>{selectedItem.weeks[4].toFixed(2)}</p></div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div>
+                  <p className={labelStyle}>Employee ID</p>
+                  <p className={inputStyle}>{selectedItem.employeeId}</p>
+                </div>
+                <div>
+                  <p className={labelStyle}>Name</p>
+                  <p className={inputStyle}>{selectedItem.employee}</p>
+                </div>
+                <div>
+                  <p className={labelStyle}>Report Month</p>
+                  <p className={inputStyle}>{currentDate}</p>
+                </div>
+                <div>
+                  <p className={labelStyle}>Total Days Worked</p>
+                  <p className={inputStyle}>{"days"}</p>
+                </div>
+                <div>
+                  <p className={labelStyle}>Total Absence</p>
+                  <p className={inputStyle}>{"Absence"}</p>
+                </div>
+                <div>
+                  <p className={labelStyle}>Total Hrs Worked</p>
+                  <p className={inputStyle}>{"hrs"}</p>
+                </div>
+                <div>
+                  <p className={labelStyle}>Total OT</p>
+                  <p className={inputStyle}>{"ot"}</p>
+                </div>
+                <div>
+                  <p className={labelStyle}>Week 1 Total</p>
+                  <p className={inputStyle}>{"1"}</p>
+                </div>
+                <div>
+                  <p className={labelStyle}>Week 2 Total</p>
+                  <p className={inputStyle}>{"2"}</p>
+                </div>
+                <div>
+                  <p className={labelStyle}>Week 3 Total</p>
+                  <p className={inputStyle}>{"3"}</p>
+                </div>
+                <div>
+                  <p className={labelStyle}>Week 4 Total</p>
+                  <p className={inputStyle}>{"4"}</p>
+                </div>
+                <div>
+                  <p className={labelStyle}>Week 5 Total</p>
+                  <p className={inputStyle}>{"5"}</p>
+                </div>
               </div>
             </div>
           </div>

@@ -179,7 +179,9 @@ const Monitoring = () => {
             key={idx}
             className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-2xl border border-blue-100/50 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
           >
-            <p className="text-sm xl:text-lg text-gray-500 mb-2">{item.label}</p>
+            <p className="text-sm xl:text-lg text-gray-500 mb-2">
+              {item.label}
+            </p>
             <h3 className="text-2xl font-bold text-gray-800">{item.value}</h3>
             <div className="mt-3 h-1 w-10 bg-blue-500 rounded-full" />
           </div>
@@ -215,7 +217,9 @@ const Monitoring = () => {
                 <option value={50}>50</option>
                 <option value={100}>100</option>
               </select>
-              <p className="text-sm xl:text-base font-medium text-gray-600">entries</p>
+              <p className="text-sm xl:text-base font-medium text-gray-600">
+                entries
+              </p>
             </div>
 
             <div className="flex flex-wrap gap-3 items-center justify-center">
@@ -254,7 +258,10 @@ const Monitoring = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto min-h-[350px]">
+        <div
+          className="overflow-x-auto min-h-[350px]"
+          style={{ scrollbarWidth: "none" }}
+        >
           <table className="w-full text-[16px] xl:text-[20px]">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
@@ -302,65 +309,69 @@ const Monitoring = () => {
                   </td>
                 </tr>
               ) : currentmonitoring.length === 0 ? (
-                  <tr>
-                    <td colSpan="9" className="px-4 py-12 text-center">
-                      <div className="flex flex-col items-center justify-center gap-3">
-                        <div className="text-4xl opacity-40">📅</div>
-                        <p className="text-gray-500 text-base font-medium">
-                         No attendance data
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : ( currentmonitoring.map((item) => (
-                <tr
-                  className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
-                  key={item.id}
-                >
-                  <td className="text-center">
-                    <div
-                      className={`w-3 h-3 rounded-full mx-auto ${
-                        item.status === "Online" ? "bg-green-600" : "bg-red-600"
-                      }`}
-                    />
-                  </td>
-
-                  <td className="px-6 py-2 text-center">{item.employee}</td>
-                  <td className="px-6 py-2 hidden sm:table-cell text-center">
-                    {item.date.toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-2 hidden lg:table-cell text-center">
-                    {item.date.toLocaleDateString("en-US", {
-                      weekday: "long",
-                    })}
-                  </td>
-                  <td className="px-6 py-2 hidden lg:table-cell text-center">
-                    {item.login}
-                  </td>
-                  <td className="px-6 py-2 hidden lg:table-cell text-center">
-                    {item.logout}
-                  </td>
-                  <td className="px-6 py-2 hidden sm:table-cell text-center">
-                    {calculateWH(item.login, item.logout)}
-                  </td>
-                  <td className="px-6 py-2 hidden lg:table-cell text-center">
-                    {item.location}
-                  </td>
-                  {/* Action */}
-                  <td className="px-4 py-2 text-center">
-                    <button
-                      onClick={() => {
-                        setSelectedItem(item);
-                        setOpenModal(true);
-                      }}
-                      className="text-blue-500 hover:text-blue-700 hover:bg-blue-100 p-1.5 rounded-lg transition-all"
-                      title="View"
-                    >
-                      <FaEye className="text-lg" />
-                    </button>
+                <tr>
+                  <td colSpan="9" className="px-4 py-12 text-center">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <div className="text-4xl opacity-40">📅</div>
+                      <p className="text-gray-500 text-base font-medium">
+                        No attendance data
+                      </p>
+                    </div>
                   </td>
                 </tr>
-              )))}
+              ) : (
+                currentmonitoring.map((item) => (
+                  <tr
+                    className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
+                    key={item.id}
+                  >
+                    <td className="text-center">
+                      <div
+                        className={`w-3 h-3 rounded-full mx-auto ${
+                          item.status === "Online"
+                            ? "bg-green-600"
+                            : "bg-red-600"
+                        }`}
+                      />
+                    </td>
+
+                    <td className="px-6 py-2 text-center">{item.employee}</td>
+                    <td className="px-6 py-2 hidden sm:table-cell text-center">
+                      {item.date.toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-2 hidden lg:table-cell text-center">
+                      {item.date.toLocaleDateString("en-US", {
+                        weekday: "long",
+                      })}
+                    </td>
+                    <td className="px-6 py-2 hidden lg:table-cell text-center">
+                      {item.login}
+                    </td>
+                    <td className="px-6 py-2 hidden lg:table-cell text-center">
+                      {item.logout}
+                    </td>
+                    <td className="px-6 py-2 hidden sm:table-cell text-center">
+                      {calculateWH(item.login, item.logout)}
+                    </td>
+                    <td className="px-6 py-2 hidden lg:table-cell text-center">
+                      {item.location}
+                    </td>
+                    {/* Action */}
+                    <td className="px-4 py-2 text-center">
+                      <button
+                        onClick={() => {
+                          setSelectedItem(item);
+                          setOpenModal(true);
+                        }}
+                        className="text-blue-500 hover:text-blue-700 hover:bg-blue-100 p-1.5 rounded-lg transition-all"
+                        title="View"
+                      >
+                        <FaEye className="text-lg" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -412,8 +423,14 @@ const Monitoring = () => {
       </div>
 
       {openModal && selectedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
+          style={{ scrollbarWidth: "none" }}
+        >
+          <div
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8"
+            style={{ scrollbarWidth: "none" }}
+          >
             {/* Close */}
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
               <h2 className="text-xl font-bold text-gray-900">

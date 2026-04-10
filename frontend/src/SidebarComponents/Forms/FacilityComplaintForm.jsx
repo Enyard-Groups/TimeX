@@ -39,11 +39,10 @@ const FacilityComplaintForm = () => {
     fetchData();
   }, []);
 
-  const labelStyle =
-    "text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block mx-1";
-
   const inputStyle =
-    "text-[16px] w-full border border-[oklch(0.923_0.003_48.717)] bg-white  rounded-md px-3 py-1 text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+  const labelStyle =
+    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const defaultFormData = {
     name: "",
@@ -211,26 +210,30 @@ const FacilityComplaintForm = () => {
 
   return (
     <div className="mb-6">
-      {/* Header */}
-      <div className="sm:flex sm:justify-between">
-        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-          <FaAngleRight />
-          Forms
-          <FaAngleRight />
-          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
-            Facility Complaint Form
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+        <h1 className="flex items-center gap-2 h-[30px] text-lg font-semibold text-gray-800">
+          <FaAngleRight className="text-blue-500 text-base" />
+          <span className="text-gray-500">Forms</span>
+          <FaAngleRight className="text-blue-500 text-base" />
+          <div
+            onClick={() => setOpenModal(false)}
+            className="cursor-pointer text-blue-600 hover:text-blue-700"
+          >
+            Facility Complaint
           </div>
         </h1>
+
         {!openModal && (
           <div className="flex justify-end">
             <button
-              onClick={() => (
-                setMode(""),
-                setEditId(null),
-                setFormData(defaultFormData),
-                setOpenModal(true)
-              )}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              onClick={() => {
+                setMode("");
+                setEditId(null);
+                setFormData(defaultFormData);
+                setOpenModal(true);
+              }}
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -238,172 +241,178 @@ const FacilityComplaintForm = () => {
         )}
       </div>
 
+      {/* Main Container */}
       {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">
+        <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl">
           {/* Top Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <div>
-              <label className="mr-2 text-md">Show</label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="ml-2 text-md">entries</span>
-            </div>
-            <div className="flex flex-wrap gap-2 items-center justify-center">
-              <div className="flex">
-                <button
-                  onClick={handleCopy}
-                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+          <div className="p-6 border-b border-blue-100/30">
+            <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-600">
+                  Display
+                </label>
+                <select
+                  value={entriesPerPage}
+                  onChange={(e) => {
+                    setEntriesPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm cursor-pointer hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 transition-all"
                 >
-                  <GoCopy />
-                </button>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+                <span className="text-sm font-medium text-gray-600">
+                  entries
+                </span>
+              </div>
 
-                <button
-                  onClick={handleExcel}
-                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
-                >
-                  <FaFileExcel />
-                </button>
+              <div className="flex flex-wrap gap-3 items-center">
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopy}
+                    className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
+                    title="Copy to clipboard"
+                  >
+                    <GoCopy />
+                  </button>
 
-                <button
-                  onClick={handlePDF}
-                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
-                >
-                  <FaFilePdf />
-                </button>
+                  <button
+                    onClick={handleExcel}
+                    className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
+                    title="Export to Excel"
+                  >
+                    <FaFileExcel />
+                  </button>
+
+                  <button
+                    onClick={handlePDF}
+                    className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
+                    title="Export to PDF"
+                  >
+                    <FaFilePdf />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Table */}
           <div
-            className="overflow-x-auto min-h-[250px]"
+            className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="p-2 font-semibold hidden sm:table-cell">
-                    SL.No
+            <table className="w-full text-[16px] lg:text-[19px] 3xl:text-[22px]">
+              <thead>
+                <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
+                  <th className="px-6 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
+                    SL.NO
                   </th>
-
-                  <th className="p-2 font-semibold"> Name</th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                    Reporter Name
+                  </th>
+                  <th className="px-6 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
                     Issue Type
                   </th>
-
-                  <th className="p-2 font-semibold hidden xl:table-cell">
+                  <th className="px-6 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
                     Location
                   </th>
-
-                  <th className="p-2 font-semibold hidden xl:table-cell">
-                    Description
+                  <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
+                    Status
                   </th>
-
-                  <th className="p-2 font-semibold hidden lg:table-cell">
-                    Safety Concerns
+                  <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                    Actions
                   </th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
-                    Requested Action
-                  </th>
-
-                  <th className="p-2 font-semibold hidden xl:table-cell">
-                    Date Noticed
-                  </th>
-
-                  <th className="p-2 font-semibold hidden lg:table-cell">
-                    Urgent
-                  </th>
-
-                  <th className="p-2 font-semibold">Action</th>
                 </tr>
               </thead>
+
               <tbody>
                 {currentrequestData.length === 0 ? (
                   <tr>
-                    <td colSpan="14" className="lg:text-center p-10 ">
-                      No Data Available
+                    <td colSpan="6" className="px-4 py-12 text-center">
+                      <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="text-4xl opacity-40">📭</div>
+                        <p className="text-gray-500 text-base">
+                          No complaints recorded
+                        </p>
+                      </div>
                     </td>
                   </tr>
                 ) : (
                   currentrequestData.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                      className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="p-2 whitespace-nowrap hidden sm:table-cell">
-                        {index + 1}
+                      <td className="px-6 py-2 text-center hidden sm:table-cell">
+                        {startIndex + index + 1}
                       </td>
 
-                      <td className="p-2">{item.name}</td>
-
-                      <td className="p-2 hidden md:table-cell">
-                        {item.issue_type}
+                      <td className="px-6 py-2 text-center">
+                        {item.name || "-"}
                       </td>
 
-                      <td className="p-2 hidden xl:table-cell">
-                        {item.location}
-                      </td>
-                      <td className="p-2 hidden xl:table-cell">
-                        {item.description}
+                      <td className="px-6 py-2 text-center hidden md:table-cell">
+                        {item.issue_type || "-"}
                       </td>
 
-                      <td className="p-2 hidden lg:table-cell">
-                        {item.safety_concerns}
+                      <td className="px-6 py-2 text-center hidden xl:table-cell">
+                        {item.location || "-"}
                       </td>
 
-                      <td className="p-2 hidden md:table-cell">
-                        {item.requested_action}
+                      <td className="px-4 py-3 hidden lg:table-cell text-center">
+                        <div className="flex justify-center">
+                          <span
+                            className={`px-3 py-1 rounded-full text-sm font-semibold border ${
+                              item.urgent
+                                ? "bg-red-100 text-red-700 border-red-300"
+                                : "bg-green-100 text-green-700 border-green-300"
+                            }`}
+                          >
+                            {item.urgent ? "Urgent" : "Normal"}
+                          </span>
+                        </div>
                       </td>
 
-                      <td className="p-2 hidden xl:table-cell">
-                        {item.date_noticed}
-                      </td>
-
-                      <td className="p-2 hidden lg:table-cell">
-                        {item.urgent ? "Y" : "N"}
-                      </td>
-
-                      <td className="p-2 flex flex-row space-x-3 justify-center whitespace-nowrap">
-                        {" "}
-                        <div className="flex flex-row space-x-3 justify-center mt-1">
-                          {/* View */}{" "}
-                          <FaEye
+                      <td className="px-4 py-3 text-center">
+                        <div className="flex justify-center gap-2">
+                          {/* View */}
+                          <button
                             onClick={() => {
                               setFormData(item);
-
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />{" "}
+                            className="text-blue-500 hover:text-blue-700 hover:bg-blue-100 p-1.5 rounded-lg transition-all"
+                            title="View"
+                          >
+                            <FaEye className="text-lg" />
+                          </button>
+
                           {/* Edit */}
-                          <FaPen
+                          <button
                             onClick={() => {
                               setFormData(item);
                               setEditId(item.id);
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="inline text-green-500 cursor-pointer text-lg"
-                          />
+                            className="text-green-500 hover:text-green-700 hover:bg-green-100 p-1.5 rounded-lg transition-all"
+                            title="Edit"
+                          >
+                            <FaPen className="text-lg" />
+                          </button>
+
                           {/* Delete */}
-                          <MdDeleteForever
+                          <button
                             onClick={() => handleDelete(item.id)}
-                            className="inline text-red-500 cursor-pointer text-xl"
-                          />
+                            className="text-red-500 hover:text-red-700 hover:bg-red-100 p-1.5 rounded-lg transition-all"
+                            title="Delete"
+                          >
+                            <MdDeleteForever className="text-xl" />
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -414,44 +423,60 @@ const FacilityComplaintForm = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-            <span>
-              Showing {requestData.length === 0 ? "0" : startIndex + 1} to{" "}
-              {Math.min(endIndex, requestData.length)} of {requestData.length}{" "}
+          <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <span className="text-sm lg:text-base 3xl:text-xl text-gray-600">
+              Showing{" "}
+              <span className="text-gray-900 font-semibold">
+                {requestData.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
+              to{" "}
+              <span className="text-gray-900 font-semibold">
+                {Math.min(endIndex, requestData.length)}
+              </span>{" "}
+              of{" "}
+              <span className="text-gray-900 font-semibold">
+                {requestData.length}
+              </span>{" "}
               entries
             </span>
 
-            <div className="flex flex-row space-x-1">
+            <div className="flex gap-2">
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="First page"
               >
                 First
               </button>
 
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Previous page"
               >
                 <GrPrevious />
               </button>
 
-              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
+                {currentPage}
+              </div>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Next page"
               >
                 <GrNext />
               </button>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="Last page"
               >
                 Last
               </button>
@@ -460,211 +485,232 @@ const FacilityComplaintForm = () => {
         </div>
       )}
 
+      {/* Modal */}
       {openModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-white rounded-xl shadow-xl w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-6"
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8"
             style={{ scrollbarWidth: "none" }}
           >
-            {/* Close */}
-            <div className="flex justify-end mb-4">
-              <RxCross2
+            {/* Close Button */}
+            <div className="flex justify-end mb-6">
+              <button
                 onClick={() => setOpenModal(false)}
-                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-              />
+                className="text-gray-400 hover:text-gray-600 transition"
+              >
+                <RxCross2 className="text-2xl" />
+              </button>
             </div>
 
-            <div className="border p-4 rounded-xl border-gray-400 shadow">
-              <div className="flex justify-center">
-                <div
-                  className="max-h-[75vh] max-w-[1200px] overflow-y-auto pr-2 text-sm px-1"
-                  style={{ scrollbarWidth: "none" }}
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                    <div className="flex flex-col">
-                      <label className={`whitespace-nowrap ${labelStyle}`}>
-                        Name
-                      </label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        disabled={mode === "view"}
-                        className={inputStyle}
-                      />
-                    </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              {mode === "view"
+                ? "View Complaint"
+                : mode === "edit"
+                  ? "Edit Complaint"
+                  : "Log New Facility Complaint"}
+            </h2>
 
-                    <div className="flex flex-col">
-                      <label className={`whitespace-nowrap ${labelStyle}`}>
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        disabled={mode === "view"}
-                        className={inputStyle}
-                      />
-                    </div>
+            <div className="space-y-6 mb-8">
+              {/* Row 1: Basic Info */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Date Noticed */}
+                <div>
+                  <label className={labelStyle}>Date Noticed</label>
+                  <input
+                    name="date_noticed"
+                    value={formData.date_noticed || ""}
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                    placeholder="dd/mm/yyyy"
+                    className={inputStyle}
+                  />
+                </div>
 
-                    <div className="flex flex-col">
-                      <label className={`whitespace-nowrap ${labelStyle}`}>
-                        Contact No.
-                      </label>
-                      <input
-                        type="number"
-                        name="contact"
-                        value={formData.contact}
-                        onChange={handleChange}
-                        disabled={mode === "view"}
-                        className={inputStyle}
-                      />
-                    </div>
+                {/* Reporter Name */}
+                <div>
+                  <label className={labelStyle}>
+                    Reporter Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                    placeholder="Full name"
+                    className={inputStyle}
+                  />
+                </div>
 
-                    <div className="flex flex-col">
-                      <label className={`whitespace-nowrap ${labelStyle}`}>
-                        Issue Type
-                      </label>
-                      <SearchDropdown
-                        name="issue_type"
-                        value={formData.issue_type}
-                        options={[
-                          "Electrical",
-                          "Plumbing",
-                          "Drainage",
-                          "Cleaning",
-                          "Security",
-                        ]}
-                        onChange={handleChange}
-                        formData={formData}
-                        setFormData={setFormData}
-                        disabled={mode === "view"}
-                        inputStyle={inputStyle}
-                      />
-                    </div>
-
-                    <div className="flex flex-col">
-                      <label className={`whitespace-nowrap ${labelStyle}`}>
-                        Location
-                      </label>
-                      <input
-                        type="text"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleChange}
-                        disabled={mode === "view"}
-                        className={inputStyle}
-                      />
-                    </div>
-
-                    <div className="flex flex-col">
-                      <label className={`whitespace-nowrap ${labelStyle}`}>
-                        Date Noticed
-                      </label>
-                      <input
-                        type="text"
-                        name="date_noticed"
-                        value={formData.date_noticed}
-                        onChange={handleChange}
-                        disabled={mode === "view"}
-                        className={inputStyle}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mt-4 gap-4">
-                    <div className="col-span-2">
-                      <label className={`whitespace-nowrap ${labelStyle}`}>
-                        Description
-                      </label>
-                      <textarea
-                        type="text"
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        disabled={mode === "view"}
-                        className={inputStyle}
-                      />
-                    </div>
-
-                    <div className="flex flex-col">
-                      <label className={`whitespace-nowrap ${labelStyle}`}>
-                        Immediate Safety Concerns
-                      </label>
-                      <SearchDropdown
-                        name="safetyConcerns"
-                        value={formData.safety_concerns}
-                        options={["Yes", "No"]}
-                        formData={formData}
-                        setFormData={setFormData}
-                        disabled={mode === "view"}
-                        inputStyle={inputStyle}
-                      />
-                    </div>
-
-                    <div className="flex flex-col">
-                      <label className={`whitespace-nowrap ${labelStyle}`}>
-                        Urgent Issue
-                      </label>
-                      <input
-                        type="checkbox"
-                        name="urgent"
-                        value={formData.urgent}
-                        onChange={handleChange}
-                        disabled={mode === "view"}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mt-4 gap-4">
-                    <div className="col-span-2">
-                      <label className={`whitespace-nowrap ${labelStyle}`}>
-                        Requested Action
-                      </label>
-                      <textarea
-                        type="text"
-                        name="requestedAction"
-                        value={formData.requested_action}
-                        onChange={handleChange}
-                        disabled={mode === "view"}
-                        className={inputStyle}
-                      />
-                    </div>
-
-                    <div className="flex flex-col">
-                      <label className={`whitespace-nowrap ${labelStyle}`}>
-                        File Attachment
-                      </label>
-                      <input
-                        type="file"
-                        name="attachedFile"
-                        value={formData.attached_file}
-                        onChange={handleChange}
-                        disabled={mode === "view"}
-                        className={inputStyle}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Save */}
-                  {mode !== "view" && (
-                    <div className="flex justify-end mt-10">
-                      <button
-                        onClick={handleSubmit}
-                        className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md mb-6"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  )}
+                {/* Email */}
+                <div>
+                  <label className={labelStyle}>Email Address</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                    placeholder="email@example.com"
+                    className={inputStyle}
+                  />
                 </div>
               </div>
+
+              {/* Row 2: Contact & Category */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Contact */}
+                <div>
+                  <label className={labelStyle}>Contact Number</label>
+                  <input
+                    type="number"
+                    name="contact"
+                    value={formData.contact}
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                    placeholder="Phone"
+                    className={inputStyle}
+                  />
+                </div>
+
+                {/* Issue Type */}
+                <div>
+                  <label className={labelStyle}>
+                    Issue Category <span className="text-red-500">*</span>
+                  </label>
+                  <SearchDropdown
+                    name="issue_type"
+                    value={formData.issue_type}
+                    options={[
+                      "Electrical",
+                      "Plumbing",
+                      "Drainage",
+                      "Cleaning",
+                      "Security",
+                      "Other",
+                    ]}
+                    formData={formData}
+                    setFormData={setFormData}
+                    disabled={mode === "view"}
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
+                </div>
+
+                {/* Location */}
+                <div>
+                  <label className={labelStyle}>
+                    Location <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                    placeholder="Block/Room/Area"
+                    className={inputStyle}
+                  />
+                </div>
+              </div>
+
+              {/* Row 3: Description & Action */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Description */}
+                <div>
+                  <label className={labelStyle}>Issue Description</label>
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                    rows={4}
+                    placeholder="Details of the issue..."
+                    className={inputStyle}
+                  />
+                </div>
+
+                {/* Requested Action */}
+                <div>
+                  <label className={labelStyle}>
+                    Requested Action / Solution
+                  </label>
+                  <textarea
+                    name="requested_action"
+                    value={formData.requested_action}
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                    rows={4}
+                    placeholder="What fix is needed?"
+                    className={inputStyle}
+                  />
+                </div>
+              </div>
+
+              {/* Row 4: Safety & File */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {/* Safety Concerns */}
+                <div>
+                  <label className={labelStyle}>Safety Concerns</label>
+                  <SearchDropdown
+                    name="safety_concerns"
+                    value={formData.safety_concerns}
+                    options={["Yes", "No"]}
+                    formData={formData}
+                    setFormData={setFormData}
+                    disabled={mode === "view"}
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
+                  />
+                </div>
+
+                {/* File Attachment */}
+                <div>
+                  <label className={labelStyle}>Attachment / Evidence</label>
+                  <input
+                    type="file"
+                    name="attachedFile"
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                    className={inputStyle}
+                  />
+                </div>
+              </div>
+
+              {/* Urgent Checkbox */}
+              <div className="flex items-center gap-3 bg-blue-50/50 px-4 py-3 rounded-xl border border-blue-100 w-fit">
+                <input
+                  type="checkbox"
+                  name="urgent"
+                  checked={formData.urgent}
+                  onChange={handleChange}
+                  disabled={mode === "view"}
+                  className="w-5 h-5 cursor-pointer accent-red-500 disabled:cursor-not-allowed"
+                />
+                <label className="text-gray-700 font-semibold cursor-pointer">
+                  Mark as Urgent Issue
+                </label>
+              </div>
             </div>
+
+            {/* Action Buttons */}
+            {mode !== "view" && (
+              <div className="flex justify-end gap-3 pt-6 border-t border-blue-100/30">
+                <button
+                  onClick={() => setOpenModal(false)}
+                  className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-50 font-semibold transition-all"
+                >
+                  Discard
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+                >
+                  {editId ? "Update Complaint" : "Submit Complaint"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

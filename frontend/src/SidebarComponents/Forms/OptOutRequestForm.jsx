@@ -24,12 +24,16 @@ const OptOutRequestForm = () => {
   const [requestData, setRequestData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const [editId, setEditId] = useState(null);
   const [showDateSpinner, setShowDateSpinner] = useState(false);
   const [showEffectiveFromDateSpinner, setShowEffectiveFromDateSpinner] =
     useState(false);
 
-  const labelStyle = "text-md text-[oklch(0.147_0.004_49.25)] my-1 block";
+  const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+  const labelStyle =
+    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const defaultFormData = {
     employee: "",
@@ -96,15 +100,19 @@ const OptOutRequestForm = () => {
     }));
   };
 
+  const filteredrequestData = requestData.filter((x) =>
+    x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()),
+  );
+
   const endIndex = currentPage * entriesPerPage;
 
   const startIndex = endIndex - entriesPerPage;
 
-  const currentrequestData = requestData.slice(startIndex, endIndex);
+  const currentrequestData = filteredrequestData.slice(startIndex, endIndex);
 
   const totalPages = Math.max(
     1,
-    Math.ceil(requestData.length / entriesPerPage),
+    Math.ceil(filteredrequestData.length / entriesPerPage),
   );
 
   // Handle submit
@@ -145,7 +153,7 @@ const OptOutRequestForm = () => {
       "\t",
     );
 
-    const rows = requestData
+    const rows = filteredrequestData
       .map((item) => {
         return [
           item.employee,
@@ -163,7 +171,7 @@ const OptOutRequestForm = () => {
   };
 
   const handleExcel = () => {
-    const excelData = requestData.map((item) => ({
+    const excelData = filteredrequestData.map((item) => ({
       Employee: item.employee,
       Date: item.date,
       EnrollmentId: item.enrollment_id,
@@ -185,7 +193,7 @@ const OptOutRequestForm = () => {
 
     const tableRows = [];
 
-    requestData.forEach((item) => {
+    filteredrequestData.forEach((item) => {
       const row = [
         item.employee,
         item.date,
@@ -205,27 +213,30 @@ const OptOutRequestForm = () => {
   };
 
   return (
-    <div className="mb-6">
-      {/* Header */}
-      <div className="sm:flex sm:justify-between">
-        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-          <FaAngleRight />
-          Forms
-          <FaAngleRight />
-          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+    <div className="mb-6 max-w-[1920px] mx-auto">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+        <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+          <FaAngleRight className="text-blue-500 text-base" />
+          <span className="text-gray-500">Forms</span>
+          <FaAngleRight className="text-blue-500 text-base" />
+          <div
+            onClick={() => setOpenModal(false)}
+            className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+          >
             OPT Out Request Form
           </div>
         </h1>
         {!openModal && (
           <div className="flex justify-end">
             <button
-              onClick={() => (
-                setMode(""),
-                setEditId(null),
-                setFormData(defaultFormData),
-                setOpenModal(true)
-              )}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              onClick={() => {
+                setMode("");
+                setEditId(null);
+                setFormData(defaultFormData);
+                setOpenModal(true);
+              }}
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -233,86 +244,105 @@ const OptOutRequestForm = () => {
         )}
       </div>
 
+      {/* Main Table Container */}
       {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">
-          {/* Top Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <div>
-              <label className="mr-2 text-md">Show</label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="ml-2 text-md">entries</span>
-            </div>
-            <div className="flex flex-wrap gap-2 items-center justify-center">
-              <div className="flex">
-                <button
-                  onClick={handleCopy}
-                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+        <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
+          <div className="p-6 border-b border-blue-100/30">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  Show
+                </label>
+                <select
+                  value={entriesPerPage}
+                  onChange={(e) => {
+                    setEntriesPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
-                  <GoCopy />
-                </button>
+                  {[10, 25, 50, 100].map((v) => (
+                    <option key={v} value={v}>
+                      {v}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  entries
+                </span>
+              </div>
 
-                <button
-                  onClick={handleExcel}
-                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
-                >
-                  <FaFileExcel />
-                </button>
-
-                <button
-                  onClick={handlePDF}
-                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
-                >
-                  <FaFilePdf />
-                </button>
+              <div className="flex flex-wrap gap-3 items-center justify-center">
+                <input
+                  placeholder="Search employee..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopy}
+                    className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 p-2.5 rounded-lg transition-all"
+                    title="Copy"
+                  >
+                    <GoCopy className="text-lg lg:text-xl 3xl:text-3xl" />
+                  </button>
+                  <button
+                    onClick={handleExcel}
+                    className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 p-2.5 rounded-lg transition-all"
+                    title="Excel"
+                  >
+                    <FaFileExcel className="text-lg lg:text-xl 3xl:text-3xl" />
+                  </button>
+                  <button
+                    onClick={handlePDF}
+                    className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 p-2.5 rounded-lg transition-all"
+                    title="PDF"
+                  >
+                    <FaFilePdf className="text-lg lg:text-xl 3xl:text-3xl" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Table */}
           <div
-            className="overflow-x-auto min-h-[250px]"
+            className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="p-2 font-semibold hidden sm:table-cell">
+            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+              <thead>
+                <tr className="bg-slate-50 border-b border-blue-100/50">
+                  <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
                     SL.No
                   </th>
-
-                  <th className="p-2 font-semibold">Employee Name</th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
+                    Employee Name
+                  </th>
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
                     Enrollment ID
                   </th>
-
-                  <th className="p-2 font-semibold hidden lg:table-cell">
+                  <th className="py-3 px-6 hidden lg:table-cell font-semibold text-gray-700">
                     Designation
                   </th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
                     Date
                   </th>
-
-                  <th className="p-2 font-semibold">Action</th>
+                  <th className="py-3 px-6 font-semibold text-gray-700">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {currentrequestData.length === 0 ? (
                   <tr>
-                    <td colSpan="14" className="lg:text-center p-10 ">
+                    <td
+                      colSpan="6"
+                      className="p-12 text-center text-gray-500 font-medium"
+                    >
                       No Data Available
                     </td>
                   </tr>
@@ -320,37 +350,34 @@ const OptOutRequestForm = () => {
                   currentrequestData.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                      className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="p-2 whitespace-nowrap hidden sm:table-cell">
-                        {index + 1}
+                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900">
+                        {startIndex + index + 1}
                       </td>
-
-                      <td className="p-2">{item.employee}</td>
-
-                      <td className="p-2 hidden md:table-cell">
+                      <td className="py-3 px-6 font-medium text-gray-900 text-center">
+                        {item.employee}
+                      </td>
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono">
                         {item.enrollment_id}
                       </td>
-                      <td className="p-2 hidden lg:table-cell">
+                      <td className="py-3 px-6 hidden lg:table-cell text-gray-600">
                         {item.designation}
                       </td>
-
-                      <td className="p-2 hidden md:table-cell">{item.date}</td>
-
-                      <td className="p-2 flex flex-row space-x-3 justify-center whitespace-nowrap">
-                        {" "}
-                        <div className="flex flex-row space-x-3 justify-center mt-1">
-                          {/* View */}{" "}
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
+                        {item.date}
+                      </td>
+                      <td className="py-3 px-6 text-center">
+                        <div className="flex justify-center gap-3">
                           <FaEye
                             onClick={() => {
                               setFormData(item);
-
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />{" "}
-                          {/* Edit */}
+                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            title="View"
+                          />
                           <FaPen
                             onClick={() => {
                               setFormData(item);
@@ -358,12 +385,13 @@ const OptOutRequestForm = () => {
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="inline text-green-500 cursor-pointer text-lg"
+                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            title="Edit"
                           />
-                          {/* Delete */}
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="inline text-red-500 cursor-pointer text-xl"
+                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            title="Delete"
                           />
                         </div>
                       </td>
@@ -375,44 +403,60 @@ const OptOutRequestForm = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-            <span>
-              Showing {requestData.length === 0 ? "0" : startIndex + 1} to{" "}
-              {Math.min(endIndex, requestData.length)} of {requestData.length}{" "}
+          <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <span className="text-sm lg:text-base 3xl:text-xl text-gray-600">
+              Showing{" "}
+              <span className="text-gray-900 font-semibold">
+                {requestData.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
+              to{" "}
+              <span className="text-gray-900 font-semibold">
+                {Math.min(endIndex, requestData.length)}
+              </span>{" "}
+              of{" "}
+              <span className="text-gray-900 font-semibold">
+                {requestData.length}
+              </span>{" "}
               entries
             </span>
 
-            <div className="flex flex-row space-x-1">
+            <div className="flex gap-2">
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="First page"
               >
                 First
               </button>
 
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Previous page"
               >
                 <GrPrevious />
               </button>
 
-              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
+                {currentPage}
+              </div>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Next page"
               >
                 <GrNext />
               </button>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="Last page"
               >
                 Last
               </button>
@@ -421,64 +465,80 @@ const OptOutRequestForm = () => {
         </div>
       )}
 
+      {/* Modal Section */}
       {openModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-white rounded-xl shadow-xl w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-6"
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1300px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
             style={{ scrollbarWidth: "none" }}
           >
-            {/* Close */}
-            <div className="flex justify-end mb-4">
-              <RxCross2
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+              <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+                {mode === "view"
+                  ? "Request Details"
+                  : mode === "edit"
+                    ? "Edit Opt-Out Request"
+                    : "New Opt-Out Request"}
+              </h2>
+              <button
                 onClick={() => setOpenModal(false)}
-                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-              />
+                className="text-gray-400 hover:text-red-600 transition-colors"
+              >
+                <RxCross2 className="text-2xl" />
+              </button>
             </div>
 
-            <div className="border p-4 rounded-xl border-gray-400 shadow">
+            <div className="border p-6 rounded-xl border-gray-400/40 shadow-sm bg-white">
               <div className="flex justify-center">
                 <div
-                  className="max-h-[75vh] max-w-5xl overflow-y-auto pr-2 text-[16px]"
+                  className="max-h-[75vh] max-w-5xl overflow-y-auto pr-2 text-[16px] lg:text-[18px] 3xl:text-[22px]"
                   style={{ scrollbarWidth: "none" }}
                 >
                   To <br />
-                  Human Resource Department <br />
+                  <span className="font-bold text-gray-800">
+                    Human Resource Department
+                  </span>{" "}
+                  <br />
                   Safecor Security
-                  <div className="flex flex-row gap-3 mt-4">
-                    <label className={`mt-2 ${labelStyle}`}>Dated:</label>
-                    <input
-                      name="date"
-                      value={formData.date || ""}
-                      onChange={handleChange}
-                      onClick={() => setShowDateSpinner(true)}
-                      disabled={mode === "view"}
-                      placeholder="dd/mm/yyyy"
-                      className="w-full border border-gray-300 px-2 rounded focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                    />
-
-                    {showDateSpinner && (
-                      <div className="absolute mt-10 ml-8 sm:ml-14 md:ml-16 lg:ml-20  ">
-                        <SpinnerDatePicker
-                          value={formData.date}
-                          onChange={(date) =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              date: date,
-                            }))
-                          }
-                          onClose={() => setShowDateSpinner(false)}
-                        />
-                      </div>
-                    )}
+                  <div className="flex flex-row items-center gap-3 mt-6">
+                    <label
+                      className={`font-semibold text-gray-700 whitespace-nowrap`}
+                    >
+                      Dated:
+                    </label>
+                    <div className="relative w-48">
+                      <input
+                        name="date"
+                        value={formData.date || ""}
+                        onChange={handleChange}
+                        onClick={() =>
+                          mode !== "view" && setShowDateSpinner(true)
+                        }
+                        readOnly
+                        disabled={mode === "view"}
+                        placeholder="dd/mm/yyyy"
+                        className="w-full border border-gray-300 px-3 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                      />
+                      {showDateSpinner && (
+                        <div className="absolute z-10">
+                          <SpinnerDatePicker
+                            value={formData.date}
+                            onChange={(date) =>
+                              setFormData((prev) => ({ ...prev, date: date }))
+                            }
+                            onClose={() => setShowDateSpinner(false)}
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="text-[16px] leading-7 space-y-4">
-                    {/* Line 1 */}
+                  <div className="leading-8 space-y-6 mt-6 text-gray-700">
                     <p>
-                      This is to confirm that (name){" "}
-                      <span className="inline-block w-40 align-middle mt-1 border border-gray-300 rounded px-2   ">
+                      This is to confirm that (name)
+                      <span className="inline-block w-64 align-middle mb-1">
                         <SearchDropdown
                           name="employee"
                           value={formData.employee}
@@ -486,74 +546,74 @@ const OptOutRequestForm = () => {
                           formData={formData}
                           setFormData={setFormData}
                           disabled={mode === "view"}
-                          className=" focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
+                          inputStyle={`${inputStyle} h-0.5`}
                         />
                       </span>
-                      , Holder of employee ID number{" "}
+                      , Holder of employee ID number
                       <input
-                        name="enrollmentId"
-                        value={formData.enrollmentId}
+                        name="enrollment_id"
+                        value={formData.enrollment_id}
                         onChange={handleChange}
                         disabled={mode === "view"}
-                        className="border border-gray-300 rounded px-2 w-32 mt-1 mx-1 rounded  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
+                        className="border border-gray-300 rounded-lg px-3 w-40 mx-2 focus:ring-2 focus:ring-blue-500 outline-none"
                       />
-                      , and designation{" "}
+                      , and designation
                       <input
                         type="text"
                         name="designation"
                         value={formData.designation}
                         onChange={handleChange}
                         disabled={mode === "view"}
-                        className="border border-gray-300 rounded px-2 w-40 mt-1 mx-1 rounded  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
+                        className="border border-gray-300 rounded-lg px-3 w-56 mx-2 focus:ring-2 focus:ring-blue-500 outline-none"
                       />
                       , entitled to a company accommodation and transportation
                       as per my contract of employment with Safecor Security.
                     </p>
 
-                    {/* Line 2 */}
                     <p>
                       I would like to opt out of the Safecor Security provided
-                      company{" "}
-                      <label className="mx-1 whitespace-nowrap">
+                      company
+                      <label className="mx-2 inline-flex items-center gap-2 cursor-pointer">
                         <input
                           type="checkbox"
-                          className="mr-1
-                       "
                           name="accommodation"
-                          value={formData.accommodation}
+                          checked={formData.accommodation}
                           onChange={handleChange}
                           disabled={mode === "view"}
+                          className="w-5 h-5 accent-blue-600"
                         />
-                        <b>accommodation</b>
+                        <b className="text-gray-900">accommodation</b>
                       </label>
-                      or/and{" "}
-                      <label className="mx-1 whitespace-nowrap">
+                      or/and
+                      <label className="mx-2 inline-flex items-center gap-2 cursor-pointer">
                         <input
                           type="checkbox"
-                          className="mr-1"
                           name="transportation"
-                          value={formData.transportation}
+                          checked={formData.transportation}
                           onChange={handleChange}
                           disabled={mode === "view"}
+                          className="w-5 h-5 accent-blue-600"
                         />
-                        <b>transportation</b>
+                        <b className="text-gray-900">transportation</b>
                       </label>
                       facility (please tick as appropriate) since; I am planning
-                      to move to a rented accommodation effective from (date)
-                      {/* Date */}
-                      <div className="inline-block w-40 align-middle mt-1 mx-2 border border-gray-300 rounded ">
+                      to move to a rented accommodation effective from
+                      <div className="inline-block relative mx-2">
                         <input
                           name="effectiveFrom"
                           value={formData.effectiveFrom || ""}
                           onChange={handleChange}
-                          onClick={() => setShowEffectiveFromDateSpinner(true)}
+                          onClick={() =>
+                            mode !== "view" &&
+                            setShowEffectiveFromDateSpinner(true)
+                          }
+                          readOnly
                           disabled={mode === "view"}
                           placeholder="dd/mm/yyyy"
-                          className="w-full px-2 rounded focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
+                          className="w-40 border border-gray-300 px-3 py-1 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                         />
-
                         {showEffectiveFromDateSpinner && (
-                          <div className="absolute ">
+                          <div className="absolute z-10">
                             <SpinnerDatePicker
                               value={formData.effectiveFrom}
                               onChange={(date) =>
@@ -571,238 +631,219 @@ const OptOutRequestForm = () => {
                       </div>
                       hence I request you to take back my accommodation or/and
                       transportation (please choose as appropriate) facility
-                      allocated to me and grant me my{" "}
-                      <label className="mx-1 whitespace-nowrap">
+                      allocated to me and grant me my
+                      <label className="mx-2 inline-flex items-center gap-2 cursor-pointer">
                         <input
                           type="checkbox"
-                          className="mr-1"
                           name="houseAllowance"
-                          value={formData.houseAllowance}
+                          checked={formData.houseAllowance}
                           onChange={handleChange}
                           disabled={mode === "view"}
+                          className="w-5 h-5 accent-blue-600"
                         />
-                        <b>House Rent Allowance</b>
+                        <b className="text-gray-900">House Rent Allowance</b>
                       </label>
-                      or/and{" "}
-                      <label className="mx-1 whitespace-nowrap">
+                      or/and
+                      <label className="mx-2 inline-flex items-center gap-2 cursor-pointer">
                         <input
                           type="checkbox"
-                          className="mr-1"
                           name="transportationAllowance"
-                          value={formData.transportationAllowance}
+                          checked={formData.transportationAllowance}
                           onChange={handleChange}
                           disabled={mode === "view"}
+                          className="w-5 h-5 accent-blue-600"
                         />
-                        <b>Transportation Allowance</b>
+                        <b className="text-gray-900">
+                          Transportation Allowance
+                        </b>
                       </label>
                       (please tick as appropriate).
                     </p>
 
-                    {/* Line 3 */}
-                    <p>
+                    <div className="bg-slate-50 p-4 rounded-xl border border-gray-200 italic text-gray-600 text-sm lg:text-base">
                       I hereby declares that I am aware of the company policy
                       that I will not be eligible to re-request for company
                       accommodation until completion of one year or earlier at
                       the discretion of the HOS if allocation of units allows.
                       Furthermore, I assume accountability to report on duty
-                      without any delay on location assigned to myself. In case
-                      of any operational concerns upraised due to my decision, I
-                      will be convicted to disciplinary action as company
-                      believes appropriate.
-                    </p>
+                      without any delay on location assigned to myself.
+                    </div>
                   </div>
-                  <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/* Detail Forms Grid */}
+                  <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
                     {/* Rented Accommodation */}
-                    <div>
-                      <h1 className="font-medium">
+                    <div className="bg-slate-50/50 p-6 rounded-2xl border border-gray-200">
+                      <h3 className="font-bold text-blue-800 mb-4 border-b pb-2 uppercase tracking-wide">
                         Details of Rented Accommodation
-                      </h1>
-                      <div className="flex flex-row gap-2 mt-1">
-                        <label
-                          className={`w-1/2 whitespace-nowrap ${labelStyle}`}
-                        >
-                          House No.
-                        </label>
-                        <input
-                          className="w-full border border-gray-300 px-2 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                          name="houseNo"
-                          value={formData.houseNo}
-                          onChange={handleChange}
-                          disabled={mode === "view"}
-                        />
-                      </div>
-                      <div className="flex flex-row gap-2 mt-1">
-                        <label
-                          className={`w-1/2 whitespace-nowrap ${labelStyle}`}
-                        >
-                          Street Name & No.
-                        </label>
-                        <input
-                          className="w-full border border-gray-300 px-2 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                          name="streetName"
-                          value={formData.streetName}
-                          onChange={handleChange}
-                          disabled={mode === "view"}
-                        />
-                      </div>
-                      <div className="flex flex-row gap-2 mt-1">
-                        <label
-                          className={`w-1/2 whitespace-nowrap ${labelStyle}`}
-                        >
-                          Building Name & No.
-                        </label>
-                        <input
-                          className="w-full border border-gray-300 px-2 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                          name="buildingName"
-                          value={formData.buildingName}
-                          onChange={handleChange}
-                          disabled={mode === "view"}
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-2 mt-1">
-                        <div className="flex flex-row gap-2">
-                          <label className={`w-1/2 ${labelStyle}`}>Area</label>
-                          <input
-                            className="w-full border border-gray-300 px-2 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                            name="area"
-                            value={formData.area}
-                            onChange={handleChange}
-                            disabled={mode === "view"}
-                          />
-                        </div>
-                        <div className="flex flex-row gap-2">
-                          <label className={`w-1/2 ${labelStyle}`}>
-                            Country
+                      </h3>
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <label className="w-1/3 font-semibold text-gray-600 text-sm">
+                            House No.
                           </label>
                           <input
-                            className="w-full border border-gray-300 px-2 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                            name="country"
-                            value={formData.country}
+                            name="houseNo"
+                            value={formData.houseNo}
                             onChange={handleChange}
                             disabled={mode === "view"}
+                            className="w-2/3 border border-gray-300 rounded-lg px-3 py-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                          />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <label className="w-1/3 font-semibold text-gray-600 text-sm">
+                            Street Name
+                          </label>
+                          <input
+                            name="streetName"
+                            value={formData.streetName}
+                            onChange={handleChange}
+                            disabled={mode === "view"}
+                            className="w-2/3 border border-gray-300 rounded-lg px-3 py-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                          />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <label className="w-1/3 font-semibold text-gray-600 text-sm">
+                            Building
+                          </label>
+                          <input
+                            name="buildingName"
+                            value={formData.buildingName}
+                            onChange={handleChange}
+                            disabled={mode === "view"}
+                            className="w-2/3 border border-gray-300 rounded-lg px-3 py-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="flex flex-col gap-1">
+                            <label className="text-sm font-bold text-gray-600">
+                              Area
+                            </label>
+                            <input
+                              name="area"
+                              value={formData.area}
+                              onChange={handleChange}
+                              disabled={mode === "view"}
+                              className="w-full border border-gray-300 rounded-lg px-3 py-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <label className="text-sm font-bold text-gray-600">
+                              Country
+                            </label>
+                            <input
+                              name="country"
+                              value={formData.country}
+                              onChange={handleChange}
+                              disabled={mode === "view"}
+                              className="w-full border border-gray-300 rounded-lg px-3 py-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <label className="w-1/3 font-semibold text-gray-600 text-sm">
+                            ZIP/PIN Code
+                          </label>
+                          <input
+                            type="number"
+                            name="zip_pin_code"
+                            value={formData.zip_pin_code}
+                            onChange={handleChange}
+                            disabled={mode === "view"}
+                            placeholder="Numbers only"
+                            className="w-2/3 border border-gray-300 rounded-lg px-3 py-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                          />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <label className="w-1/3 font-semibold text-gray-600 text-sm">
+                            Landmark
+                          </label>
+                          <input
+                            name="landmark"
+                            value={formData.landmark}
+                            onChange={handleChange}
+                            disabled={mode === "view"}
+                            className="w-2/3 border border-gray-300 rounded-lg px-3 py-1 focus:ring-2 focus:ring-blue-500 outline-none"
                           />
                         </div>
                       </div>
-                      <div className="flex flex-row gap-2 mt-1">
-                        <label
-                          className={`w-1/2 whitespace-nowrap ${labelStyle}`}
-                        >
-                          ZIP/PIN Code
-                        </label>
-                        <input
-                          type="number"
-                          className="w-full border border-gray-300 px-2 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                          name="zip_pin_code"
-                          value={formData.zip_pin_code}
-                          onChange={handleChange}
-                          disabled={mode === "view"}
-                          placeholder="Allow only Numbers"
-                        />
-                      </div>
-                      <div className="flex flex-row gap-2 mt-1">
-                        <label className={`w-1/2 ${labelStyle}`}>
-                          Landmark
-                        </label>
-                        <input
-                          className="w-full border border-gray-300 px-2 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                          name="landmark"
-                          value={formData.landmark}
-                          onChange={handleChange}
-                          disabled={mode === "view"}
-                        />
-                      </div>
                     </div>
-                    {/* Emergency Contact Details */}
-                    <div>
-                      <h1 className="font-medium">Emergency Contact Details</h1>
-                      <div className="flex flex-row gap-2 mt-1">
-                        <label
-                          className={`w-1/2 whitespace-nowrap ${labelStyle}`}
-                        >
-                          Emergency Contact Name -1
-                        </label>
-                        <input
-                          className="w-full border border-gray-300 px-2 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                          name="emergencyContact"
-                          value={formData.emergencyContact}
-                          onChange={handleChange}
-                          disabled={mode === "view"}
-                        />
-                      </div>
-                      <div className="flex flex-row gap-2 mt-1">
-                        <label
-                          className={`w-1/2 whitespace-nowrap ${labelStyle}`}
-                        >
-                          Contact Number
-                        </label>
-                        <input
-                          className="w-full border border-gray-300 px-2 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                          name="contactNo"
-                          value={formData.contactNo}
-                          onChange={handleChange}
-                          disabled={mode === "view"}
-                          type="number"
-                          placeholder="Allow only Numbers"
-                        />
-                      </div>
-                      <div className="flex flex-row gap-2 mt-1">
-                        <label className={`w-1/2 ${labelStyle}`}>
-                          Relation
-                        </label>
-                        <input
-                          className="w-full border border-gray-300 px-2 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                          name="relation"
-                          value={formData.relation}
-                          onChange={handleChange}
-                          disabled={mode === "view"}
-                        />
-                      </div>
 
-                      <div className="flex flex-row gap-2 mt-1">
-                        <label
-                          className={`w-1/2 whitespace-nowrap ${labelStyle}`}
-                        >
-                          Emergency Contact Name -2
-                        </label>
-                        <input
-                          className="w-full border border-gray-300 px-2 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                          name="emergencyContact2"
-                          value={formData.emergencyContact2}
-                          onChange={handleChange}
-                          disabled={mode === "view"}
-                        />
-                      </div>
-                      <div className="flex flex-row gap-2 mt-1">
-                        <label
-                          className={`w-1/2 whitespace-nowrap ${labelStyle}`}
-                        >
-                          Contact Number
-                        </label>
-                        <input
-                          className="w-full border border-gray-300 px-2 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                          name="contactNo2"
-                          value={formData.contactNo2}
-                          onChange={handleChange}
-                          disabled={mode === "view"}
-                          type="number"
-                          placeholder="Allow only Numbers"
-                        />
-                      </div>
-                      <div className="flex flex-row gap-2 mt-1">
-                        <label className={`w-1/2 ${labelStyle}`}>
-                          Relation
-                        </label>
-                        <input
-                          className="w-full border border-gray-300 px-2 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                          name="relation2"
-                          value={formData.relation2}
-                          onChange={handleChange}
-                          disabled={mode === "view"}
-                        />
+                    {/* Emergency Contacts */}
+                    <div className="bg-slate-50/50 p-6 rounded-2xl border border-gray-200">
+                      <h3 className="font-bold text-red-800 mb-4 border-b pb-2 uppercase tracking-wide">
+                        Emergency Contact Details
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                          <label className="text-xs font-bold text-gray-400 block mb-2 uppercase">
+                            Primary Contact
+                          </label>
+                          <div className="space-y-2">
+                            <input
+                              name="emergencyContact"
+                              value={formData.emergencyContact}
+                              onChange={handleChange}
+                              disabled={mode === "view"}
+                              placeholder="Full Name"
+                              className="w-full border-b border-gray-200 pb-1 focus:border-blue-500 outline-none"
+                            />
+                            <input
+                              type="number"
+                              name="contactNo"
+                              value={formData.contactNo}
+                              onChange={handleChange}
+                              disabled={mode === "view"}
+                              placeholder="Phone Number"
+                              className="w-full border-b border-gray-200 pb-1 focus:border-blue-500 outline-none"
+                            />
+                            <input
+                              name="relation"
+                              value={formData.relation}
+                              onChange={handleChange}
+                              disabled={mode === "view"}
+                              placeholder="Relation"
+                              className="w-full border-b border-gray-200 pb-1 focus:border-blue-500 outline-none"
+                            />
+                          </div>
+                        </div>
+                        <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                          <label className="text-xs font-bold text-gray-400 block mb-2 uppercase">
+                            Secondary Contact
+                          </label>
+                          <div className="space-y-2">
+                            <input
+                              name="emergencyContact2"
+                              value={formData.emergencyContact2}
+                              onChange={handleChange}
+                              disabled={mode === "view"}
+                              placeholder="Full Name"
+                              className="w-full border-b border-gray-200 pb-1 focus:border-blue-500 outline-none"
+                            />
+                            <input
+                              type="number"
+                              name="contactNo2"
+                              value={formData.contactNo2}
+                              onChange={handleChange}
+                              disabled={mode === "view"}
+                              placeholder="Phone Number"
+                              className="w-full border-b border-gray-200 pb-1 focus:border-blue-500 outline-none"
+                            />
+                            <input
+                              name="relation2"
+                              value={formData.relation2}
+                              onChange={handleChange}
+                              disabled={mode === "view"}
+                              placeholder="Relation"
+                              className="w-full border-b border-gray-200 pb-1 focus:border-blue-500 outline-none"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <p className="mt-6">Yours Sincerely,</p>
+                  <p className="mt-10 font-medium text-gray-800">
+                    Yours Sincerely,
+                  </p>
                   <div className="md:flex md:justify-between ">
                     <div className="flex justify-center mt-6">
                       <div>
@@ -956,9 +997,7 @@ const OptOutRequestForm = () => {
                           />
                         )}
 
-                        <label
-                          className={`${labelStyle} text-center mt-2 block`}
-                        >
+                        <label className="text-sm font-bold text-gray-400 my-2 block border-t w-full text-center pt-2">
                           Name and Signature
                         </label>
                       </div>
@@ -1116,9 +1155,7 @@ const OptOutRequestForm = () => {
                           />
                         )}
 
-                        <label
-                          className={`${labelStyle} text-center mt-2 block`}
-                        >
+                        <label className="text-sm font-bold text-gray-400 my-2 block border-t w-full text-center pt-2">
                           Approved by <br /> Human Resources Officer
                         </label>
                       </div>
@@ -1276,19 +1313,19 @@ const OptOutRequestForm = () => {
                         />
                       )}
 
-                      <label className={`${labelStyle} text-center mt-2 block`}>
+                      <label className="text-sm font-bold text-gray-400 my-2 block border-t w-full text-center pt-2">
                         Concurred by <br /> Managing Director
                       </label>
                     </div>
                   </div>
-                  {/* Save */}
+                  {/* Final Action Button */}
                   {mode !== "view" && (
-                    <div className="flex justify-end mt-10">
+                    <div className="flex justify-end pt-6 border-t">
                       <button
                         onClick={handleSubmit}
-                        className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md mb-6"
+                        className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-12 py-3 rounded-xl font-bold lg:text-lg 3xl:text-2xl shadow-lg hover:shadow-blue-200 hover:-translate-y-1 transition-all"
                       >
-                        Save
+                        Submit Request
                       </button>
                     </div>
                   )}

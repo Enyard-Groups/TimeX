@@ -38,44 +38,45 @@ const LeaveMonthlySummary = () => {
   });
 
   const inputStyle =
-    "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-lg py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
-
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
+    "text-sm lg:text-base 3xl:text-xl font-semibold text-gray-700 mb-2 block";
 
   useEffect(() => {
-    const fetchDropdowns = async () => {
+    const fetchOptions = async () => {
       try {
-        const [companiesRes, employeesRes] = await Promise.all([
+        const [companies, employees] = await Promise.all([
           axios.get(`${API_BASE}/companies`),
           axios.get(`${API_BASE}/employee`),
         ]);
-        setCompanyOptions(companiesRes.data);
-        setEmployeeOptions(employeesRes.data);
+        setCompanyOptions(companies.data);
+        setEmployeeOptions(employees.data);
       } catch (err) {
-        console.error("Failed to load dropdown options:", err);
-        toast.error("Failed to load filter options");
+        console.error("Failed to fetch dropdown options:", err);
       }
     };
-    fetchDropdowns();
+    fetchOptions();
   }, []);
 
-  const handleGenerateReport = async () => {
+  const handleGenerate = async () => {
+    if (!formData.monthyear) {
+      toast.error("Please select a month/year");
+      return;
+    }
+    setLoading(true);
+    const params = {
+      company_id: formData.company_id,
+      employee_id: formData.employee_id,
+    };
+
+    const [year, month] = formData.monthyear.split("-");
+    const firstDay = `${year}-${month}-01`;
+    const lastDay = new Date(year, month, 0).getDate();
+    const lastDayStr = `${year}-${month}-${lastDay}`;
+    params.from_date = firstDay;
+    params.to_date = lastDayStr;
+
     try {
-      setLoading(true);
-      const params = {};
-      if (formData.company_id) params.company_id = formData.company_id;
-      if (formData.employee_id) params.employee_id = formData.employee_id;
-
-      if (formData.monthyear) {
-        const [year, month] = formData.monthyear.split("-");
-        const firstDay = `${year}-${month}-01`;
-        const lastDay = new Date(year, month, 0).getDate();
-        const lastDayStr = `${year}-${month}-${lastDay}`;
-        params.from_date = firstDay;
-        params.to_date = lastDayStr;
-      }
-
       const res = await axios.get(`${API_BASE}/requests/leave/report`, { params });
       setLeaveReport(res.data);
       setCurrentPage(1);
@@ -171,27 +172,27 @@ const LeaveMonthlySummary = () => {
 
   return (
     <>
-      <div className="mb-6">
+      <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header */}
-        <div className="sm:flex sm:justify-between">
-          <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-            <FaAngleRight />
-            Reports
-            <FaAngleRight />
-            Leave
-            <FaAngleRight />
-            Leave Monthly Summary
+        <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+          <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+            <FaAngleRight className="text-blue-500 text-base" />
+            <span className="text-gray-500">Reports</span>
+            <FaAngleRight className="text-blue-500 text-base" />
+            <span className="text-gray-500">Leave</span>
+            <FaAngleRight className="text-blue-500 text-base" />
+            <div
+              onClick={() => setOpenModal(false)}
+              className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+            >
+              Leave Monthly Summary
+            </div>
           </h1>
         </div>
 
-        <div
-          className="flex items-center justify-center p-4 overflow-y-auto"
-          style={{ scrollbarWidth: "none" }}
-        >
-          <div
-            className="bg-white rounded-xl shadow-sm w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6"
-            style={{ scrollbarWidth: "none" }}
-          >
+        {/* Filter Section Area */}
+        {!openModal && (
+          <div className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-2xl border border-blue-100/50 shadow-xl mb-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <div>
                 <SearchDropdown
@@ -253,120 +254,137 @@ const LeaveMonthlySummary = () => {
 
             <div className="flex justify-end mt-10">
               <button
-                onClick={handleGenerateReport}
-                disabled={loading}
-                className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md disabled:opacity-60"
+                onClick={handleGenerate}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md lg:text-lg 3xl:text-xl transition-all duration-200"
               >
                 {loading ? "Generating..." : "Generate Report"}
               </button>
             </div>
           </div>
-        </div>
+        )}
 
+        {/* Results Table Section */}
         {openModal && (
-          <div className="mt-6 bg-white shadow-xl rounded-xl border border-[oklch(0.8_0.001_106.424)] p-6 ">
-            <div className="flex justify-end">
-              <RxCross2
-                onClick={() => setOpenModal(false)}
-                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-              />
-            </div>
-
-            <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-              <div>
-                <label className="mr-2 text-md">Show</label>
-                <select
-                  value={entriesPerPage}
-                  onChange={(e) => {
-                    setEntriesPerPage(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                  className="border rounded-full px-1 border-[oklch(0.645_0.246_16.439)]"
-                >
-                  <option value={10}>10</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </select>
-                <span className="ml-2 text-md">entries</span>
+          <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
+            <div className="p-6 border-b border-blue-100/30">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl lg:text-2xl 3xl:text-3xl font-bold text-gray-800">
+                  Monthly Summary View
+                </h2>
+                <RxCross2
+                  onClick={() => setOpenModal(false)}
+                  className="text-2xl text-gray-400 hover:text-red-500 cursor-pointer transition-colors"
+                />
               </div>
 
-              <div className="flex flex-wrap gap-2 items-center justify-center">
-                <input
-                  placeholder="Search"
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className=" shadow-sm px-3 py-1 rounded-full  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-                />
-                <div className="flex">
-                  <button onClick={handleCopy} className="text-xl px-3 py-1 cursor-pointer text-gray-800">
-                    <GoCopy />
-                  </button>
-                  <button onClick={handleExcel} className="text-xl px-3 py-1 cursor-pointer text-green-700">
-                    <FaFileExcel />
-                  </button>
-                  <button onClick={handlePDF} className="text-xl px-3 py-1 cursor-pointer text-red-600">
-                    <FaFilePdf />
-                  </button>
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                    Display
+                  </label>
+                  <select
+                    value={entriesPerPage}
+                    onChange={(e) => {
+                      setEntriesPerPage(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
+                  >
+                    {[10, 25, 50, 100].map((v) => (
+                      <option key={v} value={v}>
+                        {v}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                    entries
+                  </span>
+                </div>
+
+                <div className="flex gap-3">
+                  <input
+                    placeholder="Search summary..."
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                  />
                 </div>
               </div>
             </div>
 
             <div
-              className="overflow-x-auto min-h-[250px]"
+              className="overflow-x-auto min-h-[350px]"
               style={{ scrollbarWidth: "none" }}
             >
-              <h1 className="text-[oklch(0.577_0.245_27.325)] text-xl mb-4 text-center">
-                Leave Monthly Summary
-              </h1>
-              <table className="w-full text-lg border-collapse">
-                <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                  <tr>
-                    <th className="p-2 font-semibold">Name</th>
-                    <th className="p-2 font-semibold whitespace-nowrap hidden md:table-cell">Leave Type</th>
-                    <th className="p-2 font-semibold whitespace-nowrap hidden lg:table-cell">Month</th>
-                    <th className="p-2 font-semibold whitespace-nowrap hidden lg:table-cell">Year</th>
-                    <th className="p-2 font-semibold whitespace-nowrap hidden md:table-cell">Days</th>
-                    <th className="p-2 font-semibold hidden md:table-cell">Status</th>
-                    <th className="p-2 font-semibold">Action</th>
+              <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-blue-100/50">
+                    <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                      Name
+                    </th>
+                    <th className="px-4 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
+                      Leave Type
+                    </th>
+                    <th className="px-4 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
+                      Month
+                    </th>
+                    <th className="px-4 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
+                      Year
+                    </th>
+                    <th className="px-4 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
+                      Total Days
+                    </th>
+                    <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {currentData.length === 0 ? (
                     <tr>
-                      <td colSpan="7" className="sm:text-center p-10">No Data Available</td>
+                      <td
+                        colSpan="6"
+                        className="p-12 text-center text-gray-500 font-medium"
+                      >
+                        No Data Available
+                      </td>
                     </tr>
                   ) : (
                     currentData.map((item) => {
                       const d = new Date(item.start_date);
+                      const m = (d.getMonth() + 1).toString().padStart(2, "0");
+                      const y = d.getFullYear();
                       return (
                         <tr
                           key={item.id}
-                          className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                          className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                         >
-                          <td className="p-2 whitespace-nowrap">{item.employee_name}</td>
-                          <td className="p-2 hidden md:table-cell">{item.leave_type}</td>
-                          <td className="p-2 hidden lg:table-cell">
-                            {(d.getMonth() + 1).toString().padStart(2, "0")}
+                          <td className="px-4 py-3 text-center font-medium text-gray-900">
+                            {item.employee_name}
                           </td>
-                          <td className="p-2 hidden lg:table-cell">{d.getFullYear()}</td>
-                          <td className="p-2 hidden md:table-cell">{item.number_of_days}</td>
-                          <td className="p-2 hidden md:table-cell">
-                            <span className={`px-2 py-1 rounded-full text-sm font-medium ${statusClass(item.status)}`}>
-                              {item.status || "Pending"}
-                            </span>
+                          <td className="px-4 py-3 text-center hidden md:table-cell text-gray-600">
+                            {item.leave_type}
                           </td>
-                          <td className="p-2 ">
-                            <div className="flex gap-2 justify-center">
+                          <td className="px-4 py-3 text-center hidden lg:table-cell text-gray-600">
+                            {m}
+                          </td>
+                          <td className="px-4 py-3 text-center hidden lg:table-cell text-gray-600">
+                            {y}
+                          </td>
+                          <td className="px-4 py-3 text-center hidden md:table-cell text-gray-900 font-bold">
+                            {item.number_of_days}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <div className="flex justify-center">
                               <FaEye
                                 onClick={() => {
                                   setSelectedId(item.id);
                                   setModalOpenSelectedItem(true);
                                 }}
-                                className="text-blue-500 cursor-pointer text-lg mt-2 mr-2"
+                                className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
                               />
                             </div>
                           </td>
@@ -378,39 +396,52 @@ const LeaveMonthlySummary = () => {
               </table>
             </div>
 
-            <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-              <span>
-                Showing {filteredReport.length === 0 ? "0" : startIndex + 1} to{" "}
-                {Math.min(endIndex, filteredReport.length)} of {filteredReport.length} entries
+            {/* Pagination */}
+            <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+              <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
+                Showing{" "}
+                <span className="font-bold text-gray-900">
+                  {startIndex + 1}
+                </span>{" "}
+                to{" "}
+                <span className="font-bold text-gray-900">
+                  {Math.min(endIndex, filteredReport.length)}
+                </span>{" "}
+                of{" "}
+                <span className="font-bold text-gray-900">
+                  {filteredReport.length}
+                </span>{" "}
+                entries
               </span>
-
-              <div className="flex flex-row space-x-1">
+              <div className="flex gap-2">
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(1)}
-                  className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50"
                 >
                   First
                 </button>
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(currentPage - 1)}
-                  className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                  className="p-2.5 border rounded-lg bg-white disabled:opacity-50 hover:bg-blue-50"
                 >
                   <GrPrevious />
                 </button>
-                <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm lg:text-base 3xl:text-xl min-w-[45px] text-center">
+                  {currentPage}
+                </div>
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(currentPage + 1)}
-                  className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                  className="p-2.5 border rounded-lg bg-white disabled:opacity-50 hover:bg-blue-50"
                 >
                   <GrNext />
                 </button>
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(totalPages)}
-                  className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50"
                 >
                   Last
                 </button>
@@ -419,27 +450,32 @@ const LeaveMonthlySummary = () => {
           </div>
         )}
 
+        {/* Selection Detail Modal */}
         {modalOpenSelectedItem && selectedItem && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
             style={{ scrollbarWidth: "none" }}
           >
             <div
-              className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6"
+              className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
               style={{ scrollbarWidth: "none" }}
             >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold">{selectedItem.employee_name} Details</h2>
-                <RxCross2
-                   onClick={() => {
+              <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+                <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+                  {selectedItem.employee_name} Details
+                </h2>
+                <button
+                  onClick={() => {
                     setModalOpenSelectedItem(false);
                     setSelectedId(null);
                   }}
-                  className="cursor-pointer text-xl text-red-500"
-                />
+                  className="text-gray-400 hover:text-red-600 transition-colors"
+                >
+                  <RxCross2 className="text-2xl" />
+                </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-lg">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 <div>
                   <p className={labelStyle}>Name</p>
                   <p className={inputStyle}>{selectedItem.employee_name}</p>
@@ -457,36 +493,18 @@ const LeaveMonthlySummary = () => {
                   <p className={inputStyle}>{selectedItem.leave_type}</p>
                 </div>
                 <div>
-                  <p className={labelStyle}>Start Date</p>
-                  <p className={inputStyle}>
-                    {selectedItem.start_date ? new Date(selectedItem.start_date).toLocaleDateString() : "—"}
-                  </p>
+                  <p className={labelStyle}>From Date</p>
+                  <p className={inputStyle}>{new Date(selectedItem.start_date).toLocaleDateString()}</p>
                 </div>
                 <div>
-                  <p className={labelStyle}>End Date</p>
-                  <p className={inputStyle}>
-                    {selectedItem.end_date ? new Date(selectedItem.end_date).toLocaleDateString() : "—"}
-                  </p>
+                  <p className={labelStyle}>To Date</p>
+                  <p className={inputStyle}>{new Date(selectedItem.end_date).toLocaleDateString()}</p>
                 </div>
                 <div>
                   <p className={labelStyle}>Number of Days</p>
-                  <p className={inputStyle}>{selectedItem.number_of_days}</p>
-                </div>
-                <div className="col-span-1 sm:col-span-2 md:col-span-3">
-                  <p className={labelStyle}>Reason</p>
-                  <p className={inputStyle}>{selectedItem.reason}</p>
-                </div>
-                {selectedItem.rejectedreason && (
-                  <div className="col-span-1 sm:col-span-2 md:col-span-3">
-                    <p className={labelStyle}>Rejected Reason</p>
-                    <p className={`${inputStyle} text-red-600`}>{selectedItem.rejectedreason}</p>
-                  </div>
-                )}
-                <div>
-                  <p className={labelStyle}>Status</p>
-                   <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusClass(selectedItem.status)}`}>
-                    {selectedItem.status || "Pending"}
-                  </span>
+                  <p className={`${inputStyle} font-bold text-blue-600`}>
+                    {selectedItem.number_of_days}
+                  </p>
                 </div>
               </div>
             </div>

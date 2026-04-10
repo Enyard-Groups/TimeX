@@ -33,11 +33,10 @@ const WeeklyOvertimeForm = () => {
   const [activeInTimeIndex, setActiveInTimeIndex] = useState(null);
   const [activeOutTimeIndex, setActiveOutTimeIndex] = useState(null);
 
-  const labelStyle =
-    "text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block mx-1";
-
   const inputStyle =
-    "text-[16px] w-full border border-[oklch(0.923_0.003_48.717)] bg-white  rounded-md px-3 py-1 pt-0.5 text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+  const labelStyle =
+    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const defaultFormData = {
     employee_name: "",
@@ -303,27 +302,30 @@ const WeeklyOvertimeForm = () => {
   };
 
   return (
-    <div className="mb-6">
-      {/* Header */}
-      <div className="sm:flex sm:justify-between">
-        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-          <FaAngleRight />
-          Forms
-          <FaAngleRight />
-          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+    <div className="mb-6 max-w-[1920px] mx-auto">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+        <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+          <FaAngleRight className="text-blue-500 text-base" />
+          <span className="text-gray-500">Forms</span>
+          <FaAngleRight className="text-blue-500 text-base" />
+          <div
+            onClick={() => setOpenModal(false)}
+            className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+          >
             Weekly Overtime Form
           </div>
         </h1>
         {!openModal && (
           <div className="flex justify-end">
             <button
-              onClick={() => (
-                setMode(""),
-                setEditId(null),
-                setFormData(defaultFormData),
-                setOpenModal(true)
-              )}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              onClick={() => {
+                setMode("");
+                setEditId(null);
+                setFormData(defaultFormData);
+                setOpenModal(true);
+              }}
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -331,82 +333,93 @@ const WeeklyOvertimeForm = () => {
         )}
       </div>
 
+      {/* Main Table Container */}
       {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">
-          {/* Top Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <div>
-              <label className="mr-2 text-md">Show</label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="ml-2 text-md">entries</span>
-            </div>
-            <div className="flex flex-wrap gap-2 items-center justify-center">
-              <div className="flex">
-                <button
-                  onClick={handleCopy}
-                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+        <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
+          <div className="p-6 border-b border-blue-100/30">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  Show
+                </label>
+                <select
+                  value={entriesPerPage}
+                  onChange={(e) => {
+                    setEntriesPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
-                  <GoCopy />
-                </button>
+                  {[10, 25, 50, 100].map((v) => (
+                    <option key={v} value={v}>
+                      {v}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  entries
+                </span>
+              </div>
 
-                <button
-                  onClick={handleExcel}
-                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
-                >
-                  <FaFileExcel />
-                </button>
-
-                <button
-                  onClick={handlePDF}
-                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
-                >
-                  <FaFilePdf />
-                </button>
+              <div className="flex flex-wrap gap-3 items-center justify-center">
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopy}
+                    className="text-xl px-3 py-1 text-gray-800 hover:text-blue-600 transition-colors"
+                    title="Copy"
+                  >
+                    <GoCopy />
+                  </button>
+                  <button
+                    onClick={handleExcel}
+                    className="text-xl px-3 py-1 text-green-700 hover:text-green-800 transition-colors"
+                    title="Excel"
+                  >
+                    <FaFileExcel />
+                  </button>
+                  <button
+                    onClick={handlePDF}
+                    className="text-xl px-3 py-1 text-red-600 hover:text-red-800 transition-colors"
+                    title="PDF"
+                  >
+                    <FaFilePdf />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Table */}
           <div
-            className="overflow-x-auto min-h-[250px]"
+            className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="p-2 font-semibold hidden sm:table-cell">
+            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+              <thead>
+                <tr className="bg-slate-50 border-b border-blue-100/50">
+                  <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
                     SL.No
                   </th>
-
-                  <th className="p-2 font-semibold">Employee Name</th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
+                    Employee Name
+                  </th>
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Enrollment Id
                   </th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Designation
                   </th>
-
-                  <th className="p-2 font-semibold">Action</th>
+                  <th className="py-3 px-6 font-semibold text-gray-700">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {currentrequestData.length === 0 ? (
                   <tr>
-                    <td colSpan="14" className="lg:text-center p-10 ">
+                    <td
+                      colSpan="5"
+                      className="p-12 text-center text-gray-500 font-medium"
+                    >
                       No Data Available
                     </td>
                   </tr>
@@ -414,36 +427,31 @@ const WeeklyOvertimeForm = () => {
                   currentrequestData.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                      className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="p-2 whitespace-nowrap hidden sm:table-cell">
-                        {index + 1}
+                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900 text-center">
+                        {startIndex + index + 1}
                       </td>
-
-                      <td className="p-2">{item.employee_name}</td>
-
-                      <td className="p-2 hidden md:table-cell">
+                      <td className="py-3 px-6 font-medium text-gray-900 text-center">
+                        {item.employee_name}
+                      </td>
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono">
                         {item.enrollment_id}
                       </td>
-
-                      <td className="p-2 hidden md:table-cell">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
                         {item.designation}
                       </td>
-
-                      <td className="p-2 flex flex-row space-x-3 justify-center whitespace-nowrap">
-                        {" "}
-                        <div className="flex flex-row space-x-3 justify-center mt-1">
-                          {/* View */}{" "}
+                      <td className="py-3 px-6 text-center">
+                        <div className="flex justify-center gap-3">
                           <FaEye
                             onClick={() => {
                               setFormData(item);
-
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />{" "}
-                          {/* Edit */}
+                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            title="View"
+                          />
                           <FaPen
                             onClick={() => {
                               setFormData(item);
@@ -451,12 +459,13 @@ const WeeklyOvertimeForm = () => {
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="inline text-green-500 cursor-pointer text-lg"
+                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            title="Edit"
                           />
-                          {/* Delete */}
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="inline text-red-500 cursor-pointer text-xl"
+                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            title="Delete"
                           />
                         </div>
                       </td>
@@ -467,45 +476,62 @@ const WeeklyOvertimeForm = () => {
             </table>
           </div>
 
+          {/* Pagination Footer */}
           {/* Pagination */}
-          <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-            <span>
-              Showing {requestData.length === 0 ? "0" : startIndex + 1} to{" "}
-              {Math.min(endIndex, requestData.length)} of {requestData.length}{" "}
+          <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <span className="text-sm lg:text-base 3xl:text-xl text-gray-600">
+              Showing{" "}
+              <span className="text-gray-900 font-semibold">
+                {requestData.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
+              to{" "}
+              <span className="text-gray-900 font-semibold">
+                {Math.min(endIndex, requestData.length)}
+              </span>{" "}
+              of{" "}
+              <span className="text-gray-900 font-semibold">
+                {requestData.length}
+              </span>{" "}
               entries
             </span>
 
-            <div className="flex flex-row space-x-1">
+            <div className="flex gap-2">
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="First page"
               >
                 First
               </button>
 
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Previous page"
               >
                 <GrPrevious />
               </button>
 
-              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
+                {currentPage}
+              </div>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Next page"
               >
                 <GrNext />
               </button>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="Last page"
               >
                 Last
               </button>
@@ -514,160 +540,154 @@ const WeeklyOvertimeForm = () => {
         </div>
       )}
 
+      {/* Modal Section */}
       {openModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-white rounded-xl shadow-xl w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-6"
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
             style={{ scrollbarWidth: "none" }}
           >
-            {/* Close */}
-            <div className="flex justify-end mb-4">
-              <RxCross2
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+              <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+                {mode === "view"
+                  ? "Overtime Details"
+                  : mode === "edit"
+                    ? "Edit Overtime Form"
+                    : "Weekly Overtime Application"}
+              </h2>
+              <button
                 onClick={() => setOpenModal(false)}
-                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-              />
+                className="text-gray-400 hover:text-red-600 transition-colors"
+              >
+                <RxCross2 className="text-2xl" />
+              </button>
             </div>
 
-            <div className="border p-4 rounded-xl border-gray-400 shadow">
-              <div className="flex justify-center">
-                <div
-                  className="max-h-[75vh] max-w-[1200px] overflow-y-auto pr-2 text-[16px]"
-                  style={{ scrollbarWidth: "none" }}
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                    <div className="flex flex-col">
-                      <label className={`whitespace-nowrap ${labelStyle}`}>
-                        Name
-                      </label>
-                      <div className={inputStyle}>
-                        <SearchDropdown
-                          name="employee_name"
-                          value={formData.employee_name}
-                          options={["Employee 1", "Employee 2"]}
-                          formData={formData}
-                          setFormData={setFormData}
-                          disabled={mode === "view"}
-                          className={inputStyle}
-                        />
-                      </div>
-                    </div>
+            <div className="border p-8 rounded-xl border-gray-400/20 shadow-inner bg-white">
+              <div
+                className="max-h-[75vh] overflow-y-auto pr-2 text-sm lg:text-base 3xl:text-xl"
+                style={{ scrollbarWidth: "none" }}
+              >
+                {/* Staff Information Section */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                  <div className="flex flex-col gap-2">
+                    <label className={labelStyle}>Employee Name</label>
+                    <SearchDropdown
+                      name="employee_name"
+                      value={formData.employee_name}
+                      options={["Employee 1", "Employee 2"]}
+                      formData={formData}
+                      inputStyle={inputStyle}
+                      setFormData={setFormData}
+                      disabled={mode === "view"}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className={labelStyle}>Employee ID</label>
+                    <input
+                      name="enrollment_id"
+                      value={formData.enrollment_id}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className={labelStyle}>Site Name</label>
+                    <input
+                      name="site_name"
+                      value={formData.site_name}
+                      onChange={handleChange}
+                      disabled={mode === "view"}
+                      className={inputStyle}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className={labelStyle}>Designation</label>
+                    <SearchDropdown
+                      name="designation"
+                      value={formData.designation}
+                      options={["Driver", "HR Manager", "Officer"]}
+                      inputStyle={inputStyle}
+                      formData={formData}
+                      setFormData={setFormData}
+                      disabled={mode === "view"}
+                    />
+                  </div>
+                </div>
 
-                    <div className="flex flex-col">
-                      <label className={`whitespace-nowrap ${labelStyle}`}>
-                        Employee ID
-                      </label>
+                {/* Overtime Type and Details Table */}
+                <div className="mb-8">
+                  <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <div className="w-1.5 h-6 bg-blue-500 rounded-full"></div>{" "}
+                    Overtime Type & Log
+                  </h3>
+                  <div className="flex gap-8 mb-4 px-2">
+                    <label className="flex items-center gap-3 cursor-pointer">
                       <input
-                        type="text"
-                        name="enrollment_id"
-                        value={formData.enrollment_id}
+                        type="checkbox"
+                        name="rest_day"
+                        checked={formData.rest_day}
                         onChange={handleChange}
                         disabled={mode === "view"}
-                        className={inputStyle}
-                      />
-                    </div>
-
-                    <div className="flex flex-col">
-                      <label className={`whitespace-nowrap ${labelStyle}`}>
-                        Site Name
-                      </label>
+                        className="w-5 h-5 accent-blue-600"
+                      />{" "}
+                      <span className="font-bold text-gray-700">Rest Day</span>
+                    </label>
+                    <label className="flex items-center gap-3 cursor-pointer">
                       <input
-                        type="text"
-                        name="site_name"
-                        value={formData.site_name}
+                        type="checkbox"
+                        name="shift_extension"
+                        checked={formData.shift_extension}
                         onChange={handleChange}
                         disabled={mode === "view"}
-                        className={inputStyle}
-                      />
-                    </div>
-
-                    <div className="flex flex-col">
-                      <label className={`whitespace-nowrap ${labelStyle}`}>
-                        Designation
-                      </label>
-                      <SearchDropdown
-                        name="designation"
-                        value={formData.designation}
-                        options={[
-                          "Banking Officer",
-                          "Service Sales manager",
-                          "Finance Assistant",
-                          "Trade Finance Specialist",
-                          "Sales Support Officer",
-                          "General",
-                          "HR manager",
-                          "HR Supervisor",
-                          "HR Specialist",
-                          "Facilities Manager",
-                          "Project Manager",
-                          "Team Lead – Operations",
-                          "Driver",
-                        ]}
-                        formData={formData}
-                        setFormData={setFormData}
-                        disabled={mode === "view"}
-                        inputStyle={inputStyle}
-                      />
-                    </div>
+                        className="w-5 h-5 accent-blue-600"
+                      />{" "}
+                      <span className="font-bold text-gray-700">
+                        Shift Extension
+                      </span>
+                    </label>
                   </div>
 
-                  {/* Overtime Section */}
-                  <div className="mt-6">
-                    <h3 className="text-[16px] font-semibold mb-2">
-                      Over time Type
-                    </h3>
-
-                    <div className="flex gap-6 mb-3">
-                      <label className="flex items-center gap-2">
-                        <span>Rest Day:</span>
-                        <input
-                          type="checkbox"
-                          name="rest_day"
-                          checked={formData.rest_day}
-                          onChange={handleChange}
-                          disabled={mode === "view"}
-                        />
-                      </label>
-
-                      <label className="flex items-center gap-2">
-                        <span>Shift Extension:</span>
-                        <input
-                          type="checkbox"
-                          name="shift_extension"
-                          checked={formData.shift_extension}
-                          onChange={handleChange}
-                          disabled={mode === "view"}
-                        />
-                      </label>
-                    </div>
-
-                    <table className="w-full border border-gray-400 text-[16px]">
-                      <thead className="bg-gray-200">
-                        <tr>
-                          <th className="p-2 ">SL.No.</th>
-                          <th className="p-2 ">Days</th>
-                          <th className="p-2 ">Date</th>
-                          <th className="p-2 ">StartTime</th>
-                          <th className="p-2 ">EndTime</th>
-                          <th className="p-2 ">TotalHours</th>
-                          <th className="p-2 ">Reason</th>
-                          <th className="p-2 ">Action</th>
+                  <div className=" rounded-xl border border-gray-200 shadow-sm">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="bg-slate-100 text-gray-700">
+                          <th className="p-3 border-b border-gray-200 w-12">
+                            #
+                          </th>
+                          <th className="p-3 border-b border-gray-200">Day</th>
+                          <th className="p-3 border-b border-gray-200">Date</th>
+                          <th className="p-3 border-b border-gray-200">
+                            Start
+                          </th>
+                          <th className="p-3 border-b border-gray-200">End</th>
+                          <th className="p-3 border-b border-gray-200">
+                            Total
+                          </th>
+                          <th className="p-3 border-b border-gray-200 w-1/4">
+                            Reason
+                          </th>
+                          <th className="p-3 border-b border-gray-200">
+                            Action
+                          </th>
                         </tr>
                       </thead>
-
                       <tbody>
                         {formData.overtime_details.map((row, index) => (
                           <tr
                             key={index}
-                            className="text-center border-b border-gray-300"
+                            className="hover:bg-slate-50 transition-colors"
                           >
-                            <td className=" p-1">{index + 1}</td>
-
-                            <td className="w-30 p-1">
+                            <td className="p-2 border-b text-center font-mono text-gray-400">
+                              {index + 1}
+                            </td>
+                            <td className="p-2 border-b">
                               <select
-                                className="w-30 rounded p-1"
+                                className="w-full bg-transparent outline-none text-center"
                                 value={row.day}
                                 onChange={(e) =>
                                   handleRowChange(index, "day", e.target.value)
@@ -675,50 +695,54 @@ const WeeklyOvertimeForm = () => {
                                 disabled={mode === "view"}
                               >
                                 <option value="">Select</option>
-                                <option>Monday</option>
-                                <option>Tuesday</option>
-                                <option>Wednesday</option>
-                                <option>Thursday</option>
-                                <option>Friday</option>
-                                <option>Saturday</option>
-                                <option>Sunday</option>
+                                {[
+                                  "Monday",
+                                  "Tuesday",
+                                  "Wednesday",
+                                  "Thursday",
+                                  "Friday",
+                                  "Saturday",
+                                  "Sunday",
+                                ].map((d) => (
+                                  <option key={d}>{d}</option>
+                                ))}
                               </select>
                             </td>
-
-                            <td className="p-1">
+                            <td className="p-2 border-b relative">
                               <input
-                                name="date"
                                 value={row.date || ""}
-                                onClick={() => setActiveDateIndex(index)}
+                                onClick={() =>
+                                  mode !== "view" && setActiveDateIndex(index)
+                                }
                                 readOnly
-                                className="text-center"
+                                className="w-full text-center bg-transparent focus:outline-none cursor-pointer"
                                 placeholder="dd/mm/yyyy"
                               />
-
                               {activeDateIndex === index && (
-                                <SpinnerDatePicker
-                                  value={row.date}
-                                  onChange={(date) =>
-                                    handleRowChange(index, "date", date)
-                                  }
-                                  onClose={() => setActiveDateIndex(null)}
-                                />
+                                <div className="absolute z-20">
+                                  <SpinnerDatePicker
+                                    value={row.date}
+                                    onChange={(date) =>
+                                      handleRowChange(index, "date", date)
+                                    }
+                                    onClose={() => setActiveDateIndex(null)}
+                                  />
+                                </div>
                               )}
                             </td>
-
-                            <td className="p-1">
+                            <td className="p-2 border-b relative">
                               <div
-                                className="w-full p-1 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]  cursor-pointer text-center"
-                                onClick={() => {
-                                  if (mode !== "view") {
-                                    setActiveInTimeIndex(index);
-                                  }
-                                }}
+                                className="text-center cursor-pointer text-blue-600 font-mono"
+                                onClick={() =>
+                                  mode !== "view" && setActiveInTimeIndex(index)
+                                }
                               >
                                 {row.startTime
                                   ? row.startTime instanceof Date
                                     ? row.startTime.toLocaleTimeString([], {
                                         hour12: false,
+                                        hour: "2-digit",
+                                        minute: "2-digit",
                                       })
                                     : row.startTime
                                   : "HH:MM:SS"}
@@ -733,20 +757,20 @@ const WeeklyOvertimeForm = () => {
                                 />
                               )}
                             </td>
-
-                            <td className=" p-1">
+                            <td className="p-2 border-b relative">
                               <div
-                                className="w-full p-1 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] cursor-pointer text-center"
-                                onClick={() => {
-                                  if (mode !== "view") {
-                                    setActiveOutTimeIndex(index);
-                                  }
-                                }}
+                                className="text-center cursor-pointer text-blue-600 font-mono"
+                                onClick={() =>
+                                  mode !== "view" &&
+                                  setActiveOutTimeIndex(index)
+                                }
                               >
                                 {row.endTime
                                   ? row.endTime instanceof Date
                                     ? row.endTime.toLocaleTimeString([], {
                                         hour12: false,
+                                        hour: "2-digit",
+                                        minute: "2-digit",
                                       })
                                     : row.endTime
                                   : "HH:MM:SS"}
@@ -761,19 +785,12 @@ const WeeklyOvertimeForm = () => {
                                 />
                               )}
                             </td>
-
-                            <td className=" p-1">
-                              <input
-                                className="text-center p-1 bg-gray-100"
-                                value={row.totalHours}
-                                readOnly
-                              />
+                            <td className="p-2 border-b text-center font-bold text-gray-900 bg-gray-50/50">
+                              {row.totalHours || "00:00"}
                             </td>
-
-                            <td className=" p-1">
+                            <td className="p-2 border-b">
                               <input
-                                type="text"
-                                className="border border-gray-300 p-1"
+                                name="reason"
                                 value={row.reason}
                                 onChange={(e) =>
                                   handleRowChange(
@@ -783,136 +800,151 @@ const WeeklyOvertimeForm = () => {
                                   )
                                 }
                                 disabled={mode === "view"}
+                                className={inputStyle}
+                                placeholder="..."
                               />
                             </td>
-
-                            <td className=" p-1">
+                            <td className="p-2 border-b text-center">
                               <button
                                 onClick={() => deleteRow(index)}
-                                className="bg-red-500 text-white px-2 py-1 rounded"
                                 disabled={mode === "view"}
+                                className="text-red-500 hover:text-red-700 disabled:opacity-30"
                               >
-                                Delete
+                                <MdDeleteForever className="text-xl mx-auto" />
                               </button>
                             </td>
                           </tr>
                         ))}
-
-                        <tr>
-                          <td colSpan="8" className="text-right p-2">
-                            <button
-                              onClick={addRow}
-                              className="text-blue-600 text-xl font-bold"
-                              disabled={mode === "view"}
-                            >
-                              +
-                            </button>
-                          </td>
-                        </tr>
                       </tbody>
                     </table>
+                    {mode !== "view" && (
+                      <button
+                        onClick={addRow}
+                        className="w-full py-2 bg-slate-50 text-blue-600 font-bold hover:bg-blue-50 transition-all border-t"
+                      >
+                        + Add Another Row
+                      </button>
+                    )}
                   </div>
+                </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <div className="border border-gray-400 p-2 my-2">
-                      <h1 className="border-b-2 border-[oklch(0.645_0.246_16.439)] py-1 mb-2 w-fit">
-                        Checked By: Security Head Guard
-                      </h1>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 ">
-                        <div>
-                          <label className={labelStyle}> Name</label>
-                          <input
-                            name="checker_name"
-                            onChange={handleChange}
-                            value={formData.checker_name}
-                            disabled={mode === "view"}
-                            className={inputStyle}
-                            placeholder="Name"
-                          />
-                        </div>
-
-                        <div className="relative">
-                          <label className={labelStyle}>Date</label>
-                          <input
-                            name="checked_date"
-                            value={formData.checked_date || ""}
-                            onChange={handleChange}
-                            onClick={() => setShowCheckedDateSpinner(true)}
-                            disabled={mode === "view"}
-                            placeholder="dd/mm/yyyy"
-                            className={inputStyle}
-                          />
-
-                          {showCheckedDateSpinner && (
-                            <div className="absolute">
-                              <SpinnerDatePicker
-                                value={formData.checked_date}
-                                onChange={(date) =>
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    checked_date: date,
-                                  }))
-                                }
-                                onClose={() => setShowCheckedDateSpinner(false)}
-                              />
-                            </div>
-                          )}
-                        </div>
-                      </div>
+                {/* Verification and Approval Section */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+                  {/* Head Guard Verification */}
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-gray-200">
+                    <h3 className="font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-6 w-fit">
+                      Checked By: Security Head Guard
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4 mb-6">
                       <div>
-                        <label className={labelStyle}>Signature</label>
+                        <label className={labelStyle}>Name</label>
+                        <input
+                          name="checker_name"
+                          value={formData.checker_name}
+                          onChange={handleChange}
+                          disabled={mode === "view"}
+                          className={inputStyle}
+                        />
+                      </div>
+                      <div className="relative">
+                        <label className={labelStyle}>Date</label>
+                        <input
+                          value={formData.checked_date || ""}
+                          onClick={() =>
+                            mode !== "view" && setShowCheckedDateSpinner(true)
+                          }
+                          readOnly
+                          disabled={mode === "view"}
+                          className={inputStyle}
+                          placeholder="dd/mm/yyyy"
+                        />
+                        {showCheckedDateSpinner && (
+                          <div className="absolute z-10 shadow-2xl">
+                            <SpinnerDatePicker
+                              value={formData.checked_date}
+                              onChange={(d) =>
+                                setFormData((p) => ({ ...p, checked_date: d }))
+                              }
+                              onClose={() => setShowCheckedDateSpinner(false)}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    {/* Signature div same */}
+                    <div>
+                      <label className={labelStyle}>Signature</label>
 
-                        <div className="flex flex-col">
-                          {/* Toggle Tabs */}
-                          {mode !== "view" && (
-                            <div className="flex flex-wrap gap-2 mb-4">
-                              <button
-                                type="button"
-                                onClick={() =>
+                      <div className="flex flex-col">
+                        {/* Toggle Tabs */}
+                        {mode !== "view" && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  checkerSignMode: "upload",
+                                }))
+                              }
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.checkerSignMode === "upload"
+                                  ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              Upload
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  checkerSignMode: "draw",
+                                }))
+                              }
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.checkerSignMode === "draw"
+                                  ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              Sign Here
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Upload Area */}
+                        {formData.checkerSignMode === "upload" && (
+                          <div>
+                            <input
+                              type="file"
+                              id="checkerSignatureUpload"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file) {
                                   setFormData((prev) => ({
                                     ...prev,
-                                    checkerSignMode: "upload",
-                                  }))
+                                    checker_signature: file,
+                                    checkerSignaturePreview:
+                                      URL.createObjectURL(file),
+                                  }));
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                  formData.checkerSignMode === "upload"
-                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
-                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
-                              >
-                                Upload
-                              </button>
+                              }}
+                            />
 
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    checkerSignMode: "draw",
-                                  }))
-                                }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                  formData.checkerSignMode === "draw"
-                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
-                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
-                              >
-                                Sign Here
-                              </button>
-                            </div>
-                          )}
-
-                          {/* Upload Area */}
-                          {formData.checkerSignMode === "upload" && (
-                            <div>
-                              <input
-                                type="file"
-                                id="checkerSignatureUpload"
-                                accept="image/*"
-                                className="hidden"
-                                onChange={(e) => {
-                                  const file = e.target.files[0];
-                                  if (file) {
+                            {/* Drag & Drop */}
+                            {mode !== "view" && (
+                              <label
+                                htmlFor="checkerSignatureUpload"
+                                onDragOver={(e) => e.preventDefault()}
+                                onDrop={(e) => {
+                                  e.preventDefault();
+                                  const file = e.dataTransfer.files[0];
+                                  if (file && file.type.startsWith("image/")) {
                                     setFormData((prev) => ({
                                       ...prev,
                                       checker_signature: file,
@@ -921,196 +953,188 @@ const WeeklyOvertimeForm = () => {
                                     }));
                                   }
                                 }}
-                              />
+                                className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                              >
+                                <svg
+                                  className="w-8 h-8 text-gray-400 mb-2"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={1.5}
+                                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                                  />
+                                </svg>
+                                <p className="text-sm text-gray-500">
+                                  Drag & drop or{" "}
+                                  <span className="text-[#0f172a] font-medium underline">
+                                    browse
+                                  </span>
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  PNG, JPG, SVG supported
+                                </p>
+                              </label>
+                            )}
 
-                              {/* Drag & Drop */}
-                              {mode !== "view" && (
-                                <label
-                                  htmlFor="checkerSignatureUpload"
-                                  onDragOver={(e) => e.preventDefault()}
-                                  onDrop={(e) => {
-                                    e.preventDefault();
-                                    const file = e.dataTransfer.files[0];
-                                    if (
-                                      file &&
-                                      file.type.startsWith("image/")
-                                    ) {
+                            {/* Preview */}
+                            {formData.checkerSignaturePreview && (
+                              <div className="mt-4 flex items-center gap-3">
+                                <img
+                                  src={formData.checkerSignaturePreview}
+                                  alt="Signature Preview"
+                                  className="h-16 border rounded bg-white p-2 shadow-sm"
+                                />
+                                {mode !== "view" && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
                                       setFormData((prev) => ({
                                         ...prev,
-                                        checker_signature: file,
-                                        checkerSignaturePreview:
-                                          URL.createObjectURL(file),
-                                      }));
+                                        checker_signature: null,
+                                        checkerSignaturePreview: null,
+                                      }))
                                     }
-                                  }}
-                                  className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
-                                >
-                                  <svg
-                                    className="w-8 h-8 text-gray-400 mb-2"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
+                                    className="text-xs text-red-500 hover:underline"
                                   >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={1.5}
-                                      d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
-                                    />
-                                  </svg>
-                                  <p className="text-sm text-gray-500">
-                                    Drag & drop or{" "}
-                                    <span className="text-[#0f172a] font-medium underline">
-                                      browse
-                                    </span>
-                                  </p>
-                                  <p className="text-xs text-gray-400 mt-1">
-                                    PNG, JPG, SVG supported
-                                  </p>
-                                </label>
-                              )}
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
 
-                              {/* Preview */}
-                              {formData.checkerSignaturePreview && (
-                                <div className="mt-4 flex items-center gap-3">
-                                  <img
-                                    src={formData.checkerSignaturePreview}
-                                    alt="Signature Preview"
-                                    className="h-16 border rounded bg-white p-2 shadow-sm"
-                                  />
-                                  {mode !== "view" && (
-                                    <button
-                                      type="button"
-                                      onClick={() =>
-                                        setFormData((prev) => ({
-                                          ...prev,
-                                          checker_signature: null,
-                                          checkerSignaturePreview: null,
-                                        }))
-                                      }
-                                      className="text-xs text-red-500 hover:underline"
-                                    >
-                                      Remove
-                                    </button>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          )}
-
-                          {/* Draw Area */}
-                          {formData.checkerSignMode === "draw" && (
-                            <SignPad
-                              fieldName="checker_signature_drawn"
-                              formData={formData}
-                              setFormData={setFormData}
-                              mode={mode}
-                            />
-                          )}
-                        </div>
+                        {/* Draw Area */}
+                        {formData.checkerSignMode === "draw" && (
+                          <SignPad
+                            fieldName="checker_signature_drawn"
+                            formData={formData}
+                            setFormData={setFormData}
+                            mode={mode}
+                          />
+                        )}
                       </div>
                     </div>
+                  </div>
 
-                    <div className="border border-gray-400 p-2 my-2">
-                      <h1 className="border-b-2 border-[oklch(0.645_0.246_16.439)] py-1 mb-2 w-fit">
-                        Approved By : Manager School Operation
-                      </h1>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <div>
-                          <label className={labelStyle}> Name</label>
-                          <input
-                            name="approver_name"
-                            onChange={handleChange}
-                            value={formData.approver_name}
-                            disabled={mode === "view"}
-                            className={inputStyle}
-                            placeholder="Name"
-                          />
-                        </div>
-
-                        <div className="relative">
-                          <label className={labelStyle}>Date</label>
-                          <input
-                            name="approved_date"
-                            value={formData.approved_date || ""}
-                            onChange={handleChange}
-                            onClick={() => setShowApprovedDatePicker(true)}
-                            disabled={mode === "view"}
-                            placeholder="dd/mm/yyyy"
-                            className={inputStyle}
-                          />
-
-                          {showApprovedDatePicker && (
-                            <div className="absolute">
-                              <SpinnerDatePicker
-                                value={formData.approved_date}
-                                onChange={(date) =>
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    approved_date: date,
-                                  }))
-                                }
-                                onClose={() => setShowApprovedDatePicker(false)}
-                              />
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
+                  {/* School Manager Approval */}
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-gray-200">
+                    <h3 className="font-bold text-gray-800 border-b-2 border-green-500 pb-2 mb-6 w-fit">
+                      Approved By: Manager School Operation
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4 mb-6">
                       <div>
-                        <label className={labelStyle}>Signature</label>
+                        <label className={labelStyle}>Name</label>
+                        <input
+                          name="approver_name"
+                          value={formData.approver_name}
+                          onChange={handleChange}
+                          disabled={mode === "view"}
+                          className={inputStyle}
+                        />
+                      </div>
+                      <div className="relative">
+                        <label className={labelStyle}>Date</label>
+                        <input
+                          value={formData.approved_date || ""}
+                          onClick={() =>
+                            mode !== "view" && setShowApprovedDatePicker(true)
+                          }
+                          readOnly
+                          disabled={mode === "view"}
+                          className={inputStyle}
+                        />
+                        {showApprovedDatePicker && (
+                          <div className="absolute z-10 shadow-2xl">
+                            <SpinnerDatePicker
+                              value={formData.approved_date}
+                              onChange={(d) =>
+                                setFormData((p) => ({ ...p, approved_date: d }))
+                              }
+                              onClose={() => setShowApprovedDatePicker(false)}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    {/* Signature div same */}
+                    <div>
+                      <label className={labelStyle}>Signature</label>
 
-                        <div className="flex flex-col">
-                          {/* Toggle Tabs */}
-                          {mode !== "view" && (
-                            <div className="flex flex-wrap gap-2 mb-4">
-                              <button
-                                type="button"
-                                onClick={() =>
+                      <div className="flex flex-col">
+                        {/* Toggle Tabs */}
+                        {mode !== "view" && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  approverSignMode: "upload",
+                                }))
+                              }
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.approverSignMode === "upload"
+                                  ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              Upload
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  approverSignMode: "draw",
+                                }))
+                              }
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.approverSignMode === "draw"
+                                  ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              Sign Here
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Upload Area */}
+                        {formData.approverSignMode === "upload" && (
+                          <div>
+                            <input
+                              type="file"
+                              id="approverSignatureUpload"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file) {
                                   setFormData((prev) => ({
                                     ...prev,
-                                    approverSignMode: "upload",
-                                  }))
+                                    approver_signature: file,
+                                    approverSignaturePreview:
+                                      URL.createObjectURL(file),
+                                  }));
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                  formData.approverSignMode === "upload"
-                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
-                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
-                              >
-                                Upload
-                              </button>
+                              }}
+                            />
 
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    approverSignMode: "draw",
-                                  }))
-                                }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                  formData.approverSignMode === "draw"
-                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
-                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
-                              >
-                                Sign Here
-                              </button>
-                            </div>
-                          )}
-
-                          {/* Upload Area */}
-                          {formData.approverSignMode === "upload" && (
-                            <div>
-                              <input
-                                type="file"
-                                id="approverSignatureUpload"
-                                accept="image/*"
-                                className="hidden"
-                                onChange={(e) => {
-                                  const file = e.target.files[0];
-                                  if (file) {
+                            {/* Drag & Drop */}
+                            {mode !== "view" && (
+                              <label
+                                htmlFor="approverSignatureUpload"
+                                onDragOver={(e) => e.preventDefault()}
+                                onDrop={(e) => {
+                                  e.preventDefault();
+                                  const file = e.dataTransfer.files[0];
+                                  if (file && file.type.startsWith("image/")) {
                                     setFormData((prev) => ({
                                       ...prev,
                                       approver_signature: file,
@@ -1119,165 +1143,144 @@ const WeeklyOvertimeForm = () => {
                                     }));
                                   }
                                 }}
-                              />
+                                className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                              >
+                                <svg
+                                  className="w-8 h-8 text-gray-400 mb-2"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={1.5}
+                                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                                  />
+                                </svg>
+                                <p className="text-sm text-gray-500">
+                                  Drag & drop or{" "}
+                                  <span className="text-[#0f172a] font-medium underline">
+                                    browse
+                                  </span>
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  PNG, JPG, SVG supported
+                                </p>
+                              </label>
+                            )}
 
-                              {/* Drag & Drop */}
-                              {mode !== "view" && (
-                                <label
-                                  htmlFor="approverSignatureUpload"
-                                  onDragOver={(e) => e.preventDefault()}
-                                  onDrop={(e) => {
-                                    e.preventDefault();
-                                    const file = e.dataTransfer.files[0];
-                                    if (
-                                      file &&
-                                      file.type.startsWith("image/")
-                                    ) {
+                            {/* Preview */}
+                            {formData.approverSignaturePreview && (
+                              <div className="mt-4 flex items-center gap-3">
+                                <img
+                                  src={formData.approverSignaturePreview}
+                                  alt="Signature Preview"
+                                  className="h-16 border rounded bg-white p-2 shadow-sm"
+                                />
+                                {mode !== "view" && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
                                       setFormData((prev) => ({
                                         ...prev,
-                                        approver_signature: file,
-                                        approverSignaturePreview:
-                                          URL.createObjectURL(file),
-                                      }));
+                                        approver_signature: null,
+                                        approverSignaturePreview: null,
+                                      }))
                                     }
-                                  }}
-                                  className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
-                                >
-                                  <svg
-                                    className="w-8 h-8 text-gray-400 mb-2"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
+                                    className="text-xs text-red-500 hover:underline"
                                   >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={1.5}
-                                      d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
-                                    />
-                                  </svg>
-                                  <p className="text-sm text-gray-500">
-                                    Drag & drop or{" "}
-                                    <span className="text-[#0f172a] font-medium underline">
-                                      browse
-                                    </span>
-                                  </p>
-                                  <p className="text-xs text-gray-400 mt-1">
-                                    PNG, JPG, SVG supported
-                                  </p>
-                                </label>
-                              )}
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
 
-                              {/* Preview */}
-                              {formData.approverSignaturePreview && (
-                                <div className="mt-4 flex items-center gap-3">
-                                  <img
-                                    src={formData.approverSignaturePreview}
-                                    alt="Signature Preview"
-                                    className="h-16 border rounded bg-white p-2 shadow-sm"
-                                  />
-                                  {mode !== "view" && (
-                                    <button
-                                      type="button"
-                                      onClick={() =>
-                                        setFormData((prev) => ({
-                                          ...prev,
-                                          approver_signature: null,
-                                          approverSignaturePreview: null,
-                                        }))
-                                      }
-                                      className="text-xs text-red-500 hover:underline"
-                                    >
-                                      Remove
-                                    </button>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          )}
-
-                          {/* Draw Area */}
-                          {formData.approverSignMode === "draw" && (
-                            <SignPad
-                              fieldName="approver_signature_drawn"
-                              formData={formData}
-                              setFormData={setFormData}
-                              mode={mode}
-                            />
-                          )}
-                        </div>
+                        {/* Draw Area */}
+                        {formData.approverSignMode === "draw" && (
+                          <SignPad
+                            fieldName="approver_signature_drawn"
+                            formData={formData}
+                            setFormData={setFormData}
+                            mode={mode}
+                          />
+                        )}
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  <div className="border border-gray-400 p-2">
-                    <h1 className="border-b-2 border-[oklch(0.645_0.246_16.439)] py-1 mb-2 w-fit">
-                      For Office Use Only
-                    </h1>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                      <div>
-                        <label className={labelStyle}> Verified By</label>
-
+                {/* Office Use and Submit Section */}
+                <div className="bg-slate-100 p-8 rounded-2xl border-2 border-dashed border-slate-300">
+                  <h3 className="font-bold text-gray-500 uppercase tracking-widest mb-6 border-b border-slate-200 pb-2">
+                    For Office Use Only
+                  </h3>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-4">
+                        <label className="w-1/3 font-bold text-gray-600">
+                          Verified By:
+                        </label>
                         <input
-                          name="verified_by"
+                          value={formData.verifier_details?.verified_by || ""}
                           onChange={(e) =>
-                            setFormData((prev) => ({
-                              ...prev,
+                            setFormData((p) => ({
+                              ...p,
                               verifier_details: {
-                                ...prev.verifier_details,
+                                ...p.verifier_details,
                                 verified_by: e.target.value,
                               },
                             }))
                           }
-                          value={formData.verifier_details?.verified_by || ""}
                           disabled={mode === "view"}
-                          className={inputStyle}
-                          placeholder="Verified By"
+                          className="w-2/3 border-b-2 bg-transparent border-slate-300 outline-none focus:border-blue-500 py-1"
                         />
                       </div>
-
-                      <div>
-                        <label className={labelStyle}> Name</label>
+                      <div className="flex items-center gap-4">
+                        <label className="w-1/3 font-bold text-gray-600">
+                          Verifier Name:
+                        </label>
                         <input
-                          name="verifier_name"
+                          value={formData.verifier_details?.verifier_name || ""}
                           onChange={(e) =>
-                            setFormData((prev) => ({
-                              ...prev,
+                            setFormData((p) => ({
+                              ...p,
                               verifier_details: {
-                                ...prev.verifier_details,
+                                ...p.verifier_details,
                                 verifier_name: e.target.value,
                               },
                             }))
                           }
-                          value={formData.verifier_details?.verifier_name || ""}
                           disabled={mode === "view"}
-                          className={inputStyle}
-                          placeholder="Name"
+                          className="w-2/3 border-b-2 bg-transparent border-slate-300 outline-none focus:border-blue-500 py-1"
                         />
                       </div>
-
-                      <div className="relative">
-                        <label className={labelStyle}>Date</label>
+                      <div className="relative flex items-center gap-4">
+                        <label className="w-1/3 font-bold text-gray-600">
+                          Verified Date:
+                        </label>
                         <input
-                          name="verified_date"
                           value={formData.verifier_details?.verified_date || ""}
+                          onClick={() =>
+                            mode !== "view" && setShowVerifiedDatePicker(true)
+                          }
                           readOnly
-                          onClick={() => setShowVerifiedDatePicker(true)}
                           disabled={mode === "view"}
+                          className="w-2/3 border-b-2 bg-transparent border-slate-300 outline-none py-1 cursor-pointer"
                           placeholder="dd/mm/yyyy"
-                          className={inputStyle}
                         />
-
                         {showVerifiedDatePicker && (
-                          <div className="absolute">
+                          <div className="absolute top-10 left-1/3 z-20 shadow-2xl">
                             <SpinnerDatePicker
                               value={formData.verifier_details?.verified_date}
-                              onChange={(date) =>
-                                setFormData((prev) => ({
-                                  ...prev,
+                              onChange={(d) =>
+                                setFormData((p) => ({
+                                  ...p,
                                   verifier_details: {
-                                    ...prev.verifier_details,
-                                    verified_date: date,
+                                    ...p.verifier_details,
+                                    verified_date: d,
                                   },
                                 }))
                               }
@@ -1286,61 +1289,85 @@ const WeeklyOvertimeForm = () => {
                           </div>
                         )}
                       </div>
+                    </div>
 
-                      <div>
-                        <label className={labelStyle}>Signature</label>
+                    {/* Verifier Signature logic same */}
+                    <div>
+                      <label className={labelStyle}>Signature</label>
 
-                        <div className="flex flex-col">
-                          {/* Toggle Tabs */}
-                          {mode !== "view" && (
-                            <div className="flex gap-2 mb-4">
-                              <button
-                                type="button"
-                                onClick={() =>
+                      <div className="flex flex-col">
+                        {/* Toggle Tabs */}
+                        {mode !== "view" && (
+                          <div className="flex gap-2 mb-4">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  verifierSignMode: "upload",
+                                }))
+                              }
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.verifierSignMode === "upload"
+                                  ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              Upload
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  verifierSignMode: "draw",
+                                }))
+                              }
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.verifierSignMode === "draw"
+                                  ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              Sign Here
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Upload Area */}
+                        {formData.verifierSignMode === "upload" && (
+                          <div>
+                            <input
+                              type="file"
+                              id="verifierSignatureUpload"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file) {
                                   setFormData((prev) => ({
                                     ...prev,
-                                    verifierSignMode: "upload",
-                                  }))
+                                    verifier_details: {
+                                      ...prev.verifier_details,
+                                      verifier_signature: file,
+                                    },
+                                    verifierSignaturePreview:
+                                      URL.createObjectURL(file),
+                                  }));
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                  formData.verifierSignMode === "upload"
-                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
-                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
-                              >
-                                Upload
-                              </button>
+                              }}
+                            />
 
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    verifierSignMode: "draw",
-                                  }))
-                                }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                  formData.verifierSignMode === "draw"
-                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
-                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
-                              >
-                                Sign Here
-                              </button>
-                            </div>
-                          )}
-
-                          {/* Upload Area */}
-                          {formData.verifierSignMode === "upload" && (
-                            <div>
-                              <input
-                                type="file"
-                                id="verifierSignatureUpload"
-                                accept="image/*"
-                                className="hidden"
-                                onChange={(e) => {
-                                  const file = e.target.files[0];
-                                  if (file) {
+                            {/* Drag & Drop */}
+                            {mode !== "view" && (
+                              <label
+                                htmlFor="verifierSignatureUpload"
+                                onDragOver={(e) => e.preventDefault()}
+                                onDrop={(e) => {
+                                  e.preventDefault();
+                                  const file = e.dataTransfer.files[0];
+                                  if (file && file.type.startsWith("image/")) {
                                     setFormData((prev) => ({
                                       ...prev,
                                       verifier_details: {
@@ -1352,111 +1379,84 @@ const WeeklyOvertimeForm = () => {
                                     }));
                                   }
                                 }}
-                              />
+                                className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                              >
+                                <svg
+                                  className="w-8 h-8 text-gray-400 mb-2"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={1.5}
+                                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                                  />
+                                </svg>
+                                <p className="text-sm text-gray-500">
+                                  Drag & drop or{" "}
+                                  <span className="text-[#0f172a] font-medium underline">
+                                    browse
+                                  </span>
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  PNG, JPG, SVG supported
+                                </p>
+                              </label>
+                            )}
 
-                              {/* Drag & Drop */}
-                              {mode !== "view" && (
-                                <label
-                                  htmlFor="verifierSignatureUpload"
-                                  onDragOver={(e) => e.preventDefault()}
-                                  onDrop={(e) => {
-                                    e.preventDefault();
-                                    const file = e.dataTransfer.files[0];
-                                    if (
-                                      file &&
-                                      file.type.startsWith("image/")
-                                    ) {
+                            {/* Preview */}
+                            {formData.verifierSignaturePreview && (
+                              <div className="mt-4 flex items-center gap-3">
+                                <img
+                                  src={formData.verifierSignaturePreview}
+                                  alt="Signature Preview"
+                                  className="h-16 border rounded bg-white p-2 shadow-sm"
+                                />
+                                {mode !== "view" && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
                                       setFormData((prev) => ({
                                         ...prev,
                                         verifier_details: {
                                           ...prev.verifier_details,
-                                          verifier_signature: file,
+                                          verifier_signature: null,
                                         },
-                                        verifierSignaturePreview:
-                                          URL.createObjectURL(file),
-                                      }));
+                                        verifierSignaturePreview: null,
+                                      }))
                                     }
-                                  }}
-                                  className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
-                                >
-                                  <svg
-                                    className="w-8 h-8 text-gray-400 mb-2"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
+                                    className="text-xs text-red-500 hover:underline"
                                   >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={1.5}
-                                      d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
-                                    />
-                                  </svg>
-                                  <p className="text-sm text-gray-500">
-                                    Drag & drop or{" "}
-                                    <span className="text-[#0f172a] font-medium underline">
-                                      browse
-                                    </span>
-                                  </p>
-                                  <p className="text-xs text-gray-400 mt-1">
-                                    PNG, JPG, SVG supported
-                                  </p>
-                                </label>
-                              )}
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
 
-                              {/* Preview */}
-                              {formData.verifierSignaturePreview && (
-                                <div className="mt-4 flex items-center gap-3">
-                                  <img
-                                    src={formData.verifierSignaturePreview}
-                                    alt="Signature Preview"
-                                    className="h-16 border rounded bg-white p-2 shadow-sm"
-                                  />
-                                  {mode !== "view" && (
-                                    <button
-                                      type="button"
-                                      onClick={() =>
-                                        setFormData((prev) => ({
-                                          ...prev,
-                                          verifier_details: {
-                                            ...prev.verifier_details,
-                                            verifier_signature: null,
-                                          },
-                                          verifierSignaturePreview: null,
-                                        }))
-                                      }
-                                      className="text-xs text-red-500 hover:underline"
-                                    >
-                                      Remove
-                                    </button>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          )}
-
-                          {/* Draw Area */}
-                          {formData.verifierSignMode === "draw" && (
-                            <SignPad
-                              fieldName="verifier_signature_drawn"
-                              formData={formData}
-                              setFormData={setFormData}
-                              mode={mode}
-                            />
-                          )}
-                        </div>
+                        {/* Draw Area */}
+                        {formData.verifierSignMode === "draw" && (
+                          <SignPad
+                            fieldName="verifier_signature_drawn"
+                            formData={formData}
+                            setFormData={setFormData}
+                            mode={mode}
+                          />
+                        )}
                       </div>
                     </div>
                   </div>
 
-                  {/* Save */}
                   {mode !== "view" && (
-                    <div className="flex justify-end mt-10">
+                    <div className="flex justify-end mt-12">
                       <button
                         onClick={handleSubmit}
-                        className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md mb-6"
+                        className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-3 rounded-xl font-bold lg:text-xl shadow-xl hover:shadow-blue-200 hover:-translate-y-1 transition-all"
                       >
-                        Save
+                        Submit Overtime Record
                       </button>
                     </div>
                   )}

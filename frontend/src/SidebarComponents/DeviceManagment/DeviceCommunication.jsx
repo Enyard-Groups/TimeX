@@ -392,10 +392,12 @@ const DeviceCommunication = () => {
       {openModal && selectedItem && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-2 overflow-y-auto"
+          style={{scrollbarWidth:"none"}}
           onClick={() => setopenModal(false)}
         >
           <div
             className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
+          style={{scrollbarWidth:"none"}}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center pb-4 border-b border-blue-100/30 mb-6">

@@ -25,9 +25,10 @@ const PassportRequest = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
   const [showDateSpinner, setShowDateSpinner] = useState(false);
-  const [showDate2Spinner, setShowDate2Spinner] = useState(false);
-
-  const labelStyle = "text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block";
+  const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+  const labelStyle =
+    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const defaultFormData = {
     employee_name: "",
@@ -194,27 +195,30 @@ const PassportRequest = () => {
   };
 
   return (
-    <div className="mb-6">
-      {/* Header */}
-      <div className="sm:flex sm:justify-between">
-        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-          <FaAngleRight />
-          Forms
-          <FaAngleRight />
-          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+    <div className="mb-6 max-w-[1920px] mx-auto">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+        <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+          <FaAngleRight className="text-blue-500 text-base" />
+          <span className="text-gray-500">Forms</span>
+          <FaAngleRight className="text-blue-500 text-base" />
+          <div
+            onClick={() => setOpenModal(false)}
+            className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+          >
             Passport Request
           </div>
         </h1>
         {!openModal && (
           <div className="flex justify-end">
             <button
-              onClick={() => (
-                setMode(""),
-                setEditId(null),
-                setFormData(defaultFormData),
-                setOpenModal(true)
-              )}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              onClick={() => {
+                setMode("");
+                setEditId(null);
+                setFormData(defaultFormData);
+                setOpenModal(true);
+              }}
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -222,86 +226,96 @@ const PassportRequest = () => {
         )}
       </div>
 
+      {/* Main Table Container */}
       {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">
-          {/* Top Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <div>
-              <label className="mr-2 text-md">Show</label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="ml-2 text-md">entries</span>
-            </div>
-            <div className="flex flex-wrap gap-2 items-center justify-center">
-              <div className="flex">
-                <button
-                  onClick={handleCopy}
-                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+        <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
+          <div className="p-6 border-b border-blue-100/30">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  Show
+                </label>
+                <select
+                  value={entriesPerPage}
+                  onChange={(e) => {
+                    setEntriesPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
-                  <GoCopy />
-                </button>
+                  {[10, 25, 50, 100].map((v) => (
+                    <option key={v} value={v}>
+                      {v}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  entries
+                </span>
+              </div>
 
-                <button
-                  onClick={handleExcel}
-                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
-                >
-                  <FaFileExcel />
-                </button>
-
-                <button
-                  onClick={handlePDF}
-                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
-                >
-                  <FaFilePdf />
-                </button>
+              <div className="flex flex-wrap gap-3 items-center justify-center">
+                <div className="flex">
+                  <button
+                    onClick={handleCopy}
+                    className="text-xl px-3 py-1 cursor-pointer text-gray-800 hover:text-blue-600 transition-colors"
+                    title="Copy"
+                  >
+                    <GoCopy />
+                  </button>
+                  <button
+                    onClick={handleExcel}
+                    className="text-xl px-3 py-1 cursor-pointer text-green-700 hover:text-green-800 transition-colors"
+                    title="Excel"
+                  >
+                    <FaFileExcel />
+                  </button>
+                  <button
+                    onClick={handlePDF}
+                    className="text-xl px-3 py-1 cursor-pointer text-red-600 hover:text-red-800 transition-colors"
+                    title="PDF"
+                  >
+                    <FaFilePdf />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Table */}
           <div
-            className="overflow-x-auto min-h-[250px]"
+            className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="p-2 font-semibold hidden sm:table-cell">
+            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+              <thead>
+                <tr className="bg-slate-50 border-b border-blue-100/50">
+                  <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
                     SL.No
                   </th>
-
-                  <th className="p-2 font-semibold">Employee Name</th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
+                    Employee Name
+                  </th>
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Enrollment ID
                   </th>
-
-                  <th className="p-2 font-semibold hidden lg:table-cell">
+                  <th className="py-3 px-6 hidden lg:table-cell font-semibold text-gray-700 text-center">
                     Passport Purpose
                   </th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
                     Date
                   </th>
-
-                  <th className="p-2 font-semibold">Action</th>
+                  <th className="py-3 px-6 font-semibold text-gray-700">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {currentrequestData.length === 0 ? (
                   <tr>
-                    <td colSpan="14" className="lg:text-center p-10 ">
+                    <td
+                      colSpan="6"
+                      className="p-12 text-center text-gray-500 font-medium"
+                    >
                       No Data Available
                     </td>
                   </tr>
@@ -309,39 +323,33 @@ const PassportRequest = () => {
                   currentrequestData.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                      className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="p-2 whitespace-nowrap hidden sm:table-cell">
-                        {index + 1}
+                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900 text-center">
+                        {startIndex + index + 1}
                       </td>
-
-                      <td className="p-2">{item.employee_name}</td>
-
-                      <td className="p-2 hidden md:table-cell">
+                      <td className="py-3 px-6 font-medium text-gray-900">
+                        {item.employee_name}
+                      </td>
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono">
                         {item.enrollment_id}
                       </td>
-                      <td className="p-2 hidden lg:table-cell">
+                      <td className="py-3 px-6 hidden lg:table-cell text-gray-600 italic truncate max-w-[200px]">
                         {item.reason_for_request}
                       </td>
-
-                      <td className="p-2 hidden md:table-cell">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.request_date}
                       </td>
-
-                      <td className="p-2 flex flex-row space-x-3 justify-center whitespace-nowrap">
-                        {" "}
-                        <div className="flex flex-row space-x-3 justify-center mt-1">
-                          {/* View */}{" "}
+                      <td className="py-3 px-6">
+                        <div className="flex justify-center gap-3">
                           <FaEye
                             onClick={() => {
                               setFormData(item);
-
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />{" "}
-                          {/* Edit */}
+                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                          />
                           <FaPen
                             onClick={() => {
                               setFormData(item);
@@ -349,12 +357,11 @@ const PassportRequest = () => {
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="inline text-green-500 cursor-pointer text-lg"
+                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
                           />
-                          {/* Delete */}
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="inline text-red-500 cursor-pointer text-xl"
+                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
                           />
                         </div>
                       </td>
@@ -365,45 +372,62 @@ const PassportRequest = () => {
             </table>
           </div>
 
+          {/* Pagination Footer */}
           {/* Pagination */}
-          <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-            <span>
-              Showing {requestData.length === 0 ? "0" : startIndex + 1} to{" "}
-              {Math.min(endIndex, requestData.length)} of {requestData.length}{" "}
+          <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <span className="text-sm lg:text-base 3xl:text-xl text-gray-600">
+              Showing{" "}
+              <span className="text-gray-900 font-semibold">
+                {requestData.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
+              to{" "}
+              <span className="text-gray-900 font-semibold">
+                {Math.min(endIndex, requestData.length)}
+              </span>{" "}
+              of{" "}
+              <span className="text-gray-900 font-semibold">
+                {requestData.length}
+              </span>{" "}
               entries
             </span>
 
-            <div className="flex flex-row space-x-1">
+            <div className="flex gap-2">
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="First page"
               >
                 First
               </button>
 
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Previous page"
               >
                 <GrPrevious />
               </button>
 
-              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
+                {currentPage}
+              </div>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Next page"
               >
                 <GrNext />
               </button>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="Last page"
               >
                 Last
               </button>
@@ -412,66 +436,83 @@ const PassportRequest = () => {
         </div>
       )}
 
+      {/* Modal Section */}
       {openModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-white rounded-xl shadow-xl w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-6"
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
             style={{ scrollbarWidth: "none" }}
           >
-            {/* Close */}
-            <div className="flex justify-end mb-4">
-              <RxCross2
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+              <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+                {mode === "view"
+                  ? "Request Details"
+                  : mode === "edit"
+                    ? "Edit Passport Request"
+                    : "New Passport Request Form"}
+              </h2>
+              <button
                 onClick={() => setOpenModal(false)}
-                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-              />
+                className="text-gray-400 hover:text-red-600 transition-colors"
+              >
+                <RxCross2 className="text-2xl" />
+              </button>
             </div>
 
-            <div className="border p-4 rounded-xl border-gray-400 shadow">
+            <div className="border p-8 rounded-2xl border-gray-400/30 shadow-inner bg-white">
               <div className="flex justify-center">
                 <div
-                  className="max-h-[75vh] max-w-5xl overflow-y-auto pr-2 text-[16px]"
+                  className="max-h-[75vh] max-w-5xl overflow-y-auto pr-2 text-[16px] lg:text-[18px] 3xl:text-[22px]"
                   style={{ scrollbarWidth: "none" }}
                 >
-                  <div className="flex flex-row gap-3 mt-4">
-                    <label className={`mt-2 ${labelStyle}`}>Date:</label>
-                    <input
-                      name="request_date"
-                      value={formData.request_date || ""}
-                      onChange={handleChange}
-                      onClick={() => setShowDateSpinner(true)}
-                      disabled={mode === "view"}
-                      placeholder="dd/mm/yyyy"
-                      className="w-full border border-gray-300 px-2 rounded focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                    />
-
-                    {showDateSpinner && (
-                      <div className="absolute mt-10 ml-8 sm:ml-14 md:ml-16 lg:ml-20  ">
-                        <SpinnerDatePicker
-                          value={formData.request_date}
-                          onChange={(date) =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              request_date: date,
-                            }))
-                          }
-                          onClose={() => setShowDateSpinner(false)}
-                        />
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex flex-row gap-7 mt-2">
-                    <span>To,</span>
-                    <div>
-                      The Administration officer <br />
+                  <div className="flex flex-col md:flex-row justify-between mb-8 gap-4">
+                    <div className="text-gray-700 leading-relaxed">
+                      To, <br />
+                      <span className="font-bold text-gray-800">
+                        The Administration officer
+                      </span>{" "}
+                      <br />
                       Safecor Security <br /> Dubai, UAE.
+                    </div>
+                    <div className="flex flex-row items-center gap-3 relative min-w-[280px]">
+                      <label
+                        className={`font-bold text-gray-700 whitespace-nowrap`}
+                      >
+                        Date:
+                      </label>
+                      <input
+                        name="request_date"
+                        value={formData.request_date || ""}
+                        onChange={handleChange}
+                        onClick={() =>
+                          mode !== "view" && setShowDateSpinner(true)
+                        }
+                        readOnly
+                        disabled={mode === "view"}
+                        placeholder="dd/mm/yyyy"
+                        className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-slate-50 shadow-sm"
+                      />
+                      {showDateSpinner && (
+                        <div className="absolute z-10 top-12 left-0 shadow-2xl">
+                          <SpinnerDatePicker
+                            value={formData.request_date}
+                            onChange={(date) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                request_date: date,
+                              }))
+                            }
+                            onClose={() => setShowDateSpinner(false)}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  <div className="text-[16px] leading-7 space-y-4">
-                    {/* Line 1 */}
+                  <div className="leading-10 space-y-8 text-gray-700">
                     <p>
                       I am kindly requesting you to have my passport for the
                       purpose of
@@ -481,7 +522,8 @@ const PassportRequest = () => {
                         value={formData.reason_for_request}
                         onChange={handleChange}
                         disabled={mode === "view"}
-                        className="border border-gray-300 rounded px-2 w-40 mt-1 mx-1 rounded  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
+                        placeholder="Enter purpose here"
+                        className="border-b-2 border-gray-300 px-3 min-w-[300px] mx-2 focus:border-blue-500 outline-none bg-transparent transition-all"
                       />
                     </p>
                     <p>
@@ -491,137 +533,185 @@ const PassportRequest = () => {
                         value={formData.expected_return_date}
                         onChange={handleChange}
                         disabled={mode === "view"}
-                        className="border border-gray-300 rounded px-2 w-32 mt-1 mx-1 rounded  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
+                        placeholder="dd/mm/yyyy"
+                        className="border-b-2 border-gray-300 px-3 w-48 mx-2 focus:border-blue-500 outline-none bg-transparent transition-all font-bold text-blue-700"
                       />
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 border-t pt-4">
-                    <div className="flex flex-col">
-                      <label>Department:</label>
-                      <input
-                        name="department"
-                        value={formData.department}
-                        onChange={handleChange}
-                        disabled={mode === "view"}
-                        className="border border-gray-300 rounded px-2 w-full mt-1 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-                      />
+                  {/* Professional Details Section */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 border-t pt-8 border-slate-100">
+                    <div className="space-y-4">
+                      <div className="flex flex-col gap-1">
+                        <label className="text-xs font-bold text-gray-400 uppercase">
+                          Department
+                        </label>
+                        <input
+                          name="department"
+                          value={formData.department}
+                          onChange={handleChange}
+                          disabled={mode === "view"}
+                          className="border-b-2 border-gray-200 py-2 focus:border-blue-500 outline-none bg-transparent"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <label className="text-xs font-bold text-gray-400 uppercase">
+                          Position Title
+                        </label>
+                        <input
+                          name="position_title"
+                          value={formData.position_title}
+                          onChange={handleChange}
+                          disabled={mode === "view"}
+                          className="border-b-2 border-gray-200 py-2 focus:border-blue-500 outline-none bg-transparent"
+                        />
+                      </div>
                     </div>
-                    <div className="flex flex-col">
-                      <label>Position Title:</label>
-                      <input
-                        name="position_title"
-                        value={formData.position_title}
-                        onChange={handleChange}
-                        disabled={mode === "view"}
-                        className="border border-gray-300 rounded px-2 w-full mt-1 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-                      />
-                    </div>
-                    <div className="flex flex-col">
-                      <label>Mobile Number:</label>
-                      <input
-                        name="mobile"
-                        value={formData.mobile}
-                        onChange={handleChange}
-                        disabled={mode === "view"}
-                        className="border border-gray-300 rounded px-2 w-full mt-1 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-                      />
-                    </div>
-                    <div className="flex flex-col">
-                      <label>Passport Number:</label>
-                      <input
-                        name="passport_number"
-                        value={formData.passport_number}
-                        onChange={handleChange}
-                        disabled={mode === "view"}
-                        className="border border-gray-300 rounded px-2 w-full mt-1 focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]"
-                      />
+                    <div className="space-y-4">
+                      <div className="flex flex-col gap-1">
+                        <label className="text-xs font-bold text-gray-400 uppercase">
+                          Mobile Number
+                        </label>
+                        <input
+                          name="mobile"
+                          value={formData.mobile}
+                          onChange={handleChange}
+                          disabled={mode === "view"}
+                          className="border-b-2 border-gray-200 py-2 focus:border-blue-500 outline-none bg-transparent"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <label className="text-xs font-bold text-gray-400 uppercase">
+                          Passport Number
+                        </label>
+                        <input
+                          name="passport_number"
+                          value={formData.passport_number}
+                          onChange={handleChange}
+                          disabled={mode === "view"}
+                          className="border-b-2 border-gray-200 py-2 focus:border-blue-500 outline-none bg-transparent"
+                        />
+                      </div>
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2">
-                    <div className="grid  grid-cols-1  sm:grid-cols-2 gap-4 mt-4">
-                      <div className="flex flex-col">
-                        <label>Name:</label>
-                        <input
-                          name="employee_name"
-                          value={formData.employee_name}
-                          onChange={handleChange}
-                          disabled={mode === "view"}
-                          className="border border-gray-300 rounded px-2 sm:w-36 mt-1 rounded  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                        />
+
+                  <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-12 bg-slate-50 p-8 rounded-3xl border border-slate-100 shadow-inner">
+                    {/* Employee Identification */}
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-1.5 h-6 bg-blue-500 rounded-full"></div>
+                        <h4 className="font-bold text-gray-800">
+                          Employee Identification
+                        </h4>
                       </div>
-                      <div className="flex flex-col">
-                        <label>ID #:</label>
-                        <input
-                          name="enrollment_id"
-                          value={formData.enrollment_id}
-                          onChange={handleChange}
-                          disabled={mode === "view"}
-                          className="border border-gray-300 rounded px-2 sm:w-36 mt-1 rounded  focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] "
-                        />
+                      <div className="flex flex-col gap-4">
+                        <div className="flex flex-col">
+                          <label className="text-xs font-bold text-gray-500">
+                            Full Name
+                          </label>
+                          <input
+                            name="employee_name"
+                            value={formData.employee_name}
+                            onChange={handleChange}
+                            disabled={mode === "view"}
+                            className={inputStyle}
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <label className="text-xs font-bold text-gray-500">
+                            Enrollment ID #
+                          </label>
+                          <input
+                            name="enrollment_id"
+                            value={formData.enrollment_id}
+                            onChange={handleChange}
+                            disabled={mode === "view"}
+                            className={inputStyle}
+                          />
+                        </div>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1  sm:grid-cols-2 gap-8 mt-4">
-                      <div className="flex flex-col">
-                        {/* Toggle Tabs — hidden in view mode */}
-                        {mode !== "view" && (
-                          <div className="flex flex-wrap gap-2 mb-4">
-                            <label className="block text-sm font-medium mt-1">
-                              Signature :
-                            </label>
-                            <div className="space-x-1 space-y-1">
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    employeeSignatureMode: "upload",
-                                  }))
-                                }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                  formData.employeeSignatureMode === "upload"
-                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
-                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
-                              >
-                                Upload
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    employeeSignatureMode: "draw",
-                                  }))
-                                }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                  formData.employeeSignatureMode === "draw"
-                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
-                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
-                              >
-                                Sign Here
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                        {mode === "view" && (
-                          <label className="block text-sm font-medium mb-2">
+
+                    {/* Signature Section */}
+                    <div className="flex flex-col">
+                      {/* Toggle Tabs — hidden in view mode */}
+                      {mode !== "view" && (
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          <label className="block text-sm font-medium mt-1">
                             Signature :
                           </label>
-                        )}
+                          <div className="space-x-1 space-y-1">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  employeeSignatureMode: "upload",
+                                }))
+                              }
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.employeeSignatureMode === "upload"
+                                  ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              Upload
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  employeeSignatureMode: "draw",
+                                }))
+                              }
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.employeeSignatureMode === "draw"
+                                  ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              Sign Here
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      {mode === "view" && (
+                        <label className="block text-sm font-medium mb-2">
+                          Signature :
+                        </label>
+                      )}
 
-                        {/* Upload Area */}
-                        {formData.employeeSignatureMode === "upload" && (
-                          <div>
-                            <input
-                              type="file"
-                              id="employeeSignatureUpload"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={(e) => {
-                                const file = e.target.files[0];
-                                if (file) {
+                      {/* Upload Area */}
+                      {formData.employeeSignatureMode === "upload" && (
+                        <div>
+                          <input
+                            type="file"
+                            id="employeeSignatureUpload"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  employee_signature: file,
+                                  employeeSignaturePreview:
+                                    URL.createObjectURL(file),
+                                }));
+                              }
+                            }}
+                          />
+
+                          {/* Drag & Drop Zone */}
+                          {mode !== "view" && (
+                            <label
+                              htmlFor="employeeSignatureUpload"
+                              onDragOver={(e) => e.preventDefault()}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                const file = e.dataTransfer.files[0];
+                                if (file && file.type.startsWith("image/")) {
                                   setFormData((prev) => ({
                                     ...prev,
                                     employee_signature: file,
@@ -630,107 +720,88 @@ const PassportRequest = () => {
                                   }));
                                 }
                               }}
-                            />
+                              className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                            >
+                              <svg
+                                className="w-8 h-8 text-gray-400 mb-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={1.5}
+                                  d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                                />
+                              </svg>
+                              <p className="text-sm text-gray-500">
+                                Drag & drop or{" "}
+                                <span className="text-[#0f172a] font-medium underline">
+                                  browse
+                                </span>
+                              </p>
+                              <p className="text-xs text-gray-400 mt-1">
+                                PNG, JPG, SVG supported
+                              </p>
+                            </label>
+                          )}
 
-                            {/* Drag & Drop Zone */}
-                            {mode !== "view" && (
-                              <label
-                                htmlFor="employeeSignatureUpload"
-                                onDragOver={(e) => e.preventDefault()}
-                                onDrop={(e) => {
-                                  e.preventDefault();
-                                  const file = e.dataTransfer.files[0];
-                                  if (file && file.type.startsWith("image/")) {
+                          {/* Preview */}
+                          {formData.employeeSignaturePreview && (
+                            <div className="mt-4 flex items-center gap-3">
+                              <img
+                                src={formData.employeeSignaturePreview}
+                                alt="Signature Preview"
+                                className="h-16 border rounded bg-white p-2 shadow-sm"
+                              />
+                              {mode !== "view" && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
                                     setFormData((prev) => ({
                                       ...prev,
-                                      employee_signature: file,
-                                      employeeSignaturePreview:
-                                        URL.createObjectURL(file),
-                                    }));
+                                      employee_signature: null,
+                                      employeeSignaturePreview: null,
+                                    }))
                                   }
-                                }}
-                                className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
-                              >
-                                <svg
-                                  className="w-8 h-8 text-gray-400 mb-2"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
+                                  className="text-xs text-red-500 hover:underline"
                                 >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={1.5}
-                                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
-                                  />
-                                </svg>
-                                <p className="text-sm text-gray-500">
-                                  Drag & drop or{" "}
-                                  <span className="text-[#0f172a] font-medium underline">
-                                    browse
-                                  </span>
-                                </p>
-                                <p className="text-xs text-gray-400 mt-1">
-                                  PNG, JPG, SVG supported
-                                </p>
-                              </label>
-                            )}
+                                  Remove
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
 
-                            {/* Preview */}
-                            {formData.employeeSignaturePreview && (
-                              <div className="mt-4 flex items-center gap-3">
-                                <img
-                                  src={formData.employeeSignaturePreview}
-                                  alt="Signature Preview"
-                                  className="h-16 border rounded bg-white p-2 shadow-sm"
-                                />
-                                {mode !== "view" && (
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      setFormData((prev) => ({
-                                        ...prev,
-                                        employee_signature: null,
-                                        employeeSignaturePreview: null,
-                                      }))
-                                    }
-                                    className="text-xs text-red-500 hover:underline"
-                                  >
-                                    Remove
-                                  </button>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Draw Area */}
-                        {formData.employeeSignatureMode === "draw" && (
-                          <SignPad
-                            fieldName="signature_drawn"
-                            formData={formData}
-                            setFormData={setFormData}
-                            mode={mode}
-                          />
-                        )}
-                      </div>
-
-                      <div className="flex flex-col">
-                        <label className="flex items-center gap-2 mt-4 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            name="agreement"
-                            checked={formData.agreement}
-                            onChange={handleChange}
-                            disabled={mode === "view"}
-                            className="w-4 h-4 accent-[oklch(0.645_0.246_16.439)]"
-                          />
-                          <span className="text-sm">
-                            I agree to the terms and conditions
-                          </span>
-                        </label>
-                      </div>
+                      {/* Draw Area */}
+                      {formData.employeeSignatureMode === "draw" && (
+                        <SignPad
+                          fieldName="signature_drawn"
+                          formData={formData}
+                          setFormData={setFormData}
+                          mode={mode}
+                        />
+                      )}
                     </div>
+                  </div>
+
+                  {/* Admin Signature Area */}
+                  <div className="flex flex-col">
+                    <label className="flex items-center gap-2 mt-4 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="agreement"
+                        checked={formData.agreement}
+                        onChange={handleChange}
+                        disabled={mode === "view"}
+                        className="w-4 h-4 accent-[oklch(0.645_0.246_16.439)]"
+                      />
+                      <span className="text-sm">
+                        I agree to the terms and conditions
+                      </span>
+                    </label>
                   </div>
 
                   <div className="grid grid-cols-1  sm:grid-cols-2 mt-6">
@@ -886,20 +957,20 @@ const PassportRequest = () => {
                           mode={mode}
                         />
                       )}
+
+                      {/* Final Footer Button */}
+                      {mode !== "view" && (
+                        <div className="flex justify-end mt-12">
+                          <button
+                            onClick={handleSubmit}
+                            className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-3 rounded-xl font-bold lg:text-xl shadow-lg hover:shadow-blue-200 hover:-translate-y-1 transition-all"
+                          >
+                            Submit Request
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
-
-                  {/* Save */}
-                  {mode !== "view" && (
-                    <div className="flex justify-end mt-10">
-                      <button
-                        onClick={handleSubmit}
-                        className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md mb-6"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>

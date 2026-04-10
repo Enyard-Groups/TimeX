@@ -28,11 +28,10 @@ const TpcForm = () => {
   const [editId, setEditId] = useState(null);
   const [showDateSpinner, setShowDateSpinner] = useState(false);
 
-  const labelStyle =
-    "whitespace-nowrap text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block w-1/2";
-
   const inputStyle =
-    "text-[16px] w-full border border-[oklch(0.923_0.003_48.717)] bg-white  rounded-md px-3 pt-0.5 text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+  const labelStyle =
+    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const defaultFormData = {
     employee_name: "",
@@ -171,27 +170,30 @@ const TpcForm = () => {
   };
 
   return (
-    <div className="mb-6">
-      {/* Header */}
-      <div className="sm:flex sm:justify-between">
-        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-          <FaAngleRight />
-          Forms
-          <FaAngleRight />
-          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+    <div className="mb-6 max-w-[1920px] mx-auto">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+        <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+          <FaAngleRight className="text-blue-500 text-base" />
+          <span className="text-gray-500">Forms</span>
+          <FaAngleRight className="text-blue-500 text-base" />
+          <div
+            onClick={() => setOpenModal(false)}
+            className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+          >
             TPC Form
           </div>
         </h1>
         {!openModal && (
           <div className="flex justify-end">
             <button
-              onClick={() => (
-                setMode(""),
-                setEditId(null),
-                setFormData(defaultFormData),
-                setOpenModal(true)
-              )}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              onClick={() => {
+                setMode("");
+                setEditId(null);
+                setFormData(defaultFormData);
+                setOpenModal(true);
+              }}
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -199,82 +201,93 @@ const TpcForm = () => {
         )}
       </div>
 
+      {/* Main Table Container */}
       {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">
-          {/* Top Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <div>
-              <label className="mr-2 text-md">Show</label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="ml-2 text-md">entries</span>
-            </div>
-            <div className="flex flex-wrap gap-2 items-center justify-center">
-              <div className="flex">
-                <button
-                  onClick={handleCopy}
-                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+        <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
+          <div className="p-6 border-b border-blue-100/30">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  Show
+                </label>
+                <select
+                  value={entriesPerPage}
+                  onChange={(e) => {
+                    setEntriesPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
-                  <GoCopy />
-                </button>
+                  {[10, 25, 50, 100].map((v) => (
+                    <option key={v} value={v}>
+                      {v}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  entries
+                </span>
+              </div>
 
-                <button
-                  onClick={handleExcel}
-                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
-                >
-                  <FaFileExcel />
-                </button>
-
-                <button
-                  onClick={handlePDF}
-                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
-                >
-                  <FaFilePdf />
-                </button>
+              <div className="flex flex-wrap gap-3 items-center justify-center">
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopy}
+                    className="text-xl px-3 py-1 text-gray-800 hover:text-blue-600 transition-colors"
+                    title="Copy"
+                  >
+                    <GoCopy />
+                  </button>
+                  <button
+                    onClick={handleExcel}
+                    className="text-xl px-3 py-1 text-green-700 hover:text-green-800 transition-colors"
+                    title="Excel"
+                  >
+                    <FaFileExcel />
+                  </button>
+                  <button
+                    onClick={handlePDF}
+                    className="text-xl px-3 py-1 text-red-600 hover:text-red-800 transition-colors"
+                    title="PDF"
+                  >
+                    <FaFilePdf />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Table */}
           <div
-            className="overflow-x-auto min-h-[250px]"
+            className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="p-2 font-semibold hidden sm:table-cell">
+            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+              <thead>
+                <tr className="bg-slate-50 border-b border-blue-100/50">
+                  <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
                     SL.No
                   </th>
-
-                  <th className="p-2 font-semibold">Employee Name</th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
+                    Employee Name
+                  </th>
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Location
                   </th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Enrollment Id
                   </th>
-
-                  <th className="p-2 font-semibold">Action</th>
+                  <th className="py-3 px-6 font-semibold text-gray-700">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {currentrequestData.length === 0 ? (
                   <tr>
-                    <td colSpan="14" className="lg:text-center p-10 ">
+                    <td
+                      colSpan="5"
+                      className="p-12 text-center text-gray-500 font-medium"
+                    >
                       No Data Available
                     </td>
                   </tr>
@@ -282,36 +295,30 @@ const TpcForm = () => {
                   currentrequestData.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                      className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="p-2 whitespace-nowrap hidden sm:table-cell">
-                        {index + 1}
+                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900 text-center">
+                        {startIndex + index + 1}
                       </td>
-
-                      <td className="p-2">{item.employee_name}</td>
-
-                      <td className="p-2 hidden md:table-cell">
+                      <td className="py-3 px-6 font-medium text-gray-900">
+                        {item.employee_name}
+                      </td>
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
                         {item.location}
                       </td>
-
-                      <td className="p-2 hidden md:table-cell">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono">
                         {item.enrollment_id}
                       </td>
-
-                      <td className="p-2 flex flex-row space-x-3 justify-center whitespace-nowrap">
-                        {" "}
-                        <div className="flex flex-row space-x-3 justify-center mt-1">
-                          {/* View */}{" "}
+                      <td className="py-3 px-6 text-center">
+                        <div className="flex justify-center gap-3">
                           <FaEye
                             onClick={() => {
                               setFormData(item);
-
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />{" "}
-                          {/* Edit */}
+                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                          />
                           <FaPen
                             onClick={() => {
                               setFormData(item);
@@ -319,12 +326,11 @@ const TpcForm = () => {
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="inline text-green-500 cursor-pointer text-lg"
+                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
                           />
-                          {/* Delete */}
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="inline text-red-500 cursor-pointer text-xl"
+                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
                           />
                         </div>
                       </td>
@@ -335,45 +341,62 @@ const TpcForm = () => {
             </table>
           </div>
 
+          {/* Pagination Footer */}
           {/* Pagination */}
-          <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-            <span>
-              Showing {requestData.length === 0 ? "0" : startIndex + 1} to{" "}
-              {Math.min(endIndex, requestData.length)} of {requestData.length}{" "}
+          <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <span className="text-sm lg:text-base 3xl:text-xl text-gray-600">
+              Showing{" "}
+              <span className="text-gray-900 font-semibold">
+                {requestData.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
+              to{" "}
+              <span className="text-gray-900 font-semibold">
+                {Math.min(endIndex, requestData.length)}
+              </span>{" "}
+              of{" "}
+              <span className="text-gray-900 font-semibold">
+                {requestData.length}
+              </span>{" "}
               entries
             </span>
 
-            <div className="flex flex-row space-x-1">
+            <div className="flex gap-2">
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="First page"
               >
                 First
               </button>
 
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Previous page"
               >
                 <GrPrevious />
               </button>
 
-              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
+                {currentPage}
+              </div>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Next page"
               >
                 <GrNext />
               </button>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="Last page"
               >
                 Last
               </button>
@@ -382,166 +405,176 @@ const TpcForm = () => {
         </div>
       )}
 
+      {/* Modal Section */}
       {openModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-white rounded-xl shadow-xl w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-6"
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
             style={{ scrollbarWidth: "none" }}
           >
-            {/* Close */}
-            <div className="flex justify-end mb-4">
-              <RxCross2
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+              <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+                {mode === "view"
+                  ? "TPC Request Details"
+                  : mode === "edit"
+                    ? "Edit TPC Request"
+                    : "New TPC Request Form"}
+              </h2>
+              <button
                 onClick={() => setOpenModal(false)}
-                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-              />
+                className="text-gray-400 hover:text-red-600 transition-colors"
+              >
+                <RxCross2 className="text-2xl" />
+              </button>
             </div>
 
-            <div className="border p-4 rounded-xl border-gray-400 shadow">
-              <div className="flex justify-center">
-                <div
-                  className="max-h-[75vh] max-w-[1200px] overflow-y-auto pr-2 text-[16px]"
-                  style={{ scrollbarWidth: "none" }}
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-1 mt-4">
-                    <div className="border border-gray-400 rounded p-2 sm:p-4 ">
+            <div className="border p-8 rounded-2xl border-gray-400/20 shadow-inner bg-white">
+              <div
+                className="max-h-[75vh] overflow-y-auto pr-2 text-[16px] lg:text-[18px] 3xl:text-[22px] leading-relaxed"
+                style={{ scrollbarWidth: "none" }}
+              >
+                {/* Form Top Section */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                  <div className="bg-slate-50 p-4 rounded-xl border border-blue-100 flex flex-col justify-center">
+                    <span className="text-gray-500 font-bold uppercase text-xs mb-2">
                       To
-                      <p className="ml-2 sm:ml-6">Sefecor Security Person</p>
-                    </div>
-                    <div className="col-span-2 border border-gray-400 rounded p-2 sm:p-4">
-                      From
-                      <div className="ml-2 sm:ml-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
-                          <div className="flex flex-row gap-2">
-                            <label className={labelStyle}> Name</label>
-                            <div className={inputStyle}>
-                              <SearchDropdown
-                                name="employee_name"
-                                value={formData.employee_name}
-                                options={["Employee 1", "Employee 2"]}
-                                formData={formData}
-                                setFormData={setFormData}
-                                disabled={mode === "view"}
-                                className={inputStyle}
-                              />
-                            </div>
-                          </div>
+                    </span>
+                    <span className="font-bold text-gray-800">
+                      Safecor Security Personnel
+                    </span>
+                  </div>
 
-                          <div className="flex flex-row gap-2">
-                            <label className={labelStyle}>ID</label>
-
-                            <input
-                              name="enrollment_id"
-                              value={formData.enrollment_id}
-                              onChange={handleChange}
-                              className={inputStyle}
-                              disabled={mode === "view"}
+                  <div className="md:col-span-2 bg-slate-50 p-6 rounded-2xl border border-blue-100">
+                    <span className="text-gray-500 font-bold uppercase text-xs mb-4 block">
+                      From (Applicant Details)
+                    </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div className="flex flex-col gap-1">
+                        <label className={labelStyle}>
+                          Staff Name <span className="text-red-500">*</span>
+                        </label>
+                        <div className="w-full">
+                          <SearchDropdown
+                            name="employee_name"
+                            value={formData.employee_name}
+                            options={["Employee 1", "Employee 2"]}
+                            formData={formData}
+                            inputStyle={inputStyle}
+                            setFormData={setFormData}
+                            disabled={mode === "view"}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <label className={labelStyle}>Enrollment ID</label>
+                        <input
+                          name="enrollment_id"
+                          value={formData.enrollment_id}
+                          onChange={handleChange}
+                          className={inputStyle}
+                          disabled={mode === "view"}
+                          placeholder="ID #"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <label className={labelStyle}>Work Location</label>
+                        <SearchDropdown
+                          name="location"
+                          value={formData.location}
+                          options={["Head Office", "Location 1", "Location 2"]}
+                          formData={formData}
+                          inputStyle={inputStyle}
+                          setFormData={setFormData}
+                          disabled={mode === "view"}
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1 relative">
+                        <label className={labelStyle}>Request Date</label>
+                        <input
+                          name="date"
+                          value={formData.date || ""}
+                          onClick={() =>
+                            mode !== "view" && setShowDateSpinner(true)
+                          }
+                          readOnly
+                          disabled={mode === "view"}
+                          placeholder="dd/mm/yyyy"
+                          className={`${inputStyle} cursor-pointer`}
+                        />
+                        {showDateSpinner && (
+                          <div className="absolute z-10 bottom-full mb-2">
+                            <SpinnerDatePicker
+                              value={formData.date}
+                              onChange={(date) =>
+                                setFormData((prev) => ({ ...prev, date: date }))
+                              }
+                              onClose={() => setShowDateSpinner(false)}
                             />
                           </div>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
-                          <div className="flex flex-row gap-2">
-                            <label className={labelStyle}>Location</label>
-                            <div className={inputStyle}>
-                              <SearchDropdown
-                                name="location"
-                                value={formData.location}
-                                options={[
-                                  "Head Office",
-                                  "location 1",
-                                  "location 2",
-                                ]}
-                                formData={formData}
-                                setFormData={setFormData}
-                                disabled={mode === "view"}
-                                className={inputStyle}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
-                          <div className="flex flex-row gap-2">
-                            <label className={labelStyle}>Mobile No.</label>
-                            <input
-                              type="number"
-                              name="mobile"
-                              value={formData.mobile}
-                              onChange={handleChange}
-                              className={inputStyle}
-                              disabled={mode === "view"}
-                            />
-                          </div>
-
-                          <div className="flex flex-row gap-2 ">
-                            <label className={labelStyle}>Date</label>
-                            <input
-                              name="date"
-                              value={formData.date || ""}
-                              onChange={handleChange}
-                              onClick={() => setShowDateSpinner(true)}
-                              disabled={mode === "view"}
-                              placeholder="dd/mm/yyyy"
-                              className={inputStyle}
-                            />
-
-                            {showDateSpinner && (
-                              <div className="absolute mt-10 ml-8 sm:ml-14 md:ml-16 lg:ml-20  ">
-                                <SpinnerDatePicker
-                                  value={formData.date}
-                                  onChange={(date) =>
-                                    setFormData((prev) => ({
-                                      ...prev,
-                                      date: date,
-                                    }))
-                                  }
-                                  onClose={() => setShowDateSpinner(false)}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        </div>
+                        )}
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  <div className="sm:flex sm:flex-row gap-2 mt-3 gap-2">
-                    <label className="whitespace-nowrap text-md text-[oklch(0.147_0.004_49.25)] my-1 w-1/5">
-                      {" "}
-                      Through:
+                {/* Document Body */}
+                <div className="space-y-8 text-gray-700 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+                    <div className="flex flex-col gap-2">
+                      <label className={labelStyle}>
+                        Mobile Contact Number
+                      </label>
+                      <input
+                        type="number"
+                        name="mobile"
+                        value={formData.mobile}
+                        onChange={handleChange}
+                        className={inputStyle}
+                        disabled={mode === "view"}
+                        placeholder="Numbers only"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-3">
+                    <label className="font-bold text-gray-800">
+                      1. Through Person Information
                     </label>
-                    <div className={inputStyle}>
+                    <div className="w-full max-w-md">
                       <SearchDropdown
                         name="through_person"
                         value={formData.through_person}
                         options={["Employee 1", "Employee 2"]}
                         formData={formData}
+                        inputStyle={inputStyle}
                         setFormData={setFormData}
                         disabled={mode === "view"}
-                        className={inputStyle}
                       />
                     </div>
                   </div>
 
-                  <div className="sm:flex sm:flex-row gap-2 mt-3 gap-2">
-                    <label className="whitespace-nowrap text-md text-[oklch(0.147_0.004_49.25)] my-1 w-1/5">
-                      {" "}
-                      Comments:
+                  <div className="flex flex-col gap-3">
+                    <label className="font-bold text-gray-800">
+                      2. Request Comments / Details
                     </label>
                     <textarea
                       name="comments"
                       onChange={handleChange}
                       value={formData.comments}
                       disabled={mode === "view"}
-                      className={inputStyle}
+                      rows={4}
+                      className="w-full border-2 border-slate-200 rounded-xl p-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all resize-none"
+                      placeholder="Provide detailed information regarding the request..."
                     />
                   </div>
 
                   <div className=" gap-2 mt-3 gap-2">
                     <div className="flex flex-col">
-                      <label className="whitespace-nowrap text-md text-[oklch(0.147_0.004_49.25)] my-1">
-                        Signature
+                      <label className="font-bold text-gray-800">
+                        3. Signature
                       </label>
 
                       {/* Toggle Tabs */}
@@ -685,19 +718,25 @@ const TpcForm = () => {
                       )}
                     </div>
                   </div>
-
-                  {/* Save */}
-                  {mode !== "view" && (
-                    <div className="flex justify-end mt-10">
-                      <button
-                        onClick={handleSubmit}
-                        className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md mb-6"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  )}
                 </div>
+
+                {/* Footer / Submit Action */}
+                {mode !== "view" && (
+                  <div className="flex justify-end mt-12 pb-6 border-t pt-8 gap-4">
+                    <button
+                      onClick={() => setOpenModal(false)}
+                      className="px-10 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-bold lg:text-lg 3xl:text-2xl hover:bg-gray-50 transition-all"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSubmit}
+                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-3 rounded-xl font-bold lg:text-xl 3xl:text-2xl shadow-xl hover:shadow-blue-200 hover:-translate-y-1 transition-all"
+                    >
+                      Save & Submit TPC Form
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

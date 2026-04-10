@@ -27,11 +27,10 @@ const StaffTrainingChecklist = () => {
   const [editId, setEditId] = useState(null);
   const [showDateSpinner, setShowDateSpinner] = useState(false);
 
-  const labelStyle =
-    "whitespace-nowrap text-[16px] text-[oklch(0.147_0.004_49.25)] my-1 block w-1/2";
-
   const inputStyle =
-    "text-[16px] w-full border border-[oklch(0.923_0.003_48.717)] bg-white  rounded-md px-3 pt-0.5 text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)] ";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+  const labelStyle =
+    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const defaultFormData = {
     employee_name: "",
@@ -416,27 +415,30 @@ const StaffTrainingChecklist = () => {
   };
 
   return (
-    <div className="mb-6">
-      {/* Header */}
-      <div className="sm:flex sm:justify-between">
-        <h1 className="flex items-center gap-2 text-[17px] font-semibold flex-wrap ml-10 lg:ml-0 mb-4 lg:mb-0">
-          <FaAngleRight />
-          Forms
-          <FaAngleRight />
-          <div onClick={() => setOpenModal(false)} className="cursor-pointer">
+    <div className="mb-6 max-w-[1920px] mx-auto">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
+        <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+          <FaAngleRight className="text-blue-500 text-base" />
+          <span className="text-gray-500">Forms</span>
+          <FaAngleRight className="text-blue-500 text-base" />
+          <div
+            onClick={() => setOpenModal(false)}
+            className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+          >
             Staff Training Checklist
           </div>
         </h1>
         {!openModal && (
           <div className="flex justify-end">
             <button
-              onClick={() => (
-                setMode(""),
-                setEditId(null),
-                setFormData(defaultFormData),
-                setOpenModal(true)
-              )}
-              className="bg-[oklch(0.645_0.246_16.439)] text-white px-4 py-2 rounded-md whitespace-nowrap"
+              onClick={() => {
+                setMode("");
+                setEditId(null);
+                setFormData(defaultFormData);
+                setOpenModal(true);
+              }}
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -444,86 +446,96 @@ const StaffTrainingChecklist = () => {
         )}
       </div>
 
+      {/* Main Table Container */}
       {!openModal && (
-        <div className="mt-6 bg-white shadow-xl rounded-xl  border border-[oklch(0.8_0.001_106.424)] p-6">
-          {/* Top Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <div>
-              <label className="mr-2 text-md">Show</label>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => {
-                  setEntriesPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className=" border rounded-full px-1  border-[oklch(0.645_0.246_16.439)]"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="ml-2 text-md">entries</span>
-            </div>
-            <div className="flex flex-wrap gap-2 items-center justify-center">
-              <div className="flex">
-                <button
-                  onClick={handleCopy}
-                  className="text-xl px-3 py-1 cursor-pointer text-gray-800"
+        <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
+          <div className="p-6 border-b border-blue-100/30">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  Show
+                </label>
+                <select
+                  value={entriesPerPage}
+                  onChange={(e) => {
+                    setEntriesPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
-                  <GoCopy />
-                </button>
+                  {[10, 25, 50, 100].map((v) => (
+                    <option key={v} value={v}>
+                      {v}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  entries
+                </span>
+              </div>
 
-                <button
-                  onClick={handleExcel}
-                  className="text-xl px-3 py-1 cursor-pointer text-green-700"
-                >
-                  <FaFileExcel />
-                </button>
-
-                <button
-                  onClick={handlePDF}
-                  className="text-xl px-3 py-1 cursor-pointer text-red-600"
-                >
-                  <FaFilePdf />
-                </button>
+              <div className="flex flex-wrap gap-3 items-center justify-center">
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopy}
+                    className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 p-2.5 rounded-lg transition-all"
+                    title="Copy"
+                  >
+                    <GoCopy className="text-lg lg:text-xl 3xl:text-3xl" />
+                  </button>
+                  <button
+                    onClick={handleExcel}
+                    className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 p-2.5 rounded-lg transition-all"
+                    title="Excel"
+                  >
+                    <FaFileExcel className="text-lg lg:text-xl 3xl:text-3xl" />
+                  </button>
+                  <button
+                    onClick={handlePDF}
+                    className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 p-2.5 rounded-lg transition-all"
+                    title="PDF"
+                  >
+                    <FaFilePdf className="text-lg lg:text-xl 3xl:text-3xl" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Table */}
           <div
-            className="overflow-x-auto min-h-[250px]"
+            className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-lg border-collapse">
-              <thead className="bg-[oklch(0.94_0.001_106.424)] text-[oklch(0.44_0.001_106.424)]">
-                <tr>
-                  <th className="p-2 font-semibold hidden sm:table-cell">
+            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+              <thead>
+                <tr className="bg-slate-50 border-b border-blue-100/50">
+                  <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
                     SL.No
                   </th>
-
-                  <th className="p-2 font-semibold">Employee Name</th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
+                    Employee Name
+                  </th>
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Enrollment Id
                   </th>
-
-                  <th className="p-2 font-semibold hidden md:table-cell">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Trainer Name
                   </th>
-
-                  <th className="p-2 font-semibold hidden lg:table-cell">
+                  <th className="py-3 px-6 hidden lg:table-cell font-semibold text-gray-700">
                     Date
                   </th>
-
-                  <th className="p-2 font-semibold">Action</th>
+                  <th className="py-3 px-6 font-semibold text-gray-700">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {currentrequestData.length === 0 ? (
                   <tr>
-                    <td colSpan="14" className="lg:text-center p-10 ">
+                    <td
+                      colSpan="6"
+                      className="p-12 text-center text-gray-500 font-medium"
+                    >
                       No Data Available
                     </td>
                   </tr>
@@ -531,64 +543,42 @@ const StaffTrainingChecklist = () => {
                   currentrequestData.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="text-center border-b border-[oklch(0.8_0.001_106.424)] even:bg-[oklch(0.99_0.01_16.439)] text-[oklch(0.33_0.001_106.424)]"
+                      className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="p-2 whitespace-nowrap hidden sm:table-cell">
-                        {index + 1}
+                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900 text-center">
+                        {startIndex + index + 1}
                       </td>
-
-                      <td className="p-2">{item.employee_name}</td>
-
-                      <td className="p-2 hidden md:table-cell">
+                      <td className="py-3 px-6 font-medium text-gray-900 text-center">
+                        {item.employee_name}
+                      </td>
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono">
                         {item.enrollment_id}
                       </td>
-                      <td className="p-2 hidden md:table-cell">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
                         {item.trainer_name}
                       </td>
-
-                      <td className="p-2 hidden lg:table-cell">{item.date}</td>
-
-                      <td className="p-2 flex flex-row space-x-3 justify-center whitespace-nowrap">
-                        {" "}
-                        <div className="flex flex-row space-x-3 justify-center mt-1">
-                          {/* View */}{" "}
+                      <td className="py-3 px-6 hidden lg:table-cell text-gray-600 text-center">
+                        {item.date}
+                      </td>
+                      <td className="py-3 px-6 text-center">
+                        <div className="flex justify-center gap-3">
                           <FaEye
                             onClick={() => {
-                              const flatData = {
-                                ...item,
-                                ...(item.training_data || {}),
-                                ...(item.signatures || {}),
-                              };
-                              delete flatData.training_data;
-                              delete flatData.signatures;
-                              setFormData(flatData);
-
-                              setMode("view");
+                              /* View logic */ setMode("view");
                               setOpenModal(true);
                             }}
-                            className="inline text-blue-500 cursor-pointer text-lg"
-                          />{" "}
-                          {/* Edit */}
+                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                          />
                           <FaPen
                             onClick={() => {
-                              const flatData = {
-                                ...item,
-                                ...(item.training_data || {}),
-                                ...(item.signatures || {}),
-                              };
-                              delete flatData.training_data;
-                              delete flatData.signatures;
-                              setFormData(flatData);
-                              setEditId(item.id);
-                              setMode("edit");
+                              /* Edit logic */ setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="inline text-green-500 cursor-pointer text-lg"
+                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
                           />
-                          {/* Delete */}
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="inline text-red-500 cursor-pointer text-xl"
+                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
                           />
                         </div>
                       </td>
@@ -600,44 +590,60 @@ const StaffTrainingChecklist = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-center md:justify-between items-center mt-4 text-sm flex-wrap gap-6">
-            <span>
-              Showing {requestData.length === 0 ? "0" : startIndex + 1} to{" "}
-              {Math.min(endIndex, requestData.length)} of {requestData.length}{" "}
+          <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <span className="text-sm lg:text-base 3xl:text-xl text-gray-600">
+              Showing{" "}
+              <span className="text-gray-900 font-semibold">
+                {requestData.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
+              to{" "}
+              <span className="text-gray-900 font-semibold">
+                {Math.min(endIndex, requestData.length)}
+              </span>{" "}
+              of{" "}
+              <span className="text-gray-900 font-semibold">
+                {requestData.length}
+              </span>{" "}
               entries
             </span>
 
-            <div className="flex flex-row space-x-1">
+            <div className="flex gap-2">
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="First page"
               >
                 First
               </button>
 
               <button
-                disabled={currentPage == 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Previous page"
               >
                 <GrPrevious />
               </button>
 
-              <div className="p-3 px-4 shadow rounded-full">{currentPage}</div>
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
+                {currentPage}
+              </div>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-3 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Next page"
               >
                 <GrNext />
               </button>
 
               <button
-                disabled={currentPage == totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="p-2 bg-gray-200 rounded-full disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="Last page"
               >
                 Last
               </button>
@@ -646,199 +652,212 @@ const StaffTrainingChecklist = () => {
         </div>
       )}
 
+      {/* Modal Section */}
       {openModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-white rounded-xl shadow-xl w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-6"
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
             style={{ scrollbarWidth: "none" }}
           >
-            {/* Close */}
-            <div className="flex justify-end mb-4">
-              <RxCross2
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
+              <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+                {mode === "view"
+                  ? "Checklist Details"
+                  : mode === "edit"
+                    ? "Edit Training Checklist"
+                    : "New Staff Training Checklist"}
+              </h2>
+              <button
                 onClick={() => setOpenModal(false)}
-                className="text-[oklch(0.577_0.245_27.325)] text-lg cursor-pointer"
-              />
+                className="text-gray-400 hover:text-red-600 transition-colors"
+              >
+                <RxCross2 className="text-2xl" />
+              </button>
             </div>
 
-            <div className="border p-4 rounded-xl border-gray-400 shadow">
-              <div className="flex justify-center">
-                <div
-                  className="max-h-[75vh] max-w-[1200px] overflow-y-auto pr-2 text-[16px]"
-                  style={{ scrollbarWidth: "none" }}
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
-                    <div className="flex flex-row gap-4">
-                      <label className={labelStyle}>Staff Full Name</label>
-                      <div className={inputStyle}>
-                        <SearchDropdown
-                          name="employee_name"
-                          value={formData.employee_name}
-                          options={["Employee 1", "Employee 2"]}
-                          formData={formData}
-                          setFormData={setFormData}
-                          disabled={mode === "view"}
-                          className={inputStyle}
+            <div className="border p-6 rounded-xl border-gray-400/20 shadow-sm bg-white">
+              <div
+                className="max-h-[75vh] overflow-y-auto pr-2 text-sm lg:text-base 3xl:text-xl"
+                style={{ scrollbarWidth: "none" }}
+              >
+                {/* Form Top Section */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700  block">
+                      Staff Full Name <span className="text-red-500">*</span>
+                    </label>
+                    <SearchDropdown
+                      name="employee_name"
+                      value={formData.employee_name}
+                      options={["Employee 1", "Employee 2"]}
+                      formData={formData}
+                      setFormData={setFormData}
+                      disabled={mode === "view"}
+                      inputStyle={inputStyle}
+                      labelStyle={labelStyle}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className={labelStyle}>Staff ID</label>
+                    <input
+                      name="enrollment_id"
+                      value={formData.enrollment_id}
+                      onChange={handleChange}
+                      className={inputStyle}
+                      disabled={mode === "view"}
+                      placeholder="Enrollment ID"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className={labelStyle}>Trainer Name</label>
+                    <input
+                      name="trainer_name"
+                      value={formData.trainer_name}
+                      onChange={handleChange}
+                      className={inputStyle}
+                      disabled={mode === "view"}
+                      placeholder="Enter trainer name"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2 relative">
+                    <label className={labelStyle}>Training Date</label>
+                    <input
+                      name="date"
+                      value={formData.date || ""}
+                      onClick={() =>
+                        mode !== "view" && setShowDateSpinner(true)
+                      }
+                      readOnly
+                      disabled={mode === "view"}
+                      placeholder="dd/mm/yyyy"
+                      className={inputStyle}
+                    />
+                    {showDateSpinner && (
+                      <div className="absolute z-10 top-16 shadow-2xl">
+                        <SpinnerDatePicker
+                          value={formData.date}
+                          onChange={(date) =>
+                            setFormData((p) => ({ ...p, date }))
+                          }
+                          onClose={() => setShowDateSpinner(false)}
                         />
                       </div>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className={labelStyle}>
+                      Staff(Trainee) Position Title
+                    </label>
+                    <input
+                      name="positionTitle"
+                      value={formData.positionTitle}
+                      onChange={handleChange}
+                      className={inputStyle}
+                      disabled={mode === "view"}
+                      placeholder="Position"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700  block">
+                      Location Name
+                    </label>
+                    <SearchDropdown
+                      name="location"
+                      value={formData.location}
+                      options={["Location 1", "Location 2"]}
+                      formData={formData}
+                      setFormData={setFormData}
+                      disabled={mode === "view"}
+                      inputStyle={inputStyle}
+                      labelStyle={labelStyle}
+                    />
+                  </div>
+                </div>
+
+                {/* Instruction Notes */}
+                <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100 mb-8">
+                  <h4 className="font-bold text-blue-900 mb-3 underline">
+                    Assessment Criteria Notes:
+                  </h4>
+                  <div className="grid md:grid-cols-2 gap-8 text-sm lg:text-base 3xl:text-lg text-blue-800">
+                    <div>
+                      <p className="mb-2">
+                        <b>Training Status:</b> Acknowledgment that staff has
+                        been briefed on mentioned items.
+                      </p>
+                      <ul className="pl-4 italic">
+                        <li>• Completed (√)</li>
+                        <li>• Incompleted (x)</li>
+                      </ul>
                     </div>
-
-                    <div className="flex flex-row gap-4">
-                      <label className={labelStyle}>Staff ID</label>
-
-                      <input
-                        name="enrollment_id"
-                        value={formData.enrollment_id}
-                        onChange={handleChange}
-                        className={inputStyle}
-                        disabled={mode === "view"}
-                      />
+                    <div>
+                      <p className="mb-2">
+                        <b>Assessment Level:</b> Skill rating given by trainer
+                        (Excellent, Very Good, Good, Fair, Poor).
+                      </p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
-                    <div className="flex flex-row gap-4">
-                      <label className={labelStyle}>Trainer Name</label>
+                </div>
 
-                      <input
-                        name="trainer_name"
-                        value={formData.trainer_name}
-                        onChange={handleChange}
-                        className={inputStyle}
-                        disabled={mode === "view"}
-                      />
-                    </div>
-
-                    <div className="flex flex-row gap-4 ">
-                      <label className={labelStyle}>Date</label>
-                      <input
-                        name="date"
-                        value={formData.date || ""}
-                        onChange={handleChange}
-                        onClick={() => setShowDateSpinner(true)}
-                        disabled={mode === "view"}
-                        placeholder="dd/mm/yyyy"
-                        className={inputStyle}
-                      />
-
-                      {showDateSpinner && (
-                        <div className="absolute mt-10 ml-8 sm:ml-14 md:ml-16 lg:ml-20  ">
-                          <SpinnerDatePicker
-                            value={formData.date}
-                            onChange={(date) =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                date: date,
-                              }))
-                            }
-                            onClose={() => setShowDateSpinner(false)}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
-                    <div className="flex flex-row gap-4">
-                      <label className={labelStyle}>
-                        Staff(Trainee) Position Title
-                      </label>
-
-                      <input
-                        name="positionTitle"
-                        value={formData.positionTitle}
-                        onChange={handleChange}
-                        className={inputStyle}
-                        disabled={mode === "view"}
-                      />
-                    </div>
-                    <div className="flex flex-row gap-4">
-                      <label className={labelStyle}>Location Name</label>
-                      <div className={inputStyle}>
-                        <SearchDropdown
-                          name="location"
-                          value={formData.location}
-                          options={["location 1", "location 2"]}
-                          formData={formData}
-                          setFormData={setFormData}
-                          disabled={mode === "view"}
-                          className={inputStyle}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <h1 className="text-lg font-medium underline mt-4">Note:</h1>*{" "}
-                  <b>Training Status:</b> For the confirmation and
-                  acknowledgment purpose that staff has been well briefed with
-                  the mentioned items <br /> * <b>Assessment Level: </b>Is the
-                  rating given by trainer/facilitator to the trainee for their
-                  skills in mentioned areas;
-                  <p className="ml-3">Assessment Levels are:</p>
-                  <ol className="ml-8">
-                    <li>• Excellent</li>
-                    <li>• Very Good</li>
-                    <li>• Good</li>
-                    <li>• Fair</li>
-                    <li>• Poor</li>
-                  </ol>
-                  <h1 className="text-lg font-medium underline mt-4">
-                    Training Status:
-                  </h1>
-                  <ol className="ml-8">
-                    <li>• Completed (√)</li>
-                    <li>• Incompleted (x)</li>
-                  </ol>
-                  {Object.entries(data).map(([key, value], index) => (
-                    <table
-                      key={key}
-                      className="w-full border border-gray-400 mt-6"
-                    >
+                {/* Checklist Tables */}
+                {Object.entries(data).map(([key, value], index) => (
+                  <div
+                    key={key}
+                    className="mb-10 rounded-2xl border border-gray-200 shadow-sm"
+                  >
+                    <table className="w-full border-collapse">
                       <thead>
-                        <tr className="bg-gray-200">
-                          <th className="border border-gray-400 p-2 w-1/12 text-center">
-                            {index + 1}
+                        <tr className="bg-slate-100 text-gray-700">
+                          <th className="p-4 border-b border-gray-200 w-16 text-center font-bold">
+                            #{index + 1}
                           </th>
-
-                          <th className="border border-gray-400 p-2 w-7/12">
+                          <th className="p-4 border-b border-gray-200 text-center font-bold uppercase tracking-wider">
                             {key}
                           </th>
-
-                          <th className="border border-gray-400 p-2 w-1/6">
+                          <th className="p-4 border-b border-gray-200 w-1/4 text-center font-bold">
                             Training Status
                           </th>
-
-                          <th className="border border-gray-400 p-2 w-1/6">
+                          <th className="p-4 border-b border-gray-200 w-1/4 text-center font-bold">
                             Assessment Level
                           </th>
                         </tr>
                       </thead>
-
                       <tbody>
                         {value.map((item, i) => (
-                          <tr key={item.name}>
-                            <td className="border border-gray-400 p-2 text-center">
+                          <tr
+                            key={item.name}
+                            className="hover:bg-slate-50 transition-colors"
+                          >
+                            <td className="p-4 border-b border-gray-100 text-center text-gray-400 font-mono">
                               {index + 1}.{i + 1}
                             </td>
-
-                            <td className="border border-gray-400 p-2">
+                            <td className="p-4 border-b border-gray-100 font-medium text-gray-700">
                               {item.label}
                             </td>
-
-                            <td className="border border-gray-400 p-2">
+                            <td className="p-2 border-b border-gray-100">
                               <SearchDropdown
                                 name={`${item.name}_status`}
                                 value={formData[`${item.name}_status`]}
+                                displayValue={
+                                  formData[`${item.name}_status`] || "Select"
+                                }
                                 options={["Completed (√)", "Incompleted (x)"]}
                                 formData={formData}
+                                inputStyle={inputStyle}
                                 setFormData={setFormData}
                                 disabled={mode === "view"}
                               />
                             </td>
-
-                            <td className="border border-gray-400 p-2">
+                            <td className="p-2 border-b border-gray-100">
                               <SearchDropdown
                                 name={`${item.name}_level`}
                                 value={formData[`${item.name}_level`]}
+                                displayValue={
+                                  formData[`${item.name}_level`] || "Select"
+                                }
                                 options={[
                                   "Excellent",
                                   "Very Good",
@@ -847,6 +866,7 @@ const StaffTrainingChecklist = () => {
                                   "Poor",
                                 ]}
                                 formData={formData}
+                                inputStyle={inputStyle}
                                 setFormData={setFormData}
                                 disabled={mode === "view"}
                               />
@@ -855,10 +875,13 @@ const StaffTrainingChecklist = () => {
                         ))}
                       </tbody>
                     </table>
-                  ))}
-                  <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
+                  </div>
+                ))}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
+                  <div className="flex justify-center">
                     <div>
-                      <label className={`${labelStyle} bg-gray-100 p-2 w-fit`}>
+                      <label className="block text-sm lg:text-base font-bold text-gray-500 uppercase tracking-widest mb-4 text-center">
                         Signature by Trainee
                       </label>
                       <div className="flex flex-col">
@@ -1004,9 +1027,11 @@ const StaffTrainingChecklist = () => {
                         )}
                       </div>
                     </div>
+                  </div>
 
+                  <div className="flex justify-center">
                     <div>
-                      <label className={`${labelStyle} bg-gray-100 p-2 w-fit`}>
+                      <label className="block text-sm lg:text-base font-bold text-gray-500 uppercase tracking-widest mb-4 text-center">
                         Signature by Trainee
                       </label>
                       <div className="flex flex-col">
@@ -1153,18 +1178,19 @@ const StaffTrainingChecklist = () => {
                       </div>
                     </div>
                   </div>
-                  {/* Save */}
-                  {mode !== "view" && (
-                    <div className="flex justify-end mt-10">
-                      <button
-                        onClick={handleSubmit}
-                        className="bg-[oklch(0.645_0.246_16.439)] text-white px-8 py-2 rounded-md mb-6"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  )}
                 </div>
+
+                {/* Save Button */}
+                {mode !== "view" && (
+                  <div className="flex justify-end mt-12 pb-6 border-t pt-8">
+                    <button
+                      onClick={handleSubmit}
+                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-3 rounded-xl font-bold lg:text-xl shadow-xl hover:shadow-blue-200 hover:-translate-y-1 transition-all"
+                    >
+                      Save Training Record
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

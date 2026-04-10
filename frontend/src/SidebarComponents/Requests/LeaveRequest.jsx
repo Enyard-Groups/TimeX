@@ -430,7 +430,10 @@ const LeaveRequest = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto min-h-[350px]">
+          <div
+            className="overflow-x-auto min-h-[350px]"
+            style={{ scrollbarWidth: "none" }}
+          >
             <table className="w-full text-[16px] xl:text-[20px] text-gray-700">
               <thead>
                 <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
@@ -473,15 +476,15 @@ const LeaveRequest = () => {
                   </tr>
                 ) : currentLeave.length === 0 ? (
                   <tr>
-                  <td colSpan="7" className="px-4 py-12 text-center">
-                    <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="text-4xl opacity-40">🍃</div>
-                      <p className="text-gray-500 text-base font-medium">
-                        No Leave Requests
-                      </p>
-                    </div>
-                  </td>
-                </tr>
+                    <td colSpan="7" className="px-4 py-12 text-center">
+                      <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="text-4xl opacity-40">🍃</div>
+                        <p className="text-gray-500 text-base font-medium">
+                          No Leave Requests
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
                 ) : (
                   currentLeave.map((item) => (
                     <tr
