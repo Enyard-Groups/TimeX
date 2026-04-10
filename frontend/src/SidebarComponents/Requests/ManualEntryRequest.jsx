@@ -344,16 +344,16 @@ const ManualEntryRequest = () => {
                 <th className="px-6 py-3 text-center font-semibold text-gray-700">
                   Employee
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden lg:table-cell">
                   Location
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden md:table-cell">
                   In Time
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden md:table-cell">
                   Out Time
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden sm:table-cell">
                   Status
                 </th>
                 <th className="px-6 py-3 text-center font-semibold text-gray-700">
@@ -392,18 +392,18 @@ const ManualEntryRequest = () => {
                     className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                   >
                     <td className="px-6 py-2.5 text-center font-medium text-gray-800">
-                      {item.employee_name}
+                      {item.employee_name || item.employee_id}
                     </td>
-                    <td className="px-6 py-2.5 text-center text-gray-600">
+                    <td className="px-6 py-2.5 text-center text-gray-600 hidden lg:table-cell">
                       {item.location}
                     </td>
-                    <td className="px-6 py-2.5 text-center text-gray-600 font-mono text-sm">
+                    <td className="px-6 py-2.5 text-center text-gray-600 font-mono text-sm hidden md:table-cell">
                       {item.in_time || "-"}
                     </td>
-                    <td className="px-6 py-2.5 text-center text-gray-600 font-mono text-sm">
+                    <td className="px-6 py-2.5 text-center text-gray-600 font-mono text-sm hidden md:table-cell">
                       {item.out_time || "-"}
                     </td>
-                    <td className="px-6 py-2.5 text-center">
+                    <td className="px-6 py-2.5 text-center hidden sm:table-cell">
                       <span
                         className={`px-3 py-1 rounded-full text-xs xl:text-sm font-bold ${
                           item.status === "Approved"

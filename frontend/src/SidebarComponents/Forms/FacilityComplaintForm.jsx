@@ -23,15 +23,19 @@ const FacilityComplaintForm = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [loading,setLoading] = useState(false)
 
   const fetchData = async () => {
     try {
+      setLoading(true)
       const response = await axios.get(API_URL);
       setRequestData(response.data);
       // console.log(response.data)
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to fetch data");
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -319,6 +323,15 @@ const FacilityComplaintForm = () => {
                   <th className="px-6 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
                     Location
                   </th>
+                  <th className="px-6 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
+                    Description
+                  </th>
+                  <th className="px-6 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
+                    Safety Concern
+                  </th>
+                  <th className="px-6 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
+                    Requested Action
+                  </th>
                   <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
                     Status
                   </th>
@@ -329,11 +342,22 @@ const FacilityComplaintForm = () => {
               </thead>
 
               <tbody>
-                {currentrequestData.length === 0 ? (
+                {loading ? (
                   <tr>
-                    <td colSpan="6" className="px-4 py-12 text-center">
+                    <td
+                      colSpan="6"
+                      className="px-4 py-12 text-center text-gray-500"
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        <span>Loading...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : currentrequestData.length === 0 ? (
+                  <tr>
+                    <td colSpan="9" className="px-4 py-12 text-center">
                       <div className="flex flex-col items-center justify-center gap-3">
-                        <div className="text-4xl opacity-40">📭</div>
                         <p className="text-gray-500 text-base">
                           No complaints recorded
                         </p>
@@ -361,7 +385,15 @@ const FacilityComplaintForm = () => {
                       <td className="px-6 py-2 text-center hidden xl:table-cell">
                         {item.location || "-"}
                       </td>
-
+                      <td className="px-6 py-2 text-center hidden xl:table-cell">
+                        {item.description || "-"}
+                      </td>
+                      <td className="px-6 py-2 text-center hidden xl:table-cell">
+                        {item.safety_concerns || "-"}
+                      </td>
+                      <td className="px-6 py-2 text-center hidden xl:table-cell">
+                        {item.requested_action || "-"}
+                      </td>
                       <td className="px-4 py-3 hidden lg:table-cell text-center">
                         <div className="flex justify-center">
                           <span

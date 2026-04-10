@@ -806,75 +806,81 @@ const StaffTrainingChecklist = () => {
                 {Object.entries(data).map(([key, value], index) => (
                   <div
                     key={key}
-                    className="mb-10 rounded-2xl border border-gray-200 shadow-sm"
+                    className="mb-10 rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
                   >
-                    <table className="w-full border-collapse">
-                      <thead>
-                        <tr className="bg-slate-100 text-gray-700">
-                          <th className="p-4 border-b border-gray-200 w-16 text-center font-bold">
-                            #{index + 1}
-                          </th>
-                          <th className="p-4 border-b border-gray-200 text-center font-bold uppercase tracking-wider">
-                            {key}
-                          </th>
-                          <th className="p-4 border-b border-gray-200 w-1/4 text-center font-bold">
-                            Training Status
-                          </th>
-                          <th className="p-4 border-b border-gray-200 w-1/4 text-center font-bold">
-                            Assessment Level
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {value.map((item, i) => (
-                          <tr
-                            key={item.name}
-                            className="hover:bg-slate-50 transition-colors"
-                          >
-                            <td className="p-4 border-b border-gray-100 text-center text-gray-400 font-mono">
-                              {index + 1}.{i + 1}
-                            </td>
-                            <td className="p-4 border-b border-gray-100 font-medium text-gray-700">
-                              {item.label}
-                            </td>
-                            <td className="p-2 border-b border-gray-100">
-                              <SearchDropdown
-                                name={`${item.name}_status`}
-                                value={formData[`${item.name}_status`]}
-                                displayValue={
-                                  formData[`${item.name}_status`] || "Select"
-                                }
-                                options={["Completed (√)", "Incompleted (x)"]}
-                                formData={formData}
-                                inputStyle={inputStyle}
-                                setFormData={setFormData}
-                                disabled={mode === "view"}
-                              />
-                            </td>
-                            <td className="p-2 border-b border-gray-100">
-                              <SearchDropdown
-                                name={`${item.name}_level`}
-                                value={formData[`${item.name}_level`]}
-                                displayValue={
-                                  formData[`${item.name}_level`] || "Select"
-                                }
-                                options={[
-                                  "Excellent",
-                                  "Very Good",
-                                  "Good",
-                                  "Fair",
-                                  "Poor",
-                                ]}
-                                formData={formData}
-                                inputStyle={inputStyle}
-                                setFormData={setFormData}
-                                disabled={mode === "view"}
-                              />
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                    <div className="hidden md:grid grid-cols-[64px_1fr_25%_25%] bg-slate-100 text-gray-700 font-bold border-b border-gray-200">
+                      <div className="p-4 text-center">#{index + 1}</div>
+                      <div className="p-4 uppercase tracking-wider">{key}</div>
+                      <div className="p-4 text-center">Training Status</div>
+                      <div className="p-4 text-center">Assessment Level</div>
+                    </div>
+
+                    {/* Table Body / Mobile Cards */}
+                    <div className="flex flex-col">
+                      {value.map((item, i) => (
+                        <div
+                          key={item.name}
+                          className="flex flex-col md:grid md:grid-cols-[64px_1fr_25%_25%] border-b border-gray-100 last:border-0 hover:bg-slate-50 transition-colors"
+                        >
+                          {/* Index Row: On mobile, acts as a sub-header */}
+                          <div className="p-2 md:p-4 bg-slate-50 md:bg-transparent text-center text-gray-400 font-mono text-xs md:text-base border-b md:border-b-0">
+                            {index + 1}.{i + 1}
+                          </div>
+
+                          {/* Label Row */}
+                          <div className="p-3 md:p-4 font-medium text-gray-700 text-sm md:text-base border-b md:border-b-0">
+                            <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1">
+                              Task
+                            </span>
+                            {item.label}
+                          </div>
+
+                          {/* Training Status Dropdown */}
+                          <div className="p-3 md:p-2 border-b md:border-b-0">
+                            <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1 px-1">
+                              Training Status
+                            </span>
+                            <SearchDropdown
+                              name={`${item.name}_status`}
+                              value={formData[`${item.name}_status`]}
+                              displayValue={
+                                formData[`${item.name}_status`] || "Select"
+                              }
+                              options={["Completed (√)", "Incompleted (x)"]}
+                              formData={formData}
+                              inputStyle={inputStyle}
+                              setFormData={setFormData}
+                              disabled={mode === "view"}
+                            />
+                          </div>
+
+                          {/* Assessment Level Dropdown */}
+                          <div className="p-3 md:p-2">
+                            <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1 px-1">
+                              Assessment Level
+                            </span>
+                            <SearchDropdown
+                              name={`${item.name}_level`}
+                              value={formData[`${item.name}_level`]}
+                              displayValue={
+                                formData[`${item.name}_level`] || "Select"
+                              }
+                              options={[
+                                "Excellent",
+                                "Very Good",
+                                "Good",
+                                "Fair",
+                                "Poor",
+                              ]}
+                              formData={formData}
+                              inputStyle={inputStyle}
+                              setFormData={setFormData}
+                              disabled={mode === "view"}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
 

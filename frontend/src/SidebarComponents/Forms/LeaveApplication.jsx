@@ -27,6 +27,7 @@ const LeaveApplication = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(false);
   const [showDateSpinner, setShowDateSpinner] = useState(false);
   const [showLeaveFromDateSpinner, setShowLeaveFromDateSpinner] =
     useState(false);
@@ -203,6 +204,7 @@ const LeaveApplication = () => {
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(
         "http://localhost:3000/api/form/leaveApplication",
       );
@@ -210,6 +212,8 @@ const LeaveApplication = () => {
     } catch (error) {
       console.error(error);
       toast.error("Failed to fetch data");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -459,7 +463,19 @@ const LeaveApplication = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentleaveData.length === 0 ? (
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      className="px-4 py-12 text-center text-gray-500"
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        <span>Loading...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : currentleaveData.length === 0 ? (
                   <tr>
                     <td
                       colSpan="6"
@@ -1773,7 +1789,7 @@ const LeaveApplication = () => {
                       <input
                         name="applicantName"
                         value={formData.passportCollection.applicantName}
-                        onChange={handleChange}
+                        onChange={(e) => handleChange(e, "passportCollection")}
                         disabled={mode === "view"}
                         className={inputStyle}
                       />
@@ -1785,9 +1801,9 @@ const LeaveApplication = () => {
                         onClick={() =>
                           mode !== "view" && setShowPassDateSpinner(true)
                         }
-                        readOnly
                         disabled={mode === "view"}
                         className={inputStyle}
+                        placeholder="dd/mm/yyyy"
                       />
                       {showPassDateSpinner && (
                         <SpinnerDatePicker
@@ -2396,18 +2412,18 @@ const LeaveApplication = () => {
               </div>
               {/* Footer Actions */}
               {mode !== "view" && (
-                <div className="flex justify-end gap-3 mt-12 pt-6 border-t">
-                  <button
-                    onClick={() => setOpenModal(false)}
-                    className="px-8 py-2 border-2 border-gray-300 rounded-lg font-bold text-gray-600 hover:bg-gray-50"
-                  >
-                    Cancel
-                  </button>
+                <div className="flex flex-wrap justify-end gap-3 mt-12 pt-6 border-t">
                   <button
                     onClick={handleSubmit}
                     className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-10 py-2 rounded-lg font-bold shadow-lg hover:-translate-y-0.5 transition-all"
                   >
                     Submit Application
+                  </button>
+                  <button
+                    onClick={() => setOpenModal(false)}
+                    className="px-8 py-2 border-2 border-gray-300 rounded-lg font-bold text-gray-600 hover:bg-gray-50"
+                  >
+                    Cancel
                   </button>
                 </div>
               )}

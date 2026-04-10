@@ -462,7 +462,7 @@ const PassportRequest = () => {
               </button>
             </div>
 
-            <div className="border p-8 rounded-2xl border-gray-400/30 shadow-inner bg-white">
+            <div className="border p-4 sm:p-8 rounded-2xl border-gray-400/30 shadow-inner bg-white ">
               <div className="flex justify-center">
                 <div
                   className="max-h-[75vh] max-w-5xl overflow-y-auto pr-2 text-[16px] lg:text-[18px] 3xl:text-[22px]"
@@ -477,7 +477,7 @@ const PassportRequest = () => {
                       <br />
                       Safecor Security <br /> Dubai, UAE.
                     </div>
-                    <div className="flex flex-row items-center gap-3 relative min-w-[280px]">
+                    <div className="flex flex-wrap items-center gap-3 relative min-w-[200px]">
                       <label
                         className={`font-bold text-gray-700 whitespace-nowrap`}
                       >
@@ -523,7 +523,7 @@ const PassportRequest = () => {
                         onChange={handleChange}
                         disabled={mode === "view"}
                         placeholder="Enter purpose here"
-                        className="border-b-2 border-gray-300 px-3 min-w-[300px] mx-2 focus:border-blue-500 outline-none bg-transparent transition-all"
+                        className="border-b-2 border-gray-300 px-3 min-w-[180px] mx-2 focus:border-blue-500 outline-none bg-transparent transition-all"
                       />
                     </p>
                     <p>
@@ -534,7 +534,7 @@ const PassportRequest = () => {
                         onChange={handleChange}
                         disabled={mode === "view"}
                         placeholder="dd/mm/yyyy"
-                        className="border-b-2 border-gray-300 px-3 w-48 mx-2 focus:border-blue-500 outline-none bg-transparent transition-all font-bold text-blue-700"
+                        className="border-b-2 border-gray-300 px-3 w-42 mx-2 focus:border-blue-500 outline-none bg-transparent transition-all font-bold text-blue-700"
                       />
                     </p>
                   </div>

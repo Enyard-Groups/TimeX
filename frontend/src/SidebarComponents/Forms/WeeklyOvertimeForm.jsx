@@ -652,42 +652,39 @@ const WeeklyOvertimeForm = () => {
                     </label>
                   </div>
 
-                  <div className=" rounded-xl border border-gray-200 shadow-sm">
-                    <table className="w-full border-collapse">
-                      <thead>
-                        <tr className="bg-slate-100 text-gray-700">
-                          <th className="p-3 border-b border-gray-200 w-12">
-                            #
-                          </th>
-                          <th className="p-3 border-b border-gray-200">Day</th>
-                          <th className="p-3 border-b border-gray-200">Date</th>
-                          <th className="p-3 border-b border-gray-200">
-                            Start
-                          </th>
-                          <th className="p-3 border-b border-gray-200">End</th>
-                          <th className="p-3 border-b border-gray-200">
-                            Total
-                          </th>
-                          <th className="p-3 border-b border-gray-200 w-1/4">
-                            Reason
-                          </th>
-                          <th className="p-3 border-b border-gray-200">
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {formData.overtime_details.map((row, index) => (
-                          <tr
-                            key={index}
-                            className="hover:bg-slate-50 transition-colors"
-                          >
-                            <td className="p-2 border-b text-center font-mono text-gray-400">
-                              {index + 1}
-                            </td>
-                            <td className="p-2 border-b">
+                  <div className="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div className="hidden md:grid grid-cols-[48px_1fr_1fr_1fr_1fr_80px_1fr_60px] bg-slate-100 text-gray-700 font-bold border-b border-gray-200 text-sm">
+                      <div className="p-3 text-center">#</div>
+                      <div className="p-3 text-center">Day</div>
+                      <div className="p-3 text-center">Date</div>
+                      <div className="p-3 text-center">Start</div>
+                      <div className="p-3 text-center">End</div>
+                      <div className="p-3 text-center">Total</div>
+                      <div className="p-3 text-center">Reason</div>
+                      <div className="p-3 text-center">Action</div>
+                    </div>
+
+                    <div className="flex flex-col">
+                      {formData.overtime_details.map((row, index) => (
+                        <div
+                          key={index}
+                          className="flex flex-col md:grid md:grid-cols-[48px_1fr_1fr_1fr_1fr_80px_1fr_60px] border-b border-gray-100 last:border-0 hover:bg-slate-50 transition-colors"
+                        >
+                          <div className="p-2 md:p-3 bg-slate-50 md:bg-transparent text-center text-gray-400 font-mono text-xs border-b md:border-b-0 flex justify-between md:block">
+                            <span className="md:hidden font-bold text-gray-600 uppercase text-center">
+                              Entry #{index + 1}
+                            </span>
+                            <span className="md:block">{index + 1}</span>
+                          </div>
+
+                          {/* Day & Date - Grouped for mobile space */}
+                          <div className="grid grid-cols-2 md:contents">
+                            <div className="p-2 md:p-3 border-r md:border-r-0 border-b md:border-b-0">
+                              <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1 text-center">
+                                Day
+                              </span>
                               <select
-                                className="w-full bg-transparent outline-none text-center"
+                                className="w-full bg-transparent outline-none text-sm"
                                 value={row.day}
                                 onChange={(e) =>
                                   handleRowChange(index, "day", e.target.value)
@@ -707,19 +704,22 @@ const WeeklyOvertimeForm = () => {
                                   <option key={d}>{d}</option>
                                 ))}
                               </select>
-                            </td>
-                            <td className="p-2 border-b relative">
+                            </div>
+                            <div className="p-2 md:p-3 border-b md:border-b-0 relative">
+                              <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1 text-center">
+                                Date
+                              </span>
                               <input
                                 value={row.date || ""}
                                 onClick={() =>
                                   mode !== "view" && setActiveDateIndex(index)
                                 }
                                 readOnly
-                                className="w-full text-center bg-transparent focus:outline-none cursor-pointer"
+                                className="w-full bg-transparent focus:outline-none cursor-pointer  text-center text-sm"
                                 placeholder="dd/mm/yyyy"
                               />
                               {activeDateIndex === index && (
-                                <div className="absolute z-20">
+                                <div className="absolute z-20 left-0">
                                   <SpinnerDatePicker
                                     value={row.date}
                                     onChange={(date) =>
@@ -729,23 +729,28 @@ const WeeklyOvertimeForm = () => {
                                   />
                                 </div>
                               )}
-                            </td>
-                            <td className="p-2 border-b relative">
+                            </div>
+                          </div>
+
+                          {/* Start & End Times */}
+                          <div className="grid grid-cols-2 md:contents">
+                            <div className="p-2 md:p-3 border-r md:border-r-0 border-b md:border-b-0 relative text-center">
+                              <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1">
+                                Start
+                              </span>
                               <div
-                                className="text-center cursor-pointer text-blue-600 font-mono"
+                                className="cursor-pointer text-blue-600  text-center font-mono text-sm"
                                 onClick={() =>
                                   mode !== "view" && setActiveInTimeIndex(index)
                                 }
                               >
-                                {row.startTime
-                                  ? row.startTime instanceof Date
-                                    ? row.startTime.toLocaleTimeString([], {
-                                        hour12: false,
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                      })
-                                    : row.startTime
-                                  : "HH:MM:SS"}
+                                {row.startTime instanceof Date
+                                  ? row.startTime.toLocaleTimeString([], {
+                                      hour12: false,
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })
+                                  : row.startTime || "00:00"}
                               </div>
                               {activeInTimeIndex === index && (
                                 <SpinnerTimePicker
@@ -756,24 +761,25 @@ const WeeklyOvertimeForm = () => {
                                   onClose={() => setActiveInTimeIndex(null)}
                                 />
                               )}
-                            </td>
-                            <td className="p-2 border-b relative">
+                            </div>
+                            <div className="p-2 md:p-3 border-b md:border-b-0 relative text-center">
+                              <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1 text-center">
+                                End
+                              </span>
                               <div
-                                className="text-center cursor-pointer text-blue-600 font-mono"
+                                className="cursor-pointer text-blue-600  text-center font-mono text-sm"
                                 onClick={() =>
                                   mode !== "view" &&
                                   setActiveOutTimeIndex(index)
                                 }
                               >
-                                {row.endTime
-                                  ? row.endTime instanceof Date
-                                    ? row.endTime.toLocaleTimeString([], {
-                                        hour12: false,
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                      })
-                                    : row.endTime
-                                  : "HH:MM:SS"}
+                                {row.endTime instanceof Date
+                                  ? row.endTime.toLocaleTimeString([], {
+                                      hour12: false,
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })
+                                  : row.endTime || "00:00"}
                               </div>
                               {activeOutTimeIndex === index && (
                                 <SpinnerTimePicker
@@ -784,11 +790,23 @@ const WeeklyOvertimeForm = () => {
                                   onClose={() => setActiveOutTimeIndex(null)}
                                 />
                               )}
-                            </td>
-                            <td className="p-2 border-b text-center font-bold text-gray-900 bg-gray-50/50">
-                              {row.totalHours || "00:00"}
-                            </td>
-                            <td className="p-2 border-b">
+                            </div>
+                          </div>
+
+                          {/* Total & Action */}
+                          <div className="grid grid-cols-2 md:contents">
+                            <div className="p-2 md:p-3 bg-gray-50 md:bg-gray-50/50 border-r md:border-r-0 border-b md:border-b-0">
+                              <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1 text-center">
+                                Total
+                              </span>
+                              <span className="font-bold text-gray-900 text-sm">
+                                {row.totalHours || "00:00"}
+                              </span>
+                            </div>
+                            <div className="p-2 md:p-3">
+                              <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1 text-center">
+                                Reason
+                              </span>
                               <input
                                 name="reason"
                                 value={row.reason}
@@ -800,27 +818,31 @@ const WeeklyOvertimeForm = () => {
                                   )
                                 }
                                 disabled={mode === "view"}
-                                className={inputStyle}
-                                placeholder="..."
+                                className={`${inputStyle} text-sm`}
+                                placeholder="Type reason..."
                               />
-                            </td>
-                            <td className="p-2 border-b text-center">
+                            </div>
+                            <div className="p-2 md:p-3 border-b md:border-b-0 flex items-center justify-center">
                               <button
                                 onClick={() => deleteRow(index)}
                                 disabled={mode === "view"}
-                                className="text-red-500 hover:text-red-700 disabled:opacity-30"
+                                className="text-red-500 hover:text-red-700 disabled:opacity-30 flex items-center gap-2 md:block"
                               >
                                 <MdDeleteForever className="text-xl mx-auto" />
+                                <span className="md:hidden text-xs">
+                                  Delete Row
+                                </span>
                               </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
                     {mode !== "view" && (
                       <button
                         onClick={addRow}
-                        className="w-full py-2 bg-slate-50 text-blue-600 font-bold hover:bg-blue-50 transition-all border-t"
+                        className="w-full py-3 bg-slate-50 text-blue-600 font-bold hover:bg-blue-50 transition-all border-t text-sm"
                       >
                         + Add Another Row
                       </button>

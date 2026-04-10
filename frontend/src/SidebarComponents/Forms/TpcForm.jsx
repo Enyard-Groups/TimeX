@@ -722,18 +722,18 @@ const TpcForm = () => {
 
                 {/* Footer / Submit Action */}
                 {mode !== "view" && (
-                  <div className="flex justify-end mt-12 pb-6 border-t pt-8 gap-4">
+                  <div className="flex flex-wrap justify-end mt-12 pb-6 border-t pt-8 gap-4">
+                    <button
+                      onClick={handleSubmit}
+                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-3 rounded-xl font-bold lg:text-xl 3xl:text-2xl shadow-xl hover:shadow-blue-200 hover:-translate-y-1 transition-all"
+                    >
+                      Submit Form
+                    </button>
                     <button
                       onClick={() => setOpenModal(false)}
                       className="px-10 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-bold lg:text-lg 3xl:text-2xl hover:bg-gray-50 transition-all"
                     >
                       Cancel
-                    </button>
-                    <button
-                      onClick={handleSubmit}
-                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-3 rounded-xl font-bold lg:text-xl 3xl:text-2xl shadow-xl hover:shadow-blue-200 hover:-translate-y-1 transition-all"
-                    >
-                      Save & Submit TPC Form
                     </button>
                   </div>
                 )}

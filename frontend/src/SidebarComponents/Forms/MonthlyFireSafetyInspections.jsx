@@ -1318,18 +1318,18 @@ const MonthlyFireSafetyInspections = () => {
 
                 {/* Footer Actions */}
                 {mode !== "view" && (
-                  <div className="flex justify-end gap-3 mt-12 pt-6 border-t border-blue-100/30">
-                    <button
-                      onClick={() => setOpenModal(false)}
-                      className="px-10 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-bold lg:text-lg 3xl:text-2xl hover:bg-gray-100 transition-all"
-                    >
-                      Cancel
-                    </button>
+                  <div className="flex flex-wrap justify-end gap-3 mt-12 pt-6 border-t border-blue-100/30">
                     <button
                       onClick={handleSubmit}
                       className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-12 py-3 rounded-xl font-bold lg:text-lg 3xl:text-2xl shadow-lg hover:shadow-blue-200 hover:-translate-y-1 transition-all"
                     >
                       Submit Report
+                    </button>
+                    <button
+                      onClick={() => setOpenModal(false)}
+                      className="px-10 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-bold lg:text-lg 3xl:text-2xl hover:bg-gray-100 transition-all"
+                    >
+                      Cancel
                     </button>
                   </div>
                 )}

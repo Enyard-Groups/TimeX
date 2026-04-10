@@ -25,6 +25,7 @@ const IncidentAccident = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [loading , setLoading ] = useState(false)
   const [searchTerm, setSearchTerm] = useState("");
   const [showDateSpinner, setShowDateSpinner] = useState(false);
   const [showMsoDateSpinner, setShowMsoDateSpinner] = useState(false);
@@ -36,11 +37,14 @@ const IncidentAccident = () => {
 
   const fetchData = async () => {
     try {
+      setLoading(true)
       const response = await axios.get(API_URL);
       setIncidentData(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to fetch data");
+    } finally{
+      setLoading(false)
     }
   };
 
@@ -351,7 +355,19 @@ const IncidentAccident = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentincidentData.length === 0 ? (
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      className="px-4 py-12 text-center text-gray-500"
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        <span>Loading...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : currentincidentData.length === 0 ? (
                   <tr>
                     <td
                       colSpan="5"
@@ -1085,9 +1101,7 @@ const IncidentAccident = () => {
                           {/* Toggle Tabs */}
                           {mode !== "view" && (
                             <div className="flex flex-wrap gap-2 mb-4">
-                              <label className={labelStyle}>
-                                Signature :
-                              </label>
+                              <label className={labelStyle}>Signature :</label>
                               <div className="space-x-1 space-y-1">
                                 <button
                                   type="button"
@@ -1246,18 +1260,18 @@ const IncidentAccident = () => {
 
             {/* Footer Actions */}
             {mode !== "view" && (
-              <div className="flex justify-end gap-3 mt-12 pt-6 border-t border-blue-100/30">
-                <button
-                  onClick={() => setOpenModal(false)}
-                  className="px-10 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-bold lg:text-lg 3xl:text-2xl hover:bg-gray-100 transition-all"
-                >
-                  Cancel
-                </button>
+              <div className="flex flex-wrap justify-end gap-3 mt-12 pt-6 border-t border-blue-100/30">
                 <button
                   onClick={handleSubmit}
                   className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-12 py-3 rounded-xl font-bold lg:text-lg 3xl:text-2xl shadow-lg hover:shadow-blue-200 hover:-translate-y-1 transition-all"
                 >
                   Submit Report
+                </button>
+                <button
+                  onClick={() => setOpenModal(false)}
+                  className="px-10 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-bold lg:text-lg 3xl:text-2xl hover:bg-gray-100 transition-all"
+                >
+                  Cancel
                 </button>
               </div>
             )}

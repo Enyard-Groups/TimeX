@@ -617,131 +617,121 @@ const ShiftHandOver = () => {
                 </p>
 
                 {/* Shift Timings Table */}
-                <div className=" rounded-xl border border-gray-200 mb-8 shadow-sm">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="bg-slate-100 text-gray-700">
-                        <th className="p-3 border border-gray-200 text-center font-bold lg:text-lg 3xl:text-2xl">
-                          Shift Detail
-                        </th>
-                        <th className="p-3 border border-gray-200 text-center font-bold lg:text-lg 3xl:text-2xl">
-                          Outgoing Party
-                        </th>
-                        <th className="p-3 border border-gray-200 text-center font-bold lg:text-lg 3xl:text-2xl">
-                          Incoming Party
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td className="p-3 border border-gray-200 font-bold bg-slate-50/50 text-gray-600">
-                          Handover Timing
-                        </td>
-                        <td className="p-3 border border-gray-200 relative group">
-                          <div
-                            className="cursor-pointer  text-center font-mono lg:text-xl text-blue-600 hover:bg-blue-50 p-2 rounded transition-all"
-                            onClick={() =>
-                              mode !== "view" && setShowOutTimePicker(true)
-                            }
-                          >
-                            {formData.time_out
-                              ? formData.time_out.toLocaleTimeString([], {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  hour12: false,
-                                })
-                              : "HH:MM:SS"}
-                          </div>
-                          {showOutTimePicker && (
-                            <SpinnerTimePicker
-                              value={formData.time_out}
-                              onChange={(d) =>
-                                setFormData({ ...formData, time_out: d })
-                              }
-                              onClose={() => setShowOutTimePicker(false)}
-                            />
-                          )}
-                        </td>
-                        <td className="p-3 border border-gray-200 relative group">
-                          <div
-                            className="cursor-pointer text-center font-mono lg:text-xl text-blue-600 hover:bg-blue-50 p-2 rounded transition-all"
-                            onClick={() =>
-                              mode !== "view" && setShowInTimePicker(true)
-                            }
-                          >
-                            {formData.time_in
-                              ? formData.time_in.toLocaleTimeString([], {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  hour12: false,
-                                })
-                              : "HH:MM:SS"}
-                          </div>
-                          {showInTimePicker && (
-                            <SpinnerTimePicker
-                              value={formData.time_in}
-                              onChange={(d) =>
-                                setFormData({ ...formData, time_in: d })
-                              }
-                              onClose={() => setShowInTimePicker(false)}
-                            />
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="p-3 border border-gray-200 font-bold bg-slate-50/50 text-gray-600">
-                          Guard Name
-                        </td>
-                        <td className="p-3 border border-gray-200">
-                          <input
-                            type="text"
-                            name="guard_out"
-                            value={formData.guard_out}
-                            onChange={handleChange}
-                            disabled={mode === "view"}
-                            className="w-full text-center outline-none focus:bg-blue-50 py-1"
-                          />
-                        </td>
-                        <td className="p-3 border border-gray-200">
-                          <input
-                            type="text"
-                            name="guard_in"
-                            value={formData.guard_in}
-                            onChange={handleChange}
-                            disabled={mode === "view"}
-                            className="w-full text-center outline-none focus:bg-blue-50 py-1"
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="p-3 border border-gray-200 font-bold bg-slate-50/50 text-gray-600">
-                          ID Card Number
-                        </td>
-                        <td className="p-3 border border-gray-200">
-                          <input
-                            type="number"
-                            name="id_out"
-                            value={formData.id_out}
-                            onChange={handleChange}
-                            disabled={mode === "view"}
-                            className="w-full text-center outline-none focus:bg-blue-50 py-1"
-                            placeholder="Numbers only"
-                          />
-                        </td>
-                        <td className="p-3 border border-gray-200">
-                          <input
-                            type="number"
-                            name="id_in"
-                            value={formData.id_in}
-                            onChange={handleChange}
-                            disabled={mode === "view"}
-                            className="w-full text-center outline-none focus:bg-blue-50 py-1"
-                            placeholder="Numbers only"
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                <div className="rounded-xl border border-gray-200 mb-8 shadow-sm overflow-hidden">
+                  <div className="hidden md:grid grid-cols-3 bg-slate-100 text-gray-700 border-b border-gray-200">
+                    <div className="p-2 border-r border-gray-200 text-center font-bold lg:text-lg 3xl:text-2xl">
+                      Shift Detail
+                    </div>
+                    <div className="p-2 border-r border-gray-200 text-center font-bold lg:text-lg 3xl:text-2xl">
+                      Outgoing Party
+                    </div>
+                    <div className="p-2 text-center font-bold lg:text-lg 3xl:text-2xl">
+                      Incoming Party
+                    </div>
+                  </div>
+
+                  {/* Row 1: Handover Timing */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-200">
+                    <div className="p-2 bg-slate-50 md:bg-slate-50/50 font-bold text-gray-600 border-b md:border-b-0 md:border-r text-center border-gray-200 text-sm md:text-base">
+                      Handover Timing
+                    </div>
+                    <div className="p-3 md:p-2 border-b md:border-b-0 md:border-r border-gray-200 flex flex-col md:block">
+                      <span className="md:hidden text-[10px] uppercase text-center text-gray-400 font-bold mb-1">
+                        Outgoing
+                      </span>
+                      <div
+                        className="cursor-pointer text-center font-mono text-lg md:text-xl text-blue-600 hover:bg-blue-50 p-1 rounded"
+                        onClick={() =>
+                          mode !== "view" && setShowOutTimePicker(true)
+                        }
+                      >
+                        {formData.time_out
+                          ? formData.time_out.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            })
+                          : "HH:MM"}
+                      </div>
+                    </div>
+                    <div className="p-3 md:p-2 flex flex-col md:block">
+                      <span className="md:hidden text-[10px] uppercase text-center text-gray-400 font-bold mb-1">
+                        Incoming
+                      </span>
+                      <div
+                        className="cursor-pointer text-center font-mono text-lg md:text-xl text-blue-600 hover:bg-blue-50 p-1 rounded"
+                        onClick={() =>
+                          mode !== "view" && setShowInTimePicker(true)
+                        }
+                      >
+                        {formData.time_in
+                          ? formData.time_in.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            })
+                          : "HH:MM"}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Row 2: Guard Name */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-200">
+                    <div className="p-2 bg-slate-50 md:bg-slate-50/50 font-bold text-gray-600 border-b md:border-b-0 md:border-r text-center border-gray-200 text-sm md:text-base">
+                      Guard Name
+                    </div>
+                    <div className="p-2 border-b md:border-b-0 md:border-r border-gray-200">
+                      <input
+                        type="text"
+                        placeholder="Outgoing Name"
+                        name="guard_out"
+                        value={formData.guard_out}
+                        onChange={handleChange}
+                        disabled={mode === "view"}
+                        className="w-full text-center outline-none focus:bg-blue-50 py-1"
+                      />
+                    </div>
+                    <div className="p-2">
+                      <input
+                        type="text"
+                        placeholder="Incoming Name"
+                        name="guard_in"
+                        value={formData.guard_in}
+                        onChange={handleChange}
+                        disabled={mode === "view"}
+                        className="w-full text-center outline-none focus:bg-blue-50 py-1"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Row 3: ID Card Number */}
+                  <div className="grid grid-cols-1 md:grid-cols-3">
+                    <div className="p-2 bg-slate-50 md:bg-slate-50/50 font-bold text-gray-600 border-b md:border-b-0 md:border-r text-center border-gray-200 text-sm md:text-base">
+                      ID Card Number
+                    </div>
+                    <div className="p-2 border-b md:border-b-0 md:border-r border-gray-200">
+                      <input
+                        type="number"
+                        placeholder="ID Out"
+                        name="id_out"
+                        value={formData.id_out}
+                        onChange={handleChange}
+                        disabled={mode === "view"}
+                        className="w-full text-center outline-none focus:bg-blue-50 py-1"
+                      />
+                    </div>
+                    <div className="p-2">
+                      <input
+                        type="number"
+                        placeholder="ID In"
+                        name="id_in"
+                        value={formData.id_in}
+                        onChange={handleChange}
+                        disabled={mode === "view"}
+                        className="w-full text-center outline-none focus:bg-blue-50 py-1"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Description/Remarks Table */}
