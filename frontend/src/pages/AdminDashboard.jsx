@@ -10,64 +10,88 @@ import Timeline from "../components/Timeline";
 const AdminDashboard = ({ user }) => {
   const [attendanceData, setAttendanceData] = useState([]);
 
+  // useEffect(() => {
+  //   const fetchDashboardStats = async () => {
+  //     try {
+  //       const API_BASE = "http://localhost:3000/api";
+  //       const token = localStorage.getItem("token");
+  //       const headers = {
+  //         "Content-Type": "application/json",
+  //         ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  //       };
+
+  //       let res = await axios.get(`${API_BASE}/attendence/stats`, {
+  //         headers,
+  //       });
+
+  //       setAttendanceData(res.data);
+  //     } catch (error) {
+  //       console.error("Failed to load dashboard stats:", error);
+  //     }
+  //   };
+
+  //   fetchDashboardStats();
+  // }, []);
+
   useEffect(() => {
     const fetchDashboardStats = async () => {
       try {
-        // const API_BASE = "http://localhost:3000/api";
-        // const token = localStorage.getItem("token");
-        // const headers = {
-        //   "Content-Type": "application/json",
-        //   ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        // };
-
-        // let res = await axios.get(`${API_BASE}/attendence/stats`, {
-        //   headers,
-        // });
-
-        function getWeekDates(offset = 0) {
+        // 1. Generate dates for the last 10 years (3650 days)
+        function getDecadeDates() {
+          const dates = [];
           const today = new Date();
+          const totalDays = 365 * 10; // Approx 3650 days
 
-          const day = today.getDay();
-          const diff = today.getDate() - day + (day === 0 ? -6 : 1);
-
-          const monday = new Date(today.setDate(diff + offset * 7));
-
-          const week = [];
-          for (let i = 0; i < 7; i++) {
-            const d = new Date(monday);
-            d.setDate(monday.getDate() + i);
-            week.push(d.toISOString().split("T")[0]);
+          for (let i = totalDays - 1; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(today.getDate() - i);
+            dates.push(d.toISOString().split("T")[0]);
           }
-
-          return week;
+          return dates;
         }
 
-        function generateData(dates) {
-          return dates.map((date) => ({
-            date,
-            totalEmployees: 120,
-            presentToday: Math.floor(Math.random() * 40) + 70,
-            leave: Math.floor(Math.random() * 10),
-            earlyin: Math.floor(Math.random() * 20),
-            latein: Math.floor(Math.random() * 7),
-          }));
+        // 2. Generate data with weekend logic and growth trend
+        function generateDecadeData(dates) {
+          return dates.map((date, index) => {
+            const d = new Date(date);
+            const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+
+            /** * Realistic Growth Logic:
+             * Company starts with 50 employees and grows to 150 over 10 years
+             */
+            const totalEmployees =
+              50 + Math.floor((index / dates.length) * 100);
+
+            // Weekend: ~10% present | Weekday: 70-90% present
+            const presentToday = isWeekend
+              ? Math.floor(Math.random() * (totalEmployees * 0.1)) + 5
+              : Math.floor(Math.random() * (totalEmployees * 0.2)) +
+                Math.floor(totalEmployees * 0.7);
+
+            return {
+              date,
+              totalEmployees,
+              presentToday,
+              leave: isWeekend
+                ? 0
+                : Math.floor(Math.random() * (totalEmployees * 0.05)),
+              earlyin: isWeekend
+                ? 0
+                : Math.floor(Math.random() * (totalEmployees * 0.1)),
+              latein: isWeekend
+                ? 0
+                : Math.floor(Math.random() * (totalEmployees * 0.08)),
+            };
+          });
         }
 
-        // Combine both weeks into ONE array
-        const allDates = [
-          ...getWeekDates(-1), // previous week
-          ...getWeekDates(0), // current week
-        ];
+        const allDates = getDecadeDates();
+        const finalData = generateDecadeData(allDates);
 
-        const res = {
-          data: generateData(allDates),
-        };
-
-        console.log(res.data);
-
-        setAttendanceData(res.data);
+        console.log("Generated 10 years of data successfully.");
+        setAttendanceData(finalData);
       } catch (error) {
-        console.error("Failed to load dashboard stats:", error);
+        console.error("Failed to load 10-year dashboard stats:", error);
       }
     };
 
