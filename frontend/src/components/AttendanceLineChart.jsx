@@ -173,7 +173,7 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
   return (
     <div className="py-4 bg-white rounded-xl">
       {/*  Filter Buttons */}
-      <div className="sm:flex sm:justify-between">
+      <div className="md:flex md:justify-between">
         <h3 className="text-[16px] lg:text-[18px] 3xl:text-[20px] font-semibold text-gray-700 ml-5 mb-3">
           Attendance Overview
         </h3>

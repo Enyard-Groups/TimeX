@@ -5,7 +5,7 @@ import { logout } from "../action";
 import { IoIosLogOut } from "react-icons/io";
 import { IoNotifications } from "react-icons/io5";
 
-const RightSidebar = ({ user }) => {
+const RightSidebar = ({ user, setOpenModal }) => {
   const [notifications] = useState([]);
 
   const dispatch = useDispatch();
@@ -19,66 +19,65 @@ const RightSidebar = ({ user }) => {
 
   return (
     <div
-      className="flex flex-col h-full overflow-y-auto"
+      className="flex flex-col h-full overflow-y-auto bg-white"
       style={{ scrollbarWidth: "none" }}
     >
-      {/* Profile */}
-      <div className="flex justify-center items-start pb-5">
-        <div className="text-center ">
-          <div
-            src="/profile.jpg"
-            alt="Profile"
-            className="w-20 h-20 mt-5 rounded-full flex items-center justify-center font-black shadow-md cursor-pointer transition-all hover:scale-105 bg-[#0f172a] text-white object-cover mb-4 text-3xl"
-          >
-            {" "}
-            {user?.user_name?.charAt(0)?.toUpperCase() || "U"}
-          </div>
-          <div>
-            <h3 className="text-lg lg:text-[20px] 3xl:text-[22px] font-semibold text-gray-800">
-              {user?.user_name}
-            </h3>
-            <p className="text-sm lg:text-base 3xl:text-2xl text-gray-500">
-              {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
-            </p>
-          </div>
+      {/* Profile Section */}
+      <div className="flex flex-col items-center pt-6 pb-5 px-4 border-b border-gray-50">
+        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center font-black shadow-md cursor-pointer transition-all hover:scale-105 bg-[#0f172a] text-white text-2xl md:text-3xl mb-3">
+          {user?.user_name?.charAt(0)?.toUpperCase() || "U"}
+        </div>
+        <div className="text-center w-full overflow-hidden">
+          <h3 className="text-base md:text-lg font-semibold text-gray-800 truncate">
+            {user?.user_name}
+          </h3>
+          <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
         </div>
       </div>
 
-      <div className="px-4 ">
-        <h1 className="text-gray-600 text-sm lg:text-lg 3xl:text-2xl font-medium flex justify-between">
-          Notifications <IoNotifications className="text-lg lg:text-[20px] 3xl:text-[22px] mt-1" />
-        </h1>
-
+      {/* Notifications Section */}
+      <div className="px-4 py-4 flex-1">
+        <h2 className="text-gray-600 text-xs md:text-sm font-medium flex justify-between items-center mb-4">
+          Notifications
+          <IoNotifications className="text-base" />
+        </h2>
         {notifications.length === 0 ? (
-          <div className="flex items-center justify-center min-h-[220px] h-full text-md opacity-60 text-[oklch(0.147_0.004_49.25)] text-sm lg:text-lg 3xl:text-2xl">
+          <div className="flex items-center justify-center min-h-[150px] text-gray-400 text-xs italic">
             No Notifications
           </div>
         ) : (
-          notifications.map((item, index) => (
-            <div
-              key={index}
-              className="p-3 mb-2 rounded-xl bg-[oklch(0.97_0.001_106.424)] hover:bg-[oklch(0.923_0.003_48.717)] min-h-[220px] h-full transition text-md text-[oklch(0.147_0.004_49.25)]"
-            >
-              {item.message}
-            </div>
-          ))
+          <div className="space-y-2">
+            {notifications.map((item, index) => (
+              <div
+                key={index}
+                className="p-3 rounded-xl bg-slate-50 text-xs text-gray-700 border border-gray-100"
+              >
+                {item.message}
+              </div>
+            ))}
+          </div>
         )}
       </div>
 
-      <div className="fixed bottom-0 mb-6 mt-1 flex justify-between px-4 gap-4 border-t border-gray-200">
-        <button
-          onClick={handleLogout}
-          className="h-fit px-3 mt-2 py-0.5 cursor-pointer flex flex-row gap-2 rounded-full shadow text-xs xl:text-[16px] "
-        >
-          <span className="pt-1">Logout</span>
-          <span className="text-[15px] bg-[#00173d] rounded-full text-white p-1">
-            <IoIosLogOut />
-          </span>
-        </button>
+      {/* Footer Actions */}
+      <div className="p-4 border-t border-gray-100 bg-white sticky bottom-0">
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 hover:bg-red-50 hover:text-red-600 transition-colors rounded-xl text-xs font-medium border border-gray-200 cursor-pointer"
+          >
+            <span>Logout</span>
+            <IoIosLogOut className="text-lg" />
+          </button>
 
-        <button className="px-3 mt-1 py-0.5 cursor-pointer rounded-full shadow text-xs xl:text-[16px] ">
-          Change Password
-        </button>
+          {/* This button triggers the Modal in Dashboard */}
+          <button
+            onClick={() => setOpenModal(true)}
+            className="w-full px-4 py-2 bg-[#00173d] text-white hover:bg-opacity-90 transition-all rounded-xl text-xs font-medium cursor-pointer"
+          >
+            Change Password
+          </button>
+        </div>
       </div>
     </div>
   );

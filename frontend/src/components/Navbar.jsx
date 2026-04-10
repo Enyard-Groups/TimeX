@@ -5,17 +5,18 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import Footer from "./Footer";
 import { IoIosLogOut } from "react-icons/io";
 import { logout } from "../action";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import RightSidebar from "./RightSidebar";
-import { useLocation } from "react-router-dom";
 
-export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
+export default function Navbar({
+  rightSidebarOpen,
+  setRightSidebarOpen,
+  setOpenModal,
+}) {
   const user = useSelector((state) => state.user);
-
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const sidebarRef = useRef(null);
   const location = useLocation();
-
   const isDashboard = location.pathname === "/dashboard";
 
   useEffect(() => {
@@ -28,7 +29,6 @@ export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
         setSidebarOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [sidebarOpen]);
@@ -44,10 +44,10 @@ export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
 
   return (
     <>
-      <div className="pt-3 ">
-        {/* LEFT MENU BUTTON */}
+      <div className="pt-3">
+        {/* Mobile Menu Button */}
         <button
-          className="absolute top-8 left-6 rounded-xl lg:hidden text-xl font-bold"
+          className="absolute top-8 left-6 rounded-xl lg:hidden text-xl font-bold z-30"
           onClick={() => {
             setSidebarOpen(!sidebarOpen);
             setRightSidebarOpen(false);
@@ -56,29 +56,28 @@ export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
           {sidebarOpen ? "" : "☰"}
         </button>
 
-        {/* RIGHT ICONS */}
+        {/* Top Right Icons */}
         {isDashboard && (
           <div
-            className={`flex flex-row absolute top-7 right-4 z-50 gap-2 
-           ${!sidebarOpen ? "flex" : "hidden"} lg:flex`}
+            className={`flex flex-row absolute top-7 right-4 z-40 gap-2 ${!sidebarOpen ? "flex" : "hidden"} lg:flex`}
           >
             <button
               onClick={handleLogout}
-              className="text-[18px] bg-[#0f172a] rounded-full text-white p-1.5"
+              className="bg-[#0f172a] rounded-full text-white p-1.5 cursor-pointer"
             >
-              <IoIosLogOut className="text-xl lg:text-2xl 3xl:text-4xl" />
+              <IoIosLogOut className="text-xl lg:text-2xl" />
             </button>
 
             <button
               onClick={() => setRightSidebarOpen(true)}
-              className="text-[18px] bg-[#0f172a] rounded-full text-white p-1.5"
+              className="bg-[#0f172a] rounded-full text-white p-1.5 cursor-pointer"
             >
-              <IoMdNotificationsOutline className="text-xl lg:text-2xl 3xl:text-4xl" />
+              <IoMdNotificationsOutline className="text-xl lg:text-2xl" />
             </button>
 
             <div
               onClick={() => setRightSidebarOpen(true)}
-              className="py-1 px-2.5 bg-[#0f172a] rounded-full text-white cursor-pointer text-xl lg:text-2xl 3xl:text-4xl"
+              className="py-1 px-2.5 bg-[#0f172a] rounded-full text-white cursor-pointer text-xl lg:text-2xl"
             >
               {user?.user_name?.charAt(0).toUpperCase()}
             </div>
@@ -87,23 +86,21 @@ export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
 
         {/* RIGHT SIDEBAR */}
         <aside
-          className={`fixed top-3 right-0 h-full w-72 bg-white shadow-xl border-l border-gray-200 z-50 transform transition-transform duration-300 ${
-            rightSidebarOpen
-              ? "translate-x-0 rounded-tr-3xl"
-              : "translate-x-full"
+          className={`fixed top-3 right-0 h-full w-72 bg-white shadow-xl border-l border-gray-200 z-[60] transform transition-transform duration-300 ${
+            rightSidebarOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
           <div className="p-4 h-full flex flex-col">
-            <div className="flex justify-end mb-4">
+            <div className="flex justify-end mb-2">
               <button
                 onClick={() => setRightSidebarOpen(false)}
-                className="cursor-pointer text-sm lg:text-lg 3xl:text-2xl"
+                className="cursor-pointer text-xl p-2"
               >
                 ✕
               </button>
             </div>
-
-            <RightSidebar user={user} />
+            {/* Pass setOpenModal here */}
+            <RightSidebar user={user} setOpenModal={setOpenModal} />
           </div>
         </aside>
 
@@ -114,15 +111,7 @@ export default function Navbar({ rightSidebarOpen, setRightSidebarOpen }) {
             sidebarOpen ? "translate-x-0 w-64" : "-translate-x-full"
           } lg:translate-x-0 lg:w-64 z-40 bg-white`}
         >
-          <div className="lg:hidden absolute right-5 top-5 text-white text-lg font-bold ">
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="cursor-pointer"
-            >
-              ✕
-            </button>
-          </div>
-          <Sidebar user={user} />
+          <Sidebar user={user} setSidebarOpen={setSidebarOpen} />
         </aside>
 
         <Footer rightSidebarOpen={rightSidebarOpen} />

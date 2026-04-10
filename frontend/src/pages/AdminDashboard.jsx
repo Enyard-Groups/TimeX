@@ -108,10 +108,10 @@ const AdminDashboard = ({ user }) => {
         <EmployeeAttendance attendanceData={attendanceData} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 items-start">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6 items-start">
         {/* Line Chart */}
         <div
-          className="md:col-span-2 bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200 min-h-[430px]"
+          className="xl:col-span-2 bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200 min-h-[430px]"
           style={{ scrollbarWidth: "none" }}
         >
           <AttendanceLineChart attendanceData={attendanceData} />
