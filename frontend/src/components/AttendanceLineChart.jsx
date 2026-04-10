@@ -163,7 +163,7 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
   };
 
   return (
-    <div className="w-full h-full p-4 bg-white rounded-2xl shadow-sm border border-gray-100">
+    <div className="w-full h-full p-4 bg-white rounded-2xl">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3">
         <h3 className="text-lg font-bold text-slate-800">
           Attendance Overview
@@ -184,7 +184,7 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
           ))}
         </div>
       </div>
-      <Chart options={options} series={series} type="area" height={350} />
+      <Chart options={options} series={series} type="area" height={345} />
     </div>
   );
 };

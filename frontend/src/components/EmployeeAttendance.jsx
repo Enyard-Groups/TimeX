@@ -111,7 +111,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={chartData}
-                  margin={{ left: 0, right: 0, bottom: 0 }}
+                  margin={{ left: 7, right: 7, bottom: 4 }}
                 >
                   <defs>
                     <linearGradient
@@ -139,6 +139,8 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
                     stroke={item.color}
                     strokeWidth={3}
                     fill={`url(#grad-${index})`}
+                    style={{ outline: "none" }}
+                    className="focus:outline-none"
                     isAnimationActive={true}
                     dot={(props) => {
                       const { cx, cy, payload } = props;
