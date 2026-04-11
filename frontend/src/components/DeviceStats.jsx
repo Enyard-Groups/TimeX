@@ -70,7 +70,7 @@ const DeviceStats = ({ data = [] }) => {
 
   return (
     <div className="flex justify-center overflow-hidden">
-      <div className="bg-white rounded-xl p-4 h-[450px] w-full max-w-sm">
+      <div className="bg-white rounded-xl p-4 h-[400px] w-full max-w-sm">
         {/* Title */}
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-md font-semibold text-gray-700">Device</h3>

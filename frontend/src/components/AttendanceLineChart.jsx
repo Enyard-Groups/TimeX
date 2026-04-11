@@ -184,7 +184,7 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
           ))}
         </div>
       </div>
-      <Chart options={options} series={series} type="area" height={345} />
+      <Chart options={options} series={series} type="area" height={300} />
     </div>
   );
 };

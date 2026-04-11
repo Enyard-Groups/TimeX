@@ -92,7 +92,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
         {stats.map((item, index) => (
           <div
             key={index}
-            className="bg-white rounded-xl shadow-md flex items-center justify-between overflow-hidden relative h-[100px] border border-gray-200"
+            className="bg-white rounded-xl shadow-md flex items-center justify-between overflow-hidden relative h-[90px] border border-gray-200"
           >
             <h3 className="text-lg font-bold text-gray-800 absolute top-2 left-26 z-20">
               {item.value}
