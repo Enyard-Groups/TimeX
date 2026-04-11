@@ -153,7 +153,7 @@ const Timeline = ({ userData = [] }) => {
 
             {sortedEvents.map((event, index) => {
               const leftPos = getPosition(event.timeSecs);
-              const rowTop = 25 + index * 80;
+              const rowTop = 25 + index * 60;
               const isCheckIn = event.type === "IN";
 
               return (
@@ -173,15 +173,15 @@ const Timeline = ({ userData = [] }) => {
                     }`}
                     style={{ left: `${leftPos}%`, top: `${rowTop}px` }}
                   >
-                    <div className="w-10 h-10 rounded-full bg-white flex justify-center items-center font-bold text-[10px]">
+                    <div className="w-7 h-7 rounded-full bg-white flex justify-center items-center font-bold text-[10px]">
                       {event.name.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex flex-col leading-tight whitespace-nowrap gap-1">
-                      <span className="text-[14px] font-bold text-gray-800">
+                      <span className="text-[12px] font-bold text-gray-800">
                         {event.name}
                       </span>
                       <span
-                        className={`text-[10px] font-extrabold ${isCheckIn ? "text-[#3572ff]" : "text-[#11a5ac]"}`}
+                        className={`text-[9px] font-extrabold ${isCheckIn ? "text-[#3572ff]" : "text-[#11a5ac]"}`}
                       >
                         {event.type} • {event.displayTime}
                       </span>
