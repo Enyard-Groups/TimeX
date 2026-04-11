@@ -118,7 +118,7 @@ const AdminDashboard = ({ user }) => {
             <input
               type="text"
               placeholder="Search..."
-              className="bg-transparent outline-none text-sm xl:text-base w-full placeholder-gray-400"
+              className="bg-transparent outline-none text-sm w-full placeholder-gray-400"
             />
           </div>
         </div>
