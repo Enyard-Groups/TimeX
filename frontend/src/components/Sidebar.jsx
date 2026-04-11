@@ -53,7 +53,7 @@ const Sidebar = ({ user }) => {
 
       {isAdmin && (
         <div
-          className={`mt-2.5 mb-7 px-3 mx-2.5 rounded-xl text-md transition-all ${
+          className={`mt-2.5 mb-5 px-3 mx-2.5 rounded-xl text-md transition-all ${
             isdashboardActive ? activeClass : hoverClass
           }`}
         >
@@ -66,7 +66,7 @@ const Sidebar = ({ user }) => {
 
       {/* MIDDLE (Scrollable Area) */}
       <div
-        className="flex-1 overflow-y-auto px-3 space-y-7"
+        className="flex-1 overflow-y-auto px-3 space-y-5"
         style={{ scrollbarWidth: "none" }}
       >
         {isAdmin ? (

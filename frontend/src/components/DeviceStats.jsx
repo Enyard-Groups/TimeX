@@ -73,7 +73,7 @@ const DeviceStats = ({ data = [] }) => {
       <div className="bg-white rounded-xl p-4 h-[450px] w-full max-w-sm">
         {/* Title */}
         <div className="flex justify-between items-center mb-3">
-          <h3 className="text-[16px] lg:text-[18px] 3xl:text-[20px] font-semibold text-gray-700">Device</h3>
+          <h3 className="text-md font-semibold text-gray-700">Device</h3>
         </div>
 
         {/* Donut Chart */}
@@ -84,7 +84,10 @@ const DeviceStats = ({ data = [] }) => {
         {/* Device List */}
         <div className="mt-4 space-y-2">
           {deviceList.map((item, i) => (
-            <div key={i} className="flex items-center justify-between text-[16px] xl:text-[17px]">
+            <div
+              key={i}
+              className="flex items-center justify-between text-[16px]"
+            >
               <div className="flex items-center gap-2">
                 <span
                   className="w-3 h-3 rounded-full"

@@ -103,7 +103,7 @@ const AdminDashboard = ({ user }) => {
       <div className="md:flex md:items-center justify-between w-full mb-4">
         {/* LEFT - Welcome */}
         <div className="flex-1 flex justify-center md:justify-start text-center mt-10 sm:mt-0 md:pl-10 lg:pl-0 md:whitespace-nowrap md:mr-10">
-          <h2 className="text-xl xl:text-2xl 3xl:text-4xl font-bold tracking-tight text-[#0f172a]">
+          <h2 className="text-xl font-bold tracking-tight text-[#0f172a]">
             Dashboard
             {/* Welcome back,{" "}
             <span className="bg-clip-text font-bold text-transparent bg-blue-900">
@@ -118,7 +118,7 @@ const AdminDashboard = ({ user }) => {
             <input
               type="text"
               placeholder="Search..."
-              className="bg-transparent outline-none text-sm lg:text-lg 3xl:text-2xl w-full placeholder-gray-400"
+              className="bg-transparent outline-none text-sm xl:text-base w-full placeholder-gray-400"
             />
           </div>
         </div>

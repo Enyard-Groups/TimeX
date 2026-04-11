@@ -165,7 +165,7 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
   return (
     <div className="w-full h-full p-4 bg-white rounded-2xl">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3">
-        <h3 className="text-lg font-bold text-slate-800">
+        <h3 className="text-md font-bold text-slate-800">
           Attendance Overview
         </h3>
         <div className="flex bg-slate-100 p-1 rounded-xl">

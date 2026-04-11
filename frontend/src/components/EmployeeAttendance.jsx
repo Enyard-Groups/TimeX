@@ -92,9 +92,9 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
         {stats.map((item, index) => (
           <div
             key={index}
-            className="bg-white rounded-xl shadow-md flex items-center justify-between overflow-hidden relative h-[120px] border border-gray-200"
+            className="bg-white rounded-xl shadow-md flex items-center justify-between overflow-hidden relative h-[100px] border border-gray-200"
           >
-            <h3 className="text-xl 3xl:text-2xl font-bold text-gray-800 absolute top-2 left-26 z-20">
+            <h3 className="text-xl font-bold text-gray-800 absolute top-2 left-26 z-20">
               {item.value}
             </h3>
 
@@ -111,7 +111,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={chartData}
-                  margin={{ left: 7, right: 7, bottom: 4 }}
+                  margin={{ left: 7, right: 7, bottom: 4, top: 4 }}
                 >
                   <defs>
                     <linearGradient
