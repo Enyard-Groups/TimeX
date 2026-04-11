@@ -25,7 +25,7 @@ const Approvals = ({ user }) => {
               isApprovalsActive ? activeClass : hoverClass
             }`}
           >
-            <div className="flex items-center gap-4 text-[18px]">
+            <div className="flex items-center gap-4 text-[16px]">
               <FaCheckCircle />
               <span>Approvals</span>
             </div>
@@ -38,7 +38,7 @@ const Approvals = ({ user }) => {
 
           {/* Sub Menu */}
           {openApprovals && (
-            <div className="mt-2 flex flex-col pl-10 gap-2 text-md">
+            <div className="mt-2 flex flex-col pl-10 gap-2 text-[15px]">
               <NavLink
                 to="/approvals/mannual-entry-approval"
                 className={({ isActive }) =>

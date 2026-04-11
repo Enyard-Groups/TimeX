@@ -173,7 +173,7 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
             <button
               key={val}
               onClick={() => setRange(val)}
-              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
+              className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
                 range === val
                   ? "bg-white text-blue-600 shadow-sm"
                   : "text-slate-500 hover:text-slate-800"

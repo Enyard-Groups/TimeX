@@ -27,7 +27,7 @@ const Master = ({ user }) => {
               ismastersActive ? activeClass : hoverClass
             }`}
           >
-            <div className="flex items-center gap-4 text-[18px]">
+            <div className="flex items-center gap-4 text-[16px]">
               <RiContactsFill />
               <span>Masters</span>
             </div>
@@ -39,7 +39,7 @@ const Master = ({ user }) => {
           </div>
           {/* Sub Menu */}
           {openMasters && (
-            <div className="mt-2 flex flex-col pl-10 gap-2 text-md">
+            <div className="mt-2 flex flex-col pl-10 gap-2 text-[15px]">
               <NavLink
                 to="/masters/companies"
                 className={({ isActive }) =>

@@ -57,7 +57,7 @@ const Sidebar = ({ user }) => {
             isdashboardActive ? activeClass : hoverClass
           }`}
         >
-          <div className="flex items-center gap-4 text-[18px] pl-2">
+          <div className="flex items-center gap-3 text-[16px] pl-2">
             <RxDashboard />
             <Link to="/dashboard">Dashboard</Link>
           </div>

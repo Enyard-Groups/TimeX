@@ -60,7 +60,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
     {
       title: "Present",
       value: present,
-      icon: <UserCheck />,
+      icon: <UserCheck size={20} />,
       dataKey: "presentToday",
       color: "#2563EB",
       bg: "bg-[#DBEAFE]",
@@ -69,7 +69,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
     {
       title: "Absent",
       value: absent,
-      icon: <UserX />,
+      icon: <UserX size={20} />,
       dataKey: "absent",
       color: "#EF4444",
       bg: "bg-[#FEE2E2]",
@@ -78,7 +78,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
     {
       title: "Leave",
       value: leave,
-      icon: <Calendar />,
+      icon: <Calendar size={20} />,
       dataKey: "leave",
       color: "#06B6D4",
       bg: "bg-[#E0F2FE]",
@@ -94,7 +94,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
             key={index}
             className="bg-white rounded-xl shadow-md flex items-center justify-between overflow-hidden relative h-[100px] border border-gray-200"
           >
-            <h3 className="text-xl font-bold text-gray-800 absolute top-2 left-26 z-20">
+            <h3 className="text-lg font-bold text-gray-800 absolute top-2 left-26 z-20">
               {item.value}
             </h3>
 
@@ -102,7 +102,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
             <div
               className={`${item.bg} ${item.text} h-full flex flex-col justify-center items-center min-w-[90px] z-10`}
             >
-              <span className="text-sm font-medium mb-2">{item.title}</span>
+              <span className="text-xs font-medium mb-2">{item.title}</span>
               <span>{item.icon}</span>
             </div>
 
