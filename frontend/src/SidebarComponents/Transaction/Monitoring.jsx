@@ -179,7 +179,7 @@ const Monitoring = () => {
             key={idx}
             className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-2xl border border-blue-100/50 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
           >
-            <p className="text-sm xl:text-lg text-gray-500 mb-2">
+            <p className="text-base text-gray-500 mb-2">
               {item.label}
             </p>
             <h3 className="text-2xl font-bold text-gray-800">{item.value}</h3>
@@ -262,7 +262,7 @@ const Monitoring = () => {
           className="overflow-x-auto min-h-[350px]"
           style={{ scrollbarWidth: "none" }}
         >
-          <table className="w-full text-[16px] xl:text-[20px]">
+          <table className="w-full text-[17px]">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
                 <th className="px-6 py-3 text-center font-semibold text-gray-700">

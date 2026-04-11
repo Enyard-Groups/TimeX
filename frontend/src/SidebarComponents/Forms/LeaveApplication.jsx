@@ -44,9 +44,9 @@ const LeaveApplication = () => {
   const countries = getNames();
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base  focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const defaultFormData = {
     employee: "",
@@ -341,7 +341,7 @@ const LeaveApplication = () => {
     <div className="mb-6 max-w-[1920px] mx-auto">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+        <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl  font-semibold text-gray-900">
           <FaAngleRight className="text-blue-500 text-base" />
           <span className="text-gray-500">Forms</span>
           <FaAngleRight className="text-blue-500 text-base" />
@@ -361,7 +361,7 @@ const LeaveApplication = () => {
                 setFormData(defaultFormData);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -376,7 +376,7 @@ const LeaveApplication = () => {
           <div className="p-6 border-b border-blue-100/30">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
-                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <label className="text-sm xl:text-base  font-medium text-gray-600">
                   Show
                 </label>
                 <select
@@ -385,7 +385,7 @@ const LeaveApplication = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -393,7 +393,7 @@ const LeaveApplication = () => {
                     </option>
                   ))}
                 </select>
-                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <span className="text-sm xl:text-base  font-medium text-gray-600">
                   entries
                 </span>
               </div>
@@ -406,7 +406,7 @@ const LeaveApplication = () => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
                 />
                 <div className="flex gap-2">
                   <button
@@ -414,21 +414,21 @@ const LeaveApplication = () => {
                     className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 p-2.5 rounded-lg transition-all"
                     title="Copy"
                   >
-                    <GoCopy className="text-lg lg:text-xl 3xl:text-3xl" />
+                    <GoCopy className="text-lg xl:text-xl " />
                   </button>
                   <button
                     onClick={handleExcel}
                     className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 p-2.5 rounded-lg transition-all"
                     title="Excel"
                   >
-                    <FaFileExcel className="text-lg lg:text-xl 3xl:text-3xl" />
+                    <FaFileExcel className="text-lg xl:text-xl " />
                   </button>
                   <button
                     onClick={handlePDF}
                     className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 p-2.5 rounded-lg transition-all"
                     title="PDF"
                   >
-                    <FaFilePdf className="text-lg lg:text-xl 3xl:text-3xl" />
+                    <FaFilePdf className="text-lg xl:text-xl " />
                   </button>
                 </div>
               </div>
@@ -439,7 +439,7 @@ const LeaveApplication = () => {
             className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+            <table className="w-full text-[17px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-blue-100/50">
                   <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
@@ -513,7 +513,7 @@ const LeaveApplication = () => {
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer"
+                            className="text-blue-500 hover:text-blue-700 xl:text-xl  cursor-pointer"
                             title="View"
                           />
                           <FaPen
@@ -523,12 +523,12 @@ const LeaveApplication = () => {
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer"
+                            className="text-green-500 hover:text-green-700 xl:text-xl  cursor-pointer"
                             title="Edit"
                           />
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer"
+                            className="text-red-500 hover:text-red-700 xl:text-xl  cursor-pointer"
                             title="Delete"
                           />
                         </div>
@@ -542,7 +542,7 @@ const LeaveApplication = () => {
 
           {/* Pagination Footer */}
           <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-            <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
+            <span className="text-sm xl:text-base  text-gray-600">
               Showing{" "}
               <span className="text-gray-900 font-semibold">
                 {filteredleaveData.length === 0 ? "0" : startIndex + 1}
@@ -561,7 +561,7 @@ const LeaveApplication = () => {
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50 transition-all"
+                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50 transition-all"
               >
                 First
               </button>
@@ -572,7 +572,7 @@ const LeaveApplication = () => {
               >
                 <GrPrevious />
               </button>
-              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm lg:text-base 3xl:text-xl min-w-[45px] text-center">
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm xl:text-base  min-w-[45px] text-center">
                 {currentPage}
               </div>
               <button
@@ -585,7 +585,7 @@ const LeaveApplication = () => {
               <button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50"
+                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50"
               >
                 Last
               </button>
@@ -605,7 +605,7 @@ const LeaveApplication = () => {
             style={{ scrollbarWidth: "none" }}
           >
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
-              <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+              <h2 className="text-xl   font-bold text-gray-900">
                 {mode === "view"
                   ? "Leave Application Details"
                   : mode === "edit"
@@ -623,7 +623,7 @@ const LeaveApplication = () => {
             <div className="space-y-8">
               {/* Section I: Employee Details */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                <h3 className="bg-slate-100 py-2 px-4 border-l-4 border-blue-500 font-bold text-gray-800 lg:text-lg 3xl:text-2xl rounded-r mb-6 uppercase tracking-wide">
+                <h3 className="bg-slate-100 py-2 px-4 border-l-4 border-blue-500 font-bold text-gray-800 xl:text-lg  rounded-r mb-6 uppercase tracking-wide">
                   I. To be filled by the Employee in Capitals
                 </h3>
 
@@ -730,7 +730,7 @@ const LeaveApplication = () => {
 
                 {/* Nature of Leave Checkboxes */}
                 <div className="mt-8 p-4 bg-slate-50 rounded-xl border border-gray-100">
-                  <p className="font-bold text-gray-700 mb-4 lg:text-lg">
+                  <p className="font-bold text-gray-700 mb-4 xl:text-lg">
                     Nature of Leave:
                   </p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -756,7 +756,7 @@ const LeaveApplication = () => {
                           disabled={mode === "view"}
                           className="w-5 h-5 accent-blue-600 rounded"
                         />
-                        <span className="text-gray-700 lg:text-base 3xl:text-xl group-hover:text-blue-600 transition-colors">
+                        <span className="text-gray-700 xl:text-base  group-hover:text-blue-600 transition-colors">
                           {item.label}
                         </span>
                       </label>
@@ -780,7 +780,7 @@ const LeaveApplication = () => {
                           disabled={mode === "view"}
                           className="w-5 h-5 accent-blue-600"
                         />
-                        <span className="text-gray-700 lg:text-base">
+                        <span className="text-gray-700 xl:text-base">
                           Others:
                         </span>
                       </label>
@@ -865,7 +865,7 @@ const LeaveApplication = () => {
                 {/* TOIL Logic */}
                 <div className="mt-8 p-6 bg-blue-50/50 rounded-xl border border-blue-100">
                   <div className="flex items-center gap-6 mb-6">
-                    <span className="font-bold text-gray-800 lg:text-lg">
+                    <span className="font-bold text-gray-800 xl:text-lg">
                       TOIL Requested?
                     </span>
                     <div className="flex gap-4">
@@ -1033,10 +1033,10 @@ const LeaveApplication = () => {
 
                 {/* Declaration & Final Signature */}
                 <div className="mt-10 p-6 bg-slate-50 rounded-2xl border border-gray-200">
-                  <h4 className="font-bold text-gray-900 mb-4 underline lg:text-lg">
+                  <h4 className="font-bold text-gray-900 mb-4 underline xl:text-lg">
                     Declaration
                   </h4>
-                  <ul className="space-y-2 text-sm lg:text-base text-gray-600 mb-8 list-disc pl-5">
+                  <ul className="space-y-2 text-sm xl:text-base text-gray-600 mb-8 list-disc pl-5">
                     <li>
                       I understand that leave policies and procedures are for
                       betterment for employees and manpower planning of the
@@ -1240,7 +1240,7 @@ const LeaveApplication = () => {
 
               {/* Section II: Admin Operations */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                <h3 className="bg-slate-100 py-2 px-4 border-l-4 border-teal-500 font-bold text-gray-800 lg:text-lg rounded-r mb-6 uppercase tracking-wide">
+                <h3 className="bg-slate-100 py-2 px-4 border-l-4 border-teal-500 font-bold text-gray-800 xl:text-lg rounded-r mb-6 uppercase tracking-wide">
                   II. To be filled by the Admin Operations
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -1491,7 +1491,7 @@ const LeaveApplication = () => {
 
               {/* Section III: Final Approvals */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-8">
-                <h3 className="bg-slate-100 py-2 px-4 border-l-4 border-orange-500 font-bold text-gray-800 lg:text-lg rounded-r mb-6 uppercase tracking-wide">
+                <h3 className="bg-slate-100 py-2 px-4 border-l-4 border-orange-500 font-bold text-gray-800 xl:text-lg rounded-r mb-6 uppercase tracking-wide">
                   III. Final Approvals
                 </h3>
 
@@ -2127,7 +2127,7 @@ const LeaveApplication = () => {
                   the right to terminate my contract and deport me to my home
                   country on my own cost.”
                 </p>
-                <h3 className="bg-slate-100 py-2 px-4 border-l-4 border-blue-500 font-bold text-gray-800 lg:text-lg 3xl:text-2xl rounded-r mb-6 uppercase tracking-wide mt-4">
+                <h3 className="bg-slate-100 py-2 px-4 border-l-4 border-blue-500 font-bold text-gray-800 xl:text-lg  rounded-r mb-6 uppercase tracking-wide mt-4">
                   IV.TO BE FILLED BY THE EMPLOYEE IN CAPITALS
                 </h3>
 

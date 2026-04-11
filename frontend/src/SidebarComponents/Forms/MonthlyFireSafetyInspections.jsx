@@ -422,9 +422,9 @@ const MonthlyFireSafetyInspections = () => {
   ];
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base  focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const filteredinspectionData = inspectionData.filter(
     (x) =>
@@ -622,7 +622,7 @@ const MonthlyFireSafetyInspections = () => {
       <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-          <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+          <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl  font-semibold text-gray-900">
             <FaAngleRight className="text-blue-500 text-base" />
             <span className="text-gray-500">Forms</span>
             <FaAngleRight className="text-blue-500 text-base" />
@@ -642,7 +642,7 @@ const MonthlyFireSafetyInspections = () => {
                   setFormData(defaultFormData);
                   setOpenModal(true);
                 }}
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
               >
                 + Add New
               </button>
@@ -656,7 +656,7 @@ const MonthlyFireSafetyInspections = () => {
           <div className="p-6 border-b border-blue-100/30">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
-                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <label className="text-sm xl:text-base  font-medium text-gray-600">
                   Show
                 </label>
                 <select
@@ -665,7 +665,7 @@ const MonthlyFireSafetyInspections = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -673,7 +673,7 @@ const MonthlyFireSafetyInspections = () => {
                     </option>
                   ))}
                 </select>
-                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <span className="text-sm xl:text-base  font-medium text-gray-600">
                   entries
                 </span>
               </div>
@@ -686,7 +686,7 @@ const MonthlyFireSafetyInspections = () => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base focus:outline-none 3xl:text-lg rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base focus:outline-none  rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
                 />
                 <div className="flex gap-2">
                   <button
@@ -694,21 +694,21 @@ const MonthlyFireSafetyInspections = () => {
                     className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 p-2.5 rounded-lg transition-all"
                     title="Copy"
                   >
-                    <GoCopy className="text-lg lg:text-xl 3xl:text-3xl" />
+                    <GoCopy className="text-lg xl:text-xl " />
                   </button>
                   <button
                     onClick={handleExcel}
                     className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 p-2.5 rounded-lg transition-all"
                     title="Excel"
                   >
-                    <FaFileExcel className="text-lg lg:text-xl 3xl:text-3xl" />
+                    <FaFileExcel className="text-lg xl:text-xl " />
                   </button>
                   <button
                     onClick={handlePDF}
                     className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 p-2.5 rounded-lg transition-all"
                     title="PDF"
                   >
-                    <FaFilePdf className="text-lg lg:text-xl 3xl:text-3xl" />
+                    <FaFilePdf className="text-lg xl:text-xl " />
                   </button>
                 </div>
               </div>
@@ -720,7 +720,7 @@ const MonthlyFireSafetyInspections = () => {
             className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+            <table className="w-full text-[17px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-blue-100/50">
                   <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
@@ -793,7 +793,7 @@ const MonthlyFireSafetyInspections = () => {
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-blue-500 hover:text-blue-700 xl:text-xl  cursor-pointer transition-all"
                           />
                           <FaPen
                             onClick={() => {
@@ -807,11 +807,11 @@ const MonthlyFireSafetyInspections = () => {
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-green-500 hover:text-green-700 xl:text-xl  cursor-pointer transition-all"
                           />
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-red-500 hover:text-red-700 xl:text-xl  cursor-pointer transition-all"
                           />
                         </div>
                       </td>
@@ -824,7 +824,7 @@ const MonthlyFireSafetyInspections = () => {
 
           {/* Pagination */}
           <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-            <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
+            <span className="text-sm xl:text-base  text-gray-600">
               Showing{" "}
               <span className="text-gray-900 font-semibold">
                 {filteredinspectionData.length === 0 ? "0" : startIndex + 1}
@@ -843,7 +843,7 @@ const MonthlyFireSafetyInspections = () => {
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50 transition-all"
+                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50 transition-all"
               >
                 First
               </button>
@@ -854,7 +854,7 @@ const MonthlyFireSafetyInspections = () => {
               >
                 <GrPrevious />
               </button>
-              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm lg:text-base 3xl:text-xl min-w-[45px] text-center">
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm xl:text-base  min-w-[45px] text-center">
                 {currentPage}
               </div>
               <button
@@ -867,7 +867,7 @@ const MonthlyFireSafetyInspections = () => {
               <button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50"
+                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50"
               >
                 Last
               </button>
@@ -886,7 +886,7 @@ const MonthlyFireSafetyInspections = () => {
               style={{ scrollbarWidth: "none" }}
             >
               <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
-                <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+                <h2 className="text-xl   font-bold text-gray-900">
                   {mode === "view"
                     ? "Inspection Details"
                     : mode === "edit"
@@ -961,7 +961,7 @@ const MonthlyFireSafetyInspections = () => {
 
                 {/* Checklist Table */}
                 <div className="border border-gray-200 rounded-xl overflow-hidden mb-8">
-                  <div className="grid grid-cols-12 bg-slate-100 font-bold text-gray-700 lg:text-lg 3xl:text-2xl">
+                  <div className="grid grid-cols-12 bg-slate-100 font-bold text-gray-700 xl:text-lg ">
                     <div className="col-span-5 p-4">
                       Checklist Category & Item
                     </div>
@@ -979,7 +979,7 @@ const MonthlyFireSafetyInspections = () => {
                         key={sectionItem.section}
                         className="border-t border-gray-100"
                       >
-                        <div className="bg-blue-50/50 font-bold p-3 px-4 text-blue-800 lg:text-lg 3xl:text-2xl uppercase tracking-wide">
+                        <div className="bg-blue-50/50 font-bold p-3 px-4 text-blue-800 xl:text-base  uppercase tracking-wide">
                           {sectionItem.title}
                         </div>
                         {sectionItem.fields.map((field) => (
@@ -987,7 +987,7 @@ const MonthlyFireSafetyInspections = () => {
                             key={field.key}
                             className="grid grid-cols-12 border-b border-gray-50 items-center hover:bg-slate-50 transition-colors"
                           >
-                            <div className="col-span-5 p-4 text-gray-700 lg:text-base 3xl:text-xl">
+                            <div className="col-span-5 p-4 text-gray-700 xl:text-base ">
                               {field.label}
                             </div>
                             <div className="col-span-1 text-center">
@@ -1035,7 +1035,7 @@ const MonthlyFireSafetyInspections = () => {
                               <input
                                 type="text"
                                 placeholder="Enter specific details..."
-                                className="w-full border-gray-200 rounded-lg lg:text-base 3xl:text-lg focus:ring-blue-500"
+                                className="w-full border-gray-200 rounded-lg xl:text-base  focus:ring-blue-500"
                                 value={
                                   formData[sectionItem.section].remarks[
                                     field.key
@@ -1060,14 +1060,14 @@ const MonthlyFireSafetyInspections = () => {
 
                 {/* Action Summary Table */}
                 <div className="mb-8">
-                  <h3 className="font-bold mb-4 text-gray-800 lg:text-xl 3xl:text-3xl">
+                  <h3 className="font-bold mb-4 text-gray-800 xl:text-xl ">
                     Required Corrective Actions
                   </h3>
                   <div
                     className="overflow-x-auto rounded-xl border border-gray-200"
                     style={{ scrollbarWidth: "none" }}
                   >
-                    <table className="w-full text-sm lg:text-base 3xl:text-xl">
+                    <table className="w-full text-sm xl:text-base ">
                       <thead className="bg-slate-50 text-gray-600">
                         <tr>
                           <th className="border-b p-3 text-left">Area</th>
@@ -1337,13 +1337,13 @@ const MonthlyFireSafetyInspections = () => {
                   <div className="flex flex-wrap justify-end gap-3 mt-12 pt-6 border-t border-blue-100/30">
                     <button
                       onClick={handleSubmit}
-                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-12 py-3 rounded-xl font-bold lg:text-lg 3xl:text-2xl shadow-lg hover:shadow-blue-200 hover:-translate-y-1 transition-all"
+                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-12 py-3 rounded-xl font-bold xl:text-lg  shadow-lg hover:shadow-blue-200 hover:-translate-y-1 transition-all"
                     >
                       Submit Report
                     </button>
                     <button
                       onClick={() => setOpenModal(false)}
-                      className="px-10 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-bold lg:text-lg 3xl:text-2xl hover:bg-gray-100 transition-all"
+                      className="px-10 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-bold xl:text-lg  hover:bg-gray-100 transition-all"
                     >
                       Cancel
                     </button>

@@ -53,9 +53,9 @@ const IncidentAccident = () => {
   }, []);
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base  focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const filteredincidentData = incidentData.filter(
     (x) =>
@@ -246,7 +246,7 @@ const IncidentAccident = () => {
     <div className="mb-6 max-w-[1920px] mx-auto">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+        <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl  font-semibold text-gray-900">
           <FaAngleRight className="text-blue-500 text-base" />
           <span className="text-gray-500">Forms</span>
           <FaAngleRight className="text-blue-500 text-base" />
@@ -266,7 +266,7 @@ const IncidentAccident = () => {
                 setFormData(defaultFormData);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -281,7 +281,7 @@ const IncidentAccident = () => {
           <div className="p-6 border-b border-blue-100/30">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
-                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <label className="text-sm xl:text-base  font-medium text-gray-600">
                   Show
                 </label>
                 <select
@@ -290,7 +290,7 @@ const IncidentAccident = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -298,7 +298,7 @@ const IncidentAccident = () => {
                     </option>
                   ))}
                 </select>
-                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <span className="text-sm xl:text-base  font-medium text-gray-600">
                   entries
                 </span>
               </div>
@@ -310,9 +310,9 @@ const IncidentAccident = () => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
                 />
-                <div className="flex gap-2 text-xl lg:text-2xl 3xl:text-4xl">
+                <div className="flex gap-2 text-xl  ">
                   <GoCopy
                     onClick={handleCopy}
                     className="cursor-pointer text-gray-600 hover:text-blue-600 transition-colors"
@@ -334,7 +334,7 @@ const IncidentAccident = () => {
             className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+            <table className="w-full text-[17px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-blue-100/50">
                   <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
@@ -402,7 +402,7 @@ const IncidentAccident = () => {
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer"
+                            className="text-blue-500 hover:text-blue-700 xl:text-xl  cursor-pointer"
                           />
                           <FaPen
                             onClick={() => {
@@ -411,11 +411,11 @@ const IncidentAccident = () => {
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer"
+                            className="text-green-500 hover:text-green-700 xl:text-xl  cursor-pointer"
                           />
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer"
+                            className="text-red-500 hover:text-red-700 xl:text-xl  cursor-pointer"
                           />
                         </div>
                       </td>
@@ -428,7 +428,7 @@ const IncidentAccident = () => {
 
           {/* Pagination Footer */}
           <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-            <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
+            <span className="text-sm xl:text-base  text-gray-600">
               Showing{" "}
               <span className="text-gray-900 font-semibold">
                 {filteredincidentData.length === 0 ? "0" : startIndex + 1}
@@ -447,7 +447,7 @@ const IncidentAccident = () => {
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50 transition-all"
+                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50 transition-all"
               >
                 First
               </button>
@@ -458,7 +458,7 @@ const IncidentAccident = () => {
               >
                 <GrPrevious />
               </button>
-              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm lg:text-base 3xl:text-xl min-w-[45px] text-center">
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm xl:text-base  min-w-[45px] text-center">
                 {currentPage}
               </div>
               <button
@@ -471,7 +471,7 @@ const IncidentAccident = () => {
               <button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50"
+                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50"
               >
                 Last
               </button>
@@ -491,7 +491,7 @@ const IncidentAccident = () => {
             style={{ scrollbarWidth: "none" }}
           >
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
-              <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+              <h2 className="text-xl   font-bold text-gray-900">
                 {mode === "view"
                   ? "Incident Report Details"
                   : mode === "edit"
@@ -510,7 +510,7 @@ const IncidentAccident = () => {
               {/* Section: General Details */}
               <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <div className="flex items-center gap-3 mb-6 bg-slate-100 p-2 rounded-lg border-l-4 border-blue-500">
-                  <h3 className="text-lg lg:text-xl 3xl:text-2xl font-bold text-gray-800 uppercase tracking-wide">
+                  <h3 className="text-lg xl:text-xl  font-bold text-gray-800 uppercase tracking-wide">
                     1. Incident General Details
                   </h3>
                 </div>
@@ -647,7 +647,7 @@ const IncidentAccident = () => {
               {/* Section: Timeline & Actions */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                  <label className="text-lg lg:text-xl font-bold text-gray-800 mb-3 block">
+                  <label className="text-lg xl:text-xl font-bold text-gray-800 mb-3 block">
                     2. Incident Timeline
                   </label>
                   <p className="text-xs text-blue-500 mb-4">
@@ -658,12 +658,12 @@ const IncidentAccident = () => {
                     value={formData.incident_timeline}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    className="w-full border border-gray-300 rounded-xl h-64 p-4 lg:text-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full border border-gray-300 rounded-xl h-64 p-4 xl:text-base focus:ring-2 focus:ring-blue-500 outline-none"
                     placeholder="Describe the flow of events..."
                   />
                 </div>
                 <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                  <label className="text-lg lg:text-xl font-bold text-gray-800 mb-3 block">
+                  <label className="text-lg xl:text-xl font-bold text-gray-800 mb-3 block">
                     3. Immediate Action Taken
                   </label>
                   <p className="text-xs text-blue-500 mb-4">
@@ -674,7 +674,7 @@ const IncidentAccident = () => {
                     value={formData.action_taken}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    className="w-full border border-gray-300 rounded-xl h-64 p-4 lg:text-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full border border-gray-300 rounded-xl h-64 p-4 xl:text-base focus:ring-2 focus:ring-blue-500 outline-none"
                     placeholder="First response details..."
                   />
                 </div>
@@ -683,11 +683,11 @@ const IncidentAccident = () => {
               {/* Section: Injury Details */}
               <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
-                  <h3 className="text-lg lg:text-xl 3xl:text-2xl font-bold text-gray-800 uppercase tracking-wide">
+                  <h3 className="text-lg xl:text-xl  font-bold text-gray-800 uppercase tracking-wide">
                     4. Injury / Illness Details
                   </h3>
                   <div className="flex items-center gap-6">
-                    <span className="font-semibold lg:text-lg">
+                    <span className="font-semibold xl:text-lg">
                       Anyone injured?
                     </span>
                     <div className="flex gap-4">
@@ -874,7 +874,7 @@ const IncidentAccident = () => {
               {/* Section: Reporting Log */}
               <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <div className="flex items-center gap-3 mb-6 bg-slate-100 p-2 rounded-lg border-l-4 border-orange-500">
-                  <h3 className="text-lg lg:text-xl 3xl:text-2xl font-bold text-gray-800 uppercase tracking-wide">
+                  <h3 className="text-lg xl:text-xl  font-bold text-gray-800 uppercase tracking-wide">
                     5. Communication Log (MSO & OCC)
                   </h3>
                 </div>
@@ -964,7 +964,7 @@ const IncidentAccident = () => {
               {/* Section: Signatures */}
               <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <div className="flex items-center gap-3 mb-6 bg-slate-100 p-2 rounded-lg border-l-4 border-purple-500">
-                  <h3 className="text-lg lg:text-xl 3xl:text-2xl font-bold text-gray-800 uppercase tracking-wide">
+                  <h3 className="text-lg xl:text-xl  font-bold text-gray-800 uppercase tracking-wide">
                     6. Authentication & Acknowledgement
                   </h3>
                 </div>
@@ -1263,13 +1263,13 @@ const IncidentAccident = () => {
               <div className="flex flex-wrap justify-end gap-3 mt-12 pt-6 border-t border-blue-100/30">
                 <button
                   onClick={handleSubmit}
-                  className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-12 py-3 rounded-xl font-bold lg:text-lg 3xl:text-2xl shadow-lg hover:shadow-blue-200 hover:-translate-y-1 transition-all"
+                  className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-12 py-3 rounded-xl font-bold xl:text-lg  shadow-lg hover:shadow-blue-200 hover:-translate-y-1 transition-all"
                 >
                   Submit Report
                 </button>
                 <button
                   onClick={() => setOpenModal(false)}
-                  className="px-10 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-bold lg:text-lg 3xl:text-2xl hover:bg-gray-100 transition-all"
+                  className="px-10 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-bold xl:text-lg  hover:bg-gray-100 transition-all"
                 >
                   Cancel
                 </button>

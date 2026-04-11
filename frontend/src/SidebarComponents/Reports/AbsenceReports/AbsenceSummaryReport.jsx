@@ -40,9 +40,9 @@ const AbsenceSummaryReport = () => {
   });
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-sm lg:text-base 3xl:text-xl font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base font-semibold text-gray-700 mb-2 block";
 
   const absentences = absenceSummaryReport.filter(
     (x) =>
@@ -116,7 +116,7 @@ const AbsenceSummaryReport = () => {
       <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-          <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900 ">
+          <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl font-semibold text-gray-900 ">
             <FaAngleRight className="text-blue-500 text-base" />
             <span className="text-gray-500">Reports</span>
             <FaAngleRight className="text-blue-500 text-base" />
@@ -242,7 +242,7 @@ const AbsenceSummaryReport = () => {
             <div className="flex justify-end mt-10">
               <button
                 onClick={() => setOpenModal(true)}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md lg:text-lg 3xl:text-xl transition-all duration-200"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md xl:text-lg  transition-all duration-200"
               >
                 Generate Report
               </button>
@@ -255,7 +255,7 @@ const AbsenceSummaryReport = () => {
           <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
             <div className="p-6 border-b border-blue-100/30">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl lg:text-2xl 3xl:text-3xl font-bold text-gray-800">
+                <h2 className="text-xl font-bold text-gray-800">
                   Absence Summary Report
                 </h2>
                 <RxCross2
@@ -269,7 +269,7 @@ const AbsenceSummaryReport = () => {
               className="overflow-x-auto min-h-[350px]"
               style={{ scrollbarWidth: "none" }}
             >
-              <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px] border-collapse">
+              <table className="w-full text-[17px] border-collapse">
                 <thead>
                   <tr className="bg-slate-100 border-b border-blue-100/50">
                     <th className="px-4 py-3 text-left font-bold text-gray-700 border-r border-blue-100">
@@ -314,7 +314,7 @@ const AbsenceSummaryReport = () => {
                           <td className="px-4 py-3 text-left font-semibold text-gray-900 border-r border-blue-100/50">
                             {date.toLocaleDateString()}
                             <br />
-                            <span className="text-xs lg:text-sm 3xl:text-lg font-normal text-gray-500">
+                            <span className="text-xs lg:text-sm font-normal text-gray-500">
                               {date.toLocaleDateString("en-US", {
                                 weekday: "long",
                               })}

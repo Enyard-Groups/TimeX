@@ -58,7 +58,7 @@ const RecentActivity = ({ userData = [] }) => {
 
   return (
     <div className="overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-      <table className="w-full text-sm lg:text-base 3xl:text-xl text-left border-collapse">
+      <table className="w-full text-sm lg:text-base text-left border-collapse">
         <thead>
           <tr className="border-b border-gray-100 font-semibold text-gray-600">
             <td className="px-2 pb-2 pl-4 sm:pl-12">Name</td>
@@ -118,13 +118,13 @@ const RecentActivity = ({ userData = [] }) => {
                   </td>
 
                   <td className="p-2 text-center">
-                    <span className="px-2 py-1 font-medium rounded-full bg-[#e3e9f7] text-gray-700">
+                    <span className="px-2 py-1 font-medium rounded-full bg-[#e3e9f7] text-gray-700 font-mono">
                       {user.checkin || "--"}
                     </span>
                   </td>
 
                   <td className="p-2 text-center">
-                    <span className="px-2 py-1 font-medium rounded-full bg-[#e3f6f7] text-gray-700">
+                    <span className="px-2 py-1 font-medium rounded-full bg-[#e3f6f7] text-gray-700 font-mono">
                       {isCheckout ? user.checkout : "--"}
                     </span>
                   </td>

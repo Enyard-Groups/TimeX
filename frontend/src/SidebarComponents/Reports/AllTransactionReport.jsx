@@ -59,9 +59,9 @@ const AllTransactionReport = () => {
   });
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-sm lg:text-base 3xl:text-xl font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base font-semibold text-gray-700 mb-2 block";
 
   const filteredReport = allTransactionReport.filter((emp) => {
     const punchDate = new Date(emp.createdDate);
@@ -117,7 +117,7 @@ const AllTransactionReport = () => {
       <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-          <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900 ">
+          <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl font-semibold text-gray-900 ">
             <FaAngleRight className="text-blue-500 text-base" />
             <span className="text-gray-500">Reports</span>
             <FaAngleRight className="text-blue-500 text-base" />
@@ -268,7 +268,7 @@ const AllTransactionReport = () => {
             <div className="flex justify-end mt-10">
               <button
                 onClick={() => setOpenModal(true)}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md lg:text-lg 3xl:text-xl transition-all duration-200"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md xl:text-lg transition-all duration-200"
               >
                 Generate Report
               </button>
@@ -281,7 +281,7 @@ const AllTransactionReport = () => {
           <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
             <div className="p-6 border-b border-blue-100/30">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl lg:text-2xl 3xl:text-3xl font-bold text-gray-800">
+                <h2 className="text-xl font-bold text-gray-800">
                   All Transaction Report
                 </h2>
                 <RxCross2
@@ -292,7 +292,7 @@ const AllTransactionReport = () => {
 
               <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  <label className="text-sm xl:text-base font-medium text-gray-600">
                     Display
                   </label>
                   <select
@@ -301,7 +301,7 @@ const AllTransactionReport = () => {
                       setEntriesPerPage(Number(e.target.value));
                       setCurrentPage(1);
                     }}
-                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60"
+                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60"
                   >
                     {[10, 25, 50, 100].map((v) => (
                       <option key={v} value={v}>
@@ -309,7 +309,7 @@ const AllTransactionReport = () => {
                       </option>
                     ))}
                   </select>
-                  <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  <span className="text-sm xl:text-base font-medium text-gray-600">
                     entries
                   </span>
                 </div>
@@ -322,7 +322,7 @@ const AllTransactionReport = () => {
                       setSearchTerm(e.target.value);
                       setCurrentPage(1);
                     }}
-                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all"
+                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all"
                   />
                 </div>
               </div>
@@ -332,7 +332,7 @@ const AllTransactionReport = () => {
               className="overflow-x-auto min-h-[350px]"
               style={{ scrollbarWidth: "none" }}
             >
-              <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+              <table className="w-full text-[17px]">
                 <thead>
                   <tr className="bg-slate-50 border-b border-blue-100/50">
                     <th className="px-4 py-3 text-center font-semibold text-gray-700">
@@ -420,7 +420,7 @@ const AllTransactionReport = () => {
                                 setSelectedId(item.id);
                                 setModalOpenSelectedItem(true);
                               }}
-                              className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                              className="text-blue-500 hover:text-blue-700 xl:text-xl cursor-pointer transition-all"
                             />
                           </div>
                         </td>
@@ -433,7 +433,7 @@ const AllTransactionReport = () => {
 
             {/* Pagination */}
             <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-              <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
+              <span className="text-sm xl:text-base text-gray-600">
                 Showing{" "}
                 <span className="font-bold text-gray-900">
                   {startIndex + 1}
@@ -452,7 +452,7 @@ const AllTransactionReport = () => {
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(1)}
-                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50"
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
                 >
                   First
                 </button>
@@ -463,7 +463,7 @@ const AllTransactionReport = () => {
                 >
                   <GrPrevious />
                 </button>
-                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm lg:text-base 3xl:text-xl min-w-[45px] text-center">
+                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm min-w-[45px] text-center">
                   {currentPage}
                 </div>
                 <button
@@ -476,7 +476,7 @@ const AllTransactionReport = () => {
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(totalPages)}
-                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50"
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
                 >
                   Last
                 </button>
@@ -496,7 +496,7 @@ const AllTransactionReport = () => {
               style={{ scrollbarWidth: "none" }}
             >
               <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
-                <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+                <h2 className="text-xl font-bold text-gray-900">
                   {selectedItem.employee} Transaction Details
                 </h2>
                 <button
@@ -575,7 +575,7 @@ const AllTransactionReport = () => {
                 <div>
                   <p className={labelStyle}>Status</p>
                   <p
-                    className={`py-1 px-3 w-fit rounded lg:text-lg 3xl:text-xl font-semibold border ${selectedItem.status === "Approved" ? "bg-green-100 text-green-700 border-green-200" : selectedItem.status === "Rejected" ? "bg-red-100 text-red-700 border-red-200" : "bg-yellow-100 text-yellow-700 border-yellow-200"}`}
+                    className={`py-1 px-3 w-fit rounded xl:text-lg font-semibold border ${selectedItem.status === "Approved" ? "bg-green-100 text-green-700 border-green-200" : selectedItem.status === "Rejected" ? "bg-red-100 text-red-700 border-red-200" : "bg-yellow-100 text-yellow-700 border-yellow-200"}`}
                   >
                     {selectedItem.status}
                   </p>

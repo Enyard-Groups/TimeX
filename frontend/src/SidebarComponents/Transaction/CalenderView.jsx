@@ -161,7 +161,7 @@ const CalenderView = () => {
         <div className="grid md:grid-cols-3 gap-6">
           {/* Start Date */}
           <div>
-            <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+            <label className="text-base font-semibold text-gray-700 mb-2 block">
               Start Date <span className="text-red-500">*</span>
             </label>
             <input
@@ -173,7 +173,7 @@ const CalenderView = () => {
                 setshowendSpinner(false);
               }}
               placeholder="dd/mm/yyyy"
-              className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+              className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
             />
 
             {showstartSpinner && (
@@ -189,7 +189,7 @@ const CalenderView = () => {
 
           {/* End Date */}
           <div>
-            <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+            <label className="text-base font-semibold text-gray-700 mb-2 block">
               End Date <span className="text-red-500">*</span>
             </label>
             <input
@@ -203,7 +203,7 @@ const CalenderView = () => {
               placeholder={
                 !formData.startdate ? "Select Start Date" : "dd/mm/yyyy"
               }
-              className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+              className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2  rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
               disabled={!formData.startdate}
             />
 
@@ -229,8 +229,8 @@ const CalenderView = () => {
               options={["Head Office"]}
               formData={formData}
               setFormData={setFormData}
-              inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
-              labelStyle="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block"
+              inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2  rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+              labelStyle="text-base font-semibold text-gray-700 mb-2 block"
             />
           </div>
 
@@ -253,15 +253,15 @@ const CalenderView = () => {
               ]}
               formData={formData}
               setFormData={setFormData}
-              inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
-              labelStyle="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block"
+              inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+              labelStyle="text-base font-semibold text-gray-700 mb-2 block"
             />
           </div>
 
           {/* Button */}
           <div className="flex items-end">
             <button
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-4 py-2 xl:text-lg rounded-lg shadow-md hover:shadow-lg transition"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition"
               onClick={handlecalendergrid}
             >
               Show Calendar
@@ -329,7 +329,7 @@ const CalenderView = () => {
           {/* Assign */}
           <div className="flex justify-center mt-8">
             <button
-              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 xl:text-lg rounded-lg shadow-lg hover:shadow-xl transition"
+              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transition"
               onClick={handleAssign}
             >
               Assign This Roster

@@ -428,7 +428,7 @@ const LeaveRequest = () => {
             className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-[16px] xl:text-[20px] text-gray-700">
+            <table className="w-full text-[17px] text-gray-700">
               <thead>
                 <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
                   <th className="px-6 py-3 text-center font-semibold text-gray-700">
@@ -663,8 +663,8 @@ const LeaveRequest = () => {
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
-                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                    labelStyle="text-sm xl:text-lg font-bold text-gray-700 mb-2 block"
+                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
+                    labelStyle="text-sm xl:text-base font-bold text-gray-700 mb-2 block"
                   />
                 </div>
 
@@ -684,14 +684,14 @@ const LeaveRequest = () => {
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
-                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                    labelStyle="text-sm xl:text-lg font-bold text-gray-700 mb-2 block"
+                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
+                    labelStyle="text-sm xl:text-base font-bold text-gray-700 mb-2 block"
                   />
                 </div>
 
                 {/* First Date of Absence */}
                 <div>
-                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
                     First Date of Absence{" "}
                     <span className="text-red-500">*</span>
                   </label>
@@ -702,7 +702,7 @@ const LeaveRequest = () => {
                     onClick={() => setFromDateSpinner(true)}
                     disabled={mode === "view"}
                     placeholder="dd/mm/yyyy"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
                   {fromDateSpinner && (
                     <SpinnerDatePicker
@@ -717,7 +717,7 @@ const LeaveRequest = () => {
 
                 {/* Last Date of Absence */}
                 <div>
-                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
                     Last Date of Absence <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -727,7 +727,7 @@ const LeaveRequest = () => {
                     onClick={() => setToDateSpinner(true)}
                     disabled={mode === "view"}
                     placeholder="dd/mm/yyyy"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
                   {toDateSpinner && (
                     <SpinnerDatePicker
@@ -742,7 +742,7 @@ const LeaveRequest = () => {
 
                 {/* Resume Duty On */}
                 <div>
-                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
                     Resume Duty On
                   </label>
                   <input
@@ -752,7 +752,7 @@ const LeaveRequest = () => {
                     onClick={() => setShowResumeSpinner(true)}
                     disabled={mode === "view"}
                     placeholder="dd/mm/yyyy"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
                   {showResumeSpinner && (
                     <SpinnerDatePicker
@@ -767,7 +767,7 @@ const LeaveRequest = () => {
 
                 {/* Number of Days */}
                 <div>
-                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
                     Number of Days <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -775,13 +775,13 @@ const LeaveRequest = () => {
                     value={formData.number_of_days}
                     placeholder="Number of Days"
                     disabled
-                    className="w-full bg-gray-100 border border-gray-200 text-gray-500 px-3 py-2 xl:text-lg rounded-lg cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-gray-100 border border-gray-200 text-gray-500 px-3 py-2 xl:text-base rounded-lg cursor-not-allowed transition-all shadow-sm"
                   />
                 </div>
 
                 {/* Leave Pending of Approvals */}
                 <div>
-                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
                     Leave Pending of Approvals (No of Days)
                   </label>
                   <input
@@ -790,13 +790,13 @@ const LeaveRequest = () => {
                     onChange={handleChange}
                     placeholder="Leave Pending of Approvals (No of Days)"
                     disabled={mode === "view"}
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
                 </div>
 
                 {/* Leave Balance */}
                 <div>
-                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
                     Leave Balance
                   </label>
                   <input
@@ -805,13 +805,13 @@ const LeaveRequest = () => {
                     onChange={handleChange}
                     placeholder="Leave Balance"
                     disabled={mode === "view"}
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
                 </div>
 
                 {/* Contact */}
                 <div>
-                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
                     Contact <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -820,13 +820,13 @@ const LeaveRequest = () => {
                     onChange={handleChange}
                     placeholder="Contact"
                     disabled={mode === "view"}
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
                 </div>
 
                 {/* Email */}
                 <div>
-                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
                     Email <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -836,13 +836,13 @@ const LeaveRequest = () => {
                     onChange={handleChange}
                     placeholder="Email"
                     disabled={mode === "view"}
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
                 </div>
 
                 {/* Leave Reason */}
                 <div className="lg:col-span-2">
-                  <label className="text-sm xl:text-lg font-semibold text-gray-700 mb-2 block">
+                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
                     Leave Reason
                   </label>
                   <input
@@ -851,7 +851,7 @@ const LeaveRequest = () => {
                     onChange={handleChange}
                     placeholder="Reason for Leave"
                     disabled={mode === "view"}
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
                   />
                 </div>
 
@@ -865,7 +865,7 @@ const LeaveRequest = () => {
                     disabled={mode === "view"}
                     className="w-5 h-5 cursor-pointer accent-blue-500 disabled:cursor-not-allowed"
                   />
-                  <label className="text-gray-700 text-sm xl:text-lg font-semibold cursor-pointer">
+                  <label className="text-gray-700 text-sm xl:text-base font-semibold cursor-pointer">
                     Is HalfDay
                   </label>
                 </div>
