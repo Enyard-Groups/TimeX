@@ -117,13 +117,13 @@ const RecentActivity = ({ userData = [] }) => {
                     </div>
                   </td>
 
-                  <td className="p-2 text-center">
+                  <td className="p-2 text-center text-sm">
                     <span className="px-2 py-1 font-medium rounded-full bg-[#e3e9f7] text-gray-700 font-mono">
                       {user.checkin || "--"}
                     </span>
                   </td>
 
-                  <td className="p-2 text-center">
+                  <td className="p-2 text-center text-sm">
                     <span className="px-2 py-1 font-medium rounded-full bg-[#e3f6f7] text-gray-700 font-mono">
                       {isCheckout ? user.checkout : "--"}
                     </span>

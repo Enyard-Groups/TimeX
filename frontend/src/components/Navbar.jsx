@@ -65,19 +65,19 @@ export default function Navbar({
               onClick={handleLogout}
               className="bg-[#0f172a] rounded-full text-white p-1.5 cursor-pointer"
             >
-              <IoIosLogOut className="text-xl lg:text-2xl" />
+              <IoIosLogOut className="text-lg xl:text-xl" />
             </button>
 
             <button
               onClick={() => setRightSidebarOpen(true)}
               className="bg-[#0f172a] rounded-full text-white p-1.5 cursor-pointer"
             >
-              <IoMdNotificationsOutline className="text-xl lg:text-2xl" />
+              <IoMdNotificationsOutline className="text-lg xl:text-xl" />
             </button>
 
             <div
               onClick={() => setRightSidebarOpen(true)}
-              className="py-1 px-2.5 bg-[#0f172a] rounded-full text-white cursor-pointer text-xl lg:text-2xl"
+              className="py-1 px-2.5 bg-[#0f172a] rounded-full text-white cursor-pointer text-lg xl:text-xl"
             >
               {user?.user_name?.charAt(0).toUpperCase()}
             </div>

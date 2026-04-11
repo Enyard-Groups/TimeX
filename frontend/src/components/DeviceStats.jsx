@@ -84,7 +84,7 @@ const DeviceStats = ({ data = [] }) => {
         {/* Device List */}
         <div className="mt-4 space-y-2">
           {deviceList.map((item, i) => (
-            <div key={i} className="flex items-center justify-between text-[16px] lg:text-[18px] 3xl:text-[20px]">
+            <div key={i} className="flex items-center justify-between text-[16px] xl:text-[17px]">
               <div className="flex items-center gap-2">
                 <span
                   className="w-3 h-3 rounded-full"
