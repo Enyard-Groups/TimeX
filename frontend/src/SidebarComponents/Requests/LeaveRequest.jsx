@@ -54,8 +54,16 @@ const LeaveRequest = () => {
 
   const parseDate = (dateStr) => {
     if (!dateStr) return null;
-    const [day, month, year] = dateStr.split("/");
-    return new Date(year, month - 1, day);
+    if (dateStr instanceof Date) return dateStr;
+    if (dateStr.includes("-")) {
+      const [y, m, d] = dateStr.split("-");
+      return new Date(y, m - 1, d);
+    }
+    if (dateStr.includes("/")) {
+      const [d, m, y] = dateStr.split("/");
+      return new Date(y, m - 1, d);
+    }
+    return new Date(dateStr);
   };
 
   const inputStyle =
@@ -90,29 +98,37 @@ const LeaveRequest = () => {
   };
 
   useEffect(() => {
-    const from = parseDate(formData.start_date);
-    const to = parseDate(formData.end_date);
+    if (formData.start_date && formData.end_date) {
+      const from = parseDate(formData.start_date);
+      const to = parseDate(formData.end_date);
 
-    if (from && to && to >= from) {
-      const diffTime = to.getTime() - from.getTime();
-      let days = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+      if (from && to && !isNaN(from.getTime()) && !isNaN(to.getTime())) {
+        if (to >= from) {
+          const diffTime = to.getTime() - from.getTime();
+          let days = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-      // ✅ Handle Half Day
-      if (formData.is_half_day) {
-        days = 0.5;
+          // ✅ Handle Half Day
+          if (formData.is_half_day) {
+            days = 0.5;
+          }
+
+          if (formData.number_of_days !== days.toString()) {
+            setFormData((prev) => ({
+              ...prev,
+              number_of_days: days.toString(),
+            }));
+          }
+        } else {
+          if (formData.number_of_days !== "") {
+            setFormData((prev) => ({
+              ...prev,
+              number_of_days: "",
+            }));
+          }
+        }
       }
-
-      setFormData((prev) => ({
-        ...prev,
-        number_of_days: days.toString(),
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        number_of_days: "",
-      }));
     }
-  }, [formData.start_date, formData.end_date, formData.is_half_day]);
+  }, [formData.start_date, formData.end_date, formData.is_half_day, formData.number_of_days]);
 
   // Fetch data
   const fetchData = async () => {
@@ -200,7 +216,7 @@ const LeaveRequest = () => {
                   ...item,
                   ...res.data,
                   employee_name: employeeOptions.find(
-                    (e) => e.id === employee_id,
+                    (e) => e.company_enrollment_id === employee_id,
                   )?.full_name,
                 }
               : item,
@@ -212,8 +228,9 @@ const LeaveRequest = () => {
         setLeave((prev) => [
           {
             ...res.data,
-            employee_name: employeeOptions.find((e) => e.id === employee_id)
-              ?.full_name,
+            employee_name: employeeOptions.find(
+              (e) => e.company_enrollment_id === employee_id,
+            )?.full_name,
           },
           ...prev,
         ]);
@@ -664,7 +681,7 @@ const LeaveRequest = () => {
                     displayValue={formData.employee_name || ""}
                     options={employeeOptions}
                     labelKey="full_name"
-                    valueKey="id"
+                    valueKey="company_enrollment_id"
                     labelName="employee_name"
                     formData={formData}
                     setFormData={setFormData}

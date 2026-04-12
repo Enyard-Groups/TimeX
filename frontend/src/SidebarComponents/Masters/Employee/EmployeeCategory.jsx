@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
@@ -14,6 +15,8 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../../SearchDropdown";
 import { MdDeleteForever } from "react-icons/md";
 
+const API_BASE = "http://localhost:3000/api";
+
 const EmployeeCategory = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
@@ -28,24 +31,38 @@ const EmployeeCategory = () => {
   const [formData, setFormData] = useState({
     name: "",
     company: "",
+    company_id: "",
     company_name: "",
-    workhours: null,
-    isActive: false,
+    work_hours: null,
+    is_active: true,
   });
 
-  const fetchCompanies = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:3000/api/companies");
-      setCompanyOptions(res.data || []);
+      const res = await axios.get(`${API_BASE}/master/employee-categories`);
+      setEmployeeCategory(res.data.map(item => ({
+        ...item,
+        work_hours: item.work_hours ? new Date(`1970-01-01T${item.work_hours}`) : null
+      })));
     } catch (error) {
-      console.error("Failed to fetch companies", error);
+      console.error("Failed to fetch categories", error);
     } finally {
       setLoading(false);
     }
   };
 
+  const fetchCompanies = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/companies`);
+      setCompanyOptions(res.data || []);
+    } catch (error) {
+      console.error("Failed to fetch companies", error);
+    }
+  };
+
   useEffect(() => {
+    fetchData();
     fetchCompanies();
   }, []);
 
@@ -57,10 +74,8 @@ const EmployeeCategory = () => {
 
   const filteredemployeeCategory = employeeCategory.filter(
     (x) =>
-      x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      (x.company_name || x.company || "")
-        .toLowerCase()
-        .startsWith(searchTerm.toLowerCase()),
+      (x.name || "").toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      (x.company_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -86,47 +101,48 @@ const EmployeeCategory = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    const { name, company, workhours, isActive } = formData;
-
-    if (!name) {
+  const handleSubmit = async () => {
+    if (!formData.name || !formData.company_id) {
       toast.error("Please fill all required fields");
-      return; // stop execution
+      return;
     }
 
-    const newemployeeCategory = {
-      id: Date.now(),
-      name,
-      company,
-      workhours,
-      isActive,
+    const payload = {
+      ...formData,
+      work_hours: formData.work_hours
+        ? formData.work_hours.toTimeString().split(" ")[0]
+        : null,
     };
 
-    if (editId) {
-      setEmployeeCategory((prev) =>
-        prev.map((emp) => (emp.id === editId ? { ...emp, ...formData } : emp)),
-      );
-
-      toast.success("Data updated");
-    } else {
-      setEmployeeCategory((prev) => [...prev, newemployeeCategory]);
-
-      toast.success("Data Added");
+    try {
+      setLoading(true);
+      if (editId) {
+        await axios.put(`${API_BASE}/master/employee-categories/${editId}`, payload);
+        toast.success("Category updated");
+      } else {
+        await axios.post(`${API_BASE}/master/employee-categories`, payload);
+        toast.success("Category added");
+      }
+      setOpenModal(false);
+      fetchData();
+    } catch (error) {
+      console.error("Error saving category:", error);
+      toast.error("Failed to save category");
+    } finally {
+      setLoading(false);
     }
-
-    setOpenModal(false);
-    setEditId(null);
-
-    setFormData({
-      company: "",
-      company_name: "",
-      name: "",
-      workhours: null,
-      isActive: false,
-    });
   };
-  const handleDelete = (id) => {
-    setEmployeeCategory(employeeCategory.filter((v) => v.id !== id));
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this category?")) return;
+    try {
+      await axios.delete(`${API_BASE}/master/employee-categories/${id}`);
+      toast.success("Category deleted");
+      fetchData();
+    } catch (error) {
+      console.error("Error deleting category:", error);
+      toast.error("Failed to delete category");
+    }
   };
 
   const handleCopy = () => {
@@ -143,9 +159,9 @@ const EmployeeCategory = () => {
         [
           index + 1,
           item.name,
-          item.company,
-          item.workhours ? item.workhours.toLocaleTimeString([], {}) : "",
-          item.isActive ? "Y" : "N",
+          item.company_name,
+          item.work_hours ? item.work_hours.toLocaleTimeString([], {}) : "",
+          item.is_active ? "Y" : "N",
         ].join("\t"),
       )
       .join("\n");
@@ -158,11 +174,11 @@ const EmployeeCategory = () => {
     const excelData = filteredemployeeCategory.map((item, index) => ({
       "SL.NO": index + 1,
       "Category Name": item.name,
-      Company: item.company,
-      "Work Hours": item.workhours
-        ? item.workhours.toLocaleTimeString([], {})
+      Company: item.company_name,
+      "Work Hours": item.work_hours
+        ? item.work_hours.toLocaleTimeString([], {})
         : "",
-      Active: item.isActive ? "Y" : "N",
+      Active: item.is_active ? "Y" : "N",
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -190,9 +206,9 @@ const EmployeeCategory = () => {
       tableRows.push([
         index + 1,
         item.name,
-        item.company,
-        item.workhours ? item.workhours.toLocaleTimeString([], {}) : "",
-        item.isActive ? "Y" : "N",
+        item.company_name,
+        item.work_hours ? item.work_hours.toLocaleTimeString([], {}) : "",
+        item.is_active ? "Y" : "N",
       ]);
     });
 
@@ -227,10 +243,11 @@ const EmployeeCategory = () => {
                 setMode(""),
                 setEditId(null),
                 setFormData({
-                  company: "",
                   name: "",
-                  workhours: null,
-                  isActive: false,
+                  company_id: "",
+                  company_name: "",
+                  work_hours: null,
+                  is_active: true,
                 }),
                 setOpenModal(true)
               )}
@@ -373,8 +390,8 @@ const EmployeeCategory = () => {
                       {item.company_name || item.company || "-"}
                     </td>
                     <td className="px-6 py-2 text-center hidden md:table-cell text-gray-600">
-                      {item.workhours
-                        ? item.workhours.toLocaleTimeString([], {
+                      {item.work_hours
+                        ? item.work_hours.toLocaleTimeString([], {
                           hour12: false,
                         })
                         : "-"}
@@ -382,9 +399,9 @@ const EmployeeCategory = () => {
                     <td className="px-4 py-3 hidden lg:table-cell text-center">
                       <div className="flex justify-center">
                         <span
-                          className={`px-3 py-1 rounded-full text-sm lg:text-base 3xl:text-lg font-semibold border ${item.isActive ? "bg-green-100 text-green-700 border-green-300" : "bg-gray-100 text-gray-700 border-gray-300"}`}
+                          className={`px-3 py-1 rounded-full text-sm lg:text-base 3xl:text-lg font-semibold border ${item.is_active ? "bg-green-100 text-green-700 border-green-300" : "bg-gray-100 text-gray-700 border-gray-300"}`}
                         >
-                          {item.isActive ? "✓ Active" : "○ Inactive"}
+                          {item.is_active ? "✓ Active" : "○ Inactive"}
                         </span>
                       </div>
                     </td>
@@ -526,8 +543,8 @@ const EmployeeCategory = () => {
                     Company <span className="text-red-500">*</span>
                   </>
                 }
-                name="company"
-                value={formData.company}
+                name="company_id"
+                value={formData.company_id}
                 displayValue={formData.company_name}
                 options={companyOptions}
                 labelKey="name"
@@ -550,17 +567,17 @@ const EmployeeCategory = () => {
                   }
                   className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm cursor-pointer flex items-center justify-center min-h-[44px]"
                 >
-                  {formData.workhours
-                    ? formData.workhours.toLocaleTimeString([], {
+                  {formData.work_hours
+                    ? formData.work_hours.toLocaleTimeString([], {
                       hour12: false,
                     })
                     : "HH:MM:SS"}
                 </div>
                 {showWorkHoursPicker && (
                   <SpinnerTimePicker
-                    value={formData.workhours}
+                    value={formData.work_hours}
                     onChange={(date) =>
-                      setFormData({ ...formData, workhours: date })
+                      setFormData({ ...formData, work_hours: date })
                     }
                     onClose={() => setShowWorkHoursPicker(false)}
                   />
@@ -570,8 +587,8 @@ const EmployeeCategory = () => {
               <div className="flex items-center gap-3 h-fit sm:mt-8">
                 <input
                   type="checkbox"
-                  name="isActive"
-                  checked={formData.isActive}
+                  name="is_active"
+                  checked={formData.is_active}
                   onChange={handleChange}
                   disabled={mode === "view"}
                   className="w-5 h-5 cursor-pointer accent-blue-500"

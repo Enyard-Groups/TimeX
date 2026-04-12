@@ -896,11 +896,10 @@ const StaffTrainingChecklist = () => {
                                   traineeSignMode: "upload",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.traineeSignMode === "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.traineeSignMode === "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Upload
                             </button>
@@ -912,11 +911,10 @@ const StaffTrainingChecklist = () => {
                                   traineeSignMode: "draw",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.traineeSignMode === "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.traineeSignMode === "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Sign Here
                             </button>
@@ -1046,11 +1044,10 @@ const StaffTrainingChecklist = () => {
                                   traineeSign2Mode: "upload",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.traineeSign2Mode === "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.traineeSign2Mode === "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Upload
                             </button>
@@ -1062,11 +1059,10 @@ const StaffTrainingChecklist = () => {
                                   traineeSign2Mode: "draw",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.traineeSign2Mode === "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.traineeSign2Mode === "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Sign Here
                             </button>

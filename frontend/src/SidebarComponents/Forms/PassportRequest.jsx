@@ -649,11 +649,10 @@ const PassportRequest = () => {
                                   employeeSignatureMode: "upload",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.employeeSignatureMode === "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.employeeSignatureMode === "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Upload
                             </button>
@@ -665,11 +664,10 @@ const PassportRequest = () => {
                                   employeeSignatureMode: "draw",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.employeeSignatureMode === "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.employeeSignatureMode === "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Sign Here
                             </button>
@@ -822,11 +820,10 @@ const PassportRequest = () => {
                                   msoSignatureMode: "upload",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.msoSignatureMode === "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.msoSignatureMode === "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Upload
                             </button>
@@ -838,11 +835,10 @@ const PassportRequest = () => {
                                   msoSignatureMode: "draw",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.msoSignatureMode === "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.msoSignatureMode === "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Sign Here
                             </button>

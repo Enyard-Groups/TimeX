@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import db from "./lib/db.js" 
+import db from "./lib/db.js"
 import userRouter from "./routes/users.route.js";
 import deviceRouter from "./routes/device.route.js";
 import attendenceRouter from "./routes/attendence.route.js";
@@ -14,22 +14,22 @@ import companiesRouter from "./routes/companies.route.js";
 
 
 
-const PORT=process.env.PORT;
+const PORT = process.env.PORT;
 
-const app=express();
+const app = express();
 dotenv.config();
 app.use(express.json())
 app.use(cors({
   origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175"],
-  credentials:true
+  credentials: true
 }));
 
 app.use("/api/users", userRouter);
-app.use("/api/employee",employeesRoute);
-app.use("/api/master",masterRoute);
-app.use("/api/device",deviceRouter);
-app.use("/api/attendence",attendenceRouter);
-app.use("/api/requests",requestRouter);
+app.use("/api/employee", employeesRoute);
+app.use("/api/master", masterRoute);
+app.use("/api/device", deviceRouter);
+app.use("/api/attendence", attendenceRouter);
+app.use("/api/requests", requestRouter);
 app.use("/api/visitor", visitorRouter);
 app.use("/api/form", formRouter);
 app.use("/api/companies", companiesRouter);
@@ -44,8 +44,8 @@ const testDB = async () => {
 
   }
 
-  catch(error){
-    console.log("Error in connect db :",error.message)
+  catch (error) {
+    console.log("Error in connect db :", error.message)
   }
 };
 
@@ -53,6 +53,6 @@ testDB();
 
 
 
-app.listen(PORT, ()=>{
+app.listen(PORT, () => {
   console.log(`server is running at http://localhost:${PORT}`);
 })

@@ -408,9 +408,9 @@ const AllTransactionReport = () => {
                         <td className="px-4 py-3 text-center hidden sm:table-cell text-gray-600">
                           {item.outtime && item.intime
                             ? getTimeDiff(
-                                new Date(item.intime).toLocaleTimeString(),
-                                new Date(item.outtime).toLocaleTimeString(),
-                              )
+                              new Date(item.intime).toLocaleTimeString(),
+                              new Date(item.outtime).toLocaleTimeString(),
+                            )
                             : "Missed Punch"}
                         </td>
                         <td className="px-4 py-3 text-center">
@@ -558,9 +558,9 @@ const AllTransactionReport = () => {
                   <p className={inputStyle}>
                     {selectedItem.intime && selectedItem.outtime
                       ? getTimeDiff(
-                          new Date(selectedItem.intime).toLocaleTimeString(),
-                          new Date(selectedItem.outtime).toLocaleTimeString(),
-                        )
+                        new Date(selectedItem.intime).toLocaleTimeString(),
+                        new Date(selectedItem.outtime).toLocaleTimeString(),
+                      )
                       : "Missed Punch"}
                   </p>
                 </div>

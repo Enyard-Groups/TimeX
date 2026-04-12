@@ -862,11 +862,10 @@ const OptOutRequestForm = () => {
                                     nameSignMode: "upload",
                                   }))
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                  formData.nameSignMode === "upload"
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.nameSignMode === "upload"
                                     ? "bg-[#0f172a] text-white border-[#0f172a]"
                                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                                  }`}
                               >
                                 Upload
                               </button>
@@ -878,11 +877,10 @@ const OptOutRequestForm = () => {
                                     nameSignMode: "draw",
                                   }))
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                  formData.nameSignMode === "draw"
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.nameSignMode === "draw"
                                     ? "bg-[#0f172a] text-white border-[#0f172a]"
                                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                                  }`}
                               >
                                 Sign Here
                               </button>
@@ -1019,11 +1017,10 @@ const OptOutRequestForm = () => {
                                     approvedByMode: "upload",
                                   }))
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                  formData.approvedByMode === "upload"
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.approvedByMode === "upload"
                                     ? "bg-[#0f172a] text-white border-[#0f172a]"
                                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                                  }`}
                               >
                                 Upload
                               </button>
@@ -1035,11 +1032,10 @@ const OptOutRequestForm = () => {
                                     approvedByMode: "draw",
                                   }))
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                  formData.approvedByMode === "draw"
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.approvedByMode === "draw"
                                     ? "bg-[#0f172a] text-white border-[#0f172a]"
                                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                                  }`}
                               >
                                 Sign Here
                               </button>
@@ -1178,11 +1174,10 @@ const OptOutRequestForm = () => {
                                   concurredByMode: "upload",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.concurredByMode === "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.concurredByMode === "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Upload
                             </button>
@@ -1194,11 +1189,10 @@ const OptOutRequestForm = () => {
                                   concurredByMode: "draw",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.concurredByMode === "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.concurredByMode === "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Sign Here
                             </button>

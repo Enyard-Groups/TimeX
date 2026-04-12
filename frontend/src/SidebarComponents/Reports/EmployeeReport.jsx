@@ -14,15 +14,6 @@ import { FaFileExcel, FaFilePdf } from "react-icons/fa";
 
 const API_BASE = "http://localhost:3000/api";
 
-const EMPLOYEE_CATEGORIES = [
-  "All Category",
-  "Full Time Equivalent",
-  "Contingent",
-  "Freelence",
-  "Contract",
-  "Permanent",
-  "User",
-];
 
 const EmployeeReport = () => {
   const [openModal, setOpenModal]                     = useState(false);
@@ -35,6 +26,7 @@ const EmployeeReport = () => {
   const [companyOptions, setCompanyOptions]           = useState([]);
   const [designationOptions, setDesignationOptions]   = useState([]);
   const [locationOptions, setLocationOptions]         = useState([]);
+  const [categoryOptions, setCategoryOptions]         = useState([]);
 
   const [searchTerm, setSearchTerm]     = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
@@ -45,8 +37,10 @@ const EmployeeReport = () => {
     company: "",
     company_id: "",
     location: "",
+    location_id: "",
     designation_id: "",
     designation: "",
+    finger: "",
   });
 
   const inputStyle =
@@ -54,24 +48,60 @@ const EmployeeReport = () => {
   const labelStyle =
     "text-sm lg:text-base 3xl:text-xl font-semibold text-gray-700 mb-2 block";
 
+  useEffect(() => {
+    fetchOptions();
+  }, []);
+
+  const fetchOptions = async () => {
+    try {
+      const [resComp, resDesig, resLoc, resCat] = await Promise.all([
+        axios.get(`${API_BASE}/companies`),
+        axios.get(`${API_BASE}/master/designation`),
+        axios.get(`${API_BASE}/master/geofencing`),
+        axios.get(`${API_BASE}/master/employee-categories`),
+      ]);
+      setCompanyOptions(resComp.data);
+      setDesignationOptions(resDesig.data);
+      setLocationOptions(resLoc.data || []);
+      setCategoryOptions(resCat.data);
+    } catch (err) {
+      console.error("Error fetching filter options:", err);
+    }
+  };
+
+  const handleGenerate = async () => {
+    setLoading(true);
+    try {
+      const params = {
+        company: formData.company_id,
+        type: formData.employeeCategory === "All Category" ? "" : formData.employeeCategory,
+        location: formData.location_id,
+        designation_id: formData.designation_id,
+        finger: formData.finger,
+      };
+      const res = await axios.get(`${API_BASE}/employee/report`, { params });
+      setEmployeeReport(res.data);
+      setOpenModal(true);
+    } catch (err) {
+      console.error("Error generating report:", err);
+      toast.error("Failed to generate report");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const filteredReport = employeeReport.filter((emp) => {
+    const sTerm = searchTerm.toLowerCase();
     return (
-      (formData.company === "" || emp.company === formData.company) &&
-      (formData.employeeCategory === "" ||
-        formData.employeeCategory === "All Category" ||
-        emp.employeeCategory === formData.employeeCategory) &&
-      (formData.location === "" || emp.location === formData.location) &&
-      (formData.department === "" || emp.department === formData.department) &&
-      (formData.finger === "" || emp.finger === formData.finger)
+      (emp.name || "").toLowerCase().includes(sTerm) ||
+      (emp.employeeID || "").toLowerCase().includes(sTerm) ||
+      (emp.company || "").toLowerCase().includes(sTerm) ||
+      (emp.location || "").toLowerCase().includes(sTerm) ||
+      (emp.department || "").toLowerCase().includes(sTerm)
     );
   });
 
-  const filteredemployeeReport = filteredReport.filter(
-    (x) =>
-      x.company.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.employeeCategory.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.location.toLowerCase().startsWith(searchTerm.toLowerCase()),
-  );
+  const filteredemployeeReport = filteredReport;
 
   const endIndex   = currentPage * entriesPerPage;
   const startIndex = endIndex - entriesPerPage;
@@ -150,7 +180,9 @@ const EmployeeReport = () => {
                 label="Company"
                 name="company"
                 value={formData.company}
-                options={["Company 1", "Company 2"]}
+                options={companyOptions}
+                labelKey="name"
+                valueKey="id"
                 formData={formData}
                 setFormData={setFormData}
                 inputStyle={inputStyle}
@@ -163,14 +195,9 @@ const EmployeeReport = () => {
                 label="Employee Category"
                 name="employeeCategory"
                 value={formData.employeeCategory}
-                options={[
-                  "All Category",
-                  "Full Time Equivalent",
-                  "Contingent",
-                  "Freelence",
-                  "Contract",
-                  "Permanent",
-                ]}
+                options={[{ name: "All Category" }, ...categoryOptions]}
+                labelKey="name"
+                valueKey="name"
                 formData={formData}
                 setFormData={setFormData}
                 inputStyle={inputStyle}
@@ -181,9 +208,13 @@ const EmployeeReport = () => {
             <div>
               <SearchDropdown
                 label="Location"
-                name="location"
-                value={formData.location}
-                options={["Head Office", "Location 2"]}
+                name="location_id"
+                value={formData.location_id}
+                displayValue={formData.location}
+                options={locationOptions}
+                labelKey="name"
+                valueKey="id"
+                labelName="location"
                 formData={formData}
                 setFormData={setFormData}
                 inputStyle={inputStyle}
@@ -194,32 +225,11 @@ const EmployeeReport = () => {
             <div>
               <SearchDropdown
                 label="Designation"
-                name="department"
-                value={formData.department}
-                options={[
-                  "Regional Sales Support Manager",
-                  "Operations Support Officer",
-                  "Finance Assistant",
-                  "Trade Finance Specialist",
-                  "Banking Operations Officer",
-                  "Sales Support Officer",
-                  "Banking Operations Officer",
-                  "Project Manager",
-                  "Administrative Assistant",
-                  "Sales Officer",
-                  "Banking Officer",
-                  "Sales Manager",
-                  "Senior Banking Officer",
-                  "Client Service Manager",
-                  "Senior Director – Banking Operations",
-                  "Relationship Officer",
-                  "Accountant",
-                  "Director – Sales Excellence",
-                  "Service Sales Support Officer",
-                  "HR Manager",
-                  "Sales & Logistics Officer",
-                  "Operation Officer",
-                ]}
+                name="designation"
+                value={formData.designation}
+                options={designationOptions}
+                labelKey="name"
+                valueKey="id"
                 formData={formData}
                 setFormData={setFormData}
                 inputStyle={inputStyle}
@@ -241,8 +251,9 @@ const EmployeeReport = () => {
             </div>
             <div className="flex items-end">
               <button
-                onClick={() => setOpenModal(true)}
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-4 py-2 lg:text-lg 3xl:text-xl rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                onClick={handleGenerate}
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-4 py-2 lg:text-lg 3xl:text-xl rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50"
               >
                 {loading ? "Generating..." : "Generate Report"}
               </button>

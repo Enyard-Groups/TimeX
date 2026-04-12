@@ -52,7 +52,7 @@ export const getLeaveReport = async (req, res) => {
         e.company_enrollment_id AS employee_code,
         c.name AS company_name
       FROM leave_requests lr
-      LEFT JOIN employees e ON lr.employee_id = e.id
+      LEFT JOIN employees e ON lr.employee_id = e.company_enrollment_id
       LEFT JOIN companies c ON e.company = CAST(c.id AS int)
       ${whereClause}
       ORDER BY lr.created_at DESC`,
@@ -77,7 +77,7 @@ export const getLeaveRequests = async (req, res) => {
         c.name AS company_name
       FROM leave_requests lr
       LEFT JOIN employees e 
-        ON lr.employee_id = e.id
+        ON lr.employee_id = e.company_enrollment_id
       LEFT JOIN companies c 
         ON e.company = c.id
     `; // ❌ removed semicolon here
@@ -291,7 +291,7 @@ export const getClaimReport = async (req, res) => {
         e.company_enrollment_id AS employee_code,
         c.name AS company_name
       FROM claim_requests cr
-      LEFT JOIN employees e ON cr.employee_id = e.id
+      LEFT JOIN employees e ON cr.employee_id = e.company_enrollment_id
       LEFT JOIN companies c ON e.company = CAST(c.id AS int)
       ${whereClause}
       ORDER BY cr.created_at DESC`,
@@ -314,7 +314,7 @@ export const getClaimRequests = async (req, res) => {
     c.name
 FROM claim_requests cr
 LEFT JOIN employees e 
-    ON cr.employee_id = e.id
+    ON cr.employee_id = e.company_enrollment_id
 LEFT JOIN companies c 
     ON e.company= c.id
     `;
@@ -459,7 +459,7 @@ export const getTravelRequests = async (req, res) => {
     c.name
 FROM business_travel_requests tr
 LEFT JOIN employees e 
-    ON tr.employee_id = e.id
+    ON tr.employee_id = e.company_enrollment_id
 LEFT JOIN companies c 
     ON e.company = c.id
     `;
@@ -626,7 +626,7 @@ export const getWfhReport = async (req, res) => {
         e.company_enrollment_id AS employee_code,
         c.name AS company_name
       FROM wfh_requests w
-      LEFT JOIN employees e ON w.employee_id = e.id
+      LEFT JOIN employees e ON w.employee_id = e.company_enrollment_id
       LEFT JOIN companies c ON e.company = CAST(c.id AS int)
       ${whereClause}
       ORDER BY w.created_at DESC`,
@@ -644,7 +644,7 @@ export const getWfhRequests = async (req, res) => {
     const result = await db.query(`
       SELECT w.*, e.full_name as employee_name, e.company_enrollment_id as "idNo"
       FROM wfh_requests w
-      LEFT JOIN employees e ON w.employee_id = e.id
+      LEFT JOIN employees e ON w.employee_id = e.company_enrollment_id  
       ORDER BY w.created_at DESC
     `);
     return res.json(result.rows);
@@ -800,6 +800,7 @@ export const getManualEntryReport = async (req, res) => {
         m.id,
         m.employee_id,
         m.location,
+        gm.name                 AS location_name,
         CAST(m.in_time  AS TEXT) AS in_time,
         CAST(m.out_time AS TEXT) AS out_time,
         m.reason,
@@ -815,7 +816,8 @@ export const getManualEntryReport = async (req, res) => {
         ds.name                 AS designation,
         d.name                  AS department
        FROM manual_entry_requests m
-       LEFT JOIN employees e     ON m.employee_id = e.id
+       LEFT JOIN employees e     ON m.employee_id = e.company_enrollment_id
+       LEFT JOIN geofencing_masters gm ON m.location = gm.id
        LEFT JOIN companies c     ON e.company = CAST(c.id AS int)
        LEFT JOIN designations ds  ON e.designation_id = ds.id
        LEFT JOIN departments d    ON e.department_id = d.id
@@ -836,9 +838,10 @@ export const getManualRequests = async (req, res) => {
   try {
     const { status } = req.query;
     let query = `
-      SELECT m.*, e.full_name as employee_name 
+      SELECT m.*, e.full_name as employee_name, gm.name as location_name 
       FROM manual_entry_requests m
-      LEFT JOIN employees e ON m.employee_id = e.id
+      LEFT JOIN employees e ON m.employee_id = e.company_enrollment_id
+      LEFT JOIN geofencing_masters gm ON m.location = gm.id
     `;
     const params = [];
     if (status) {

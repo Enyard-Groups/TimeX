@@ -162,7 +162,7 @@ const AttendanceByEmployee = () => {
         {!openModal && (
           <div className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-2xl border border-blue-100/50 shadow-xl mb-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-               <div>
+              <div>
                 <SearchDropdown
                   label="Company"
                   name="company"
@@ -380,9 +380,9 @@ const AttendanceByEmployee = () => {
                         <td className="px-4 py-3 text-center hidden sm:table-cell text-gray-600">
                           {item.outtime && item.intime
                             ? getTimeDiff(
-                                new Date(item.intime).toLocaleTimeString(),
-                                new Date(item.outtime).toLocaleTimeString(),
-                              )
+                              new Date(item.intime).toLocaleTimeString(),
+                              new Date(item.outtime).toLocaleTimeString(),
+                            )
                             : "Missed Punch"}
                         </td>
                         <td className="px-4 py-3 hidden md:table-cell text-center">
@@ -550,9 +550,9 @@ const AttendanceByEmployee = () => {
                   <p className={inputStyle}>
                     {selectedItem.intime && selectedItem.outtime
                       ? getTimeDiff(
-                          new Date(selectedItem.intime).toLocaleTimeString(),
-                          new Date(selectedItem.outtime).toLocaleTimeString(),
-                        )
+                        new Date(selectedItem.intime).toLocaleTimeString(),
+                        new Date(selectedItem.outtime).toLocaleTimeString(),
+                      )
                       : "Missed Punch"}
                   </p>
                 </div>

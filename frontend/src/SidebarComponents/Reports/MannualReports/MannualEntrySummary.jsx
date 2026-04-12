@@ -8,15 +8,52 @@ import { FaEye } from "react-icons/fa";
 
 const MannualEntrySummary = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [mannualEntrySummary, setMannualEntrySummary] = useState([]);
-  const [selectedId, setSelectedId] = useState(null);
-  const [modalOpenSelectedItem, setModalOpenSelectedItem] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [locationOptions, setLocationOptions] = useState([]);
+  const [companyOptions, setCompanyOptions] = useState([]);
+  const [designationOptions, setDesignationOptions] = useState([]);
+  const [employeeOptions, setEmployeeOptions] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const [locRes, compRes, desigRes, empRes] = await Promise.all([
+        axios.get(`${API_BASE}/master/geofencing`),
+        axios.get(`${API_BASE}/companies`),
+        axios.get(`${API_BASE}/designations`),
+        axios.get(`${API_BASE}/employee`),
+      ]);
+      setLocationOptions(locRes.data || []);
+      setCompanyOptions(compRes.data || []);
+      setDesignationOptions(desigRes.data || []);
+      setEmployeeOptions(empRes.data || []);
+    } catch (err) {
+      console.error("Failed to fetch dropdown data", err);
+    }
+  };
 
   useEffect(() => {
-    const stored =
-      JSON.parse(localStorage.getItem("mannualEntryRequests")) || [];
-    setMannualEntrySummary(stored);
+    fetchData();
   }, []);
+
+  const handleGenerate = async () => {
+    try {
+      setLoading(true);
+      const params = {
+        company_id: formData.company_id,
+        location: formData.location,
+        employee_id: formData.employee_id,
+        from_date: formData.fromPunchDate,
+        to_date: formData.toPunchDate,
+      };
+      const res = await axios.get(`${API_BASE}/requests/manual/report`, { params });
+      setMannualEntrySummary(res.data);
+      setOpenModal(true);
+    } catch (error) {
+      console.error("Error generating report", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
@@ -50,9 +87,13 @@ const MannualEntrySummary = () => {
   const [formData, setFormData] = useState({
     employeeCategory: "",
     company: "",
+    company_id: "",
     location: "",
+    location_name: "",
     department: "",
+    designation_id: "",
     employee: "",
+    employee_id: "",
     fromPunchDate: "",
     toPunchDate: "",
   });
@@ -86,11 +127,15 @@ const MannualEntrySummary = () => {
     );
   });
 
-  const filteredmannualEntrySummary = filteredReport.filter(
-    (x) =>
-      x.company.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.employeeCategory.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.location.toLowerCase().startsWith(searchTerm.toLowerCase()),
+  const filteredmannualEntrySummary = mannualEntrySummary.filter(
+    (x) => {
+      const locName = x.location_name || locationOptions.find(l => l.id == x.location)?.name || x.location || "";
+      return (
+        (x.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (x.company_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        locName.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -138,9 +183,13 @@ const MannualEntrySummary = () => {
               <div>
                 <SearchDropdown
                   label="Company"
-                  name="company"
-                  value={formData.company}
-                  options={["Company 1", "Company 2"]}
+                  name="company_id"
+                  value={formData.company_id}
+                  displayValue={formData.company}
+                  options={companyOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  labelName="company"
                   formData={formData}
                   setFormData={setFormData}
                   inputStyle={inputStyle}
@@ -173,7 +222,11 @@ const MannualEntrySummary = () => {
                   label="Location"
                   name="location"
                   value={formData.location}
-                  options={["Head Office", "Location 2"]}
+                  displayValue={formData.location_name}
+                  options={locationOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  labelName="location_name"
                   formData={formData}
                   setFormData={setFormData}
                   inputStyle={inputStyle}
@@ -184,32 +237,13 @@ const MannualEntrySummary = () => {
               <div>
                 <SearchDropdown
                   label="Designation"
-                  name="department"
-                  value={formData.department}
-                  options={[
-                    "Regional Sales Support Manager",
-                    "Operations Support Officer",
-                    "Finance Assistant",
-                    "Trade Finance Specialist",
-                    "Banking Operations Officer",
-                    "Sales Support Officer",
-                    "Banking Operations Officer",
-                    "Project Manager",
-                    "Administrative Assistant",
-                    "Sales Officer",
-                    "Banking Officer",
-                    "Sales Manager",
-                    "Senior Banking Officer",
-                    "Client Service Manager",
-                    "Senior Director – Banking Operations",
-                    "Relationship Officer",
-                    "Accountant",
-                    "Director – Sales Excellence",
-                    "Service Sales Support Officer",
-                    "HR Manager",
-                    "Sales & Logistics Officer",
-                    "Operation Officer",
-                  ]}
+                  name="designation_id"
+                  value={formData.designation_id}
+                  displayValue={formData.department}
+                  options={designationOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  labelName="department"
                   formData={formData}
                   setFormData={setFormData}
                   inputStyle={inputStyle}
@@ -220,15 +254,13 @@ const MannualEntrySummary = () => {
               <div>
                 <SearchDropdown
                   label="Employee"
-                  name="employee"
-                  value={formData.employee}
-                  options={[
-                    "Employee 1",
-                    "Employee 2",
-                    "Employee 3",
-                    "Employee 4",
-                    "Employee 5",
-                  ]}
+                  name="employee_id"
+                  value={formData.employee_id}
+                  displayValue={formData.employee}
+                  options={employeeOptions}
+                  labelKey="full_name"
+                  valueKey="id"
+                  labelName="employee"
                   formData={formData}
                   setFormData={setFormData}
                   inputStyle={inputStyle}
@@ -285,10 +317,11 @@ const MannualEntrySummary = () => {
 
             <div className="flex justify-end mt-10">
               <button
-                onClick={() => setOpenModal(true)}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md lg:text-lg 3xl:text-xl transition-all duration-200"
+                onClick={handleGenerate}
+                disabled={loading}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md lg:text-lg 3xl:text-xl transition-all duration-200 disabled:opacity-50"
               >
-                Generate Report
+                {loading ? "Generating..." : "Generate Report"}
               </button>
             </div>
           </div>
@@ -393,32 +426,35 @@ const MannualEntrySummary = () => {
                           {index + 1}
                         </td>
                         <td className="px-4 py-3 text-center hidden lg:table-cell text-gray-600">
-                          {item.location}
+                          {item.location_name ||
+                            locationOptions.find((l) => l.id == item.location)
+                              ?.name ||
+                            item.location}
                         </td>
                         <td className="px-4 py-3 text-center hidden md:table-cell text-gray-600">
-                          {new Date(item.createdDate).toLocaleDateString()}
+                          {new Date(item.created_at).toLocaleDateString()}
                         </td>
                         <td className="px-4 py-3 text-center hidden md:table-cell text-gray-600">
-                          {new Date(item.intime || item.outtime).toLocaleString(
+                          {new Date(item.in_time || item.out_time).toLocaleString(
                             "en-US",
                             { weekday: "long" },
                           )}
                         </td>
                         <td className="px-4 py-3 text-center hidden xl:table-cell text-gray-600">
-                          {item.intime
-                            ? new Date(item.intime).toLocaleTimeString()
+                          {item.in_time
+                            ? new Date(item.in_time).toLocaleTimeString()
                             : "No Checkin"}
                         </td>
                         <td className="px-4 py-3 text-center hidden xl:table-cell text-gray-600">
-                          {item.outtime
-                            ? new Date(item.outtime).toLocaleTimeString()
+                          {item.out_time
+                            ? new Date(item.out_time).toLocaleTimeString()
                             : "No Checkout"}
                         </td>
                         <td className="px-4 py-3 text-center hidden sm:table-cell text-gray-600">
-                          {item.outtime && item.intime
+                          {item.out_time && item.in_time
                             ? getTimeDiff(
-                                new Date(item.intime).toLocaleTimeString(),
-                                new Date(item.outtime).toLocaleTimeString(),
+                                new Date(item.in_time).toLocaleTimeString(),
+                                new Date(item.out_time).toLocaleTimeString(),
                               )
                             : "Missed Punch"}
                         </td>
@@ -522,12 +558,12 @@ const MannualEntrySummary = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 <div>
                   <p className={labelStyle}>Name</p>
-                  <p className={inputStyle}>{selectedItem.employee}</p>
+                  <p className={inputStyle}>{selectedItem.employee_name}</p>
                 </div>
                 <div>
                   <p className={labelStyle}>Punch Date</p>
                   <p className={inputStyle}>
-                    {new Date(selectedItem.createdDate).toLocaleDateString()}
+                    {new Date(selectedItem.created_at).toLocaleDateString()}
                   </p>
                 </div>
                 <div>
@@ -541,16 +577,16 @@ const MannualEntrySummary = () => {
                 <div>
                   <p className={labelStyle}>Check in</p>
                   <p className={inputStyle}>
-                    {selectedItem.intime
-                      ? new Date(selectedItem.intime).toLocaleString()
+                    {selectedItem.in_time
+                      ? new Date(selectedItem.in_time).toLocaleString()
                       : "No Checkin"}
                   </p>
                 </div>
                 <div>
                   <p className={labelStyle}>Check out</p>
                   <p className={inputStyle}>
-                    {selectedItem.outtime
-                      ? new Date(selectedItem.outtime).toLocaleString()
+                    {selectedItem.out_time
+                      ? new Date(selectedItem.out_time).toLocaleString()
                       : "No Checkout"}
                   </p>
                 </div>
@@ -559,16 +595,18 @@ const MannualEntrySummary = () => {
                   <p className={inputStyle}>
                     {selectedItem.outtime && selectedItem.intime
                       ? getTimeDiff(
-                          new Date(selectedItem.intime).toLocaleTimeString(),
-                          new Date(selectedItem.outtime).toLocaleTimeString(),
+                          new Date(selectedItem.in_time).toLocaleTimeString(),
+                          new Date(selectedItem.out_time).toLocaleTimeString(),
                         )
                       : "Missed Punch"}
                   </p>
                 </div>
-                <div>
-                  <p className={labelStyle}>Location</p>
-                  <p className={inputStyle}>{selectedItem.location}</p>
-                </div>
+                  <p className={inputStyle}>
+                    {selectedItem.location_name ||
+                      locationOptions.find((l) => l.id == selectedItem.location)
+                        ?.name ||
+                      selectedItem.location}
+                  </p>
                 <div>
                   <p className={labelStyle}>Remarks</p>
                   <p className={inputStyle}>

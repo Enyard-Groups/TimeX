@@ -268,7 +268,10 @@ const EmployeeGeofencing = () => {
           {showSingleLocation && (
             <select
               value={selectedLocations[0] || ""}
-              onChange={(e) => setSelectedLocations([Number(e.target.value)])}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSelectedLocations(val ? [Number(val)] : []);
+              }}
               className="bg-blue-50 border border-blue-200 px-4 py-2 rounded-lg w-56 focus:ring-2 xl:text-lg focus:ring-blue-500/60"
             >
               <option value="">Select Location</option>
@@ -305,7 +308,7 @@ const EmployeeGeofencing = () => {
 
           {/* Button */}
           <button
-            // onClick={applyLocation}
+            onClick={applyLocation}
             className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg shadow-md hover:shadow-lg transition xl:text-lg"
           >
             + Assign Location

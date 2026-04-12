@@ -23,7 +23,8 @@ const API_BASE = "http://localhost:3000/api";
 const emptyForm = {
   employee_id: "",
   enrollment_id: "",
-  location: "Head Office",
+  location: "",
+  location_name: "",
   in_time: null,
   out_time: null,
   remarks: "",
@@ -35,6 +36,7 @@ const ManualEntryRequest = () => {
   const [openModal, setOpenModal] = useState(false);
   const [manualEntry, setManualEntry] = useState([]);
   const [employeeOptions, setEmployeeOptions] = useState([]);
+  const [locationOptions, setLocationOptions] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -49,13 +51,15 @@ const ManualEntryRequest = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [manualRes, empRes] = await Promise.all([
+      const [manualRes, empRes, locRes] = await Promise.all([
         axios.get(`${API_BASE}/requests/manual`),
         axios.get(`${API_BASE}/employee`),
+        axios.get(`${API_BASE}/master/geofencing`),
       ]);
       console.log(manualRes.data);
       setManualEntry(manualRes.data);
       setEmployeeOptions(empRes.data);
+      setLocationOptions(locRes.data || []);
     } catch (error) {
       console.error("Failed to fetch data", error);
       toast.error("Failed to load data");
@@ -71,7 +75,9 @@ const ManualEntryRequest = () => {
   // Update enrollment_id when employee changes
   useEffect(() => {
     if (formData.employee_id) {
-      const emp = employeeOptions.find((e) => e.id === formData.employee_id);
+      const emp = employeeOptions.find(
+        (e) => e.company_enrollment_id === formData.employee_id,
+      );
       if (emp) {
         setFormData((prev) => ({
           ...prev,
@@ -115,7 +121,7 @@ const ManualEntryRequest = () => {
                   ...item,
                   ...res.data,
                   employee_name: employeeOptions.find(
-                    (e) => e.id === employee_id,
+                    (e) => e.company_enrollment_id === employee_id,
                   )?.full_name,
                 }
               : item,
@@ -127,8 +133,9 @@ const ManualEntryRequest = () => {
         setManualEntry((prev) => [
           {
             ...res.data,
-            employee_name: employeeOptions.find((e) => e.id === employee_id)
-              ?.full_name,
+            employee_name: employeeOptions.find(
+              (e) => e.company_enrollment_id === employee_id,
+            )?.full_name,
           },
           ...prev,
         ]);
@@ -155,13 +162,17 @@ const ManualEntryRequest = () => {
     }
   };
 
-  const filteredEntry = manualEntry.filter(
-    (x) =>
-      (x.employee_name || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      (x.location || "").toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredEntry = manualEntry.filter((x) => {
+    const locName =
+      x.location_name ||
+      locationOptions.find((l) => l.id == x.location)?.name ||
+      x.location ||
+      "";
+    return (
+      (x.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      locName.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   const endIndex = currentPage * entriesPerPage;
   const startIndex = endIndex - entriesPerPage;
@@ -183,7 +194,9 @@ const ManualEntryRequest = () => {
       .map((item) =>
         [
           item.employee_name,
-          item.location,
+          item.location_name ||
+            locationOptions.find((l) => l.id == item.location)?.name ||
+            item.location,
           item.in_time ? new Date(item.in_time).toLocaleString() : "-",
           item.out_time ? new Date(item.out_time).toLocaleString() : "-",
           item.status,
@@ -199,7 +212,10 @@ const ManualEntryRequest = () => {
   const handleExcel = () => {
     const excelData = filteredEntry.map((item) => ({
       Employee: item.employee_name,
-      Location: item.location,
+      Location:
+        item.location_name ||
+        locationOptions.find((l) => l.id == item.location)?.name ||
+        item.location,
       InTime: item.in_time ? new Date(item.in_time).toLocaleString() : "-",
       OutTime: item.out_time ? new Date(item.out_time).toLocaleString() : "-",
       Status: item.status,
@@ -222,7 +238,9 @@ const ManualEntryRequest = () => {
     ];
     const tableRows = filteredEntry.map((item) => [
       item.employee_name,
-      item.location,
+      item.location_name ||
+        locationOptions.find((l) => l.id == item.location)?.name ||
+        item.location,
       item.in_time ? new Date(item.in_time).toLocaleString() : "-",
       item.out_time ? new Date(item.out_time).toLocaleString() : "-",
       item.status,
@@ -395,7 +413,11 @@ const ManualEntryRequest = () => {
                       {item.employee_name}
                     </td>
                     <td className="px-6 py-2.5 text-center text-gray-600">
-                      {item.location}
+                      {item.location_name ||
+                        locationOptions.find((l) => l.id == item.location)
+                          ?.name ||
+                        item.location ||
+                        "-"}
                     </td>
                     <td className="px-6 py-2.5 text-center text-gray-600 font-mono text-sm">
                       {item.in_time || "-"}
@@ -554,7 +576,7 @@ const ManualEntryRequest = () => {
                   displayValue={formData.employee_name || ""}
                   options={employeeOptions}
                   labelKey="full_name"
-                  valueKey="id"
+                  valueKey="company_enrollment_id"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
@@ -583,15 +605,11 @@ const ManualEntryRequest = () => {
                   }
                   name="location"
                   value={formData.location}
-                  displayValue={formData.location || ""}
-                  options={["Head Office", "Branch A", "Branch B"].map(
-                    (loc) => ({
-                      id: loc,
-                      name: loc,
-                    }),
-                  )}
+                  displayValue={formData.location_name || ""}
+                  options={locationOptions}
                   labelKey="name"
-                  valueKey="name"
+                  valueKey="id"
+                  labelName="location_name"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}

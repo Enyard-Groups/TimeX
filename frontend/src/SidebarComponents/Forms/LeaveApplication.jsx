@@ -40,6 +40,9 @@ const LeaveApplication = () => {
   const [showPassDateSpinner, setShowPassDateSpinner] = useState(false);
   const [showFinalDateSpinner, setShowFinalDateSpinner] = useState(false);
 
+  const [employees, setEmployees] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [designations, setDesignations] = useState([]);
   const countries = getNames();
 
   const inputStyle =
@@ -186,8 +189,8 @@ const LeaveApplication = () => {
 
   const filteredleaveData = leaveData.filter(
     (x) =>
-      x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.location.toLowerCase().startsWith(searchTerm.toLowerCase()),
+      (x.employee_name || x.employee || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (x.location_name || x.location || "").toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -213,8 +216,24 @@ const LeaveApplication = () => {
     }
   };
 
+  const fetchOptions = async () => {
+    try {
+      const [empRes, locRes, desRes] = await Promise.all([
+        axios.get("http://localhost:3000/api/employees"),
+        axios.get("http://localhost:3000/api/master/geofencing"),
+        axios.get("http://localhost:3000/api/master/designation"),
+      ]);
+      setEmployees(empRes.data);
+      setLocations(locRes.data);
+      setDesignations(desRes.data);
+    } catch (error) {
+      console.error("Error fetching options:", error);
+    }
+  };
+
   useEffect(() => {
     fetchData();
+    fetchOptions();
   }, []);
 
   // Handle submit
@@ -620,7 +639,9 @@ const LeaveApplication = () => {
                       label=""
                       name="employee"
                       value={formData.employee}
-                      options={["Employee 1", "Employee 2"]}
+                      options={employees}
+                      labelKey="full_name"
+                      valueKey="id"
                       formData={formData}
                       setFormData={setFormData}
                       disabled={mode === "view"}
@@ -669,11 +690,9 @@ const LeaveApplication = () => {
                     }
                     name="designation"
                     value={formData.designation}
-                    options={[
-                      "Regional Manager",
-                      "Finance Assistant",
-                      "Operations Officer",
-                    ]}
+                    options={designations}
+                    labelKey="name"
+                    valueKey="id"
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
@@ -703,7 +722,9 @@ const LeaveApplication = () => {
                     }
                     name="location"
                     value={formData.location}
-                    options={["Head Office", "UAE"]}
+                    options={locations}
+                    labelKey="name"
+                    valueKey="id"
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
@@ -1083,11 +1104,10 @@ const LeaveApplication = () => {
                                   signatureMode: "upload",
                                 })
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.signatureMode === "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.signatureMode === "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Upload
                             </button>
@@ -1099,11 +1119,10 @@ const LeaveApplication = () => {
                                   signatureMode: "draw",
                                 })
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.signatureMode === "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.signatureMode === "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Sign Here
                             </button>
@@ -1550,71 +1569,71 @@ const LeaveApplication = () => {
                       )}
                       {formData.finalApproval.upload1signatureMode ===
                         "upload" && (
-                        <div>
-                          <input
-                            type="file"
-                            id="upload1signatureUpload"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) =>
-                              e.target.files[0] &&
-                              setFormData({
-                                ...formData,
-                                finalApproval: {
-                                  ...formData.finalApproval,
-                                  upload1signature: e.target.files[0],
-                                  upload1signaturePreview: URL.createObjectURL(
-                                    e.target.files[0],
-                                  ),
-                                },
-                              })
-                            }
-                          />
-                          {mode !== "view" && (
-                            <label
-                              htmlFor="upload1signatureUpload"
-                              className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
-                            >
-                              <p className="text-sm text-gray-500">
-                                Drag & drop or{" "}
-                                <span className="text-[#0f172a] font-medium underline">
-                                  browse
-                                </span>
-                              </p>
-                            </label>
-                          )}
-                          {formData.finalApproval.upload1signaturePreview && (
-                            <div className="mt-4 flex items-center gap-3">
-                              <img
-                                src={
-                                  formData.finalApproval.upload1signaturePreview
-                                }
-                                className="h-16 border rounded bg-white p-2 shadow-sm"
-                                alt="Preview"
-                              />
-                            </div>
-                          )}
-                        </div>
-                      )}
+                          <div>
+                            <input
+                              type="file"
+                              id="upload1signatureUpload"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) =>
+                                e.target.files[0] &&
+                                setFormData({
+                                  ...formData,
+                                  finalApproval: {
+                                    ...formData.finalApproval,
+                                    upload1signature: e.target.files[0],
+                                    upload1signaturePreview: URL.createObjectURL(
+                                      e.target.files[0],
+                                    ),
+                                  },
+                                })
+                              }
+                            />
+                            {mode !== "view" && (
+                              <label
+                                htmlFor="upload1signatureUpload"
+                                className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                              >
+                                <p className="text-sm text-gray-500">
+                                  Drag & drop or{" "}
+                                  <span className="text-[#0f172a] font-medium underline">
+                                    browse
+                                  </span>
+                                </p>
+                              </label>
+                            )}
+                            {formData.finalApproval.upload1signaturePreview && (
+                              <div className="mt-4 flex items-center gap-3">
+                                <img
+                                  src={
+                                    formData.finalApproval.upload1signaturePreview
+                                  }
+                                  className="h-16 border rounded bg-white p-2 shadow-sm"
+                                  alt="Preview"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        )}
                       {formData.finalApproval.upload1signatureMode ===
                         "draw" && (
-                        <SignPad
-                          fieldName="upload1signaturehere"
-                          formData={formData.finalApproval}
-                          setFormData={(updater) =>
-                            setFormData((p) => ({
-                              ...p,
-                              finalApproval: {
-                                ...p.finalApproval,
-                                ...(typeof updater === "function"
-                                  ? updater(p.finalApproval)
-                                  : updater),
-                              },
-                            }))
-                          }
-                          mode={mode}
-                        />
-                      )}
+                          <SignPad
+                            fieldName="upload1signaturehere"
+                            formData={formData.finalApproval}
+                            setFormData={(updater) =>
+                              setFormData((p) => ({
+                                ...p,
+                                finalApproval: {
+                                  ...p.finalApproval,
+                                  ...(typeof updater === "function"
+                                    ? updater(p.finalApproval)
+                                    : updater),
+                                },
+                              }))
+                            }
+                            mode={mode}
+                          />
+                        )}
                     </div>
                   </div>
 
@@ -1688,71 +1707,71 @@ const LeaveApplication = () => {
                       )}
                       {formData.finalApproval.upload2signatureMode ===
                         "upload" && (
-                        <div>
-                          <input
-                            type="file"
-                            id="upload2signatureUpload"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) =>
-                              e.target.files[0] &&
-                              setFormData({
-                                ...formData,
-                                finalApproval: {
-                                  ...formData.finalApproval,
-                                  upload2signature: e.target.files[0],
-                                  upload2signaturePreview: URL.createObjectURL(
-                                    e.target.files[0],
-                                  ),
-                                },
-                              })
-                            }
-                          />
-                          {mode !== "view" && (
-                            <label
-                              htmlFor="upload2signatureUpload"
-                              className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
-                            >
-                              <p className="text-sm text-gray-500">
-                                Drag & drop or{" "}
-                                <span className="text-[#0f172a] font-medium underline">
-                                  browse
-                                </span>
-                              </p>
-                            </label>
-                          )}
-                          {formData.finalApproval.upload2signaturePreview && (
-                            <div className="mt-4 flex items-center gap-3">
-                              <img
-                                src={
-                                  formData.finalApproval.upload2signaturePreview
-                                }
-                                className="h-16 border rounded bg-white p-2 shadow-sm"
-                                alt="Preview"
-                              />
-                            </div>
-                          )}
-                        </div>
-                      )}
+                          <div>
+                            <input
+                              type="file"
+                              id="upload2signatureUpload"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) =>
+                                e.target.files[0] &&
+                                setFormData({
+                                  ...formData,
+                                  finalApproval: {
+                                    ...formData.finalApproval,
+                                    upload2signature: e.target.files[0],
+                                    upload2signaturePreview: URL.createObjectURL(
+                                      e.target.files[0],
+                                    ),
+                                  },
+                                })
+                              }
+                            />
+                            {mode !== "view" && (
+                              <label
+                                htmlFor="upload2signatureUpload"
+                                className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                              >
+                                <p className="text-sm text-gray-500">
+                                  Drag & drop or{" "}
+                                  <span className="text-[#0f172a] font-medium underline">
+                                    browse
+                                  </span>
+                                </p>
+                              </label>
+                            )}
+                            {formData.finalApproval.upload2signaturePreview && (
+                              <div className="mt-4 flex items-center gap-3">
+                                <img
+                                  src={
+                                    formData.finalApproval.upload2signaturePreview
+                                  }
+                                  className="h-16 border rounded bg-white p-2 shadow-sm"
+                                  alt="Preview"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        )}
                       {formData.finalApproval.upload2signatureMode ===
                         "draw" && (
-                        <SignPad
-                          fieldName="upload2signaturehere"
-                          formData={formData.finalApproval}
-                          setFormData={(updater) =>
-                            setFormData((p) => ({
-                              ...p,
-                              finalApproval: {
-                                ...p.finalApproval,
-                                ...(typeof updater === "function"
-                                  ? updater(p.finalApproval)
-                                  : updater),
-                              },
-                            }))
-                          }
-                          mode={mode}
-                        />
-                      )}
+                          <SignPad
+                            fieldName="upload2signaturehere"
+                            formData={formData.finalApproval}
+                            setFormData={(updater) =>
+                              setFormData((p) => ({
+                                ...p,
+                                finalApproval: {
+                                  ...p.finalApproval,
+                                  ...(typeof updater === "function"
+                                    ? updater(p.finalApproval)
+                                    : updater),
+                                },
+                              }))
+                            }
+                            mode={mode}
+                          />
+                        )}
                     </div>
                   </div>
                 </div>
@@ -1823,12 +1842,11 @@ const LeaveApplication = () => {
                                   },
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.passportCollection.signatureMode ===
-                                "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.passportCollection.signatureMode ===
+                                  "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Upload
                             </button>
@@ -1843,12 +1861,11 @@ const LeaveApplication = () => {
                                   },
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.passportCollection.signatureMode ===
-                                "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.passportCollection.signatureMode ===
+                                  "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Sign Here
                             </button>
@@ -1862,106 +1879,106 @@ const LeaveApplication = () => {
                       {/* Upload Area */}
                       {formData.passportCollection.signatureMode ===
                         "upload" && (
-                        <div>
-                          <input
-                            type="file"
-                            id="passportSignatureUpload"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) => {
-                              const file = e.target.files[0];
-                              if (file) {
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  passportCollection: {
-                                    ...prev.passportCollection,
-                                    signature: file,
-                                    signaturePreview: URL.createObjectURL(file),
-                                  },
-                                }));
-                              }
-                            }}
-                          />
-
-                          {/* Drag & Drop Zone */}
-                          {mode !== "view" && (
-                            <label
-                              htmlFor="passportSignatureUpload"
-                              onDragOver={(e) => e.preventDefault()}
-                              onDrop={(e) => {
-                                e.preventDefault();
-                                const file = e.dataTransfer.files[0];
-                                if (file && file.type.startsWith("image/")) {
+                          <div>
+                            <input
+                              type="file"
+                              id="passportSignatureUpload"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file) {
                                   setFormData((prev) => ({
                                     ...prev,
                                     passportCollection: {
                                       ...prev.passportCollection,
                                       signature: file,
-                                      signaturePreview:
-                                        URL.createObjectURL(file),
+                                      signaturePreview: URL.createObjectURL(file),
                                     },
                                   }));
                                 }
                               }}
-                              className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
-                            >
-                              <svg
-                                className="w-8 h-8 text-gray-400 mb-2"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={1.5}
-                                  d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
-                                />
-                              </svg>
-                              <p className="text-sm text-gray-500">
-                                Drag & drop or{" "}
-                                <span className="text-[#0f172a] font-medium underline">
-                                  browse
-                                </span>
-                              </p>
-                              <p className="text-xs text-gray-400 mt-1">
-                                PNG, JPG, SVG supported
-                              </p>
-                            </label>
-                          )}
+                            />
 
-                          {/* Preview */}
-                          {formData.passportCollection.signaturePreview && (
-                            <div className="mt-4 flex items-center gap-3">
-                              <img
-                                src={
-                                  formData.passportCollection.signaturePreview
-                                }
-                                alt="Signature Preview"
-                                className="h-16 border rounded bg-white p-2 shadow-sm"
-                              />
-                              {mode !== "view" && (
-                                <button
-                                  type="button"
-                                  onClick={() =>
+                            {/* Drag & Drop Zone */}
+                            {mode !== "view" && (
+                              <label
+                                htmlFor="passportSignatureUpload"
+                                onDragOver={(e) => e.preventDefault()}
+                                onDrop={(e) => {
+                                  e.preventDefault();
+                                  const file = e.dataTransfer.files[0];
+                                  if (file && file.type.startsWith("image/")) {
                                     setFormData((prev) => ({
                                       ...prev,
                                       passportCollection: {
                                         ...prev.passportCollection,
-                                        signature: null,
-                                        signaturePreview: null,
+                                        signature: file,
+                                        signaturePreview:
+                                          URL.createObjectURL(file),
                                       },
-                                    }))
+                                    }));
                                   }
-                                  className="text-xs text-red-500 hover:underline"
+                                }}
+                                className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                              >
+                                <svg
+                                  className="w-8 h-8 text-gray-400 mb-2"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
                                 >
-                                  Remove
-                                </button>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      )}
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={1.5}
+                                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                                  />
+                                </svg>
+                                <p className="text-sm text-gray-500">
+                                  Drag & drop or{" "}
+                                  <span className="text-[#0f172a] font-medium underline">
+                                    browse
+                                  </span>
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  PNG, JPG, SVG supported
+                                </p>
+                              </label>
+                            )}
+
+                            {/* Preview */}
+                            {formData.passportCollection.signaturePreview && (
+                              <div className="mt-4 flex items-center gap-3">
+                                <img
+                                  src={
+                                    formData.passportCollection.signaturePreview
+                                  }
+                                  alt="Signature Preview"
+                                  className="h-16 border rounded bg-white p-2 shadow-sm"
+                                />
+                                {mode !== "view" && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        passportCollection: {
+                                          ...prev.passportCollection,
+                                          signature: null,
+                                          signaturePreview: null,
+                                        },
+                                      }))
+                                    }
+                                    className="text-xs text-red-500 hover:underline"
+                                  >
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
 
                       {/* Draw Area */}
                       {formData.passportCollection.signatureMode === "draw" && (
@@ -2260,11 +2277,10 @@ const LeaveApplication = () => {
                               finalSignatureMode: "upload",
                             }))
                           }
-                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                            formData.finalSignatureMode === "upload"
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.finalSignatureMode === "upload"
                               ? "bg-[#0f172a] text-white border-[#0f172a]"
                               : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                          }`}
+                            }`}
                         >
                           Upload
                         </button>
@@ -2276,11 +2292,10 @@ const LeaveApplication = () => {
                               finalSignatureMode: "draw",
                             }))
                           }
-                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                            formData.finalSignatureMode === "draw"
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.finalSignatureMode === "draw"
                               ? "bg-[#0f172a] text-white border-[#0f172a]"
                               : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                          }`}
+                            }`}
                         >
                           Sign Here
                         </button>

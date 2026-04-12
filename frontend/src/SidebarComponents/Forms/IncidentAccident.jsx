@@ -15,13 +15,13 @@ import axios from "axios";
 import SpinnerTimePicker from "../SpinnerTimePicker";
 import SpinnerDatePicker from "../SpinnerDatePicker";
 import SignPad from "./SignPad";
+import SearchDropdown from "../SearchDropdown";
 
 const API_URL = "http://localhost:3000/api/form/incident";
 
 const IncidentAccident = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
-  const [incidentData, setIncidentData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
@@ -33,6 +33,8 @@ const IncidentAccident = () => {
   const [showDateAckSpinner, setShowAckDateSpinner] = useState(false);
   const [showTimeSpinner, setShowTimeSpinner] = useState(false);
   const [showTimeSpinner2, setShowTimeSpinner2] = useState(false);
+  const [employees, setEmployees] = useState([]);
+  const [locations, setLocations] = useState([]);
 
   const fetchData = async () => {
     try {
@@ -44,8 +46,22 @@ const IncidentAccident = () => {
     }
   };
 
+  const fetchOptions = async () => {
+    try {
+      const [empRes, locRes] = await Promise.all([
+        axios.get("http://localhost:3000/api/employees"),
+        axios.get("http://localhost:3000/api/master/geofencing"),
+      ]);
+      setEmployees(empRes.data);
+      setLocations(locRes.data);
+    } catch (error) {
+      console.error("Error fetching options:", error);
+    }
+  };
+
   useEffect(() => {
     fetchData();
+    fetchOptions();
   }, []);
 
   const inputStyle =
@@ -55,8 +71,8 @@ const IncidentAccident = () => {
 
   const filteredincidentData = incidentData.filter(
     (x) =>
-      x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.location.toLowerCase().startsWith(searchTerm.toLowerCase()),
+      (x.location_name || x.location || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (x.building || "").toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const defaultFormData = {
@@ -561,12 +577,17 @@ const IncidentAccident = () => {
                   </div>
                   <div>
                     <label className={labelStyle}>Location</label>
-                    <input
+                    <SearchDropdown
                       name="location"
                       value={formData.location}
-                      onChange={handleChange}
+                      options={locations}
+                      labelKey="name"
+                      valueKey="id"
+                      formData={formData}
+                      setFormData={setFormData}
                       disabled={mode === "view"}
-                      className={inputStyle}
+                      inputStyle={inputStyle}
+                      labelStyle={labelStyle}
                     />
                   </div>
                   <div>
@@ -924,22 +945,42 @@ const IncidentAccident = () => {
                   </div>
                   <div>
                     <label className={labelStyle}>MSO Name</label>
-                    <input
+                    <SearchDropdown
                       name="mso_name"
                       value={formData.mso_occ.mso_name}
-                      onChange={(e) => handleChange(e, "mso_occ")}
+                      options={employees}
+                      labelKey="full_name"
+                      valueKey="id"
+                      formData={formData}
+                      setFormData={(newData) => {
+                        const val = typeof newData === "function" ? newData(formData).mso_name : newData.mso_name;
+                        setFormData(p => ({
+                          ...p,
+                          mso_occ: { ...p.mso_occ, mso_name: val }
+                        }))
+                      }}
                       disabled={mode === "view"}
-                      className={inputStyle}
+                      inputStyle={inputStyle}
                     />
                   </div>
                   <div>
                     <label className={labelStyle}>OCC Staff Name</label>
-                    <input
+                    <SearchDropdown
                       name="occ_staff_name"
                       value={formData.mso_occ.occ_staff_name}
-                      onChange={(e) => handleChange(e, "mso_occ")}
+                      options={employees}
+                      labelKey="full_name"
+                      valueKey="id"
+                      formData={formData}
+                      setFormData={(newData) => {
+                        const val = typeof newData === "function" ? newData(formData).occ_staff_name : newData.occ_staff_name;
+                        setFormData(p => ({
+                          ...p,
+                          mso_occ: { ...p.mso_occ, occ_staff_name: val }
+                        }))
+                      }}
                       disabled={mode === "view"}
-                      className={inputStyle}
+                      inputStyle={inputStyle}
                     />
                   </div>
                 </div>
@@ -960,12 +1001,22 @@ const IncidentAccident = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className={labelStyle}>Reported By</label>
-                        <input
+                        <SearchDropdown
                           name="reported_by"
                           value={formData.signature.reported_by}
-                          onChange={(e) => handleChange(e, "signature")}
+                          options={employees}
+                          labelKey="full_name"
+                          valueKey="id"
+                          formData={formData}
+                          setFormData={(newData) => {
+                            const val = typeof newData === "function" ? newData(formData).reported_by : newData.reported_by;
+                            setFormData(p => ({
+                              ...p,
+                              signature: { ...p.signature, reported_by: val }
+                            }));
+                          }}
                           disabled={mode === "view"}
-                          className={inputStyle}
+                          inputStyle={inputStyle}
                         />
                       </div>
                       <div>
@@ -980,12 +1031,22 @@ const IncidentAccident = () => {
                       </div>
                       <div>
                         <label className={labelStyle}>Form Filled By</label>
-                        <input
+                        <SearchDropdown
                           name="filled_by"
                           value={formData.signature.filled_by}
-                          onChange={(e) => handleChange(e, "signature")}
+                          options={employees}
+                          labelKey="full_name"
+                          valueKey="id"
+                          formData={formData}
+                          setFormData={(newData) => {
+                            const val = typeof newData === "function" ? newData(formData).filled_by : newData.filled_by;
+                            setFormData(p => ({
+                              ...p,
+                              signature: { ...p.signature, filled_by: val }
+                            }));
+                          }}
                           disabled={mode === "view"}
-                          className={inputStyle}
+                          inputStyle={inputStyle}
                         />
                       </div>
                       <div>
@@ -1037,14 +1098,22 @@ const IncidentAccident = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="sm:col-span-2">
                         <label className={labelStyle}>MSO/Asst. MSO Name</label>
-                        <input
+                        <SearchDropdown
                           name="assistant_name"
                           value={formData.report_acknowledge.assistant_name}
-                          onChange={(e) =>
-                            handleChange(e, "report_acknowledge")
-                          }
+                          options={employees}
+                          labelKey="full_name"
+                          valueKey="id"
+                          formData={formData}
+                          setFormData={(newData) => {
+                            const val = typeof newData === "function" ? newData(formData).assistant_name : newData.assistant_name;
+                            setFormData(p => ({
+                              ...p,
+                              report_acknowledge: { ...p.report_acknowledge, assistant_name: val }
+                            }));
+                          }}
                           disabled={mode === "view"}
-                          className={inputStyle}
+                          inputStyle={inputStyle}
                         />
                       </div>
                       <div className="relative sm:col-span-2">

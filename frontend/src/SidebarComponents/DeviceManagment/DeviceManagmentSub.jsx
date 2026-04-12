@@ -26,14 +26,18 @@ const DeviceManagementSub = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [companyOptions, setCompanyOptions] = useState([]);
   const [formData, setFormData] = useState({
-    devicemodel: "",
     name: "",
     company: "",
+    company_id: "",
+    company_name: "",
     deviceip: "",
     deviceserialno: "",
-    latitude: "",
+    devicemodel: "",
+    devicemodel_id: "",
     longitude: "",
+    latitude: "",
     isFace: false,
     isFingerprint: false,
     isCardNo: false,
@@ -57,7 +61,6 @@ const DeviceManagementSub = () => {
       });
       const payload = response?.data?.data ?? response?.data;
       console.log(payload);
-      // Map snake_case booleans back to camelCase for display
       const mapped = (Array.isArray(payload) ? payload : []).map((d) => ({
         ...d,
         isFace: d.is_face ?? false,
@@ -68,8 +71,10 @@ const DeviceManagementSub = () => {
         name: d.device_name ?? "",
         deviceserialno: d.serial_number ?? "",
         deviceip: d.ip_address ?? "",
-        company: d.company ?? "",
-        devicemodel: d.device_model ?? "",
+        company_id: d.company ?? "",
+        company_name: d.company_name ?? d.company ?? "",
+        devicemodel: d.devicemodel_name ?? d.device_model ?? "",
+        devicemodel_id: d.device_model ?? "",
       }));
       setDevicemanagement(mapped);
     } catch (error) {
@@ -89,13 +94,24 @@ const DeviceManagementSub = () => {
       setDeviceModels(Array.isArray(payload) ? payload : []);
     } catch (error) {
       console.error("Failed to fetch device models", error);
-      // Don't show toast for models, as it's not critical
+    }
+  };
+
+  const fetchCompanies = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/companies`, {
+        headers: getHeaders(),
+      });
+      setCompanyOptions(res.data || []);
+    } catch (error) {
+      console.error("Failed to fetch companies", error);
     }
   };
 
   useEffect(() => {
     fetchDevices();
     fetchDeviceModels();
+    fetchCompanies();
   }, []);
 
   const filteredDevicemanagement = devicemanagement.filter(
@@ -130,21 +146,35 @@ const DeviceManagementSub = () => {
   };
 
   const handleSubmit = async () => {
-    const { name, company, deviceip, deviceserialno } = formData;
+    const { name, company_id, deviceip, deviceserialno } = formData;
 
-    if (!name || !company || !deviceip || !deviceserialno) {
+    if (!name || !company_id || !deviceip || !deviceserialno) {
       toast.error("Please fill all required fields");
       return;
     }
 
+    const payload = {
+      ...formData,
+      company: formData.company_id,
+      device_name: formData.name,
+      serial_number: formData.deviceserialno,
+      ip_address: formData.deviceip,
+      device_model: formData.devicemodel_id,
+      is_face: formData.isFace,
+      is_fingerprint: formData.isFingerprint,
+      is_card_no: formData.isCardNo,
+      is_pin_no: formData.isPinNo,
+      is_active: formData.isActive
+    };
+
     try {
       if (editId) {
-        await axios.put(`${API_BASE}/device/devices/${editId}`, formData, {
+        await axios.put(`${API_BASE}/device/devices/${editId}`, payload, {
           headers: getHeaders(),
         });
         toast.success("Data updated");
       } else {
-        await axios.post(`${API_BASE}/device/devices`, formData, {
+        await axios.post(`${API_BASE}/device/devices`, payload, {
           headers: getHeaders(),
         });
         toast.success("Data Added");
@@ -154,12 +184,15 @@ const DeviceManagementSub = () => {
       setEditId(null);
       setFormData({
         company: "",
+        company_id: "",
+        company_name: "",
         name: "",
         deviceip: "",
         deviceserialno: "",
         longitude: "",
         latitude: "",
         devicemodel: "",
+        devicemodel_id: "",
         isFace: false,
         isFingerprint: false,
         isCardNo: false,
@@ -277,12 +310,15 @@ const DeviceManagementSub = () => {
                 setEditId(null);
                 setFormData({
                   company: "",
+                  company_id: "",
+                  company_name: "",
                   name: "",
                   deviceip: "",
                   deviceserialno: "",
                   longitude: "",
                   latitude: "",
                   devicemodel: "",
+                  devicemodel_id: "",
                   isFace: false,
                   isFingerprint: false,
                   isCardNo: false,
@@ -518,7 +554,7 @@ const DeviceManagementSub = () => {
           </table>
         </div>
 
-        {/* Pagination */}
+        {/* Pagination Section */}
         <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
           <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
             Showing{" "}
@@ -594,61 +630,110 @@ const DeviceManagementSub = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {[
-                {
-                  name: "deviceserialno",
-                  label: "Device Serial Number",
-                  placeholder: "Enter serial number",
-                  req: true,
-                },
-                {
-                  name: "name",
-                  label: "Name",
-                  placeholder: "Enter device name",
-                  req: true,
-                },
-                {
-                  name: "deviceip",
-                  label: "Device IP",
-                  placeholder: "e.g. 192.168.1.1",
-                  req: true,
-                },
-                {
-                  name: "company",
-                  label: "Company",
-                  placeholder: "Enter company",
-                  req: true,
-                },
-                { name: "longitude", label: "Longitude", placeholder: "0" },
-                { name: "latitude", label: "Latitude", placeholder: "0" },
-              ].map((field) => (
-                <div key={field.name}>
+                <div key="deviceserialno">
                   <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
-                    {field.label}{" "}
-                    {field.req && <span className="text-red-500">*</span>}
+                    Device Serial Number <span className="text-red-500">*</span>
                   </label>
                   <input
-                    name={field.name}
-                    value={formData[field.name]}
+                    name="deviceserialno"
+                    value={formData.deviceserialno}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    placeholder={field.placeholder}
+                    placeholder="Enter serial number"
                     className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
                   />
                 </div>
-              ))}
-              <SearchDropdown
-                label={<>Device Model</>}
-                name="devicemodel"
-                value={formData.devicemodel}
-                displayValue={formData.devicemodel}
-                options={["Model 1", "Model 2"].map((m) => ({ name: m }))}
-                formData={formData}
-                setFormData={setFormData}
-                disabled={mode === "view"}
-                inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm font-medium"
-                labelStyle="text-sm lg:text-lg 3xl:text-xl font-bold text-gray-700 mb-2 block"
-              />
+                <div key="name">
+                  <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                    Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                    placeholder="Enter device name"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  />
+                </div>
+                <div key="deviceip">
+                  <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                    Device IP <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    name="deviceip"
+                    value={formData.deviceip}
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                    placeholder="e.g. 192.168.1.1"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  />
+                </div>
+                <div key="longitude">
+                  <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                    Longitude
+                  </label>
+                  <input
+                    name="longitude"
+                    value={formData.longitude}
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                    placeholder="0"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  />
+                </div>
+                <div key="latitude">
+                  <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                    Latitude
+                  </label>
+                  <input
+                    name="latitude"
+                    value={formData.latitude}
+                    onChange={handleChange}
+                    disabled={mode === "view"}
+                    placeholder="0"
+                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  />
+                </div>
+
+              <div>
+                <SearchDropdown
+                  label={
+                    <>
+                      Company <span className="text-red-500">*</span>
+                    </>
+                  }
+                  name="company_id"
+                  value={formData.company_id}
+                  displayValue={formData.company_name}
+                  options={companyOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  labelName="company_name"
+                  formData={formData}
+                  setFormData={setFormData}
+                  disabled={mode === "view"}
+                  inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  labelStyle="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block"
+                />
+              </div>
+              <div>
+                <SearchDropdown
+                  label={<>Device Model</>}
+                  name="devicemodel_id"
+                  value={formData.devicemodel_id}
+                  displayValue={formData.devicemodel}
+                  options={deviceModels}
+                  labelKey="name"
+                  valueKey="id"
+                  labelName="devicemodel"
+                  formData={formData}
+                  setFormData={setFormData}
+                  disabled={mode === "view"}
+                  inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm font-medium"
+                  labelStyle="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block"
+                />
+              </div>
             </div>
 
             {/* Checkboxes Grid */}

@@ -424,19 +424,19 @@ const ShiftHandOver = () => {
                       <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.time_in
                           ? item.time_in.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: false,
-                            })
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false,
+                          })
                           : "-"}
                       </td>
                       <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.time_out
                           ? item.time_out.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: false,
-                            })
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false,
+                          })
                           : "-"}
                       </td>
                       <td className="py-3 px-6 hidden lg:table-cell text-gray-600 text-center">
@@ -646,10 +646,10 @@ const ShiftHandOver = () => {
                           >
                             {formData.time_out
                               ? formData.time_out.toLocaleTimeString([], {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  hour12: false,
-                                })
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                              })
                               : "HH:MM:SS"}
                           </div>
                           {showOutTimePicker && (
@@ -671,10 +671,10 @@ const ShiftHandOver = () => {
                           >
                             {formData.time_in
                               ? formData.time_in.toLocaleTimeString([], {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  hour12: false,
-                                })
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                              })
                               : "HH:MM:SS"}
                           </div>
                           {showInTimePicker && (
@@ -843,11 +843,10 @@ const ShiftHandOver = () => {
                                     preparedBySignMode: "upload",
                                   }))
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                  formData.preparedBySignMode === "upload"
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.preparedBySignMode === "upload"
                                     ? "bg-[#0f172a] text-white border-[#0f172a]"
                                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                                  }`}
                               >
                                 Upload
                               </button>
@@ -859,11 +858,10 @@ const ShiftHandOver = () => {
                                     preparedBySignMode: "draw",
                                   }))
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                  formData.preparedBySignMode === "draw"
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.preparedBySignMode === "draw"
                                     ? "bg-[#0f172a] text-white border-[#0f172a]"
                                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                                  }`}
                               >
                                 Sign Here
                               </button>
@@ -993,11 +991,10 @@ const ShiftHandOver = () => {
                                   acknowledgedBySignMode: "upload",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.acknowledgedBySignMode === "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.acknowledgedBySignMode === "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Upload
                             </button>
@@ -1009,11 +1006,10 @@ const ShiftHandOver = () => {
                                   acknowledgedBySignMode: "draw",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.acknowledgedBySignMode === "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.acknowledgedBySignMode === "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Sign Here
                             </button>

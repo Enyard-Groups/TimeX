@@ -38,11 +38,52 @@ const MannualEntryReport = () => {
     company: "",
     company_id: "",
     location: "",
+    location_name: "",
     designation: "",
     designation_id: "",
     fromPunchDate: "",
     toPunchDate: "",
   });
+
+  const fetchData = async () => {
+    try {
+      const [compRes, locRes, desigRes] = await Promise.all([
+        axios.get(`${API_BASE}/companies`),
+        axios.get(`${API_BASE}/master/geofencing`),
+        axios.get(`${API_BASE}/designations`),
+      ]);
+      setCompanyOptions(compRes.data || []);
+      setLocationOptions(locRes.data || []);
+      setDesignationOptions(desigRes.data || []);
+    } catch (error) {
+      console.error("Failed to fetch dropdown data", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleGenerate = async () => {
+    try {
+      setLoading(true);
+      const params = {
+        company_id: formData.company_id,
+        location: formData.location,
+        designation_id: formData.designation_id,
+        from_date: formData.fromPunchDate,
+        to_date: formData.toPunchDate,
+      };
+      const res = await axios.get(`${API_BASE}/requests/manual/report`, { params });
+      setMannualEntryReport(res.data);
+      setOpenModal(true);
+    } catch (error) {
+      console.error("Error generating report", error);
+      toast.error("Failed to generate report");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const inputStyle =
     "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
@@ -71,12 +112,16 @@ const MannualEntryReport = () => {
     );
   });
 
-  const filteredmannualEntryReport = filteredReport.filter(
-    (x) =>
-      (x.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (x.company_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (x.location || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (x.employee_code || "").toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredmannualEntryReport = mannualEntryReport.filter(
+    (x) => {
+      const locName = x.location_name || locationOptions.find(l => l.id == x.location)?.name || x.location || "";
+      return (
+        (x.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (x.company_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        locName.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (x.employee_code || "").toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
   );
 
   const endIndex    = currentPage * entriesPerPage;
@@ -89,13 +134,13 @@ const MannualEntryReport = () => {
   // ─── Export helpers ───────────────────────────────────────────────────────
   const handleCopy = () => {
     const header = ["Sl.No", "Employee", "Company", "Location", "In Time", "Out Time", "Status", "Remarks"].join("\t");
-    const rows = filteredReport
+    const rows = mannualEntryReport
       .map((item, i) =>
         [
           i + 1,
           item.employee_name,
           item.company_name,
-          item.location,
+          item.location_name || locationOptions.find(l => l.id == item.location)?.name || item.location,
           item.in_time || "—",
           item.out_time || "—",
           item.status,
@@ -133,11 +178,11 @@ const MannualEntryReport = () => {
     autoTable(doc, {
       startY: 20,
       head: [["Sl.No", "Employee", "Company", "Location", "In Time", "Out Time", "Status", "Remarks"]],
-      body: filteredReport.map((item, i) => [
+      body: mannualEntryReport.map((item, i) => [
         i + 1,
         item.employee_name,
         item.company_name,
-        item.location,
+        item.location_name || locationOptions.find(l => l.id == item.location)?.name || item.location,
         item.in_time || "—",
         item.out_time || "—",
         item.status,
@@ -180,9 +225,13 @@ const MannualEntryReport = () => {
               <div>
                 <SearchDropdown
                   label="Company"
-                  name="company"
-                  value={formData.company}
-                  options={["Company 1", "Company 2"]}
+                  name="company_id"
+                  value={formData.company_id}
+                  displayValue={formData.company}
+                  options={companyOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  labelName="company"
                   formData={formData}
                   setFormData={setFormData}
                   inputStyle={inputStyle}
@@ -215,7 +264,11 @@ const MannualEntryReport = () => {
                   label="Location"
                   name="location"
                   value={formData.location}
-                  options={["Head Office", "Location 2"]}
+                  displayValue={formData.location_name}
+                  options={locationOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  labelName="location_name"
                   formData={formData}
                   setFormData={setFormData}
                   inputStyle={inputStyle}
@@ -226,32 +279,13 @@ const MannualEntryReport = () => {
               <div>
                 <SearchDropdown
                   label="Designation"
-                  name="department"
-                  value={formData.department}
-                  options={[
-                    "Regional Sales Support Manager",
-                    "Operations Support Officer",
-                    "Finance Assistant",
-                    "Trade Finance Specialist",
-                    "Banking Operations Officer",
-                    "Sales Support Officer",
-                    "Banking Operations Officer",
-                    "Project Manager",
-                    "Administrative Assistant",
-                    "Sales Officer",
-                    "Banking Officer",
-                    "Sales Manager",
-                    "Senior Banking Officer",
-                    "Client Service Manager",
-                    "Senior Director – Banking Operations",
-                    "Relationship Officer",
-                    "Accountant",
-                    "Director – Sales Excellence",
-                    "Service Sales Support Officer",
-                    "HR Manager",
-                    "Sales & Logistics Officer",
-                    "Operation Officer",
-                  ]}
+                  name="designation_id"
+                  value={formData.designation_id}
+                  displayValue={formData.designation}
+                  options={designationOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  labelName="designation"
                   formData={formData}
                   setFormData={setFormData}
                   inputStyle={inputStyle}
@@ -308,10 +342,11 @@ const MannualEntryReport = () => {
 
             <div className="flex justify-end mt-10">
               <button
-                onClick={() => setOpenModal(true)}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md lg:text-lg 3xl:text-xl transition-all duration-200"
+                onClick={handleGenerate}
+                disabled={loading}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md lg:text-lg 3xl:text-xl transition-all duration-200 disabled:opacity-50"
               >
-                Generate Report
+                {loading ? "Generating..." : "Generate Report"}
               </button>
             </div>
           </div>
@@ -432,8 +467,8 @@ const MannualEntryReport = () => {
                             : "-"}
                         </td>
                         <td className="px-4 py-3 text-center hidden xl:table-cell text-gray-600">
-                          {item.createdDate
-                            ? new Date(item.createdDate).toLocaleDateString()
+                          {item.created_at
+                            ? new Date(item.created_at).toLocaleDateString()
                             : "-"}
                         </td>
                         <td className="px-4 py-3 hidden md:table-cell text-center">

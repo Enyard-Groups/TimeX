@@ -42,6 +42,7 @@ const emptyForm = {
   designation_id: "",
   designation_id_name: "",
   shift_id: "",
+  shift_id_name: "",
   leave_plan: [],
   leave_plan_name: [],
 };
@@ -80,7 +81,7 @@ const EmployeeMaster = () => {
     try {
       setLoading(true);
       const res = await axios.get(`${API_BASE}/employee`);
-      console.log(res.data);
+    
       setEmployeeMaster(res.data);
     } catch (error) {
       toast.error("Failed to load employees");
@@ -88,7 +89,7 @@ const EmployeeMaster = () => {
       setLoading(false);
     }
   };
-  console.log(companyOptions);
+
 
   // ── Fetch dropdown options from backend ───────────────────────────────────
   const fetchDropdowns = async () => {
@@ -100,15 +101,16 @@ const EmployeeMaster = () => {
         axios.get(`${API_BASE}/users/approvers`, { withCredentials: true }),
         axios.get(`${API_BASE}/master/leave-types`, { withCredentials: true }),
         axios.get(`${API_BASE}/companies`),
-        axios.get(`${API_BASE}/master/location-groups`),
+        axios.get(`${API_BASE}/master/geofencing`),
       ]);
+
       setDepartmentOptions(deptRes.data || []);
       setDesignationOptions(desRes.data || []);
       setShiftOptions(shiftRes.data || []);
       setApproverOptions(appRes.data || []);
       setLeavePLanOptions(levRes.data || []);
       setCompanyOptions(compRes.data || []);
-      setLocationOptions(locRes.data?.data || locRes.data || []);
+      setLocationOptions(locRes.data || []);
     } catch (error) {
       console.error("Failed to fetch dropdowns", error);
     }
@@ -120,18 +122,25 @@ const EmployeeMaster = () => {
   }, []);
 
   // ── Filtered / paged data ─────────────────────────────────────────────────
-  const filteredemployeeMaster = employeeMaster.filter(
-    (x) =>
+  const filteredemployeeMaster = employeeMaster.filter((x) => {
+    const locName =
+      x.location_name ||
+      x.name ||
+      locationOptions.find((o) => o.id == x.location)?.name ||
+      x.location ||
+      "";
+    return (
       (x.full_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      (x.location || "").toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      locName.toString().toLowerCase().startsWith(searchTerm.toLowerCase()) ||
       (x.department_name || "")
         .toLowerCase()
         .startsWith(searchTerm.toLowerCase()) ||
       (x.designation_name || "")
         .toLowerCase()
         .startsWith(searchTerm.toLowerCase()) ||
-      (x.company_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
-  );
+      (x.company_name || "").toLowerCase().startsWith(searchTerm.toLowerCase())
+    );
+  });
 
   const endIndex = currentPage * entriesPerPage;
   const startIndex = endIndex - entriesPerPage;
@@ -215,6 +224,9 @@ const EmployeeMaster = () => {
           index + 1,
           item.device_enrollment_id,
           item.company_enrollment_id,
+          item.location_name ||
+          item.name ||
+          locationOptions.find((o) => o.id == item.location)?.name ||
           item.location,
           item.full_name,
           item.shift_name || item.shift,
@@ -233,7 +245,11 @@ const EmployeeMaster = () => {
       "SL.NO": index + 1,
       "Device ID": item.device_enrollment_id,
       "Company ID": item.company_enrollment_id,
-      Location: item.location,
+      Location:
+        item.location_name ||
+        item.name ||
+        locationOptions.find((o) => o.id == item.location)?.name ||
+        item.location,
       "Full Name": item.full_name,
       Shift: item.shift_name || item.shift,
       Designation: item.designation_name || item.designation,
@@ -261,6 +277,9 @@ const EmployeeMaster = () => {
       index + 1,
       item.device_enrollment_id,
       item.company_enrollment_id,
+      item.location_name ||
+      item.name ||
+      locationOptions.find((o) => o.id == item.location)?.name ||
       item.location,
       item.full_name,
       item.shift_name || item.shift,
@@ -371,7 +390,7 @@ const EmployeeMaster = () => {
 
         {/* Table */}
         <div className="overflow-x-auto min-h-[350px]"
-          style={{scrollbarWidth:"none"}}>
+          style={{ scrollbarWidth: "none" }}>
           <table className="w-full text-[16px] lg:text-[19px] 3xl:text-[22px]">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
@@ -444,7 +463,12 @@ const EmployeeMaster = () => {
                       {item.company_enrollment_id || "-"}
                     </td>
                     <td className="px-6 py-2 text-center hidden lg:table-cell">
-                      {item.location || "-"}
+                      {item.location_name ||
+                        item.name ||
+                        locationOptions.find((o) => o.id == item.location)
+                          ?.name ||
+                        item.location ||
+                        "-"}
                     </td>
                     <td className="px-6 py-2 text-center font-medium">
                       {item.full_name || "-"}
@@ -472,7 +496,15 @@ const EmployeeMaster = () => {
                         </button>
                         <button
                           onClick={() => {
-                            setFormData({ ...item });
+                            setFormData({
+                              ...item,
+                              department_id_name: item.department_name,
+                              designation_id_name: item.designation_name,
+                              shift_id_name: item.shift_name || item.shift,
+                              location_name: item.location_name || item.name || item.location,
+                              company_name: item.company_name,
+                              leave_plan: item.leave_plan ? item.leave_plan.split(",") : [],
+                            });
                             setEditId(item.id);
                             setMode("edit");
                             setOpenModal(true);
@@ -552,9 +584,9 @@ const EmployeeMaster = () => {
       {/* Modal */}
       {openModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
-          style={{scrollbarWidth:"none"}}>
+          style={{ scrollbarWidth: "none" }}>
           <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8"
-          style={{scrollbarWidth:"none"}}>
+            style={{ scrollbarWidth: "none" }}>
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
               <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
                 {mode === "view"
@@ -702,7 +734,7 @@ const EmployeeMaster = () => {
                   value={formData.location}
                   displayValue={formData.location_name}
                   options={locationOptions}
-                  labelKey="group_name"
+                  labelKey="name"
                   valueKey="id"
                   labelName="location_name"
                   formData={formData}
@@ -735,6 +767,21 @@ const EmployeeMaster = () => {
                   labelKey="name"
                   valueKey="id"
                   labelName="designation_id_name"
+                  formData={formData}
+                  setFormData={setFormData}
+                  disabled={mode === "view"}
+                  inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-4 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                  labelStyle="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block"
+                />
+                <SearchDropdown
+                  label="Shift"
+                  name="shift_id"
+                  value={formData.shift_id}
+                  displayValue={formData.shift_id_name}
+                  options={shiftOptions}
+                  labelKey="shift_name"
+                  valueKey="id"
+                  labelName="shift_id_name"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}

@@ -67,8 +67,16 @@ const WfhRequest = () => {
 
   const parseDate = (dateStr) => {
     if (!dateStr) return null;
-    const [day, month, year] = dateStr.split("/");
-    return new Date(year, month - 1, day);
+    if (dateStr instanceof Date) return dateStr;
+    if (dateStr.includes("-")) {
+      const [y, m, d] = dateStr.split("-");
+      return new Date(y, m - 1, d);
+    }
+    if (dateStr.includes("/")) {
+      const [d, m, y] = dateStr.split("/");
+      return new Date(y, m - 1, d);
+    }
+    return new Date(dateStr);
   };
 
   useEffect(() => {
@@ -76,22 +84,28 @@ const WfhRequest = () => {
       const from = parseDate(formData.start_date);
       const to = parseDate(formData.end_date);
 
-      if (to && from && to >= from) {
-        const diffTime = Math.abs(to - from);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+      if (to && from && !isNaN(from.getTime()) && !isNaN(to.getTime())) {
+        if (to >= from) {
+          const diffTime = Math.abs(to - from);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-        setFormData((prev) => ({
-          ...prev,
-          number_of_days: diffDays.toString(),
-        }));
-      } else {
-        setFormData((prev) => ({
-          ...prev,
-          number_of_days: "",
-        }));
+          if (formData.number_of_days !== diffDays.toString()) {
+            setFormData((prev) => ({
+              ...prev,
+              number_of_days: diffDays.toString(),
+            }));
+          }
+        } else {
+          if (formData.number_of_days !== "") {
+            setFormData((prev) => ({
+              ...prev,
+              number_of_days: "",
+            }));
+          }
+        }
       }
     }
-  }, [formData.start_date, formData.end_date]);
+  }, [formData.start_date, formData.end_date, formData.number_of_days]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -138,7 +152,7 @@ const WfhRequest = () => {
                   ...item,
                   ...res.data,
                   employee_name: employeeOptions.find(
-                    (e) => e.id === employee_id,
+                    (e) => e.company_enrollment_id === employee_id,
                   )?.full_name,
                 }
               : item,
@@ -150,8 +164,9 @@ const WfhRequest = () => {
         setWfh((prev) => [
           {
             ...res.data,
-            employee_name: employeeOptions.find((e) => e.id === employee_id)
-              ?.full_name,
+            employee_name: employeeOptions.find(
+              (e) => e.company_enrollment_id === employee_id,
+            )?.full_name,
           },
           ...prev,
         ]);
@@ -591,7 +606,7 @@ const WfhRequest = () => {
                 displayValue={formData.employee_name || ""}
                 options={employeeOptions}
                 labelKey="full_name"
-                valueKey="id"
+                valueKey="company_enrollment_id"
                 labelName="employee_name"
                 formData={formData}
                 setFormData={setFormData}

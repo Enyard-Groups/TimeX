@@ -96,7 +96,7 @@ const ClaimRequest = () => {
                   ...item,
                   ...res.data,
                   employee_name: employeeOptions.find(
-                    (e) => e.id === employee_id,
+                    (e) => e.company_enrollment_id === employee_id,
                   )?.full_name,
                 }
               : item,
@@ -108,8 +108,9 @@ const ClaimRequest = () => {
         setClaims((prev) => [
           {
             ...res.data,
-            employee_name: employeeOptions.find((e) => e.id === employee_id)
-              ?.full_name,
+            employee_name: employeeOptions.find(
+              (e) => e.company_enrollment_id === employee_id,
+            )?.full_name,
           },
           ...prev,
         ]);
@@ -543,7 +544,7 @@ const ClaimRequest = () => {
                 displayValue={formData.employee_name || ""}
                 options={employeeOptions}
                 labelKey="full_name"
-                valueKey="id"
+                valueKey="company_enrollment_id"
                 formData={formData}
                 setFormData={setFormData}
                 disabled={mode === "view"}

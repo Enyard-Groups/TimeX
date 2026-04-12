@@ -12,6 +12,7 @@ import { GoCopy } from "react-icons/go";
 import { FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import SearchDropdown from "../SearchDropdown";
 
 const API_BASE = "http://localhost:3000/api";
 
@@ -24,12 +25,14 @@ const DeviceModel = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [companyOptions, setCompanyOptions] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     company: "",
+    company_id: "",
     company_name: "",
     code: "",
-    isActive: false,
+    active: true,
   });
 
   const getHeaders = () => {
@@ -50,6 +53,7 @@ const DeviceModel = () => {
       const payload = response?.data?.data ?? response?.data;
       const mapped = (Array.isArray(payload) ? payload : []).map((d) => ({
         ...d,
+        company_id: d.company,
         active:
           d.active === true ||
           d.active === 1 ||
@@ -105,23 +109,28 @@ const DeviceModel = () => {
   };
 
   const handleSubmit = async () => {
-    const { name, company, code } = formData;
+    const { name, company_id, code } = formData;
 
-    if (!name || !company || !code) {
+    if (!name || !company_id || !code) {
       toast.error("Please fill all required fields");
       return;
     }
+
+    const payload = {
+      ...formData,
+      company: formData.company_id,
+    };
 
     try {
       if (editId) {
         await axios.put(
           `${API_BASE}/device/device-models/${editId}`,
-          formData,
+          payload,
           { headers: getHeaders() },
         );
         toast.success("Data updated");
       } else {
-        await axios.post(`${API_BASE}/device/device-models`, formData, {
+        await axios.post(`${API_BASE}/device/device-models`, payload, {
           headers: getHeaders(),
         });
         toast.success("Data Added");
@@ -129,7 +138,7 @@ const DeviceModel = () => {
       await fetchDeviceModels();
       setOpenModal(false);
       setEditId(null);
-      setFormData({ company: "", company_name: "", name: "", code: "", isActive: false });
+      setFormData({ company: "", company_id: "", company_name: "", name: "", code: "", active: true });
     } catch (error) {
       console.error("Failed to save device model", error);
       const message =
@@ -527,22 +536,24 @@ const DeviceModel = () => {
                 />
               </div>
               <div>
-                <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
-                  Company <span className="text-red-500">*</span>
-                </label>
-                <input
-                  name="company"
-                  value={formData.company}
+                <SearchDropdown
+                  label={
+                    <>
+                      Company <span className="text-red-500">*</span>
+                    </>
+                  }
+                  name="company_id"
+                  value={formData.company_id}
                   displayValue={formData.company_name}
                   options={companyOptions}
                   labelKey="name"
                   valueKey="id"
+                  labelName="company_name"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
-                  placeholder="Enter company"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
-                  required
+                  inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  labelStyle="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block"
                 />
               </div>
               <div className="flex items-center gap-3 h-fit sm:mt-8">

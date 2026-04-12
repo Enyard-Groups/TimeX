@@ -376,7 +376,7 @@ const AbsenceReport = () => {
                       const isFirst =
                         index === 0 ||
                         currentabsenceReport[index - 1].employee !==
-                          item.employee;
+                        item.employee;
                       return (
                         <tr
                           key={item.id}
@@ -414,9 +414,9 @@ const AbsenceReport = () => {
                           <td className="px-4 py-3 text-center hidden xl:table-cell text-gray-600">
                             {item.createdDate
                               ? new Date(item.createdDate).toLocaleDateString(
-                                  "en-US",
-                                  { weekday: "long" },
-                                )
+                                "en-US",
+                                { weekday: "long" },
+                              )
                               : "-"}
                           </td>
                           <td className="px-4 py-3 hidden sm:table-cell text-center">
@@ -552,9 +552,9 @@ const AbsenceReport = () => {
                   <p className={inputStyle}>
                     {selectedItem.createdDate
                       ? new Date(selectedItem.createdDate).toLocaleDateString(
-                          "en-US",
-                          { weekday: "long" },
-                        )
+                        "en-US",
+                        { weekday: "long" },
+                      )
                       : "-"}
                   </p>
                 </div>

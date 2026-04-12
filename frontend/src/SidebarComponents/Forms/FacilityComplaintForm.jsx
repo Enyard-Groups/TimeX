@@ -365,11 +365,10 @@ const FacilityComplaintForm = () => {
                       <td className="px-4 py-3 hidden lg:table-cell text-center">
                         <div className="flex justify-center">
                           <span
-                            className={`px-3 py-1 rounded-full text-sm font-semibold border ${
-                              item.urgent
+                            className={`px-3 py-1 rounded-full text-sm font-semibold border ${item.urgent
                                 ? "bg-red-100 text-red-700 border-red-300"
                                 : "bg-green-100 text-green-700 border-green-300"
-                            }`}
+                              }`}
                           >
                             {item.urgent ? "Urgent" : "Normal"}
                           </span>

@@ -47,10 +47,10 @@ const HolidayMaster = () => {
     try {
       const [compRes, locRes] = await Promise.all([
         axios.get(`${API_BASE}/companies`),
-        axios.get(`${API_BASE}/master/location-groups`),
+        axios.get(`${API_BASE}/master/geofencing`),
       ]);
       setCompanyOptions(compRes.data || []);
-      setLocationOptions(locRes.data?.data || locRes.data || []);
+      setLocationOptions(locRes.data || []);
     } catch (error) {
       console.error("Failed to fetch companies/locations", error);
     }
@@ -717,7 +717,7 @@ const HolidayMaster = () => {
                 value={formData.location}
                 displayValue={formData.location_name}
                 options={locationOptions}
-                labelKey="group_name"
+                labelKey="name"
                 valueKey="id"
                 labelName="location_name"
                 formData={formData}

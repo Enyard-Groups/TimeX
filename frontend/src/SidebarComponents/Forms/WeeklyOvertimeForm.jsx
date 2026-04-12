@@ -740,10 +740,10 @@ const WeeklyOvertimeForm = () => {
                                 {row.startTime
                                   ? row.startTime instanceof Date
                                     ? row.startTime.toLocaleTimeString([], {
-                                        hour12: false,
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                      })
+                                      hour12: false,
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })
                                     : row.startTime
                                   : "HH:MM:SS"}
                               </div>
@@ -768,10 +768,10 @@ const WeeklyOvertimeForm = () => {
                                 {row.endTime
                                   ? row.endTime instanceof Date
                                     ? row.endTime.toLocaleTimeString([], {
-                                        hour12: false,
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                      })
+                                      hour12: false,
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })
                                     : row.endTime
                                   : "HH:MM:SS"}
                               </div>
@@ -887,11 +887,10 @@ const WeeklyOvertimeForm = () => {
                                   checkerSignMode: "upload",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.checkerSignMode === "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.checkerSignMode === "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Upload
                             </button>
@@ -904,11 +903,10 @@ const WeeklyOvertimeForm = () => {
                                   checkerSignMode: "draw",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.checkerSignMode === "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.checkerSignMode === "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Sign Here
                             </button>
@@ -1077,11 +1075,10 @@ const WeeklyOvertimeForm = () => {
                                   approverSignMode: "upload",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.approverSignMode === "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.approverSignMode === "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Upload
                             </button>
@@ -1094,11 +1091,10 @@ const WeeklyOvertimeForm = () => {
                                   approverSignMode: "draw",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.approverSignMode === "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.approverSignMode === "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Sign Here
                             </button>
@@ -1307,11 +1303,10 @@ const WeeklyOvertimeForm = () => {
                                   verifierSignMode: "upload",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.verifierSignMode === "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.verifierSignMode === "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Upload
                             </button>
@@ -1324,11 +1319,10 @@ const WeeklyOvertimeForm = () => {
                                   verifierSignMode: "draw",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                                formData.verifierSignMode === "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.verifierSignMode === "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                              }`}
+                                }`}
                             >
                               Sign Here
                             </button>

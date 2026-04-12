@@ -588,11 +588,10 @@ const TpcForm = () => {
                                 signatureMode: "upload",
                               }))
                             }
-                            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                              formData.signatureMode === "upload"
+                            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.signatureMode === "upload"
                                 ? "bg-[#0f172a] text-white border-[#0f172a]"
                                 : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                            }`}
+                              }`}
                           >
                             Upload
                           </button>
@@ -605,11 +604,10 @@ const TpcForm = () => {
                                 signatureMode: "draw",
                               }))
                             }
-                            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                              formData.signatureMode === "draw"
+                            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.signatureMode === "draw"
                                 ? "bg-[#0f172a] text-white border-[#0f172a]"
                                 : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                            }`}
+                              }`}
                           >
                             Sign Here
                           </button>

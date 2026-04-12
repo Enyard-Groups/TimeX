@@ -576,3 +576,72 @@ export const assignGeofencingToEmployees = async (req, res) => {
     client.release();
   }
 };
+
+// ── Employee Categories ────────────────────────────────────────────────────────
+
+export const getEmployeeCategories = async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT ec.*, c.name as company_name 
+      FROM employee_categories ec
+      LEFT JOIN companies c ON ec.company_id = c.id
+      ORDER BY ec.created_at DESC
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error in getEmployeeCategories:', error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const createEmployeeCategory = async (req, res) => {
+  const { name, description, is_active, company_id, work_hours } = req.body;
+  if (!name) {
+    return res.status(400).json({ message: 'Category name is required.' });
+  }
+  try {
+    const result = await db.query(
+      'INSERT INTO employee_categories (name, description, is_active, company_id, work_hours) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [name, description, is_active ?? true, company_id, work_hours]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error in createEmployeeCategory:', error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateEmployeeCategory = async (req, res) => {
+  const { id } = req.params;
+  const { name, description, is_active, company_id, work_hours } = req.body;
+  try {
+    const result = await db.query(
+      'UPDATE employee_categories SET name=$1, description=$2, is_active=$3, company_id=$4, work_hours=$5, updated_at=NOW() WHERE id=$6 RETURNING *',
+      [name, description, is_active, company_id, work_hours, id]
+    );
+    if (!result.rows[0]) {
+      return res.status(404).json({ message: 'Employee category not found.' });
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error in updateEmployeeCategory:', error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteEmployeeCategory = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await db.query(
+      'DELETE FROM employee_categories WHERE id=$1 RETURNING id',
+      [id]
+    );
+    if (!result.rows[0]) {
+      return res.status(404).json({ message: 'Employee category not found.' });
+    }
+    res.json({ message: 'Employee category removed.' });
+  } catch (error) {
+    console.error('Error in deleteEmployeeCategory:', error.message);
+    res.status(500).json({ message: error.message });
+  }
+};

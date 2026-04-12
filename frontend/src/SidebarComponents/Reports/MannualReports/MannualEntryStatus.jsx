@@ -25,6 +25,7 @@ const MannualEntryStatus = () => {
   // Dropdown data
   const [companyOptions, setCompanyOptions] = useState([]);
   const [employeeOptions, setEmployeeOptions] = useState([]);
+  const [locationOptions, setLocationOptions] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
@@ -54,12 +55,14 @@ const MannualEntryStatus = () => {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const [companies, employees] = await Promise.all([
+        const [companies, employees, locations] = await Promise.all([
           axios.get(`${API_BASE}/companies`),
-          axios.get(`${API_BASE}/employees`),
+          axios.get(`${API_BASE}/employee`),
+          axios.get(`${API_BASE}/master/geofencing`),
         ]);
         setCompanyOptions(companies.data);
         setEmployeeOptions(employees.data);
+        setLocationOptions(locations.data || []);
       } catch (err) {
         console.error("Failed to fetch dropdown options:", err);
       }
@@ -96,6 +99,7 @@ const MannualEntryStatus = () => {
     const matchesSearch =
       (emp.employee_name || "").toLowerCase().includes(searchLower) ||
       (emp.company_name || "").toLowerCase().includes(searchLower) ||
+      (emp.location_name || locationOptions.find(l => l.id == emp.location)?.name || emp.location || "").toLowerCase().includes(searchLower) ||
       (emp.employee_code || "").toLowerCase().includes(searchLower);
 
     return matchesSearch;
@@ -256,7 +260,11 @@ const MannualEntryStatus = () => {
                   label="Location"
                   name="location"
                   value={formData.location}
-                  options={["Head Office", "Location 2"]}
+                  displayValue={formData.location_name}
+                  options={locationOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  labelName="location_name"
                   formData={formData}
                   setFormData={setFormData}
                   inputStyle={inputStyle}

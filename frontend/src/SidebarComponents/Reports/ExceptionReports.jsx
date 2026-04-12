@@ -384,9 +384,9 @@ const ExceptionReports = () => {
                         <td className="px-4 py-3 text-center hidden lg:table-cell text-gray-600">
                           {item.createdDate
                             ? new Date(item.createdDate).toLocaleDateString(
-                                "en-US",
-                                { weekday: "long" },
-                              )
+                              "en-US",
+                              { weekday: "long" },
+                            )
                             : "-"}
                         </td>
                         <td className="px-4 py-3 text-center hidden lg:table-cell text-gray-600">
@@ -518,9 +518,9 @@ const ExceptionReports = () => {
                   <p className={inputStyle}>
                     {selectedItem.createdDate
                       ? new Date(selectedItem.createdDate).toLocaleDateString(
-                          "en-US",
-                          { weekday: "long" },
-                        )
+                        "en-US",
+                        { weekday: "long" },
+                      )
                       : "Missed Entry"}
                   </p>
                 </div>

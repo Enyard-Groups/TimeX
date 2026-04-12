@@ -407,10 +407,10 @@ const PatrollingChecklist = () => {
                         {item.shift_timing
                           ? item.shift_timing instanceof Date
                             ? item.shift_timing.toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: false,
-                              })
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            })
                             : item.shift_timing
                           : "-"}
                       </td>
@@ -588,10 +588,10 @@ const PatrollingChecklist = () => {
                       {formData.shift_timing
                         ? formData.shift_timing instanceof Date
                           ? formData.shift_timing.toLocaleTimeString([], {
-                              hour12: false,
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })
+                            hour12: false,
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
                           : formData.shift_timing
                         : "HH:MM:SS"}
                     </div>
@@ -901,11 +901,10 @@ const PatrollingChecklist = () => {
                               eSignMode: "upload",
                             }))
                           }
-                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                            formData.eSignMode === "upload"
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.eSignMode === "upload"
                               ? "bg-[#0f172a] text-white border-[#0f172a]"
                               : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                          }`}
+                            }`}
                         >
                           Upload
                         </button>
@@ -918,11 +917,10 @@ const PatrollingChecklist = () => {
                               eSignMode: "draw",
                             }))
                           }
-                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                            formData.eSignMode === "draw"
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.eSignMode === "draw"
                               ? "bg-[#0f172a] text-white border-[#0f172a]"
                               : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                          }`}
+                            }`}
                         >
                           Sign Here
                         </button>
