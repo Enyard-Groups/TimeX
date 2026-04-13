@@ -131,7 +131,7 @@ const Login = () => {
 
           <img
             src="./timexlogin.png"
-            width="120"
+            width="140"
             className="fixed top-8 right-8 z-30 opacity-80 md:opacity-100"
             alt="Logo"
           />
