@@ -14,33 +14,37 @@ import {
   FaUserClock,
   FaAngleRight,
 } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 const PerformanceDashboard = () => {
+  const { attendanceData } = useSelector((state) => state);
   // Summary Cards
   const summary = [
     {
       title: "Total Employees",
-      value: 43,
+      value: attendanceData[attendanceData.length - 1].totalEmployees || 0,
       icon: <FaUsers />,
       color: "from-gray-300 to-gray-500 text-gray-900",
     },
-
     {
       title: "Total Present Employees",
-      value: 32,
+      value: attendanceData[attendanceData.length - 1].presentToday || 0,
       icon: <FaUserCheck />,
       color: "from-red-300 to-red-500 text-red-900",
     },
     {
       title: "Total Absent Employees",
-      value: 8,
+      value:
+        attendanceData[attendanceData.length - 1].totalEmployees -
+          (attendanceData[attendanceData.length - 1].presentToday +
+            attendanceData[attendanceData.length - 1].leave) || 0,
       icon: <FaUserTimes />,
       color: "from-red-100 to-red-300 text-red-500",
     },
 
     {
       title: "Employees On Leave",
-      value: 3,
+      value: attendanceData[attendanceData.length - 1].leave || 0,
       icon: <FaUserClock />,
       color: "from-gray-100 to-gray-300 text-gray-500",
     },

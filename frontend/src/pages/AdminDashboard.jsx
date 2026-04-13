@@ -6,9 +6,18 @@ import AttendanceLineChart from "../components/AttendanceLineChart";
 import DeviceStats from "../components/DeviceStats";
 import { userData } from "../assets/userData";
 import Timeline from "../components/Timeline";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAttendanceStats } from "../action";
 
 const AdminDashboard = ({ user }) => {
-  const [attendanceData, setAttendanceData] = useState([]);
+  const dispatch = useDispatch();
+  const { attendanceData } = useSelector((state) => state);
+
+  useEffect(() => {
+    if (attendanceData.length === 0) {
+      dispatch(fetchAttendanceStats());
+    }
+  }, [dispatch, attendanceData.length]);
 
   // useEffect(() => {
   //   const fetchDashboardStats = async () => {
@@ -32,71 +41,6 @@ const AdminDashboard = ({ user }) => {
 
   //   fetchDashboardStats();
   // }, []);
-
-  useEffect(() => {
-    const fetchDashboardStats = async () => {
-      try {
-        // 1. Generate dates for the last 10 years (3650 days)
-        function getDecadeDates() {
-          const dates = [];
-          const today = new Date();
-          const totalDays = 365 * 10; // Approx 3650 days
-
-          for (let i = totalDays - 1; i >= 0; i--) {
-            const d = new Date();
-            d.setDate(today.getDate() - i);
-            dates.push(d.toISOString().split("T")[0]);
-          }
-          return dates;
-        }
-
-        // 2. Generate data with weekend logic and growth trend
-        function generateDecadeData(dates) {
-          return dates.map((date, index) => {
-            const d = new Date(date);
-            const isWeekend = d.getDay() === 0 || d.getDay() === 6;
-
-            /** * Realistic Growth Logic:
-             * Company starts with 50 employees and grows to 150 over 10 years
-             */
-            const totalEmployees =
-              50 + Math.floor((index / dates.length) * 100);
-
-            // Weekend: ~10% present | Weekday: 70-90% present
-            const presentToday = isWeekend
-              ? Math.floor(Math.random() * (totalEmployees * 0.1)) + 5
-              : Math.floor(Math.random() * (totalEmployees * 0.2)) +
-                Math.floor(totalEmployees * 0.7);
-
-            return {
-              date,
-              totalEmployees,
-              presentToday,
-              leave: isWeekend
-                ? 0
-                : Math.floor(Math.random() * (totalEmployees * 0.05)),
-              earlyin: isWeekend
-                ? 0
-                : Math.floor(Math.random() * (totalEmployees * 0.1)),
-              latein: isWeekend
-                ? 0
-                : Math.floor(Math.random() * (totalEmployees * 0.08)),
-            };
-          });
-        }
-
-        const allDates = getDecadeDates();
-        const finalData = generateDecadeData(allDates);
-
-        console.log("Generated 10 years of data successfully.");
-        setAttendanceData(finalData);
-      } catch (error) {
-        console.error("Failed to load 10-year dashboard stats:", error);
-      }
-    };
-
-    fetchDashboardStats();
-  }, []);
 
   return (
     <>

@@ -7,12 +7,15 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
   const processedData = useMemo(() => {
     if (!attendanceData || attendanceData.length === 0) return [];
 
-    const data = [...attendanceData];
+    const filteredData = attendanceData.filter((item) => {
+      const day = new Date(item.date).getDay();
+      return day !== 0;
+    });
 
     // 1. Daily/Weekly Views (7d, 15d, 1m)
     if (range === "7d" || range === "15d" || range === "1m") {
       const sliceSize = range === "7d" ? -7 : range === "15d" ? -15 : -30;
-      return data.slice(sliceSize).map((item) => {
+      return filteredData.slice(sliceSize).map((item) => {
         const dateObj = new Date(item.date);
         return {
           label:
@@ -29,7 +32,7 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
       });
     }
 
-    // 2. 1 Year View - Aggregated by Month (Jan, Feb, Mar...)
+    // 2. 1 Year View
     if (range === "1y") {
       const monthNames = [
         "Jan",
@@ -47,9 +50,10 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
       ];
       const months = {};
 
-      data.slice(-365).forEach((item) => {
+      // Take last 365 available non-Sunday days
+      filteredData.slice(-312).forEach((item) => {
         const dateObj = new Date(item.date);
-        const monthLabel = monthNames[dateObj.getMonth()]; // Get "Jan", "Feb" etc.
+        const monthLabel = monthNames[dateObj.getMonth()];
 
         if (!months[monthLabel]) {
           months[monthLabel] = { present: 0, absent: 0, leave: 0, count: 0 };
@@ -60,7 +64,6 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
         months[monthLabel].count += 1;
       });
 
-      // Return in chronological order starting from the earliest month found in the data
       return monthNames
         .filter((name) => months[name])
         .map((name) => ({
@@ -71,10 +74,11 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
         }));
     }
 
-    // 3. 3 Year View - Aggregated by Year (2024, 2025, 2026)
+    // 3. 3 Year View - Aggregated by Year
     if (range === "3y") {
       const years = {};
-      data.slice(-1095).forEach((item) => {
+      filteredData.slice(-939).forEach((item) => {
+        // ~939 working days in 3 years
         const yearLabel = new Date(item.date).getFullYear().toString();
 
         if (!years[yearLabel]) {
@@ -101,7 +105,7 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
 
   if (processedData.length === 0) {
     return (
-      <div className="py-10 text-center text-gray-400 bg-white rounded-xl">
+      <div className="py-10 text-center text-gray-400 bg-white rounded-xl border border-dashed border-slate-200">
         No data available
       </div>
     );
@@ -120,15 +124,8 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
       zoom: { enabled: false },
       fontFamily: "inherit",
     },
-    
-    dataLabels: {
-      enabled: false,
-    },
+    dataLabels: { enabled: false },
     stroke: { curve: "smooth", width: 3 },
-    markers: {
-      size: 0,
-      hover: { size: 5 },
-    },
     colors: ["#2563EB", "#EF4444", "#06B6D4"],
     fill: {
       type: "gradient",
@@ -136,30 +133,36 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
         opacityFrom: 0.4,
         opacityTo: 0.05,
         stops: [20, 100],
-        gradientToColors: ["#DBEAFE", "#FEE2E2", "#E0F2FE"],
       },
     },
+    // ADD THIS GRID SECTION
     grid: {
-      borderColor: "#f1f5f9",
-      strokeDashArray: 4,
-      padding: { left: 10, right: 10 },
+      show: true,
+      xaxis: {
+        lines: { show: false },
+      },
+      yaxis: {
+        lines: { show: false },
+      },
+      padding: {
+        left: 10,
+        right: 10,
+      },
     },
     xaxis: {
       categories: processedData.map((d) => d.label),
-      // Ensures only the months/years show without extra ticks
-      tickAmount: range === "1y" ? 12 : range === "3y" ? 3 : undefined,
       axisBorder: { show: false },
       axisTicks: { show: false },
-      labels: { rotate: -45, style: { colors: "#94a3b8", fontSize: "11px" } },
+      labels: { style: { colors: "#94a3b8", fontSize: "11px" } },
     },
-    yaxis: { labels: { style: { colors: "#94a3b8", fontSize: "11px" } } },
-    tooltip: { theme: "light", x: { show: true } },
-    legend: {
-      position: "top",
-      horizontalAlign: "right",
-      fontSize: "13px",
-      labels: { colors: "#64748b" },
+    yaxis: {
+      labels: { style: { colors: "#94a3b8", fontSize: "11px" } },
+
+      axisBorder: { show: false },
+      axisTicks: { show: false },
     },
+    tooltip: { theme: "light" },
+    legend: { position: "top", horizontalAlign: "right" },
   };
 
   return (
