@@ -7,10 +7,9 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
   const processedData = useMemo(() => {
     if (!attendanceData || attendanceData.length === 0) return [];
 
-    // Filter out Sundays first to ensure they don't impact averages or counts
     const filteredData = attendanceData.filter((item) => {
       const day = new Date(item.date).getDay();
-      return day !== 0; // 0 is Sunday
+      return day !== 0;
     });
 
     // 1. Daily/Weekly Views (7d, 15d, 1m)
@@ -33,7 +32,7 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
       });
     }
 
-    // 2. 1 Year View - Aggregated by Month
+    // 2. 1 Year View
     if (range === "1y") {
       const monthNames = [
         "Jan",
@@ -53,7 +52,6 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
 
       // Take last 365 available non-Sunday days
       filteredData.slice(-312).forEach((item) => {
-        // ~312 working days in a year
         const dateObj = new Date(item.date);
         const monthLabel = monthNames[dateObj.getMonth()];
 
@@ -105,12 +103,10 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
     return [];
   }, [attendanceData, range]);
 
-  // ... (Keep rest of the component Chart options and JSX the same)
-
   if (processedData.length === 0) {
     return (
       <div className="py-10 text-center text-gray-400 bg-white rounded-xl border border-dashed border-slate-200">
-        No data available (Sundays excluded)
+        No data available
       </div>
     );
   }
@@ -139,13 +135,32 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
         stops: [20, 100],
       },
     },
+    // ADD THIS GRID SECTION
+    grid: {
+      show: true,
+      xaxis: {
+        lines: { show: false },
+      },
+      yaxis: {
+        lines: { show: false },
+      },
+      padding: {
+        left: 10,
+        right: 10,
+      },
+    },
     xaxis: {
       categories: processedData.map((d) => d.label),
       axisBorder: { show: false },
       axisTicks: { show: false },
       labels: { style: { colors: "#94a3b8", fontSize: "11px" } },
     },
-    yaxis: { labels: { style: { colors: "#94a3b8", fontSize: "11px" } } },
+    yaxis: {
+      labels: { style: { colors: "#94a3b8", fontSize: "11px" } },
+
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+    },
     tooltip: { theme: "light" },
     legend: { position: "top", horizontalAlign: "right" },
   };
