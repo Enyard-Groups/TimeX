@@ -3,7 +3,8 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setAuth, setUser } from "../action";
 import axios from "axios";
-import { RxCross2 } from "react-icons/rx";
+import { RxCross2, RxEyeOpen, RxEyeClosed } from "react-icons/rx";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -11,13 +12,16 @@ const Login = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [showMobileForm, setShowMobileForm] = useState(false);
 
   const currentYear = new Date().getFullYear();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
     if (userName === "admin" && password === "admin123") {
       const adminUserData = {
@@ -26,15 +30,11 @@ const Login = () => {
         name: "Administrator",
         role: "admin",
       };
-
       localStorage.setItem("user", JSON.stringify(adminUserData));
       localStorage.setItem("token", "admin-bypass");
-
       dispatch(setUser(adminUserData));
       dispatch(setAuth(true));
-      setError("");
       navigate("/");
-
       return;
     }
 
@@ -45,187 +45,204 @@ const Login = () => {
       });
       const userData = res.data.User || res.data.user || res.data;
       const authToken = res.data.token || res.data.accessToken || null;
-
       localStorage.setItem("user", JSON.stringify(userData));
-      if (authToken) {
-        localStorage.setItem("token", authToken);
-      }
-
+      if (authToken) localStorage.setItem("token", authToken);
       dispatch(setUser(userData));
       dispatch(setAuth(true));
       navigate("/");
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid credentials");
+      setError(err.response?.data?.message || "Invalid credentials.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-white overflow-hidden">
-      {/* MOBILE FORM */}
+    <div className="relative min-h-screen w-full bg-[#0f172a] overflow-hidden font-sans">
+      {/* MOBILE OVERLAY FORM (Translates up from bottom) */}
       <div
-        className={`fixed inset-0 z-50 bg-white transition-transform duration-500 ease-in-out transform md:hidden ${
-          showMobileForm ? "translate-x-0" : "translate-x-full"
+        className={`fixed inset-0 z-50 bg-[#0f172a] transition-transform duration-500 ease-in-out md:hidden flex flex-col p-8 ${
+          showMobileForm ? "translate-y-0" : "translate-y-full"
         }`}
       >
-        <div className="p-8 h-full flex flex-col">
-          <button
-            onClick={() => setShowMobileForm(false)}
-            className="self-end p-2 bg-slate-100 rounded-full text-slate-500"
-          >
-            <RxCross2 size={24} />
-          </button>
-          <div className="mt-4">
-            <img
-              src="../timexlogin.png"
-              className="bg-white mb-12"
-              alt=""
-              height="180px"
-              width="180px"
-            />
-            <h2 className="text-3xl font-black text-[#0f172a] mb-2">
-              Welcome Back
-            </h2>
-            <p className="text-gray-500 mb-8">
-              Enter your credentials to continue.
-            </p>
+        <button
+          onClick={() => setShowMobileForm(false)}
+          className="self-end p-3 bg-white/5 rounded-full text-white mb-10"
+        >
+          <RxCross2 size={24} />
+        </button>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {error && (
-                <div className="text-lg ml-4 p-3 rounded-xl text-sm bg-[oklch(0.577_0.245_27.325/0.08)] border border-[oklch(0.577_0.245_27.325/0.3)] text-[oklch(0.577_0.245_27.325)]">
-                  {error}
-                </div>
-              )}
-              <input
-                type="text"
-                placeholder="Username"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-gray-200 focus:ring-4 focus:ring-blue-100 outline-none"
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-gray-200 focus:ring-4 focus:ring-blue-100 outline-none"
-              />
-              <button
-                type="submit"
-                className="w-full py-4 rounded-2xl text-white font-bold bg-[#0f172a] shadow-lg active:scale-95 transition-all"
-              >
-                Sign In
-              </button>
-            </form>
-          </div>
+        <div className="w-full max-w-sm mx-auto">
+          <h2 className="text-4xl font-black text-white mb-2 tracking-tight">
+            Welcome Back
+          </h2>
+          <p className="text-slate-400 mb-8 italic">Sign in to your account</p>
+
+          <LoginForm
+            handleSubmit={handleSubmit}
+            userName={userName}
+            setUserName={setUserName}
+            password={password}
+            setPassword={setPassword}
+            showPassword={showPassword}
+            setShowPassword={setShowPassword}
+            error={error}
+            isLoading={isLoading}
+          />
         </div>
       </div>
 
-      {/* MAIN DESKTOP GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
-        {/* LEFT SIDE  */}
+        {/* DESKTOP LEFT FORM */}
+        <div className="hidden md:flex justify-center items-center p-12 lg:p-20 bg-[#0f172a] z-20">
+          <div className="w-full max-w-md">
+            <div className="mb-12">
+              <h2 className="text-5xl font-black text-white tracking-tight mb-3">
+                Welcome Back
+              </h2>
+              <p className="text-slate-400 text-lg font-light italic">
+                Access your workforce dashboard.
+              </p>
+            </div>
+            <LoginForm
+              handleSubmit={handleSubmit}
+              userName={userName}
+              setUserName={setUserName}
+              password={password}
+              setPassword={setPassword}
+              showPassword={showPassword}
+              setShowPassword={setShowPassword}
+              error={error}
+              isLoading={isLoading}
+            />
+          </div>
+        </div>
+
+        {/* IMAGE SIDE (Visible on Mobile as Background) */}
         <div className="relative h-full w-full flex items-end overflow-hidden">
-          <div className="absolute inset-0 bg-black/60 z-10"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/20 to-transparent z-10"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a] via-transparent to-transparent hidden md:block z-10"></div>
+
           <img
-            src="./login.jpg"
-            className="absolute inset-0 w-full h-full object-cover"
-            alt="Login Background"
+            src="./bgimagelogin.png"
+            className="absolute inset-0 w-full h-full object-right object-cover scale-100 md:scale-110 transition-transform duration-700"
+            alt="Background"
           />
 
-          <div className="relative z-20 p-8 md:p-12 w-full">
-            <div className="text-white mb-8">
-              <p className="text-xs md:text-sm font-medium uppercase tracking-[0.3em] opacity-80 mb-2">
+          <img
+            src="./timexlogin.png"
+            width="120"
+            className="fixed top-8 right-8 z-30 opacity-80 md:opacity-100"
+            alt="Logo"
+          />
+
+          <div className="relative z-20 p-8 md:p-16 w-full">
+            <div className="text-white mb-8 md:mb-10 max-w-lg">
+              <p className="text-xs font-bold uppercase tracking-[0.4em] text-blue-400 mb-2">
                 Smart Attendance
               </p>
-              <h1 className="text-3xl md:text-5xl font-bold leading-tight">
-                Simplify your <br /> workforce management.
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                Simplify your <br />{" "}
+                <span className="text-blue-400">workforce</span> management.
               </h1>
             </div>
 
-            {/* MOBILE ONLY */}
+            {/* MOBILE ONLY TRIGGER BUTTON */}
             <button
               onClick={() => setShowMobileForm(true)}
-              className="md:hidden mb-8 bg-white px-8 py-3 rounded-xl text-lg text-[#0f172a] font-bold shadow-2xl active:scale-95 transition-transform"
+              className="md:hidden w-full bg-white text-[#0f172a] py-4 rounded-2xl font-black text-lg shadow-2xl active:scale-95 transition-all mb-8"
             >
-              Sign in
+              Sign In to Dashboard
             </button>
 
-            <div className="text-sm md:text-lg flex flex-wrap gap-2 text-white opacity-90">
-              <p>© {currentYear} TimeX</p>
-              <span className="opacity-30">|</span>
+            <div className="text-[10px] md:text-xs flex items-center gap-3 text-white/40 uppercase tracking-widest font-semibold">
+              <p>© {currentYear}</p>
+              <span>|</span>
               <a
                 href="https://enyard.in"
                 target="_blank"
                 rel="noreferrer"
-                className="hover:underline"
+                className="hover:text-white"
               >
                 ENYARD
               </a>
-              <span className="opacity-30">|</span>
-
-              <p className="whitespace-nowrap">All rights reserved</p>
+              <span>|</span>
+              <p>All rights reserved</p>
             </div>
-          </div>
-        </div>
-
-        {/* RIGHT SIDE */}
-        <div className="hidden md:flex justify-center items-center p-12">
-          <div className="w-full max-w-md">
-            <img
-              src="../timexlogin.png"
-              className="bg-white mb-12"
-              alt=""
-              height="180px"
-              width="180px"
-            />
-            <h2 className="text-4xl font-black text-[#0f172a] mb-2">
-              Welcome Back
-            </h2>
-            <p className="text-gray-500 text-lg mb-8">
-              Enter your credentials to access your dashboard.
-            </p>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {error && (
-                <div className="text-lg ml-4 p-3 rounded-xl text-sm bg-[oklch(0.577_0.245_27.325/0.08)] border border-[oklch(0.577_0.245_27.325/0.3)] text-[oklch(0.577_0.245_27.325)]">
-                  {error}
-                </div>
-              )}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                  Username
-                </label>
-                <input
-                  type="text"
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
-                  className="w-full px-5 py-4 rounded-2xl border border-gray-200 bg-slate-50 focus:ring-4 focus:ring-blue-100 outline-none transition-all"
-                  placeholder="e.g. admin"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-5 py-4 rounded-2xl border border-gray-200 bg-slate-50 focus:ring-4 focus:ring-blue-100 outline-none transition-all"
-                  placeholder="••••••••"
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full py-4 rounded-2xl text-white font-bold bg-[#0f172a] shadow-xl hover:bg-[#1e293b] transition-all"
-              >
-                Sign In
-              </button>
-            </form>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+const LoginForm = ({
+  handleSubmit,
+  userName,
+  setUserName,
+  password,
+  setPassword,
+  showPassword,
+  setShowPassword,
+  error,
+  isLoading,
+}) => (
+  <form onSubmit={handleSubmit} className="space-y-5">
+    {error && (
+      <div className="p-4 rounded-xl text-sm bg-red-500/10 border border-red-500/20 text-red-400 animate-pulse">
+        {error}
+      </div>
+    )}
+
+    <div className="space-y-2">
+      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+        Username
+      </label>
+      <input
+        required
+        type="text"
+        value={userName}
+        onChange={(e) => setUserName(e.target.value)}
+        className="w-full px-6 py-4 rounded-2xl border border-slate-800 bg-slate-900/40 text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+        placeholder="Enter username"
+      />
+    </div>
+
+    <div className="space-y-2">
+      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+        Password
+      </label>
+      <div className="relative">
+        <input
+          required
+          type={showPassword ? "text" : "password"}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full px-6 py-4 rounded-2xl border border-slate-800 bg-slate-900/40 text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+          placeholder="••••••••"
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-slate-500 hover:text-white"
+        >
+          {showPassword ? <RxEyeOpen size={20} /> : <RxEyeClosed size={20} />}
+        </button>
+      </div>
+    </div>
+
+    <button
+      type="submit"
+      disabled={isLoading}
+      className="w-full py-4 mt-4 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold shadow-lg shadow-blue-900/40 flex items-center justify-center gap-3 transition-all"
+    >
+      {isLoading ? (
+        <AiOutlineLoading3Quarters className="animate-spin" size={20} />
+      ) : (
+        "Sign In"
+      )}
+    </button>
+  </form>
+);
 
 export default Login;
