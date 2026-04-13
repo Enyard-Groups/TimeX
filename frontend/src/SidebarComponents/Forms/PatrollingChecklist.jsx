@@ -25,6 +25,7 @@ const PatrollingChecklist = () => {
   const [requestData, setRequestData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [editId, setEditId] = useState(null);
   const [showDateSpinner, setShowDateSpinner] = useState(false);
   const [showInTimePicker, setShowInTimePicker] = useState(false);
@@ -33,12 +34,15 @@ const PatrollingChecklist = () => {
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(API_URL);
       setRequestData(response.data);
       console.log(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to fetch data");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,9 +51,9 @@ const PatrollingChecklist = () => {
   }, []);
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base  focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const defaultFormData = {
     name: "",
@@ -264,7 +268,7 @@ const PatrollingChecklist = () => {
     <div className="mb-6 max-w-[1920px] mx-auto">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+        <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl  font-semibold text-gray-900">
           <FaAngleRight className="text-blue-500 text-base" />
           <span className="text-gray-500">Forms</span>
           <FaAngleRight className="text-blue-500 text-base" />
@@ -284,7 +288,7 @@ const PatrollingChecklist = () => {
                 setFormData(defaultFormData);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -298,7 +302,7 @@ const PatrollingChecklist = () => {
           <div className="p-6 border-b border-blue-100/30">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
-                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <label className="text-sm xl:text-base  font-medium text-gray-600">
                   Show
                 </label>
                 <select
@@ -307,7 +311,7 @@ const PatrollingChecklist = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -315,7 +319,7 @@ const PatrollingChecklist = () => {
                     </option>
                   ))}
                 </select>
-                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <span className="text-sm xl:text-base  font-medium text-gray-600">
                   entries
                 </span>
               </div>
@@ -352,7 +356,7 @@ const PatrollingChecklist = () => {
             className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+            <table className="w-full text-[17px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-blue-100/50">
                   <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700 text-center">
@@ -376,7 +380,19 @@ const PatrollingChecklist = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentrequestData.length === 0 ? (
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      className="px-4 py-12 text-center text-gray-500"
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        <span>Loading...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : currentrequestData.length === 0 ? (
                   <tr>
                     <td
                       colSpan="6"
@@ -422,7 +438,7 @@ const PatrollingChecklist = () => {
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-blue-500 hover:text-blue-700 xl:text-xl  cursor-pointer transition-all"
                             title="View"
                           />
                           <FaPen
@@ -432,12 +448,12 @@ const PatrollingChecklist = () => {
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-green-500 hover:text-green-700 xl:text-xl  cursor-pointer transition-all"
                             title="Edit"
                           />
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-red-500 hover:text-red-700 xl:text-xl  cursor-pointer transition-all"
                             title="Delete"
                           />
                         </div>
@@ -451,7 +467,7 @@ const PatrollingChecklist = () => {
 
           {/* Pagination */}
           <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-            <span className="text-sm lg:text-base 3xl:text-xl text-gray-600">
+            <span className="text-sm xl:text-base  text-gray-600">
               Showing{" "}
               <span className="text-gray-900 font-semibold">
                 {requestData.length === 0 ? "0" : startIndex + 1}
@@ -523,7 +539,7 @@ const PatrollingChecklist = () => {
             style={{ scrollbarWidth: "none" }}
           >
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
-              <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+              <h2 className="text-xl   font-bold text-gray-900">
                 {mode === "view"
                   ? "Patrolling Record Details"
                   : mode === "edit"
@@ -540,7 +556,7 @@ const PatrollingChecklist = () => {
 
             <div className="border p-8 rounded-2xl border-gray-400/20 shadow-inner bg-white">
               <div
-                className="max-h-[75vh] overflow-y-auto pr-2 text-sm lg:text-base 3xl:text-xl"
+                className="max-h-[75vh] overflow-y-auto pr-2 text-sm xl:text-base "
                 style={{ scrollbarWidth: "none" }}
               >
                 {/* Staff Information Section */}
@@ -633,7 +649,7 @@ const PatrollingChecklist = () => {
                     )}
                   </div>
                 </div>
-                <div className="p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-900 rounded-r-xl mb-10 text-sm lg:text-base italic leading-relaxed">
+                <div className="p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-900 rounded-r-xl mb-10 text-sm xl:text-base italic leading-relaxed">
                   *Proceed patrolling in the given order, category wise. If
                   everything is normal tick the "status ok" box. If you find
                   anything wrong, cross the box and report to Manager School
@@ -742,7 +758,7 @@ const PatrollingChecklist = () => {
                     className="overflow-x-auto"
                     style={{ scrollbarWidth: "none" }}
                   >
-                    <table className="w-full text-center text-sm lg:text-base">
+                    <table className="w-full text-center text-sm xl:text-base">
                       <thead>
                         <tr className="bg-slate-50 text-gray-400 text-[16px]  tracking-tighter">
                           <th className="p-3 border-b border-r border-gray-100 hidden sm:table-cell">
@@ -869,7 +885,7 @@ const PatrollingChecklist = () => {
                               </td>
                               <td className="p-3">
                                 <FaEye
-                                  className="text-blue-400 hover:text-blue-600 cursor-pointer mx-auto lg:text-xl"
+                                  className="text-blue-400 hover:text-blue-600 cursor-pointer mx-auto xl:text-xl"
                                   onClick={() => {
                                     setViewRow(row);
                                     setOpenViewModal(true);
@@ -886,7 +902,7 @@ const PatrollingChecklist = () => {
                 {/* Signature Area */}
                 <div>
                   <div className="flex flex-col mt-4">
-                    <label className="text-sm lg:text-base font-bold text-gray-500 uppercase tracking-widest mb-4">
+                    <label className="text-sm xl:text-base font-bold text-gray-500 uppercase tracking-widest mb-4">
                       Official E-Signature
                     </label>
 
@@ -1035,7 +1051,7 @@ const PatrollingChecklist = () => {
                     <div className="w-full md:w-fit flex justify-end items-end">
                       <button
                         onClick={handleSubmit}
-                        className="w-full md:w-auto bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-4 rounded-2xl font-bold lg:text-xl shadow-xl hover:shadow-blue-200 hover:-translate-y-1 transition-all"
+                        className="w-full md:w-auto bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-4 rounded-2xl font-bold xl:text-xl shadow-xl hover:shadow-blue-200 hover:-translate-y-1 transition-all"
                       >
                         Submit Checklist
                       </button>
@@ -1052,11 +1068,11 @@ const PatrollingChecklist = () => {
       {openViewModal && viewRow && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
           <div className="bg-white p-8 rounded-3xl w-full max-w-2xl shadow-2xl animate-in zoom-in duration-200">
-            <h2 className="text-xl lg:text-2xl font-black text-gray-900 mb-6 border-b pb-4 flex items-center gap-2">
+            <h2 className="text-xl  font-black text-gray-900 mb-6 border-b pb-4 flex items-center gap-2">
               <div className="w-2 h-2 bg-blue-600 rounded-full animate-ping"></div>{" "}
               Patrolling Item Details
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm lg:text-lg">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm xl:text-lg">
               <div className="col-span-2 p-3 bg-slate-50 rounded-xl mb-2">
                 <span className="text-xs font-bold text-gray-400 block uppercase">
                   Section & Task

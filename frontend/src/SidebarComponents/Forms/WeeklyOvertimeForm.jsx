@@ -26,17 +26,21 @@ const WeeklyOvertimeForm = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [showCheckedDateSpinner, setShowCheckedDateSpinner] = useState(false);
   const [showApprovedDatePicker, setShowApprovedDatePicker] = useState(false);
   const [showVerifiedDatePicker, setShowVerifiedDatePicker] = useState(false);
   const [activeDateIndex, setActiveDateIndex] = useState(null);
   const [activeInTimeIndex, setActiveInTimeIndex] = useState(null);
   const [activeOutTimeIndex, setActiveOutTimeIndex] = useState(null);
+  const [employees, setEmployees] = useState([]);
+  const [designations, setDesignations] = useState([]);
+  const [locations, setLocations] = useState([]);
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base  focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const defaultFormData = {
     employee_name: "",
@@ -84,17 +88,51 @@ const WeeklyOvertimeForm = () => {
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(API_URL);
       setRequestData(response.data);
     } catch (error) {
       console.error("Error fetching weekly overtime data:", error);
       toast.error("Failed to load data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchOptions = async () => {
+    try {
+      const [empRes, desRes, locRes] = await Promise.all([
+        axios.get("http://localhost:3000/api/employee"),
+        axios.get("http://localhost:3000/api/master/designation"),
+        axios.get("http://localhost:3000/api/master/geofencing"),
+      ]);
+      setEmployees(empRes.data);
+      setDesignations(desRes.data);
+      setLocations(locRes.data);
+    } catch (error) {
+      console.error("Error fetching options:", error);
     }
   };
 
   useEffect(() => {
     fetchData();
+    fetchOptions();
   }, []);
+
+  useEffect(() => {
+    if (formData.employee_name && mode !== "view") {
+      const selectedEmp = employees.find(
+        (emp) => emp.full_name === formData.employee_name
+      );
+      if (selectedEmp) {
+        setFormData((prev) => ({
+          ...prev,
+          enrollment_id: selectedEmp.company_enrollment_id || "",
+          designation: selectedEmp.designation_name || prev.designation,
+        }));
+      }
+    }
+  }, [formData.employee_name, employees]);
 
   const getTimeDiff = (startTime, endTime) => {
     const [ih, im, is] = startTime.split(":").map(Number);
@@ -305,7 +343,7 @@ const WeeklyOvertimeForm = () => {
     <div className="mb-6 max-w-[1920px] mx-auto">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+        <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl  font-semibold text-gray-900">
           <FaAngleRight className="text-blue-500 text-base" />
           <span className="text-gray-500">Forms</span>
           <FaAngleRight className="text-blue-500 text-base" />
@@ -325,7 +363,7 @@ const WeeklyOvertimeForm = () => {
                 setFormData(defaultFormData);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -339,7 +377,7 @@ const WeeklyOvertimeForm = () => {
           <div className="p-6 border-b border-blue-100/30">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
-                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <label className="text-sm xl:text-base  font-medium text-gray-600">
                   Show
                 </label>
                 <select
@@ -348,7 +386,7 @@ const WeeklyOvertimeForm = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -356,7 +394,7 @@ const WeeklyOvertimeForm = () => {
                     </option>
                   ))}
                 </select>
-                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <span className="text-sm xl:text-base  font-medium text-gray-600">
                   entries
                 </span>
               </div>
@@ -393,7 +431,7 @@ const WeeklyOvertimeForm = () => {
             className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+            <table className="w-full text-[17px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-blue-100/50">
                   <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
@@ -414,7 +452,19 @@ const WeeklyOvertimeForm = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentrequestData.length === 0 ? (
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan="5"
+                      className="px-4 py-12 text-center text-gray-500"
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        <span>Loading...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : currentrequestData.length === 0 ? (
                   <tr>
                     <td
                       colSpan="5"
@@ -449,7 +499,7 @@ const WeeklyOvertimeForm = () => {
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-blue-500 hover:text-blue-700 xl:text-xl  cursor-pointer transition-all"
                             title="View"
                           />
                           <FaPen
@@ -459,12 +509,12 @@ const WeeklyOvertimeForm = () => {
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-green-500 hover:text-green-700 xl:text-xl  cursor-pointer transition-all"
                             title="Edit"
                           />
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-red-500 hover:text-red-700 xl:text-xl  cursor-pointer transition-all"
                             title="Delete"
                           />
                         </div>
@@ -479,7 +529,7 @@ const WeeklyOvertimeForm = () => {
           {/* Pagination Footer */}
           {/* Pagination */}
           <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-            <span className="text-sm lg:text-base 3xl:text-xl text-gray-600">
+            <span className="text-sm xl:text-base  text-gray-600">
               Showing{" "}
               <span className="text-gray-900 font-semibold">
                 {requestData.length === 0 ? "0" : startIndex + 1}
@@ -551,7 +601,7 @@ const WeeklyOvertimeForm = () => {
             style={{ scrollbarWidth: "none" }}
           >
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
-              <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+              <h2 className="text-xl   font-bold text-gray-900">
                 {mode === "view"
                   ? "Overtime Details"
                   : mode === "edit"
@@ -568,7 +618,7 @@ const WeeklyOvertimeForm = () => {
 
             <div className="border p-8 rounded-xl border-gray-400/20 shadow-inner bg-white">
               <div
-                className="max-h-[75vh] overflow-y-auto pr-2 text-sm lg:text-base 3xl:text-xl"
+                className="max-h-[75vh] overflow-y-auto pr-2 text-sm xl:text-base "
                 style={{ scrollbarWidth: "none" }}
               >
                 {/* Staff Information Section */}
@@ -578,7 +628,9 @@ const WeeklyOvertimeForm = () => {
                     <SearchDropdown
                       name="employee_name"
                       value={formData.employee_name}
-                      options={["Employee 1", "Employee 2"]}
+                      options={employees}
+                      labelKey="full_name"
+                      valueKey="full_name"
                       formData={formData}
                       inputStyle={inputStyle}
                       setFormData={setFormData}
@@ -597,12 +649,16 @@ const WeeklyOvertimeForm = () => {
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className={labelStyle}>Site Name</label>
-                    <input
+                    <SearchDropdown
                       name="site_name"
                       value={formData.site_name}
-                      onChange={handleChange}
+                      options={locations}
+                      labelKey="name"
+                      valueKey="name"
+                      inputStyle={inputStyle}
+                      formData={formData}
+                      setFormData={setFormData}
                       disabled={mode === "view"}
-                      className={inputStyle}
                     />
                   </div>
                   <div className="flex flex-col gap-2">
@@ -610,7 +666,9 @@ const WeeklyOvertimeForm = () => {
                     <SearchDropdown
                       name="designation"
                       value={formData.designation}
-                      options={["Driver", "HR Manager", "Officer"]}
+                      options={designations}
+                      labelKey="name"
+                      valueKey="name"
                       inputStyle={inputStyle}
                       formData={formData}
                       setFormData={setFormData}
@@ -652,42 +710,39 @@ const WeeklyOvertimeForm = () => {
                     </label>
                   </div>
 
-                  <div className=" rounded-xl border border-gray-200 shadow-sm">
-                    <table className="w-full border-collapse">
-                      <thead>
-                        <tr className="bg-slate-100 text-gray-700">
-                          <th className="p-3 border-b border-gray-200 w-12">
-                            #
-                          </th>
-                          <th className="p-3 border-b border-gray-200">Day</th>
-                          <th className="p-3 border-b border-gray-200">Date</th>
-                          <th className="p-3 border-b border-gray-200">
-                            Start
-                          </th>
-                          <th className="p-3 border-b border-gray-200">End</th>
-                          <th className="p-3 border-b border-gray-200">
-                            Total
-                          </th>
-                          <th className="p-3 border-b border-gray-200 w-1/4">
-                            Reason
-                          </th>
-                          <th className="p-3 border-b border-gray-200">
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {formData.overtime_details.map((row, index) => (
-                          <tr
-                            key={index}
-                            className="hover:bg-slate-50 transition-colors"
-                          >
-                            <td className="p-2 border-b text-center font-mono text-gray-400">
-                              {index + 1}
-                            </td>
-                            <td className="p-2 border-b">
+                  <div className="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div className="hidden md:grid grid-cols-[48px_1fr_1fr_1fr_1fr_80px_1fr_60px] bg-slate-100 text-gray-700 font-bold border-b border-gray-200 text-sm">
+                      <div className="p-3 text-center">#</div>
+                      <div className="p-3 text-center">Day</div>
+                      <div className="p-3 text-center">Date</div>
+                      <div className="p-3 text-center">Start</div>
+                      <div className="p-3 text-center">End</div>
+                      <div className="p-3 text-center">Total</div>
+                      <div className="p-3 text-center">Reason</div>
+                      <div className="p-3 text-center">Action</div>
+                    </div>
+
+                    <div className="flex flex-col">
+                      {formData.overtime_details.map((row, index) => (
+                        <div
+                          key={index}
+                          className="flex flex-col md:grid md:grid-cols-[48px_1fr_1fr_1fr_1fr_80px_1fr_60px] border-b border-gray-100 last:border-0 hover:bg-slate-50 transition-colors"
+                        >
+                          <div className="p-2 md:p-3 bg-slate-50 md:bg-transparent text-center text-gray-400 font-mono text-xs border-b md:border-b-0 flex justify-between md:block">
+                            <span className="md:hidden font-bold text-gray-600 uppercase text-center">
+                              Entry #{index + 1}
+                            </span>
+                            <span className="md:block">{index + 1}</span>
+                          </div>
+
+                          {/* Day & Date - Grouped for mobile space */}
+                          <div className="grid grid-cols-2 md:contents">
+                            <div className="p-2 md:p-3 border-r md:border-r-0 border-b md:border-b-0">
+                              <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1 text-center">
+                                Day
+                              </span>
                               <select
-                                className="w-full bg-transparent outline-none text-center"
+                                className="w-full bg-transparent outline-none text-sm"
                                 value={row.day}
                                 onChange={(e) =>
                                   handleRowChange(index, "day", e.target.value)
@@ -707,19 +762,22 @@ const WeeklyOvertimeForm = () => {
                                   <option key={d}>{d}</option>
                                 ))}
                               </select>
-                            </td>
-                            <td className="p-2 border-b relative">
+                            </div>
+                            <div className="p-2 md:p-3 border-b md:border-b-0 relative">
+                              <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1 text-center">
+                                Date
+                              </span>
                               <input
                                 value={row.date || ""}
                                 onClick={() =>
                                   mode !== "view" && setActiveDateIndex(index)
                                 }
                                 readOnly
-                                className="w-full text-center bg-transparent focus:outline-none cursor-pointer"
+                                className="w-full bg-transparent focus:outline-none cursor-pointer  text-center text-sm"
                                 placeholder="dd/mm/yyyy"
                               />
                               {activeDateIndex === index && (
-                                <div className="absolute z-20">
+                                <div className="absolute z-20 left-0">
                                   <SpinnerDatePicker
                                     value={row.date}
                                     onChange={(date) =>
@@ -729,23 +787,28 @@ const WeeklyOvertimeForm = () => {
                                   />
                                 </div>
                               )}
-                            </td>
-                            <td className="p-2 border-b relative">
+                            </div>
+                          </div>
+
+                          {/* Start & End Times */}
+                          <div className="grid grid-cols-2 md:contents">
+                            <div className="p-2 md:p-3 border-r md:border-r-0 border-b md:border-b-0 relative text-center">
+                              <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1">
+                                Start
+                              </span>
                               <div
-                                className="text-center cursor-pointer text-blue-600 font-mono"
+                                className="cursor-pointer text-blue-600  text-center font-mono text-sm"
                                 onClick={() =>
                                   mode !== "view" && setActiveInTimeIndex(index)
                                 }
                               >
-                                {row.startTime
-                                  ? row.startTime instanceof Date
-                                    ? row.startTime.toLocaleTimeString([], {
+                                {row.startTime instanceof Date
+                                  ? row.startTime.toLocaleTimeString([], {
                                       hour12: false,
                                       hour: "2-digit",
                                       minute: "2-digit",
                                     })
-                                    : row.startTime
-                                  : "HH:MM:SS"}
+                                  : row.startTime || "00:00"}
                               </div>
                               {activeInTimeIndex === index && (
                                 <SpinnerTimePicker
@@ -756,24 +819,25 @@ const WeeklyOvertimeForm = () => {
                                   onClose={() => setActiveInTimeIndex(null)}
                                 />
                               )}
-                            </td>
-                            <td className="p-2 border-b relative">
+                            </div>
+                            <div className="p-2 md:p-3 border-b md:border-b-0 relative text-center">
+                              <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1 text-center">
+                                End
+                              </span>
                               <div
-                                className="text-center cursor-pointer text-blue-600 font-mono"
+                                className="cursor-pointer text-blue-600  text-center font-mono text-sm"
                                 onClick={() =>
                                   mode !== "view" &&
                                   setActiveOutTimeIndex(index)
                                 }
                               >
-                                {row.endTime
-                                  ? row.endTime instanceof Date
-                                    ? row.endTime.toLocaleTimeString([], {
+                                {row.endTime instanceof Date
+                                  ? row.endTime.toLocaleTimeString([], {
                                       hour12: false,
                                       hour: "2-digit",
                                       minute: "2-digit",
                                     })
-                                    : row.endTime
-                                  : "HH:MM:SS"}
+                                  : row.endTime || "00:00"}
                               </div>
                               {activeOutTimeIndex === index && (
                                 <SpinnerTimePicker
@@ -784,11 +848,23 @@ const WeeklyOvertimeForm = () => {
                                   onClose={() => setActiveOutTimeIndex(null)}
                                 />
                               )}
-                            </td>
-                            <td className="p-2 border-b text-center font-bold text-gray-900 bg-gray-50/50">
-                              {row.totalHours || "00:00"}
-                            </td>
-                            <td className="p-2 border-b">
+                            </div>
+                          </div>
+
+                          {/* Total & Action */}
+                          <div className="grid grid-cols-2 md:contents">
+                            <div className="p-2 md:p-3 bg-gray-50 md:bg-gray-50/50 border-r md:border-r-0 border-b md:border-b-0">
+                              <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1 text-center">
+                                Total
+                              </span>
+                              <span className="font-bold text-gray-900 text-sm">
+                                {row.totalHours || "00:00"}
+                              </span>
+                            </div>
+                            <div className="p-2 md:p-3">
+                              <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1 text-center">
+                                Reason
+                              </span>
                               <input
                                 name="reason"
                                 value={row.reason}
@@ -800,27 +876,31 @@ const WeeklyOvertimeForm = () => {
                                   )
                                 }
                                 disabled={mode === "view"}
-                                className={inputStyle}
-                                placeholder="..."
+                                className={`${inputStyle} text-sm`}
+                                placeholder="Type reason..."
                               />
-                            </td>
-                            <td className="p-2 border-b text-center">
+                            </div>
+                            <div className="p-2 md:p-3 border-b md:border-b-0 flex items-center justify-center">
                               <button
                                 onClick={() => deleteRow(index)}
                                 disabled={mode === "view"}
-                                className="text-red-500 hover:text-red-700 disabled:opacity-30"
+                                className="text-red-500 hover:text-red-700 disabled:opacity-30 flex items-center gap-2 md:block"
                               >
                                 <MdDeleteForever className="text-xl mx-auto" />
+                                <span className="md:hidden text-xs">
+                                  Delete Row
+                                </span>
                               </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
                     {mode !== "view" && (
                       <button
                         onClick={addRow}
-                        className="w-full py-2 bg-slate-50 text-blue-600 font-bold hover:bg-blue-50 transition-all border-t"
+                        className="w-full py-3 bg-slate-50 text-blue-600 font-bold hover:bg-blue-50 transition-all border-t text-sm"
                       >
                         + Add Another Row
                       </button>
@@ -1448,7 +1528,7 @@ const WeeklyOvertimeForm = () => {
                     <div className="flex justify-end mt-12">
                       <button
                         onClick={handleSubmit}
-                        className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-3 rounded-xl font-bold lg:text-xl shadow-xl hover:shadow-blue-200 hover:-translate-y-1 transition-all"
+                        className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-3 rounded-xl font-bold xl:text-xl shadow-xl hover:shadow-blue-200 hover:-translate-y-1 transition-all"
                       >
                         Submit Overtime Record
                       </button>

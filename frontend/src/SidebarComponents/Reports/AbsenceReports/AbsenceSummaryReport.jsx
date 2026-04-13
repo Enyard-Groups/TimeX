@@ -1,38 +1,48 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
+import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../../SearchDropdown";
 import SpinnerDatePicker from "../../SpinnerDatePicker";
-import toast from "react-hot-toast";
-
-const API_BASE = "http://localhost:3000/api";
 
 const AbsenceSummaryReport = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [absenceData, setAbsenceData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [absenceSummaryReport, setAbsenceSummaryReport] = useState([]);
 
-  // Dropdown data
-  const [companyOptions, setCompanyOptions] = useState([]);
-  const [employeeOptions, setEmployeeOptions] = useState([]);
+  const parseDate = (dateStr) => {
+    if (!dateStr) return null;
 
-  const [showFromDateSpinner, setShowFromDateSpinner] = useState(false);
-  const [showToDateSpinner, setShowToDateSpinner] = useState(false);
+    // supports both dd/mm/yyyy and ISO
+    if (dateStr.includes("/")) {
+      const [day, month, year] = dateStr.split("/");
+      return new Date(year, month - 1, day);
+    }
+
+    return new Date(dateStr);
+  };
+
+  useEffect(() => {
+    const stored =
+      JSON.parse(localStorage.getItem("mannualEntryRequests")) || [];
+    setAbsenceSummaryReport(stored);
+  }, []);
+
+  const [showPunchDateSpinner, setShowPunchDateSpinner] = useState(false);
+  const [showToPunchDateSpinner, setShowToPunchDateSpinner] = useState(false);
 
   const [formData, setFormData] = useState({
+    employeeCategory: "",
     company: "",
-    company_id: "",
-    employee: "",
-    employee_id: "",
+    location: "",
+    department: "",
     fromPunchDate: "",
     toPunchDate: "",
   });
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-sm lg:text-base 3xl:text-xl font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base font-semibold text-gray-700 mb-2 block";
 
   const absentences = absenceSummaryReport.filter(
     (x) =>
@@ -64,48 +74,49 @@ const AbsenceSummaryReport = () => {
   const getDateRange = (from, to) => {
     const dates = [];
     if (!from || !to) return dates;
-    
-    // Parse from dd/mm/yyyy
-    const [fd, fm, fy] = from.split("/").map(Number);
-    const [td, tm, ty] = to.split("/").map(Number);
-    
-    let current = new Date(fy, fm-1, fd);
-    const end = new Date(ty, tm-1, td);
+
+    let current = new Date(from);
+    const end = new Date(to);
 
     while (current <= end) {
       dates.push(new Date(current));
       current.setDate(current.getDate() + 1);
     }
+
     return dates;
   };
 
   const generateSummary = () => {
-    const dateRange = getDateRange(formData.fromPunchDate, formData.toPunchDate);
+    const fromDate = parseDate(formData.fromPunchDate) || new Date();
+    const toDate = parseDate(formData.toPunchDate) || new Date();
+
+    const dateRange = getDateRange(fromDate, toDate);
+
     const summary = {};
-    const locationsSet = new Set();
 
-    absenceData.forEach((item) => {
-      const loc = item.location || "Unknown Location";
-      locationsSet.add(loc);
-      const dt = item.created_at ? new Date(item.created_at) : null;
-      if (!dt) return;
-      const dateStr = dt.toDateString();
+    filteredReport.forEach((item) => {
+      const loc = item.location || "Unknown";
+      const date = new Date(item.createdDate).toDateString();
 
-      if (!summary[loc]) summary[loc] = {};
-      summary[loc][dateStr] = (summary[loc][dateStr] || 0) + 1;
+      if (!summary[loc]) {
+        summary[loc] = {};
+      }
+
+      summary[loc][date] = (summary[loc][date] || 0) + 1;
     });
 
-    return { summary, dateRange, locations: Array.from(locationsSet) };
+    return { summary, dateRange };
   };
 
-  const { summary, dateRange, locations } = generateSummary();
+  const { summary, dateRange } = generateSummary();
+  const locations = Object.keys(summary);
 
   return (
     <>
       <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-          <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900 ">
+          <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl font-semibold text-gray-900 ">
             <FaAngleRight className="text-blue-500 text-base" />
             <span className="text-gray-500">Reports</span>
             <FaAngleRight className="text-blue-500 text-base" />
@@ -129,18 +140,9 @@ const AbsenceSummaryReport = () => {
                   label="Company"
                   name="company"
                   value={formData.company}
-                  options={companyOptions}
-                  labelKey="name"
-                  valueKey="id"
-                  labelName="company"
+                  options={["Company 1", "Company 2"]}
                   formData={formData}
-                  setFormData={(updated) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      company: updated.company,
-                      company_id: updated.company_id ?? updated.company,
-                    }))
-                  }
+                  setFormData={setFormData}
                   inputStyle={inputStyle}
                   labelStyle={labelStyle}
                 />
@@ -200,19 +202,21 @@ const AbsenceSummaryReport = () => {
                   onClick={() => setShowPunchDateSpinner(true)}
                   readOnly
                   placeholder="dd/mm/yyyy"
-                  readOnly
-                  className={`${inputStyle} cursor-pointer`}
+                  className={inputStyle}
                 />
                 {showPunchDateSpinner && (
                   <SpinnerDatePicker
                     value={formData.fromPunchDate}
-                    onChange={(date) => setFormData((prev) => ({ ...prev, fromPunchDate: date }))}
-                    onClose={() => setShowFromDateSpinner(false)}
+                    onChange={(date) =>
+                      setFormData({ ...formData, fromPunchDate: date })
+                    }
+                    onClose={() => setShowPunchDateSpinner(false)}
                   />
                 )}
               </div>
-              <div className="relative">
-                <label className={labelStyle}>To Date</label>
+
+              <div>
+                <label className={labelStyle}>To Punch Date</label>
                 <input
                   name="toPunchDate"
                   value={
@@ -221,14 +225,15 @@ const AbsenceSummaryReport = () => {
                   onClick={() => setShowToPunchDateSpinner(true)}
                   readOnly
                   placeholder="dd/mm/yyyy"
-                  readOnly
-                  className={`${inputStyle} cursor-pointer`}
+                  className={inputStyle}
                 />
                 {showToPunchDateSpinner && (
                   <SpinnerDatePicker
                     value={formData.toPunchDate}
-                    onChange={(date) => setFormData((prev) => ({ ...prev, toPunchDate: date }))}
-                    onClose={() => setShowToDateSpinner(false)}
+                    onChange={(date) =>
+                      setFormData({ ...formData, toPunchDate: date })
+                    }
+                    onClose={() => setShowToPunchDateSpinner(false)}
                   />
                 )}
               </div>
@@ -237,9 +242,9 @@ const AbsenceSummaryReport = () => {
             <div className="flex justify-end mt-10">
               <button
                 onClick={() => setOpenModal(true)}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md lg:text-lg 3xl:text-xl transition-all duration-200"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md xl:text-lg  transition-all duration-200"
               >
-                {loading ? "Generating..." : "Generate Report"}
+                Generate Report
               </button>
             </div>
           </div>
@@ -250,7 +255,7 @@ const AbsenceSummaryReport = () => {
           <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
             <div className="p-6 border-b border-blue-100/30">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl lg:text-2xl 3xl:text-3xl font-bold text-gray-800">
+                <h2 className="text-xl font-bold text-gray-800">
                   Absence Summary Report
                 </h2>
                 <RxCross2
@@ -264,7 +269,7 @@ const AbsenceSummaryReport = () => {
               className="overflow-x-auto min-h-[350px]"
               style={{ scrollbarWidth: "none" }}
             >
-              <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px] border-collapse">
+              <table className="w-full text-[17px] border-collapse">
                 <thead>
                   <tr className="bg-slate-100 border-b border-blue-100/50">
                     <th className="px-4 py-3 text-left font-bold text-gray-700 border-r border-blue-100">
@@ -309,7 +314,7 @@ const AbsenceSummaryReport = () => {
                           <td className="px-4 py-3 text-left font-semibold text-gray-900 border-r border-blue-100/50">
                             {date.toLocaleDateString()}
                             <br />
-                            <span className="text-xs lg:text-sm 3xl:text-lg font-normal text-gray-500">
+                            <span className="text-xs lg:text-sm font-normal text-gray-500">
                               {date.toLocaleDateString("en-US", {
                                 weekday: "long",
                               })}

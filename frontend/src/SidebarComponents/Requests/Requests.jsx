@@ -25,7 +25,7 @@ const Requests = ({ user }) => {
               isrequestsActive ? activeClass : hoverClass
             }`}
           >
-            <div className="flex items-center gap-4 text-[18px] xl:text-[21px]">
+            <div className="flex items-center gap-4 text-[16px] ">
               <IoInformationCircle />
               <span>Requests</span>
             </div>
@@ -38,7 +38,7 @@ const Requests = ({ user }) => {
 
           {/* Sub Menu */}
           {openRequests && (
-            <div className="mt-2 flex flex-col pl-10 gap-2 text-md xl:text-[19px]">
+            <div className="mt-2 flex flex-col pl-10 gap-2 text-[15px] ">
               <NavLink
                 to="/requests/mannual-entry-req"
                 className={({ isActive }) =>

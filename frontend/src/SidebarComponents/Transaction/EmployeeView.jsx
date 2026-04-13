@@ -181,7 +181,7 @@ const EmployeeView = () => {
           className="overflow-x-auto min-h-[350px]"
           style={{ scrollbarWidth: "none" }}
         >
-          <table className="w-full text-[16px] xl:text-[20px]">
+          <table className="w-full text-[17px] ">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
                 <th className="px-4 py-3 text-center font-semibold text-gray-700">
@@ -338,7 +338,7 @@ const EmployeeView = () => {
         {/* Mass Update */}
         <div className="flex justify-center mt-6">
           <button
-            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg xl:text-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
             onClick={handleMassUpdate}
           >
             Mass Update

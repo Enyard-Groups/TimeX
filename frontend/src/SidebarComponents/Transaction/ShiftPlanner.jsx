@@ -27,7 +27,7 @@ const ShiftPlanner = () => {
         <div className="flex gap-6 px-6 pt-6 border-b border-blue-100/30">
           <button
             onClick={() => setActiveTab("calendar")}
-            className={`pb-3 text-[16px] xl:text-[20px] font-semibold transition-all relative
+            className={`pb-3 text-[16px] font-semibold transition-all relative
           ${
             activeTab === "calendar"
               ? "text-blue-600"
@@ -42,7 +42,7 @@ const ShiftPlanner = () => {
 
           <button
             onClick={() => setActiveTab("employee")}
-            className={`pb-3 text-[16px] xl:text-[20px] font-semibold transition-all relative
+            className={`pb-3 text-[16px] font-semibold transition-all relative
           ${
             activeTab === "employee"
               ? "text-blue-600"

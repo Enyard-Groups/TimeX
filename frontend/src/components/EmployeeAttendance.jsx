@@ -1,91 +1,90 @@
 import React from "react";
-import { Users, UserCheck, UserX, Calendar } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  ResponsiveContainer,
-  Area,
-  AreaChart,
-} from "recharts";
-
-// helper  function to calculate percentage change
-function getPercentChange(current, prev) {
-  if (!prev || prev === 0) return 0;
-  const change = ((current - prev) / prev) * 100;
-  return Math.min(100, Math.max(-100, change));
-}
-
-function TrendBadge({ pct }) {
-  const isUp = pct >= 0;
-  return (
-    <span
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: "1px",
-        color: isUp ? "#2da45b" : "#d62b2b",
-        fontWeight: 500,
-        borderRadius: "999px",
-      }}
-    >
-      {isUp ? "↑" : "↓"} {Math.abs(pct).toFixed(1)}%
-    </span>
-  );
-}
+import { UserCheck, UserX, Calendar } from "lucide-react";
+import { ResponsiveContainer, Area, AreaChart } from "recharts";
 
 const EmployeeAttendance = ({ attendanceData = [] }) => {
   const latest = attendanceData?.[attendanceData.length - 1] || {};
-
   const total = Number(latest?.totalEmployees) || 0;
   const present = Number(latest?.presentToday) || 0;
   const leave = Number(latest?.leave) || 0;
   const absent = Math.max(0, total - (present + leave));
 
-  const prevData = attendanceData?.[attendanceData.length - 2] || {};
-  const prevPresent = Number(prevData?.presentToday) || 0;
-  const prevAbsent = Math.max(0, (prevData?.totalEmployees || 0) - prevPresent);
-  const prevLeave = Number(prevData?.leave) || 0;
+  const getWeeklyProgressData = () => {
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // 0 (Sun) to 6 (Sat)
+
+    // Sunday reset: If Sunday, show a flat line at 0
+    if (dayOfWeek === 0)
+      return ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => ({
+        day: d,
+        presentToday: 0,
+        absent: 0,
+        leave: 0,
+        isLast: false,
+      }));
+
+    const currentDayIndex = dayOfWeek - 1; // Mon=0, Tue=1...
+    const recentHistory = attendanceData.slice(-(currentDayIndex + 1));
+
+    // Create a full Mon-Sat array
+    const weekData = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
+      (dayName, index) => {
+        // If the day has passed or is today, use real data
+        if (index <= currentDayIndex && recentHistory[index]) {
+          const d = recentHistory[index];
+          return {
+            day: dayName,
+            presentToday: d.presentToday || 0,
+            absent: (d.totalEmployees || 0) - (d.presentToday || 0),
+            leave: d.leave || 0,
+            isToday: index === currentDayIndex, // Logic for the marker
+          };
+        }
+        // Future days: Set values to 0 so the line drops to the bottom
+        return {
+          day: dayName,
+          presentToday: 10,
+          absent: 5,
+          leave: 3,
+          isToday: false,
+        };
+      },
+    );
+
+    return weekData;
+  };
+
+  const chartData = getWeeklyProgressData();
 
   const stats = [
     {
       title: "Present",
       value: present,
-      icon: <UserCheck />,
+      icon: <UserCheck size={20} />,
       dataKey: "presentToday",
       color: "#2563EB",
       bg: "bg-[#DBEAFE]",
-      text:"text-[#0049a8]",
-      pct: getPercentChange(present, prevPresent),
+      text: "text-[#0049a8]",
     },
     {
       title: "Absent",
       value: absent,
-      icon: <UserX />,
+      icon: <UserX size={20} />,
       dataKey: "absent",
       color: "#EF4444",
       bg: "bg-[#FEE2E2]",
-      text:"text-[#890000]",
-      pct: getPercentChange(absent, prevAbsent),
+      text: "text-[#890000]",
     },
     {
       title: "Leave",
       value: leave,
-      icon: <Calendar />,
+      icon: <Calendar size={20} />,
       dataKey: "leave",
       color: "#06B6D4",
       bg: "bg-[#E0F2FE]",
-      text:"text-[#004e82]",
-      pct: getPercentChange(leave, prevLeave),
+      text: "text-[#004e82]",
     },
   ];
-
-
-  // Limit to last 7 days + dynamic values
-
-  const chartData = attendanceData.slice(-7).map((d) => ({
-    ...d,
-    absent: (d.totalEmployees || 0) - (d.presentToday || 0),
-  }));
 
   return (
     <div className="w-full">
@@ -93,36 +92,30 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
         {stats.map((item, index) => (
           <div
             key={index}
-            className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex items-center justify-between overflow-hidden relative h-[120px] border border-gray-200"
+            className="bg-white rounded-xl shadow-md flex items-center justify-between overflow-hidden relative h-[90px] border border-gray-200"
           >
-            <h3 className="text-xl 3xl:text-2xl font-bold text-gray-800 absolute top-2 left-26">
+            <h3 className="text-lg font-bold text-gray-800 absolute top-2 left-26 z-20">
               {item.value}
             </h3>
-            <div className="text-xs lg:text-sm 3xl:text-lg absolute top-1 right-1">
-              <TrendBadge pct={item.pct} />
-              <p className=" text-gray-500">this week</p>
-            </div>
 
-            {/* Left Info */}
+            {/* Left Header Info */}
             <div
-              className={`${item.bg} ${item.text} h-full flex flex-col justify-center items-center min-w-[90px]`}
+              className={`${item.bg} ${item.text} h-full flex flex-col justify-center items-center min-w-[90px] z-10`}
             >
-              <span className="text-sm lg:text-base 3xl:text-2xl mb-3">
-                {item.title}
-              </span>
-              <span className="text-sm lg:text-xl 3xl:text-4xl ">
-                {item.icon}
-              </span>
+              <span className="text-xs font-medium mb-2">{item.title}</span>
+              <span>{item.icon}</span>
             </div>
 
-            {/* Chart */}
-            <div className="flex-1 h-[80px] pt-10">
+            {/* Progress Chart */}
+            <div className="flex-1 h-full pt-12 pb-1 pr-1">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData}>
+                <AreaChart
+                  data={chartData}
+                  margin={{ left: 7, right: 7, bottom: 4, top: 4 }}
+                >
                   <defs>
-                    {/* Shadow fill gradient top to bottom */}
                     <linearGradient
-                      id={`shadowGrad-${item.dataKey}`}
+                      id={`grad-${index}`}
                       x1="0"
                       y1="0"
                       x2="0"
@@ -131,7 +124,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
                       <stop
                         offset="0%"
                         stopColor={item.color}
-                        stopOpacity={0.25}
+                        stopOpacity={0.2}
                       />
                       <stop
                         offset="100%"
@@ -140,46 +133,35 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
                       />
                     </linearGradient>
                   </defs>
-
-                  {/* Line + shadow area */}
                   <Area
                     type="monotone"
                     dataKey={item.dataKey}
                     stroke={item.color}
-                    strokeWidth={2.5}
-                    fill={`url(#shadowGrad-${item.dataKey})`}
-                    dot={false}
-                    activeDot={{ r: 5, fill: item.color }}
-                  />
-
-                  {/* Dot highlight */}
-                  <Line
-                    type="monotone"
-                    dataKey={item.dataKey}
-                    stroke="transparent"
+                    strokeWidth={3}
+                    fill={`url(#grad-${index})`}
+                    style={{ outline: "none" }}
+                    className="focus:outline-none"
+                    isAnimationActive={true}
                     dot={(props) => {
-                      const { cx, cy, index: i } = props;
-                      const isTarget = i === chartData.length - 3;
-                      if (!isTarget) return null;
-                      return (
-                        <>
+                      const { cx, cy, payload } = props;
+                      // Only render the marker dot on the "Current Day" node
+                      if (payload.isToday) {
+                        return (
                           <circle
                             cx={cx}
                             cy={cy}
-                            r={8}
-                            fill={item.color}
-                            opacity={0.15}
-                          />
-                          <circle
-                            cx={cx}
-                            cy={cy}
-                            r={4.5}
+                            r={4}
                             fill={item.color}
                             stroke="#fff"
                             strokeWidth={2}
+                            style={{
+                              filter:
+                                "drop-shadow(0px 2px 2px rgba(0,0,0,0.2))",
+                            }}
                           />
-                        </>
-                      );
+                        );
+                      }
+                      return null;
                     }}
                   />
                 </AreaChart>

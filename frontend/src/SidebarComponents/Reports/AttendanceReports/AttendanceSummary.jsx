@@ -1,49 +1,66 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../../SearchDropdown";
 import SpinnerDatePicker from "../../SpinnerDatePicker";
 import { FaEye } from "react-icons/fa";
-import { GoCopy } from "react-icons/go";
-import { FaFileExcel, FaFilePdf } from "react-icons/fa";
-import toast from "react-hot-toast";
-import * as XLSX from "xlsx";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-
-const API_BASE = "http://localhost:3000/api";
 
 const AttendanceSummary = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [summaryData, setSummaryData] = useState([]);
+  const [attendanceSummary, setAttendanceSummary] = useState([]);
+
   const [selectedId, setSelectedId] = useState(null);
   const [modalOpenSelectedItem, setModalOpenSelectedItem] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  // Dropdown data
-  const [companyOptions, setCompanyOptions] = useState([]);
-  const [employeeOptions, setEmployeeOptions] = useState([]);
+  useEffect(() => {
+    const stored =
+      JSON.parse(localStorage.getItem("mannualEntryRequests")) || [];
+    setAttendanceSummary(stored);
+  }, []);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [showFromDateSpinner, setShowFromDateSpinner] = useState(false);
-  const [showToDateSpinner, setShowToDateSpinner] = useState(false);
+  const [showPunchDateSpinner, setShowPunchDateSpinner] = useState(false);
+  const [showToPunchDateSpinner, setShowToPunchDateSpinner] = useState(false);
+
+  const parseDate = (dateStr) => {
+    if (!dateStr) return null;
+
+    const [day, month, year] = dateStr.split("/");
+    return new Date(year, month - 1, day);
+  };
+
+  // const getTimeDiff = (inTime, outTime) => {
+  //   const [ih, im, is] = inTime.split(":").map(Number);
+  //   const [oh, om, os] = outTime.split(":").map(Number);
+
+  //   const inSeconds = ih * 3600 + im * 60 + is;
+  //   const outSeconds = oh * 3600 + om * 60 + os;
+
+  //   const diff = outSeconds - inSeconds;
+
+  //   const hours = Math.floor(diff / 3600);
+  //   const minutes = Math.floor((diff % 3600) / 60);
+  //   const seconds = diff % 60;
+
+  //   return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  // };
 
   const [formData, setFormData] = useState({
+    employeeCategory: "",
     company: "",
-    company_id: "",
+    location: "",
+    department: "",
     employee: "",
-    employee_id: "",
     fromPunchDate: "",
     toPunchDate: "",
   });
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base  rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-sm lg:text-base 3xl:text-xl font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base  font-semibold text-gray-700 mb-2 block";
 
   const filteredReport = attendanceSummary.filter((emp) => {
     const punchDate = new Date(emp.createdDate);
@@ -71,81 +88,35 @@ const AttendanceSummary = () => {
 
   const filteredattendanceSummary = filteredReport.filter(
     (x) =>
-      (x.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (x.employee_code || "").toLowerCase().includes(searchTerm.toLowerCase())
+      x.company.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      x.employeeCategory.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      x.location.toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
-  const totalPages = Math.max(1, Math.ceil(filteredReport.length / entriesPerPage));
-  const startIndex = (currentPage - 1) * entriesPerPage;
-  const currentData = filteredReport.slice(startIndex, startIndex + entriesPerPage);
+  const endIndex = currentPage * entriesPerPage;
 
-  const selectedItem = summaryData.find((item) => item.id === selectedId);
+  const startIndex = endIndex - entriesPerPage;
 
-  const handleCopy = () => {
-    const header = ["Sl.No", "Employee", "Days Worked", "Hrs Worked", "W1", "W2", "W3", "W4", "W5"].join("\t");
-    const rows = filteredReport.map((item, i) => {
-      return [
-        i + 1,
-        item.employee_name,
-        item.totalDays,
-        item.totalHours.toFixed(2),
-        item.weeks[0].toFixed(1),
-        item.weeks[1].toFixed(1),
-        item.weeks[2].toFixed(1),
-        item.weeks[3].toFixed(1),
-        item.weeks[4].toFixed(1),
-      ].join("\t");
-    }).join("\n");
-    navigator.clipboard.writeText(`${header}\n${rows}`);
-    toast.success("Copied to clipboard");
-  };
+  const currentattendanceSummary = filteredattendanceSummary.slice(
+    startIndex,
+    endIndex,
+  );
 
-  const handleExcel = () => {
-    const data = filteredReport.map((item, i) => ({
-      "Sl.No": i + 1,
-      Employee: item.employee_name,
-      "Employee ID": item.employee_code,
-      "Days Worked": item.totalDays,
-      "Hrs Worked": item.totalHours.toFixed(2),
-      "Week 1": item.weeks[0].toFixed(1),
-      "Week 2": item.weeks[1].toFixed(1),
-      "Week 3": item.weeks[2].toFixed(1),
-      "Week 4": item.weeks[3].toFixed(1),
-      "Week 5": item.weeks[4].toFixed(1),
-    }));
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "AttendanceSummary");
-    XLSX.writeFile(wb, "AttendanceSummary.xlsx");
-  };
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredattendanceSummary.length / entriesPerPage),
+  );
 
-  const handlePDF = () => {
-    const doc = new jsPDF("landscape");
-    doc.text("Attendance Summary", 14, 14);
-    autoTable(doc, {
-      startY: 20,
-      head: [["Sl.No", "Employee", "Days Worked", "Hrs Worked", "W1", "W2", "W3", "W4", "W5"]],
-      body: filteredReport.map((item, i) => [
-        i + 1,
-        item.employee_name,
-        item.totalDays,
-        item.totalHours.toFixed(2),
-        item.weeks[0].toFixed(1),
-        item.weeks[1].toFixed(1),
-        item.weeks[2].toFixed(1),
-        item.weeks[3].toFixed(1),
-        item.weeks[4].toFixed(1),
-      ]),
-    });
-    doc.save("AttendanceSummary.pdf");
-  };
+  const selectedItem = attendanceSummary.find((item) => item.id === selectedId);
+
+  const currentDate = new Date().getDate();
 
   return (
     <>
       <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-          <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900 ">
+          <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl 3xl:text-4xl font-semibold text-gray-900 ">
             <FaAngleRight className="text-blue-500 text-base" />
             <span className="text-gray-500">Reports</span>
             <FaAngleRight className="text-blue-500 text-base" />
@@ -169,55 +140,125 @@ const AttendanceSummary = () => {
                   label="Company"
                   name="company"
                   value={formData.company}
-                  options={companyOptions}
-                  labelKey="name"
-                  valueKey="id"
-                  labelName="company"
+                  options={["Company 1", "Company 2"]}
                   formData={formData}
-                  setFormData={(updated) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      company: updated.company,
-                      company_id: updated.company_id ?? updated.company,
-                    }))
-                  }
+                  setFormData={setFormData}
                   inputStyle={inputStyle}
                   labelStyle={labelStyle}
                 />
               </div>
-              <div className="relative">
-                <label className={labelStyle}>From Date</label>
+
+              <div>
+                <SearchDropdown
+                  label="Employee Category"
+                  name="employeeCategory"
+                  value={formData.employeeCategory}
+                  options={[
+                    "All Category",
+                    "Full Time Equivalent",
+                    "Contingent",
+                    "Freelence",
+                    "Contract",
+                    "Permanent",
+                  ]}
+                  formData={formData}
+                  setFormData={setFormData}
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                />
+              </div>
+
+              <div>
+                <SearchDropdown
+                  label="Location"
+                  name="location"
+                  value={formData.location}
+                  options={["Head Office", "Location 2"]}
+                  formData={formData}
+                  setFormData={setFormData}
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                />
+              </div>
+
+              <div>
+                <SearchDropdown
+                  label="Designation"
+                  name="department"
+                  value={formData.department}
+                  options={[
+                    "Regional Sales Support Manager",
+                    "Operations Support Officer",
+                    "Finance Assistant",
+                    "Trade Finance Specialist",
+                    "Banking Operations Officer",
+                    "Sales Support Officer",
+                    "Banking Operations Officer",
+                    "Project Manager",
+                    "Administrative Assistant",
+                    "Sales Officer",
+                    "Banking Officer",
+                    "Sales Manager",
+                    "Senior Banking Officer",
+                    "Client Service Manager",
+                    "Senior Director – Banking Operations",
+                    "Relationship Officer",
+                    "Accountant",
+                    "Director – Sales Excellence",
+                    "Service Sales Support Officer",
+                    "HR Manager",
+                    "Sales & Logistics Officer",
+                    "Operation Officer",
+                  ]}
+                  formData={formData}
+                  setFormData={setFormData}
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>From Punch Date</label>
                 <input
                   name="fromPunchDate"
                   value={formData.fromPunchDate}
-                  onClick={() => setShowFromDateSpinner(true)}
+                  onClick={() => {
+                    setShowPunchDateSpinner(true);
+                  }}
                   placeholder="dd/mm/yyyy"
-                  readOnly
-                  className={`${inputStyle} cursor-pointer`}
+                  className={inputStyle}
                 />
-                {showFromDateSpinner && (
+
+                {showPunchDateSpinner && (
                   <SpinnerDatePicker
                     value={formData.fromPunchDate}
-                    onChange={(date) => setFormData((prev) => ({ ...prev, fromPunchDate: date }))}
-                    onClose={() => setShowFromDateSpinner(false)}
+                    onChange={(date) =>
+                      setFormData({ ...formData, fromPunchDate: date })
+                    }
+                    onClose={() => setShowPunchDateSpinner(false)}
                   />
                 )}
               </div>
-              <div className="relative">
-                <label className={labelStyle}>To Date</label>
+
+              <div>
+                <label className={labelStyle}>To Punch Date</label>
                 <input
                   name="toPunchDate"
                   value={formData.toPunchDate}
-                  onClick={() => setShowToDateSpinner(true)}
+                  onClick={() => {
+                    setShowToPunchDateSpinner(true);
+                  }}
                   placeholder="dd/mm/yyyy"
-                  readOnly
-                  className={`${inputStyle} cursor-pointer`}
+                  className={inputStyle}
                 />
-                {showToDateSpinner && (
+
+                {showToPunchDateSpinner && (
                   <SpinnerDatePicker
                     value={formData.toPunchDate}
-                    onChange={(date) => setFormData((prev) => ({ ...prev, toPunchDate: date }))}
-                    onClose={() => setShowToDateSpinner(false)}
+                    onChange={(date) =>
+                      setFormData({ ...formData, toPunchDate: date })
+                    }
+                    onClose={() => setShowToPunchDateSpinner(false)}
                   />
                 )}
               </div>
@@ -225,9 +266,9 @@ const AttendanceSummary = () => {
             <div className="flex justify-end mt-4">
               <button
                 onClick={() => setOpenModal(true)}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md lg:text-lg 3xl:text-xl transition-all duration-200"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md xl:text-lg  transition-all duration-200"
               >
-                {loading ? "Generating..." : "Generate Report"}
+                Generate Report
               </button>
             </div>
           </div>
@@ -238,7 +279,7 @@ const AttendanceSummary = () => {
           <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
             <div className="p-6 border-b border-blue-100/30">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl lg:text-2xl 3xl:text-3xl font-bold text-gray-800">
+                <h2 className="text-xl 3xl:text-3xl font-bold text-gray-800">
                   Attendance Summary
                 </h2>
                 <RxCross2
@@ -249,7 +290,7 @@ const AttendanceSummary = () => {
 
               <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  <label className="text-sm xl:text-base  font-medium text-gray-600">
                     Display
                   </label>
                   <select
@@ -258,7 +299,7 @@ const AttendanceSummary = () => {
                       setEntriesPerPage(Number(e.target.value));
                       setCurrentPage(1);
                     }}
-                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
+                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60 transition-all"
                   >
                     {[10, 25, 50, 100].map((v) => (
                       <option key={v} value={v}>
@@ -266,7 +307,7 @@ const AttendanceSummary = () => {
                       </option>
                     ))}
                   </select>
-                  <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  <span className="text-sm xl:text-base  font-medium text-gray-600">
                     entries
                   </span>
                 </div>
@@ -279,7 +320,7 @@ const AttendanceSummary = () => {
                       setSearchTerm(e.target.value);
                       setCurrentPage(1);
                     }}
-                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
                   />
                 </div>
               </div>
@@ -289,7 +330,7 @@ const AttendanceSummary = () => {
               className="overflow-x-auto min-h-[350px]"
               style={{ scrollbarWidth: "none" }}
             >
-              <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+              <table className="w-full text-[17px]">
                 <thead>
                   <tr className="bg-slate-50 border-b border-blue-100/50">
                     <th className="px-4 py-3 text-center font-semibold text-gray-700">
@@ -373,7 +414,7 @@ const AttendanceSummary = () => {
                               setSelectedId(item.id);
                               setModalOpenSelectedItem(true);
                             }}
-                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all mx-auto"
+                            className="text-blue-500 hover:text-blue-700 xl:text-xl 3xl:text-3xl cursor-pointer transition-all mx-auto"
                           />
                         </td>
                       </tr>
@@ -385,7 +426,7 @@ const AttendanceSummary = () => {
 
             {/* Pagination */}
             <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-              <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
+              <span className="text-sm xl:text-base  text-gray-600">
                 Showing{" "}
                 <span className="font-bold text-gray-900">
                   {startIndex + 1}
@@ -404,7 +445,7 @@ const AttendanceSummary = () => {
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(1)}
-                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50 transition-all"
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50 transition-all"
                 >
                   First
                 </button>
@@ -415,7 +456,7 @@ const AttendanceSummary = () => {
                 >
                   <GrPrevious />
                 </button>
-                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm lg:text-base 3xl:text-xl min-w-[45px] text-center">
+                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm xl:text-base  min-w-[45px] text-center">
                   {currentPage}
                 </div>
                 <button
@@ -428,7 +469,7 @@ const AttendanceSummary = () => {
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(totalPages)}
-                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50 transition-all"
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50 transition-all"
                 >
                   Last
                 </button>
@@ -448,7 +489,7 @@ const AttendanceSummary = () => {
               style={{ scrollbarWidth: "none" }}
             >
               <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
-                <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+                <h2 className="text-xl 3xl:text-4xl font-bold text-gray-900">
                   {selectedItem.employee} Summary Details
                 </h2>
                 <button

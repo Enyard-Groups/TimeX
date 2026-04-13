@@ -15,16 +15,17 @@ import axios from "axios";
 import SpinnerTimePicker from "../SpinnerTimePicker";
 import SpinnerDatePicker from "../SpinnerDatePicker";
 import SignPad from "./SignPad";
-import SearchDropdown from "../SearchDropdown";
 
 const API_URL = "http://localhost:3000/api/form/incident";
 
 const IncidentAccident = () => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
+  const [incidentData, setIncidentData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [loading , setLoading ] = useState(false)
   const [searchTerm, setSearchTerm] = useState("");
   const [showDateSpinner, setShowDateSpinner] = useState(false);
   const [showMsoDateSpinner, setShowMsoDateSpinner] = useState(false);
@@ -33,46 +34,34 @@ const IncidentAccident = () => {
   const [showDateAckSpinner, setShowAckDateSpinner] = useState(false);
   const [showTimeSpinner, setShowTimeSpinner] = useState(false);
   const [showTimeSpinner2, setShowTimeSpinner2] = useState(false);
-  const [employees, setEmployees] = useState([]);
-  const [locations, setLocations] = useState([]);
 
   const fetchData = async () => {
     try {
+      setLoading(true)
       const response = await axios.get(API_URL);
       setIncidentData(response.data);
+      console.log(response.data)
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to fetch data");
-    }
-  };
-
-  const fetchOptions = async () => {
-    try {
-      const [empRes, locRes] = await Promise.all([
-        axios.get("http://localhost:3000/api/employees"),
-        axios.get("http://localhost:3000/api/master/geofencing"),
-      ]);
-      setEmployees(empRes.data);
-      setLocations(locRes.data);
-    } catch (error) {
-      console.error("Error fetching options:", error);
+    } finally{
+      setLoading(false)
     }
   };
 
   useEffect(() => {
     fetchData();
-    fetchOptions();
   }, []);
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base  focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const filteredincidentData = incidentData.filter(
     (x) =>
-      (x.location_name || x.location || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (x.building || "").toLowerCase().includes(searchTerm.toLowerCase())
+      // x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      x.location.toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
   const defaultFormData = {
@@ -258,7 +247,7 @@ const IncidentAccident = () => {
     <div className="mb-6 max-w-[1920px] mx-auto">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+        <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl  font-semibold text-gray-900">
           <FaAngleRight className="text-blue-500 text-base" />
           <span className="text-gray-500">Forms</span>
           <FaAngleRight className="text-blue-500 text-base" />
@@ -278,7 +267,7 @@ const IncidentAccident = () => {
                 setFormData(defaultFormData);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -293,7 +282,7 @@ const IncidentAccident = () => {
           <div className="p-6 border-b border-blue-100/30">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
-                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <label className="text-sm xl:text-base  font-medium text-gray-600">
                   Show
                 </label>
                 <select
@@ -302,7 +291,7 @@ const IncidentAccident = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -310,7 +299,7 @@ const IncidentAccident = () => {
                     </option>
                   ))}
                 </select>
-                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <span className="text-sm xl:text-base  font-medium text-gray-600">
                   entries
                 </span>
               </div>
@@ -322,9 +311,9 @@ const IncidentAccident = () => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
                 />
-                <div className="flex gap-2 text-xl lg:text-2xl 3xl:text-4xl">
+                <div className="flex gap-2 text-xl  ">
                   <GoCopy
                     onClick={handleCopy}
                     className="cursor-pointer text-gray-600 hover:text-blue-600 transition-colors"
@@ -346,7 +335,7 @@ const IncidentAccident = () => {
             className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+            <table className="w-full text-[17px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-blue-100/50">
                   <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
@@ -367,7 +356,19 @@ const IncidentAccident = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentincidentData.length === 0 ? (
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan="5"
+                      className="px-4 py-12 text-center text-gray-500"
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        <span>Loading...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : currentincidentData.length === 0 ? (
                   <tr>
                     <td
                       colSpan="5"
@@ -402,7 +403,7 @@ const IncidentAccident = () => {
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer"
+                            className="text-blue-500 hover:text-blue-700 xl:text-xl  cursor-pointer"
                           />
                           <FaPen
                             onClick={() => {
@@ -411,11 +412,11 @@ const IncidentAccident = () => {
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer"
+                            className="text-green-500 hover:text-green-700 xl:text-xl  cursor-pointer"
                           />
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer"
+                            className="text-red-500 hover:text-red-700 xl:text-xl  cursor-pointer"
                           />
                         </div>
                       </td>
@@ -428,7 +429,7 @@ const IncidentAccident = () => {
 
           {/* Pagination Footer */}
           <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-            <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
+            <span className="text-sm xl:text-base  text-gray-600">
               Showing{" "}
               <span className="text-gray-900 font-semibold">
                 {filteredincidentData.length === 0 ? "0" : startIndex + 1}
@@ -447,7 +448,7 @@ const IncidentAccident = () => {
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(1)}
-                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50 transition-all"
+                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50 transition-all"
               >
                 First
               </button>
@@ -458,7 +459,7 @@ const IncidentAccident = () => {
               >
                 <GrPrevious />
               </button>
-              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm lg:text-base 3xl:text-xl min-w-[45px] text-center">
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm xl:text-base  min-w-[45px] text-center">
                 {currentPage}
               </div>
               <button
@@ -471,7 +472,7 @@ const IncidentAccident = () => {
               <button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50"
+                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50"
               >
                 Last
               </button>
@@ -491,7 +492,7 @@ const IncidentAccident = () => {
             style={{ scrollbarWidth: "none" }}
           >
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
-              <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+              <h2 className="text-xl   font-bold text-gray-900">
                 {mode === "view"
                   ? "Incident Report Details"
                   : mode === "edit"
@@ -510,7 +511,7 @@ const IncidentAccident = () => {
               {/* Section: General Details */}
               <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <div className="flex items-center gap-3 mb-6 bg-slate-100 p-2 rounded-lg border-l-4 border-blue-500">
-                  <h3 className="text-lg lg:text-xl 3xl:text-2xl font-bold text-gray-800 uppercase tracking-wide">
+                  <h3 className="text-lg xl:text-xl  font-bold text-gray-800 uppercase tracking-wide">
                     1. Incident General Details
                   </h3>
                 </div>
@@ -577,17 +578,12 @@ const IncidentAccident = () => {
                   </div>
                   <div>
                     <label className={labelStyle}>Location</label>
-                    <SearchDropdown
+                    <input
                       name="location"
                       value={formData.location}
-                      options={locations}
-                      labelKey="name"
-                      valueKey="id"
-                      formData={formData}
-                      setFormData={setFormData}
+                      onChange={handleChange}
                       disabled={mode === "view"}
-                      inputStyle={inputStyle}
-                      labelStyle={labelStyle}
+                      className={inputStyle}
                     />
                   </div>
                   <div>
@@ -652,7 +648,7 @@ const IncidentAccident = () => {
               {/* Section: Timeline & Actions */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                  <label className="text-lg lg:text-xl font-bold text-gray-800 mb-3 block">
+                  <label className="text-lg xl:text-xl font-bold text-gray-800 mb-3 block">
                     2. Incident Timeline
                   </label>
                   <p className="text-xs text-blue-500 mb-4">
@@ -663,12 +659,12 @@ const IncidentAccident = () => {
                     value={formData.incident_timeline}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    className="w-full border border-gray-300 rounded-xl h-64 p-4 lg:text-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full border border-gray-300 rounded-xl h-64 p-4 xl:text-base focus:ring-2 focus:ring-blue-500 outline-none"
                     placeholder="Describe the flow of events..."
                   />
                 </div>
                 <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                  <label className="text-lg lg:text-xl font-bold text-gray-800 mb-3 block">
+                  <label className="text-lg xl:text-xl font-bold text-gray-800 mb-3 block">
                     3. Immediate Action Taken
                   </label>
                   <p className="text-xs text-blue-500 mb-4">
@@ -679,7 +675,7 @@ const IncidentAccident = () => {
                     value={formData.action_taken}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    className="w-full border border-gray-300 rounded-xl h-64 p-4 lg:text-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full border border-gray-300 rounded-xl h-64 p-4 xl:text-base focus:ring-2 focus:ring-blue-500 outline-none"
                     placeholder="First response details..."
                   />
                 </div>
@@ -688,11 +684,11 @@ const IncidentAccident = () => {
               {/* Section: Injury Details */}
               <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
-                  <h3 className="text-lg lg:text-xl 3xl:text-2xl font-bold text-gray-800 uppercase tracking-wide">
+                  <h3 className="text-lg xl:text-xl  font-bold text-gray-800 uppercase tracking-wide">
                     4. Injury / Illness Details
                   </h3>
                   <div className="flex items-center gap-6">
-                    <span className="font-semibold lg:text-lg">
+                    <span className="font-semibold xl:text-lg">
                       Anyone injured?
                     </span>
                     <div className="flex gap-4">
@@ -879,7 +875,7 @@ const IncidentAccident = () => {
               {/* Section: Reporting Log */}
               <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <div className="flex items-center gap-3 mb-6 bg-slate-100 p-2 rounded-lg border-l-4 border-orange-500">
-                  <h3 className="text-lg lg:text-xl 3xl:text-2xl font-bold text-gray-800 uppercase tracking-wide">
+                  <h3 className="text-lg xl:text-xl  font-bold text-gray-800 uppercase tracking-wide">
                     5. Communication Log (MSO & OCC)
                   </h3>
                 </div>
@@ -945,42 +941,22 @@ const IncidentAccident = () => {
                   </div>
                   <div>
                     <label className={labelStyle}>MSO Name</label>
-                    <SearchDropdown
+                    <input
                       name="mso_name"
                       value={formData.mso_occ.mso_name}
-                      options={employees}
-                      labelKey="full_name"
-                      valueKey="id"
-                      formData={formData}
-                      setFormData={(newData) => {
-                        const val = typeof newData === "function" ? newData(formData).mso_name : newData.mso_name;
-                        setFormData(p => ({
-                          ...p,
-                          mso_occ: { ...p.mso_occ, mso_name: val }
-                        }))
-                      }}
+                      onChange={(e) => handleChange(e, "mso_occ")}
                       disabled={mode === "view"}
-                      inputStyle={inputStyle}
+                      className={inputStyle}
                     />
                   </div>
                   <div>
                     <label className={labelStyle}>OCC Staff Name</label>
-                    <SearchDropdown
+                    <input
                       name="occ_staff_name"
                       value={formData.mso_occ.occ_staff_name}
-                      options={employees}
-                      labelKey="full_name"
-                      valueKey="id"
-                      formData={formData}
-                      setFormData={(newData) => {
-                        const val = typeof newData === "function" ? newData(formData).occ_staff_name : newData.occ_staff_name;
-                        setFormData(p => ({
-                          ...p,
-                          mso_occ: { ...p.mso_occ, occ_staff_name: val }
-                        }))
-                      }}
+                      onChange={(e) => handleChange(e, "mso_occ")}
                       disabled={mode === "view"}
-                      inputStyle={inputStyle}
+                      className={inputStyle}
                     />
                   </div>
                 </div>
@@ -989,7 +965,7 @@ const IncidentAccident = () => {
               {/* Section: Signatures */}
               <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <div className="flex items-center gap-3 mb-6 bg-slate-100 p-2 rounded-lg border-l-4 border-purple-500">
-                  <h3 className="text-lg lg:text-xl 3xl:text-2xl font-bold text-gray-800 uppercase tracking-wide">
+                  <h3 className="text-lg xl:text-xl  font-bold text-gray-800 uppercase tracking-wide">
                     6. Authentication & Acknowledgement
                   </h3>
                 </div>
@@ -1001,22 +977,12 @@ const IncidentAccident = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className={labelStyle}>Reported By</label>
-                        <SearchDropdown
+                        <input
                           name="reported_by"
                           value={formData.signature.reported_by}
-                          options={employees}
-                          labelKey="full_name"
-                          valueKey="id"
-                          formData={formData}
-                          setFormData={(newData) => {
-                            const val = typeof newData === "function" ? newData(formData).reported_by : newData.reported_by;
-                            setFormData(p => ({
-                              ...p,
-                              signature: { ...p.signature, reported_by: val }
-                            }));
-                          }}
+                          onChange={(e) => handleChange(e, "signature")}
                           disabled={mode === "view"}
-                          inputStyle={inputStyle}
+                          className={inputStyle}
                         />
                       </div>
                       <div>
@@ -1031,22 +997,12 @@ const IncidentAccident = () => {
                       </div>
                       <div>
                         <label className={labelStyle}>Form Filled By</label>
-                        <SearchDropdown
+                        <input
                           name="filled_by"
                           value={formData.signature.filled_by}
-                          options={employees}
-                          labelKey="full_name"
-                          valueKey="id"
-                          formData={formData}
-                          setFormData={(newData) => {
-                            const val = typeof newData === "function" ? newData(formData).filled_by : newData.filled_by;
-                            setFormData(p => ({
-                              ...p,
-                              signature: { ...p.signature, filled_by: val }
-                            }));
-                          }}
+                          onChange={(e) => handleChange(e, "signature")}
                           disabled={mode === "view"}
-                          inputStyle={inputStyle}
+                          className={inputStyle}
                         />
                       </div>
                       <div>
@@ -1098,22 +1054,14 @@ const IncidentAccident = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="sm:col-span-2">
                         <label className={labelStyle}>MSO/Asst. MSO Name</label>
-                        <SearchDropdown
+                        <input
                           name="assistant_name"
                           value={formData.report_acknowledge.assistant_name}
-                          options={employees}
-                          labelKey="full_name"
-                          valueKey="id"
-                          formData={formData}
-                          setFormData={(newData) => {
-                            const val = typeof newData === "function" ? newData(formData).assistant_name : newData.assistant_name;
-                            setFormData(p => ({
-                              ...p,
-                              report_acknowledge: { ...p.report_acknowledge, assistant_name: val }
-                            }));
-                          }}
+                          onChange={(e) =>
+                            handleChange(e, "report_acknowledge")
+                          }
                           disabled={mode === "view"}
-                          inputStyle={inputStyle}
+                          className={inputStyle}
                         />
                       </div>
                       <div className="relative sm:col-span-2">
@@ -1154,9 +1102,7 @@ const IncidentAccident = () => {
                           {/* Toggle Tabs */}
                           {mode !== "view" && (
                             <div className="flex flex-wrap gap-2 mb-4">
-                              <label className={labelStyle}>
-                                Signature :
-                              </label>
+                              <label className={labelStyle}>Signature :</label>
                               <div className="space-x-1 space-y-1">
                                 <button
                                   type="button"
@@ -1315,18 +1261,18 @@ const IncidentAccident = () => {
 
             {/* Footer Actions */}
             {mode !== "view" && (
-              <div className="flex justify-end gap-3 mt-12 pt-6 border-t border-blue-100/30">
-                <button
-                  onClick={() => setOpenModal(false)}
-                  className="px-10 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-bold lg:text-lg 3xl:text-2xl hover:bg-gray-100 transition-all"
-                >
-                  Cancel
-                </button>
+              <div className="flex flex-wrap justify-end gap-3 mt-12 pt-6 border-t border-blue-100/30">
                 <button
                   onClick={handleSubmit}
-                  className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-12 py-3 rounded-xl font-bold lg:text-lg 3xl:text-2xl shadow-lg hover:shadow-blue-200 hover:-translate-y-1 transition-all"
+                  className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-12 py-3 rounded-xl font-bold xl:text-lg  shadow-lg hover:shadow-blue-200 hover:-translate-y-1 transition-all"
                 >
                   Submit Report
+                </button>
+                <button
+                  onClick={() => setOpenModal(false)}
+                  className="px-10 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-bold xl:text-lg  hover:bg-gray-100 transition-all"
+                >
+                  Cancel
                 </button>
               </div>
             )}

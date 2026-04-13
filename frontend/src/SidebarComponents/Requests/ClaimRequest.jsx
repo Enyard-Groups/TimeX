@@ -329,7 +329,7 @@ const ClaimRequest = () => {
           className="overflow-x-auto min-h-[350px]"
           style={{ scrollbarWidth: "none" }}
         >
-          <table className="w-full text-[16px] xl:text-[20px] text-gray-900">
+          <table className="w-full text-[17px] text-gray-900">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
                 <th className="px-6 py-3 text-center font-semibold text-gray-700">
@@ -548,8 +548,8 @@ const ClaimRequest = () => {
                 formData={formData}
                 setFormData={setFormData}
                 disabled={mode === "view"}
-                inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 transition-all shadow-sm font-medium"
-                labelStyle="text-sm xl:text-lg font-bold text-gray-700 mb-2 block"
+                inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 transition-all shadow-sm font-medium"
+                labelStyle="text-sm xl:text-base font-bold text-gray-700 mb-2 block"
               />
 
               <SearchDropdown
@@ -566,12 +566,12 @@ const ClaimRequest = () => {
                 formData={formData}
                 setFormData={setFormData}
                 disabled={mode === "view"}
-                inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 transition-all shadow-sm font-medium"
-                labelStyle="text-sm xl:text-lg font-bold text-gray-700 mb-2 block"
+                inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 transition-all shadow-sm font-medium"
+                labelStyle="text-sm xl:text-base font-bold text-gray-700 mb-2 block"
               />
 
               <div>
-                <label className="text-sm xl:text-lg font-bold text-gray-700 mb-2 block">
+                <label className="text-sm xl:text-base font-bold text-gray-700 mb-2 block">
                   Date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -581,7 +581,7 @@ const ClaimRequest = () => {
                   disabled={mode === "view"}
                   readOnly
                   placeholder="dd/mm/yyyy"
-                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
                 />
                 {dateSpinner && (
                   <SpinnerDatePicker
@@ -593,7 +593,7 @@ const ClaimRequest = () => {
               </div>
 
               <div>
-                <label className="text-sm xl:text-lg font-bold text-gray-700 mb-2 block">
+                <label className="text-sm xl:text-base font-bold text-gray-700 mb-2 block">
                   Amount <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -602,13 +602,13 @@ const ClaimRequest = () => {
                   value={formData.amount}
                   onChange={handleChange}
                   disabled={mode === "view"}
-                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
                   placeholder="Enter amount"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="text-sm xl:text-lg font-bold text-gray-700 mb-2 block">
+                <label className="text-sm xl:text-base font-bold text-gray-700 mb-2 block">
                   Purpose <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -616,13 +616,13 @@ const ClaimRequest = () => {
                   value={formData.purpose}
                   onChange={handleChange}
                   disabled={mode === "view"}
-                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
                   placeholder="Enter purpose of claim"
                 />
               </div>
 
               <div className="md:col-span-3">
-                <label className="text-sm xl:text-lg font-bold text-gray-700 mb-2 block">
+                <label className="text-sm xl:text-base font-bold text-gray-700 mb-2 block">
                   Remarks
                 </label>
                 <textarea
@@ -630,7 +630,7 @@ const ClaimRequest = () => {
                   value={formData.remarks}
                   onChange={handleChange}
                   disabled={mode === "view"}
-                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2 xl:text-lg rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm h-24"
+                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2 xl:text-base rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm h-24"
                   placeholder="Enter optional remarks..."
                 />
               </div>

@@ -1,214 +1,190 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Chart from "react-apexcharts";
 
 const AttendanceLineChart = ({ attendanceData = [] }) => {
   const [range, setRange] = useState("7d");
 
-  //  If no data at all
-  if (!attendanceData || attendanceData.length === 0) {
+  const processedData = useMemo(() => {
+    if (!attendanceData || attendanceData.length === 0) return [];
+
+    const data = [...attendanceData];
+
+    // 1. Daily/Weekly Views (7d, 15d, 1m)
+    if (range === "7d" || range === "15d" || range === "1m") {
+      const sliceSize = range === "7d" ? -7 : range === "15d" ? -15 : -30;
+      return data.slice(sliceSize).map((item) => {
+        const dateObj = new Date(item.date);
+        return {
+          label:
+            range === "7d"
+              ? dateObj.toLocaleDateString("en-IN", { weekday: "short" })
+              : dateObj.toLocaleDateString("en-IN", {
+                  day: "2-digit",
+                  month: "short",
+                }),
+          present: item.presentToday,
+          absent: item.totalEmployees - item.presentToday,
+          leave: item.leave,
+        };
+      });
+    }
+
+    // 2. 1 Year View - Aggregated by Month (Jan, Feb, Mar...)
+    if (range === "1y") {
+      const monthNames = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      const months = {};
+
+      data.slice(-365).forEach((item) => {
+        const dateObj = new Date(item.date);
+        const monthLabel = monthNames[dateObj.getMonth()]; // Get "Jan", "Feb" etc.
+
+        if (!months[monthLabel]) {
+          months[monthLabel] = { present: 0, absent: 0, leave: 0, count: 0 };
+        }
+        months[monthLabel].present += item.presentToday;
+        months[monthLabel].absent += item.totalEmployees - item.presentToday;
+        months[monthLabel].leave += item.leave;
+        months[monthLabel].count += 1;
+      });
+
+      // Return in chronological order starting from the earliest month found in the data
+      return monthNames
+        .filter((name) => months[name])
+        .map((name) => ({
+          label: name,
+          present: Math.round(months[name].present / months[name].count),
+          absent: Math.round(months[name].absent / months[name].count),
+          leave: Math.round(months[name].leave / months[name].count),
+        }));
+    }
+
+    // 3. 3 Year View - Aggregated by Year (2024, 2025, 2026)
+    if (range === "3y") {
+      const years = {};
+      data.slice(-1095).forEach((item) => {
+        const yearLabel = new Date(item.date).getFullYear().toString();
+
+        if (!years[yearLabel]) {
+          years[yearLabel] = { present: 0, absent: 0, leave: 0, count: 0 };
+        }
+        years[yearLabel].present += item.presentToday;
+        years[yearLabel].absent += item.totalEmployees - item.presentToday;
+        years[yearLabel].leave += item.leave;
+        years[yearLabel].count += 1;
+      });
+
+      return Object.keys(years)
+        .sort()
+        .map((y) => ({
+          label: y,
+          present: Math.round(years[y].present / years[y].count),
+          absent: Math.round(years[y].absent / years[y].count),
+          leave: Math.round(years[y].leave / years[y].count),
+        }));
+    }
+
+    return [];
+  }, [attendanceData, range]);
+
+  if (processedData.length === 0) {
     return (
       <div className="py-10 text-center text-gray-400 bg-white rounded-xl">
-        No attendance data available
+        No data available
       </div>
     );
   }
 
-  //  Filter Data (with fallback)
-  const getFilteredData = () => {
-    const data = [...attendanceData];
-
-    let filtered = [];
-
-    switch (range) {
-      case "7d":
-        filtered = data.slice(-7);
-        break;
-      case "15d":
-        filtered = data.slice(-15);
-        break;
-      case "1m":
-        filtered = data.slice(-30);
-        break;
-      case "1y":
-        filtered = data.slice(-365);
-        break;
-      case "3y":
-        filtered = data.slice(-365 * 3);
-        break;
-      default:
-        filtered = data;
-    }
-
-    //  fallback to all data if empty
-    return filtered.length > 0 ? filtered : data;
-  };
-
-  const filteredData = getFilteredData();
-  const isEmptyRange = filteredData.length === 0;
-
-  //  Format Data
-  const formattedData = filteredData.map((item) => {
-    const total = Number(item.totalEmployees) || 0;
-    const present = Number(item.presentToday) || 0;
-    const absent = Math.max(0, total - present);
-
-    const day = item.date
-      ? new Date(item.date).toLocaleDateString("en-IN", {
-          weekday: "short",
-        })
-      : "Today";
-
-    return {
-      day,
-      total,
-      leave: item.leave || 0,
-      absent,
-    };
-  });
-
-  //  Series
   const series = [
-    {
-      name: "Present",
-      data: formattedData.map(
-        (item) => item.total - (item.absent + item.leave),
-      ),
-    },
-    {
-      name: "Absent",
-      data: formattedData.map((item) => item.absent),
-    },
-    {
-      name: "Leave",
-      data: formattedData.map((item) => item.leave),
-    },
+    { name: "Present", data: processedData.map((d) => d.present) },
+    { name: "Absent", data: processedData.map((d) => d.absent) },
+    { name: "Leave", data: processedData.map((d) => d.leave) },
   ];
 
-  //  Chart Options
   const options = {
     chart: {
       type: "area",
-      height: 190,
       toolbar: { show: false },
       zoom: { enabled: false },
-      background: "transparent",
+      fontFamily: "inherit",
     },
-
-    stroke: {
-      curve: "smooth",
-      width: 3,
-    },
-
-    grid: {
-      borderColor: "#f1f5f9",
-      strokeDashArray: 3,
-      padding: { left: 10, right: 10 },
-    },
-
+    
     dataLabels: {
       enabled: false,
     },
-
+    stroke: { curve: "smooth", width: 3 },
     markers: {
       size: 0,
-      hover: {
-        size: 6,
-      },
+      hover: { size: 5 },
     },
-
-    xaxis: {
-      categories: formattedData.map((item) => item.day),
-      axisBorder: { show: false },
-      axisTicks: { show: false },
-      labels: {
-        style: {
-          colors: "#94a3b8",
-          fontSize: "11px",
-        },
-      },
-    },
-
-    yaxis: {
-      labels: {
-        style: {
-          colors: "#94a3b8",
-          fontSize: "11px",
-        },
-      },
-    },
-
-    tooltip: {
-      theme: "light",
-      y: {
-        formatter: (val) => `${val} employees`,
-      },
-    },
-
-    legend: {
-      position: "top",
-      horizontalAlign: "right",
-      fontSize: "14px",
-      labels: {
-        colors: "#64748b",
-      },
-    },
-
-    // colors: ["#8061c9", "#1f7dff", "#274bcd"],
     colors: ["#2563EB", "#EF4444", "#06B6D4"],
-
     fill: {
       type: "gradient",
       gradient: {
-        shade: "light",
-        type: "vertical",
-        // gradientToColors: ["#dbeafe", "#ede9fe", "#e0f2fe"],
-        gradientToColors: ["#DBEAFE", "#FEE2E2", "#E0F2FE"], // match bg colors
-        opacityFrom: 0.7,
+        opacityFrom: 0.4,
         opacityTo: 0.05,
-        stops: [0, 100],
+        stops: [20, 100],
+        gradientToColors: ["#DBEAFE", "#FEE2E2", "#E0F2FE"],
       },
+    },
+    grid: {
+      borderColor: "#f1f5f9",
+      strokeDashArray: 4,
+      padding: { left: 10, right: 10 },
+    },
+    xaxis: {
+      categories: processedData.map((d) => d.label),
+      // Ensures only the months/years show without extra ticks
+      tickAmount: range === "1y" ? 12 : range === "3y" ? 3 : undefined,
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+      labels: { rotate: -45, style: { colors: "#94a3b8", fontSize: "11px" } },
+    },
+    yaxis: { labels: { style: { colors: "#94a3b8", fontSize: "11px" } } },
+    tooltip: { theme: "light", x: { show: true } },
+    legend: {
+      position: "top",
+      horizontalAlign: "right",
+      fontSize: "13px",
+      labels: { colors: "#64748b" },
     },
   };
 
   return (
-    <div className="py-4 bg-white rounded-xl">
-      {/*  Filter Buttons */}
-      <div className="sm:flex sm:justify-between">
-        <h3 className="text-[16px] lg:text-[18px] 3xl:text-[20px] font-semibold text-gray-700 ml-5 mb-3">
+    <div className="w-full h-full p-4 bg-white rounded-2xl">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3">
+        <h3 className="text-md font-bold text-slate-800">
           Attendance Overview
         </h3>
-        <div className="flex sm:gap-2 mb-3 px-3">
-          {[
-            { label: "7D", value: "7d" },
-            { label: "15D", value: "15d" },
-            { label: "1M", value: "1m" },
-            { label: "1Y", value: "1y" },
-            { label: "3Y", value: "3y" },
-          ].map((btn) => (
+        <div className="flex bg-slate-100 p-1 rounded-xl">
+          {["7d", "15d", "1m", "1y", "3y"].map((val) => (
             <button
-              key={btn.value}
-              onClick={() => setRange(btn.value)}
-              className={`px-3 py-1 text-xs lg:text-sm 3xl:text-base rounded-lg transition-all ${
-                range === btn.value
-                  ? "bg-[#042b6a] text-white shadow-md"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              key={val}
+              onClick={() => setRange(val)}
+              className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
+                range === val
+                  ? "bg-white text-blue-600 shadow-sm"
+                  : "text-slate-500 hover:text-slate-800"
               }`}
             >
-              {btn.label}
+              {val.toUpperCase()}
             </button>
           ))}
         </div>
       </div>
-
-      {/*  Optional warning */}
-      {isEmptyRange && (
-        <div className="text-xs lg:text-sm 3xl:text-lg text-red-400 text-right mb-2">
-          No data for selected range
-        </div>
-      )}
-
-      {/*  Chart */}
-      <Chart options={options} series={series} type="area" height={360} />
+      <Chart options={options} series={series} type="area" height={300} />
     </div>
   );
 };

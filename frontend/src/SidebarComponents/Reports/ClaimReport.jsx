@@ -21,67 +21,86 @@ const ClaimReport = () => {
   const [selectedId, setSelectedId] = useState(null);
   const [modalOpenSelectedItem, setModalOpenSelectedItem] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  // Dropdown data
-  const [companyOptions, setCompanyOptions] = useState([]);
   const [employeeOptions, setEmployeeOptions] = useState([]);
+
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const res = await axios.get(`${API_BASE}/employee`);
+        setEmployeeOptions(res.data || []);
+      } catch (error) {
+        console.error("Failed to fetch employees", error);
+      }
+    };
+    fetchEmployees();
+  }, []);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [showFromDateSpinner, setShowFromDateSpinner] = useState(false);
-  const [showToDateSpinner, setShowToDateSpinner] = useState(false);
+  const [showPunchDateSpinner, setShowPunchDateSpinner] = useState(false);
+  const [showToPunchDateSpinner, setShowToPunchDateSpinner] = useState(false);
 
   const [formData, setFormData] = useState({
-    company: "",
-    company_id: "",
     employee: "",
-    employee_id: "",
+    employee_name: "",
     fromdateinform: "",
     todateinform: "",
   });
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-sm lg:text-base 3xl:text-xl font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base font-semibold text-gray-700 mb-2 block";
 
-  const filteredReport = claimReport.filter((emp) => {
-    const fromDate = parseDate(emp.fromDate);
-    const toDate = parseDate(emp.toDate);
-    const fromDateinform = parseDate(formData.fromdateinform);
-    const toDateinform = parseDate(formData.todateinform);
+  const handleGenerate = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (formData.employee) params.append("company_enrollment_id", formData.employee);
+      if (formData.fromdateinform) params.append("from_date", formData.fromdateinform);
+      if (formData.todateinform) params.append("to_date", formData.todateinform);
 
-    if (toDateinform) {
-      toDateinform.setHours(23, 59, 59, 999);
+      const res = await axios.get(`${API_BASE}/requests/claim/report?${params.toString()}`);
+      setClaimReport(res.data || []);
+      setOpenModal(true);
+      setCurrentPage(1);
+    } catch (error) {
+      console.error("Failed to generate report", error);
+      toast.error("Failed to generate report");
+    } finally {
+      setLoading(false);
     }
+  };
 
+  const filteredclaimReport = claimReport.filter((x) => {
+    const searchLower = searchTerm.toLowerCase();
     return (
-      (!formData.employee || emp.employee === formData.employee) &&
-      (!fromDateinform || fromDate >= fromDateinform) &&
-      (!toDateinform || toDate <= toDateinform)
+      (x.employee_name || "").toLowerCase().includes(searchLower) ||
+      (x.employee_code || "").toLowerCase().includes(searchLower) ||
+      (x.claim_category || "").toLowerCase().includes(searchLower) ||
+      (x.purpose || "").toLowerCase().includes(searchLower)
     );
   });
 
-  const filteredclaimReport = filteredReport.filter((x) =>
-    x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()),
-  );
-
   const endIndex = currentPage * entriesPerPage;
   const startIndex = endIndex - entriesPerPage;
-  const currentData = filteredReport.slice(startIndex, endIndex);
-  const totalPages = Math.max(1, Math.ceil(filteredReport.length / entriesPerPage));
+  const currentclaimReport = filteredclaimReport.slice(startIndex, endIndex);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredclaimReport.length / entriesPerPage),
+  );
 
   const selectedItem = claimReport.find((item) => item.id === selectedId);
 
   const handleCopy = () => {
-    const header = ["Sl.No", "Employee", "Company", "Claim Date", "Category", "Amount", "Purpose", "Status"].join("\t");
-    const rows = filteredReport
+    const header = ["Sl.No", "Employee", "ID", "Claim Date", "Category", "Amount", "Purpose", "Status"].join("\t");
+    const rows = filteredclaimReport
       .map((item, i) =>
         [
           i + 1,
           item.employee_name,
-          item.company_name,
+          item.employee_code,
           item.date ? new Date(item.date).toLocaleDateString() : "—",
           item.claim_category,
           item.amount,
@@ -95,7 +114,7 @@ const ClaimReport = () => {
   };
 
   const handleExcel = () => {
-    const data = filteredReport.map((item, i) => ({
+    const data = filteredclaimReport.map((item, i) => ({
       "Sl.No": i + 1,
       Employee: item.employee_name,
       "Employee ID": item.employee_code,
@@ -105,7 +124,6 @@ const ClaimReport = () => {
       Amount: item.amount,
       Purpose: item.purpose,
       Status: item.status,
-      Remarks: item.remarks || "—",
     }));
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
@@ -118,11 +136,11 @@ const ClaimReport = () => {
     doc.text("Claim Report", 14, 14);
     autoTable(doc, {
       startY: 20,
-      head: [["Sl.No", "Employee", "Company", "Claim Date", "Category", "Amount", "Status"]],
-      body: filteredReport.map((item, i) => [
+      head: [["Sl.No", "Employee", "ID", "Claim Date", "Category", "Amount", "Status"]],
+      body: filteredclaimReport.map((item, i) => [
         i + 1,
         item.employee_name,
-        item.company_name,
+        item.employee_code,
         item.date ? new Date(item.date).toLocaleDateString() : "—",
         item.claim_category,
         item.amount,
@@ -132,18 +150,12 @@ const ClaimReport = () => {
     doc.save("ClaimReport.pdf");
   };
 
-  const statusClass = (status) => {
-    if (status === "Approved") return "bg-green-100 text-green-700";
-    if (status === "Rejected") return "bg-red-100 text-red-700";
-    return "bg-yellow-100 text-yellow-700";
-  };
-
   return (
     <>
       <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-          <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900 ">
+          <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl font-semibold text-gray-900 ">
             <FaAngleRight className="text-blue-500 text-base" />
             <span className="text-gray-500">Reports</span>
             <FaAngleRight className="text-blue-500 text-base" />
@@ -162,49 +174,22 @@ const ClaimReport = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <div>
                 <SearchDropdown
-                  label="Company"
-                  name="company"
-                  value={formData.company}
-                  options={companyOptions}
-                  labelKey="name"
-                  valueKey="id"
-                  labelName="company"
+                  label="Employee"
+                  name="employee"
+                  value={formData.employee}
+                  displayValue={formData.employee_name}
+                  options={employeeOptions}
+                  labelKey="full_name"
+                  valueKey="company_enrollment_id"
+                  labelName="employee_name"
                   formData={formData}
-                  setFormData={(updated) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      company: updated.company,
-                      company_id: updated.company_id ?? updated.company,
-                    }))
-                  }
+                  setFormData={setFormData}
                   inputStyle={inputStyle}
                   labelStyle={labelStyle}
                 />
               </div>
 
               <div>
-                <SearchDropdown
-                  label="Employee"
-                  name="employee"
-                  value={formData.employee}
-                  options={employeeOptions}
-                  labelKey="full_name"
-                  valueKey="id"
-                  labelName="employee"
-                  formData={formData}
-                  setFormData={(updated) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      employee: updated.employee,
-                      employee_id: updated.employee_id ?? updated.employee,
-                    }))
-                  }
-                  inputStyle={inputStyle}
-                  labelStyle={labelStyle}
-                />
-              </div>
-
-              <div className="relative">
                 <label className={labelStyle}>From Date</label>
                 <input
                   name="fromdateinform"
@@ -212,21 +197,20 @@ const ClaimReport = () => {
                   onClick={() => setShowPunchDateSpinner(true)}
                   readOnly
                   placeholder="dd/mm/yyyy"
-                  readOnly
-                  className={`${inputStyle} cursor-pointer`}
+                  className={inputStyle}
                 />
                 {showPunchDateSpinner && (
                   <SpinnerDatePicker
                     value={formData.fromdateinform}
                     onChange={(date) =>
-                      setFormData((prev) => ({ ...prev, fromdateinform: date }))
+                      setFormData({ ...formData, fromdateinform: date })
                     }
-                    onClose={() => setShowFromDateSpinner(false)}
+                    onClose={() => setShowPunchDateSpinner(false)}
                   />
                 )}
               </div>
 
-              <div className="relative">
+              <div>
                 <label className={labelStyle}>To Date</label>
                 <input
                   name="todateinform"
@@ -234,16 +218,15 @@ const ClaimReport = () => {
                   onClick={() => setShowToPunchDateSpinner(true)}
                   readOnly
                   placeholder="dd/mm/yyyy"
-                  readOnly
-                  className={`${inputStyle} cursor-pointer`}
+                  className={inputStyle}
                 />
                 {showToPunchDateSpinner && (
                   <SpinnerDatePicker
                     value={formData.todateinform}
                     onChange={(date) =>
-                      setFormData((prev) => ({ ...prev, todateinform: date }))
+                      setFormData({ ...formData, todateinform: date })
                     }
-                    onClose={() => setShowToDateSpinner(false)}
+                    onClose={() => setShowToPunchDateSpinner(false)}
                   />
                 )}
               </div>
@@ -251,8 +234,9 @@ const ClaimReport = () => {
 
             <div className="flex justify-end mt-10">
               <button
-                onClick={() => setOpenModal(true)}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md lg:text-lg 3xl:text-xl transition-all duration-200"
+                onClick={handleGenerate}
+                disabled={loading}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md xl:text-lg transition-all duration-200"
               >
                 {loading ? "Generating..." : "Generate Report"}
               </button>
@@ -265,7 +249,7 @@ const ClaimReport = () => {
           <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
             <div className="p-6 border-b border-blue-100/30">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl lg:text-2xl 3xl:text-3xl font-bold text-gray-800">
+                <h2 className="text-xl font-bold text-gray-800">
                   Claim Summary View
                 </h2>
                 <RxCross2
@@ -276,7 +260,7 @@ const ClaimReport = () => {
 
               <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  <label className="text-sm xl:text-base font-medium text-gray-600">
                     Display
                   </label>
                   <select
@@ -285,7 +269,7 @@ const ClaimReport = () => {
                       setEntriesPerPage(Number(e.target.value));
                       setCurrentPage(1);
                     }}
-                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
+                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base focus:ring-2 focus:ring-blue-500/60 transition-all"
                   >
                     {[10, 25, 50, 100].map((v) => (
                       <option key={v} value={v}>
@@ -293,12 +277,35 @@ const ClaimReport = () => {
                       </option>
                     ))}
                   </select>
-                  <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  <span className="text-sm xl:text-base font-medium text-gray-600">
                     entries
                   </span>
                 </div>
 
                 <div className="flex gap-3">
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleCopy}
+                      className="p-2 bg-white border border-blue-200 rounded-lg text-blue-600 hover:bg-blue-50 transition-all"
+                      title="Copy to Clipboard"
+                    >
+                      <GoCopy />
+                    </button>
+                    <button
+                      onClick={handleExcel}
+                      className="p-2 bg-white border border-blue-200 rounded-lg text-green-600 hover:bg-green-50 transition-all"
+                      title="Export to Excel"
+                    >
+                      <FaFileExcel />
+                    </button>
+                    <button
+                      onClick={handlePDF}
+                      className="p-2 bg-white border border-blue-200 rounded-lg text-red-600 hover:bg-red-50 transition-all"
+                      title="Export to PDF"
+                    >
+                      <FaFilePdf />
+                    </button>
+                  </div>
                   <input
                     placeholder="Search claims..."
                     value={searchTerm}
@@ -306,7 +313,7 @@ const ClaimReport = () => {
                       setSearchTerm(e.target.value);
                       setCurrentPage(1);
                     }}
-                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
                   />
                 </div>
               </div>
@@ -316,7 +323,7 @@ const ClaimReport = () => {
               className="overflow-x-auto min-h-[350px]"
               style={{ scrollbarWidth: "none" }}
             >
-              <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+              <table className="w-full text-[17px]">
                 <thead>
                   <tr className="bg-slate-50 border-b border-blue-100/50">
                     <th className="px-4 py-3 text-center font-semibold text-gray-700">
@@ -340,29 +347,29 @@ const ClaimReport = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {currentData.length === 0 ? (
+                  {currentclaimReport.length === 0 ? (
                     <tr>
                       <td
                         colSpan="6"
-                        className="p-12 text-center text-gray-500 font-medium lg:text-lg 3xl:text-2xl"
+                        className="p-12 text-center text-gray-500 font-medium xl:text-lg"
                       >
                         No Data Available
                       </td>
                     </tr>
                   ) : (
-                    currentData.map((item) => (
+                    currentclaimReport.map((item) => (
                       <tr
                         key={item.id}
                         className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                       >
                         <td className="px-4 py-3 text-center font-medium text-gray-900">
-                          {item.employee}
+                          {item.employee_name}
                         </td>
                         <td className="px-4 py-3 text-center hidden md:table-cell text-gray-600">
-                          {item.date}
+                          {item.date ? new Date(item.date).toLocaleDateString() : "—"}
                         </td>
                         <td className="px-4 py-3 text-center hidden md:table-cell text-gray-600">
-                          {item.claimCategory}
+                          {item.claim_category}
                         </td>
                         <td className="px-4 py-3 text-center hidden md:table-cell font-bold text-gray-900">
                           ₹{item.amount}
@@ -377,7 +384,7 @@ const ClaimReport = () => {
                                 setSelectedId(item.id);
                                 setModalOpenSelectedItem(true);
                               }}
-                              className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                              className="text-blue-500 hover:text-blue-700 xl:text-xl cursor-pointer transition-all"
                             />
                           </div>
                         </td>
@@ -388,9 +395,9 @@ const ClaimReport = () => {
               </table>
             </div>
 
-            {/* Pagination */}
+            {/* Pagination Section */}
             <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-              <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
+              <span className="text-sm xl:text-base text-gray-600">
                 Showing{" "}
                 <span className="font-bold text-gray-900">
                   {startIndex + 1}
@@ -409,7 +416,7 @@ const ClaimReport = () => {
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(1)}
-                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50 transition-all"
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm  font-medium disabled:opacity-50 transition-all"
                 >
                   First
                 </button>
@@ -420,7 +427,7 @@ const ClaimReport = () => {
                 >
                   <GrPrevious />
                 </button>
-                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm lg:text-base 3xl:text-xl min-w-[45px] text-center">
+                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm  min-w-[45px] text-center">
                   {currentPage}
                 </div>
                 <button
@@ -433,7 +440,7 @@ const ClaimReport = () => {
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(totalPages)}
-                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50 transition-all"
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm  font-medium disabled:opacity-50 transition-all"
                 >
                   Last
                 </button>
@@ -453,8 +460,8 @@ const ClaimReport = () => {
               style={{ scrollbarWidth: "none" }}
             >
               <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
-                <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
-                  {selectedItem.employee} Claim Details
+                <h2 className="text-xl  font-bold text-gray-900">
+                  {selectedItem.employee_name} Claim Details
                 </h2>
                 <button
                   onClick={() => {
@@ -482,11 +489,11 @@ const ClaimReport = () => {
                 </div>
                 <div>
                   <p className={labelStyle}>Claim Date</p>
-                  <p className={inputStyle}>{selectedItem.date}</p>
+                  <p className={inputStyle}>{selectedItem.date ? new Date(selectedItem.date).toLocaleDateString() : "—"}</p>
                 </div>
                 <div>
                   <p className={labelStyle}>Claim Category</p>
-                  <p className={inputStyle}>{selectedItem.claimCategory}</p>
+                  <p className={inputStyle}>{selectedItem.claim_category}</p>
                 </div>
                 <div>
                   <p className={labelStyle}>Amount</p>
@@ -494,12 +501,42 @@ const ClaimReport = () => {
                     ₹{selectedItem.amount}
                   </p>
                 </div>
-                <div className="sm:col-span-2">
+                <div>
+                  <p className={labelStyle}>Status</p>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-bold ${
+                      selectedItem.status === "Approved"
+                        ? "bg-green-100 text-green-700"
+                        : selectedItem.status === "Rejected"
+                          ? "bg-red-100 text-red-700"
+                          : "bg-yellow-100 text-yellow-700"
+                    }`}
+                  >
+                    {selectedItem.status}
+                  </span>
+                </div>
+                <div className="md:col-span-2">
                   <p className={labelStyle}>Purpose</p>
                   <p className={`${inputStyle} min-h-[80px]`}>
                     {selectedItem.purpose || "No purpose specified"}
                   </p>
                 </div>
+                {selectedItem.remarks && (
+                  <div className="md:col-span-3">
+                    <p className={labelStyle}>Remarks</p>
+                    <p className={`${inputStyle} bg-gray-50`}>
+                      {selectedItem.remarks}
+                    </p>
+                  </div>
+                )}
+                {selectedItem.rejectedreason && (
+                  <div className="md:col-span-3">
+                    <p className={labelStyle}>Rejected Reason</p>
+                    <p className={`${inputStyle} bg-red-50 text-red-700`}>
+                      {selectedItem.rejectedreason}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

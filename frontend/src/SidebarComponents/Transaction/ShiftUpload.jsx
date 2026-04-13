@@ -13,10 +13,10 @@ const ShiftUpload = () => {
   });
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2  xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2  rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm";
 
   const labelStyle =
-    "text-sm xl:text-lg font-semibold text-gray-700 mb-2 block";
+    "text-base font-semibold text-gray-700 mb-2 block";
 
   const getDatesBetween = (start, end) => {
     const dates = [];
@@ -223,12 +223,12 @@ const ShiftUpload = () => {
               type="file"
               accept=".xlsx,.xls,image/*"
               onChange={handleFileChange}
-              className=" w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+              className=" w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
             />
 
             <button
               onClick={handleUpload}
-              className="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-semibold px-5 py-2 xl:text-lg rounded-lg shadow hover:shadow-md transition-all whitespace-nowrap"
+              className="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-semibold px-5 py-2 xl:text-base rounded-lg shadow hover:shadow-md transition-all whitespace-nowrap"
             >
               Import File
             </button>

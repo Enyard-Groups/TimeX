@@ -10,64 +10,88 @@ import Timeline from "../components/Timeline";
 const AdminDashboard = ({ user }) => {
   const [attendanceData, setAttendanceData] = useState([]);
 
+  // useEffect(() => {
+  //   const fetchDashboardStats = async () => {
+  //     try {
+  //       const API_BASE = "http://localhost:3000/api";
+  //       const token = localStorage.getItem("token");
+  //       const headers = {
+  //         "Content-Type": "application/json",
+  //         ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  //       };
+
+  //       let res = await axios.get(`${API_BASE}/attendence/stats`, {
+  //         headers,
+  //       });
+
+  //       setAttendanceData(res.data);
+  //     } catch (error) {
+  //       console.error("Failed to load dashboard stats:", error);
+  //     }
+  //   };
+
+  //   fetchDashboardStats();
+  // }, []);
+
   useEffect(() => {
     const fetchDashboardStats = async () => {
       try {
-        // const API_BASE = "http://localhost:3000/api";
-        // const token = localStorage.getItem("token");
-        // const headers = {
-        //   "Content-Type": "application/json",
-        //   ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        // };
-
-        // let res = await axios.get(`${API_BASE}/attendence/stats`, {
-        //   headers,
-        // });
-
-        function getWeekDates(offset = 0) {
+        // 1. Generate dates for the last 10 years (3650 days)
+        function getDecadeDates() {
+          const dates = [];
           const today = new Date();
+          const totalDays = 365 * 10; // Approx 3650 days
 
-          const day = today.getDay();
-          const diff = today.getDate() - day + (day === 0 ? -6 : 1);
-
-          const monday = new Date(today.setDate(diff + offset * 7));
-
-          const week = [];
-          for (let i = 0; i < 7; i++) {
-            const d = new Date(monday);
-            d.setDate(monday.getDate() + i);
-            week.push(d.toISOString().split("T")[0]);
+          for (let i = totalDays - 1; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(today.getDate() - i);
+            dates.push(d.toISOString().split("T")[0]);
           }
-
-          return week;
+          return dates;
         }
 
-        function generateData(dates) {
-          return dates.map((date) => ({
-            date,
-            totalEmployees: 120,
-            presentToday: Math.floor(Math.random() * 40) + 70,
-            leave: Math.floor(Math.random() * 10),
-            earlyin: Math.floor(Math.random() * 20),
-            latein: Math.floor(Math.random() * 7),
-          }));
+        // 2. Generate data with weekend logic and growth trend
+        function generateDecadeData(dates) {
+          return dates.map((date, index) => {
+            const d = new Date(date);
+            const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+
+            /** * Realistic Growth Logic:
+             * Company starts with 50 employees and grows to 150 over 10 years
+             */
+            const totalEmployees =
+              50 + Math.floor((index / dates.length) * 100);
+
+            // Weekend: ~10% present | Weekday: 70-90% present
+            const presentToday = isWeekend
+              ? Math.floor(Math.random() * (totalEmployees * 0.1)) + 5
+              : Math.floor(Math.random() * (totalEmployees * 0.2)) +
+                Math.floor(totalEmployees * 0.7);
+
+            return {
+              date,
+              totalEmployees,
+              presentToday,
+              leave: isWeekend
+                ? 0
+                : Math.floor(Math.random() * (totalEmployees * 0.05)),
+              earlyin: isWeekend
+                ? 0
+                : Math.floor(Math.random() * (totalEmployees * 0.1)),
+              latein: isWeekend
+                ? 0
+                : Math.floor(Math.random() * (totalEmployees * 0.08)),
+            };
+          });
         }
 
-        // Combine both weeks into ONE array
-        const allDates = [
-          ...getWeekDates(-1), // previous week
-          ...getWeekDates(0), // current week
-        ];
+        const allDates = getDecadeDates();
+        const finalData = generateDecadeData(allDates);
 
-        const res = {
-          data: generateData(allDates),
-        };
-
-        console.log(res.data);
-
-        setAttendanceData(res.data);
+        console.log("Generated 10 years of data successfully.");
+        setAttendanceData(finalData);
       } catch (error) {
-        console.error("Failed to load dashboard stats:", error);
+        console.error("Failed to load 10-year dashboard stats:", error);
       }
     };
 
@@ -79,7 +103,7 @@ const AdminDashboard = ({ user }) => {
       <div className="md:flex md:items-center justify-between w-full mb-4">
         {/* LEFT - Welcome */}
         <div className="flex-1 flex justify-center md:justify-start text-center mt-10 sm:mt-0 md:pl-10 lg:pl-0 md:whitespace-nowrap md:mr-10">
-          <h2 className="text-2xl lg:text-3xl 3xl:text-5xl font-bold tracking-tight text-[#0f172a]">
+          <h2 className="text-xl font-bold tracking-tight text-[#0f172a]">
             Dashboard
             {/* Welcome back,{" "}
             <span className="bg-clip-text font-bold text-transparent bg-blue-900">
@@ -94,7 +118,7 @@ const AdminDashboard = ({ user }) => {
             <input
               type="text"
               placeholder="Search..."
-              className="bg-transparent outline-none text-sm lg:text-lg 3xl:text-2xl w-full placeholder-gray-400"
+              className="bg-transparent outline-none text-sm w-full placeholder-gray-400"
             />
           </div>
         </div>
@@ -108,10 +132,10 @@ const AdminDashboard = ({ user }) => {
         <EmployeeAttendance attendanceData={attendanceData} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 items-start">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6 items-start">
         {/* Line Chart */}
         <div
-          className="md:col-span-2 bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200 min-h-[430px]"
+          className="xl:col-span-2 bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200 min-h-[430px]"
           style={{ scrollbarWidth: "none" }}
         >
           <AttendanceLineChart attendanceData={attendanceData} />

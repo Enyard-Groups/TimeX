@@ -551,6 +551,26 @@ export const deleteTcpForm = async (req, res) => {
 
 export const getWeeklyOvertime = async (req, res) => {
     try {
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS weekly_overtime (
+                id SERIAL PRIMARY KEY,
+                employee_name VARCHAR(255),
+                designation VARCHAR(255),
+                enrollment_id VARCHAR(100),
+                site_name VARCHAR(255),
+                rest_day BOOLEAN DEFAULT FALSE,
+                shift_extension BOOLEAN DEFAULT FALSE,
+                overtime_details JSONB,
+                checker_name VARCHAR(255),
+                checker_signature TEXT,
+                checked_date DATE,
+                approver_name VARCHAR(255),
+                approver_signature TEXT,
+                approved_date DATE,
+                verifier_details JSONB,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
         const result = await db.query('SELECT * FROM weekly_overtime ORDER BY created_at DESC');
         res.json(result.rows);
     } catch (error) {

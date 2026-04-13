@@ -25,13 +25,16 @@ const TpcForm = () => {
   const [requestData, setRequestData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [editId, setEditId] = useState(null);
   const [showDateSpinner, setShowDateSpinner] = useState(false);
+  const [employees, setEmployees] = useState([]);
+  const [locations, setLocations] = useState([]);
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base  focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const defaultFormData = {
     employee_name: "",
@@ -51,17 +54,48 @@ const TpcForm = () => {
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(API_URL);
       setRequestData(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to fetch data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchOptions = async () => {
+    try {
+      const [empRes, locRes] = await Promise.all([
+        axios.get("http://localhost:3000/api/employee"),
+        axios.get("http://localhost:3000/api/master/geofencing"),
+      ]);
+      setEmployees(empRes.data);
+      setLocations(locRes.data);
+    } catch (error) {
+      console.error("Error fetching options:", error);
     }
   };
 
   useEffect(() => {
     fetchData();
+    fetchOptions();
   }, []);
+
+  useEffect(() => {
+    if (formData.employee_name && mode !== "view") {
+      const selectedEmp = employees.find(
+        (emp) => emp.full_name === formData.employee_name
+      );
+      if (selectedEmp) {
+        setFormData((prev) => ({
+          ...prev,
+          enrollment_id: selectedEmp.company_enrollment_id || "",
+        }));
+      }
+    }
+  }, [formData.employee_name, employees]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -173,7 +207,7 @@ const TpcForm = () => {
     <div className="mb-6 max-w-[1920px] mx-auto">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+        <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl  font-semibold text-gray-900">
           <FaAngleRight className="text-blue-500 text-base" />
           <span className="text-gray-500">Forms</span>
           <FaAngleRight className="text-blue-500 text-base" />
@@ -193,7 +227,7 @@ const TpcForm = () => {
                 setFormData(defaultFormData);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -207,7 +241,7 @@ const TpcForm = () => {
           <div className="p-6 border-b border-blue-100/30">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
-                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <label className="text-sm xl:text-base  font-medium text-gray-600">
                   Show
                 </label>
                 <select
@@ -216,7 +250,7 @@ const TpcForm = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -224,7 +258,7 @@ const TpcForm = () => {
                     </option>
                   ))}
                 </select>
-                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <span className="text-sm xl:text-base  font-medium text-gray-600">
                   entries
                 </span>
               </div>
@@ -261,7 +295,7 @@ const TpcForm = () => {
             className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+            <table className="w-full text-[17px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-blue-100/50">
                   <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
@@ -282,7 +316,19 @@ const TpcForm = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentrequestData.length === 0 ? (
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan="5"
+                      className="px-4 py-12 text-center text-gray-500"
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        <span>Loading...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : currentrequestData.length === 0 ? (
                   <tr>
                     <td
                       colSpan="5"
@@ -317,7 +363,7 @@ const TpcForm = () => {
                               setMode("view");
                               setOpenModal(true);
                             }}
-                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-blue-500 hover:text-blue-700 xl:text-xl  cursor-pointer transition-all"
                           />
                           <FaPen
                             onClick={() => {
@@ -326,11 +372,11 @@ const TpcForm = () => {
                               setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-green-500 hover:text-green-700 xl:text-xl  cursor-pointer transition-all"
                           />
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-red-500 hover:text-red-700 xl:text-xl  cursor-pointer transition-all"
                           />
                         </div>
                       </td>
@@ -344,7 +390,7 @@ const TpcForm = () => {
           {/* Pagination Footer */}
           {/* Pagination */}
           <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-            <span className="text-sm lg:text-base 3xl:text-xl text-gray-600">
+            <span className="text-sm xl:text-base  text-gray-600">
               Showing{" "}
               <span className="text-gray-900 font-semibold">
                 {requestData.length === 0 ? "0" : startIndex + 1}
@@ -416,7 +462,7 @@ const TpcForm = () => {
             style={{ scrollbarWidth: "none" }}
           >
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
-              <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+              <h2 className="text-xl   font-bold text-gray-900">
                 {mode === "view"
                   ? "TPC Request Details"
                   : mode === "edit"
@@ -433,7 +479,7 @@ const TpcForm = () => {
 
             <div className="border p-8 rounded-2xl border-gray-400/20 shadow-inner bg-white">
               <div
-                className="max-h-[75vh] overflow-y-auto pr-2 text-[16px] lg:text-[18px] 3xl:text-[22px] leading-relaxed"
+                className="max-h-[75vh] overflow-y-auto pr-2 text-[17px] leading-relaxed"
                 style={{ scrollbarWidth: "none" }}
               >
                 {/* Form Top Section */}
@@ -460,7 +506,9 @@ const TpcForm = () => {
                           <SearchDropdown
                             name="employee_name"
                             value={formData.employee_name}
-                            options={["Employee 1", "Employee 2"]}
+                            options={employees}
+                            labelKey="full_name"
+                            valueKey="full_name"
                             formData={formData}
                             inputStyle={inputStyle}
                             setFormData={setFormData}
@@ -484,7 +532,9 @@ const TpcForm = () => {
                         <SearchDropdown
                           name="location"
                           value={formData.location}
-                          options={["Head Office", "Location 1", "Location 2"]}
+                          options={locations}
+                          labelKey="name"
+                          valueKey="name"
                           formData={formData}
                           inputStyle={inputStyle}
                           setFormData={setFormData}
@@ -547,7 +597,9 @@ const TpcForm = () => {
                       <SearchDropdown
                         name="through_person"
                         value={formData.through_person}
-                        options={["Employee 1", "Employee 2"]}
+                        options={employees}
+                        labelKey="full_name"
+                        valueKey="full_name"
                         formData={formData}
                         inputStyle={inputStyle}
                         setFormData={setFormData}
@@ -720,18 +772,18 @@ const TpcForm = () => {
 
                 {/* Footer / Submit Action */}
                 {mode !== "view" && (
-                  <div className="flex justify-end mt-12 pb-6 border-t pt-8 gap-4">
-                    <button
-                      onClick={() => setOpenModal(false)}
-                      className="px-10 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-bold lg:text-lg 3xl:text-2xl hover:bg-gray-50 transition-all"
-                    >
-                      Cancel
-                    </button>
+                  <div className="flex flex-wrap justify-end mt-12 pb-6 border-t pt-8 gap-4">
                     <button
                       onClick={handleSubmit}
-                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-3 rounded-xl font-bold lg:text-xl 3xl:text-2xl shadow-xl hover:shadow-blue-200 hover:-translate-y-1 transition-all"
+                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-3 rounded-xl font-bold xl:text-xl  shadow-xl hover:shadow-blue-200 hover:-translate-y-1 transition-all"
                     >
-                      Save & Submit TPC Form
+                      Submit Form
+                    </button>
+                    <button
+                      onClick={() => setOpenModal(false)}
+                      className="px-10 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-bold xl:text-lg  hover:bg-gray-50 transition-all"
+                    >
+                      Cancel
                     </button>
                   </div>
                 )}

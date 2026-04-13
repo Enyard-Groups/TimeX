@@ -356,22 +356,22 @@ const ManualEntryRequest = () => {
           className="overflow-x-auto min-h-[350px]"
           style={{ scrollbarWidth: "none" }}
         >
-          <table className="w-full text-[16px] xl:text-[20px] text-gray-700">
+          <table className="w-full text-[17px] text-gray-700">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
                 <th className="px-6 py-3 text-center font-semibold text-gray-700">
                   Employee
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden lg:table-cell">
                   Location
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden md:table-cell">
                   In Time
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden md:table-cell">
                   Out Time
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-700">
+                <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden sm:table-cell">
                   Status
                 </th>
                 <th className="px-6 py-3 text-center font-semibold text-gray-700">
@@ -410,22 +410,18 @@ const ManualEntryRequest = () => {
                     className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                   >
                     <td className="px-6 py-2.5 text-center font-medium text-gray-800">
-                      {item.employee_name}
+                      {item.employee_name || item.employee_id}
                     </td>
-                    <td className="px-6 py-2.5 text-center text-gray-600">
-                      {item.location_name ||
-                        locationOptions.find((l) => l.id == item.location)
-                          ?.name ||
-                        item.location ||
-                        "-"}
+                    <td className="px-6 py-2.5 text-center text-gray-600 hidden lg:table-cell">
+                      {item.location}
                     </td>
-                    <td className="px-6 py-2.5 text-center text-gray-600 font-mono text-sm">
+                    <td className="px-6 py-2.5 text-center text-gray-600 font-mono text-sm hidden md:table-cell">
                       {item.in_time || "-"}
                     </td>
-                    <td className="px-6 py-2.5 text-center text-gray-600 font-mono text-sm">
+                    <td className="px-6 py-2.5 text-center text-gray-600 font-mono text-sm hidden md:table-cell">
                       {item.out_time || "-"}
                     </td>
-                    <td className="px-6 py-2.5 text-center">
+                    <td className="px-6 py-2.5 text-center hidden sm:table-cell">
                       <span
                         className={`px-3 py-1 rounded-full text-xs xl:text-sm font-bold ${
                           item.status === "Approved"
@@ -580,19 +576,19 @@ const ManualEntryRequest = () => {
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
-                  inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 transition-all shadow-sm font-medium"
-                  labelStyle="text-sm xl:text-lg font-bold text-gray-700 mb-2 block"
+                  inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 transition-all shadow-sm font-medium"
+                  labelStyle="text-sm xl:text-base font-bold text-gray-700 mb-2 block"
                 />
               </div>
 
               <div>
-                <label className="text-sm xl:text-lg font-bold text-gray-700 mb-2 block">
+                <label className="text-sm xl:text-base font-bold text-gray-700 mb-2 block">
                   Enrollment ID
                 </label>
                 <input
                   value={formData.enrollment_id}
                   readOnly
-                  className="w-full bg-gray-100 border-2 border-gray-200 text-gray-500 px-4 py-2.5 xl:text-lg rounded-xl transition-all shadow-sm cursor-not-allowed font-medium"
+                  className="w-full bg-gray-100 border-2 border-gray-200 text-gray-500 px-4 py-2.5 xl:text-base rounded-xl transition-all shadow-sm cursor-not-allowed font-medium"
                 />
               </div>
 
@@ -613,13 +609,13 @@ const ManualEntryRequest = () => {
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
-                  inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 transition-all shadow-sm font-medium"
-                  labelStyle="text-sm xl:text-lg font-bold text-gray-700 mb-2 block"
+                  inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 transition-all shadow-sm font-medium"
+                  labelStyle="text-sm xl:text-base font-bold text-gray-700 mb-2 block"
                 />
               </div>
 
               <div className="relative">
-                <label className="text-sm xl:text-lg font-bold text-gray-700 mb-2 block">
+                <label className="text-sm xl:text-base font-bold text-gray-700 mb-2 block">
                   Punch In Time <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -632,7 +628,7 @@ const ManualEntryRequest = () => {
                   disabled={mode === "view"}
                   readOnly
                   placeholder="HH:MM:SS"
-                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm font-medium"
+                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm font-medium"
                 />
                 {showInTimePicker && (
                   <SpinnerTimePicker
@@ -646,7 +642,7 @@ const ManualEntryRequest = () => {
               </div>
 
               <div className="relative">
-                <label className="text-sm xl:text-lg font-bold text-gray-700 mb-2 block">
+                <label className="text-sm xl:text-base font-bold text-gray-700 mb-2 block">
                   Punch Out Time <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -659,7 +655,7 @@ const ManualEntryRequest = () => {
                   disabled={mode === "view"}
                   readOnly
                   placeholder="HH:MM:SS"
-                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm font-medium"
+                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm font-medium"
                 />
                 {showOutTimePicker && (
                   <SpinnerTimePicker
@@ -673,7 +669,7 @@ const ManualEntryRequest = () => {
               </div>
 
               <div className="lg:col-span-2">
-                <label className="text-sm xl:text-lg font-bold text-gray-700 mb-2 block">
+                <label className="text-sm xl:text-base font-bold text-gray-700 mb-2 block">
                   Remarks
                 </label>
                 <textarea
@@ -682,7 +678,7 @@ const ManualEntryRequest = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   rows="1"
-                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-lg rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm font-medium"
+                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm font-medium"
                   placeholder="Enter optional remarks..."
                 />
               </div>

@@ -8,14 +8,14 @@ const Footer = ({ rightSidebarOpen}) => {
     <>
       {user && (
         <div
-          className={`fixed bottom-0 right-0 left-0 lg:left-64 z-30 lg:z-50 h-12 xl:h-16 border-t flex items-center justify-center transition-all duration-300 ${rightSidebarOpen ? "lg:mr-72" : "mr-0"}`}
+          className={`fixed bottom-0 right-0 left-0 lg:left-64 z-30 lg:z-50 h-12 border-t flex items-center justify-center transition-all duration-300 ${rightSidebarOpen ? "lg:mr-72" : "mr-0"}`}
           style={{
             backgroundColor: "white",
             borderColor: "oklch(0.923 0.003 48.717)",
           }}
         >
           <div
-            className="text-sm xl:text-lg gap-2 flex justify-center items-center"
+            className="text-sm gap-2 flex justify-center items-center"
             style={{ color: "oklch(0.423 0.003 48.717)" }}
           >
             <p className="whitespace-nowrap">© {currentYear} TimeX</p>

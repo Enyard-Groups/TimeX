@@ -1,148 +1,95 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../SearchDropdown";
 import SpinnerDatePicker from "../SpinnerDatePicker";
 import { FaEye } from "react-icons/fa";
-import { GoCopy } from "react-icons/go";
-import { FaFileExcel, FaFilePdf } from "react-icons/fa";
+import axios from "axios";
 import toast from "react-hot-toast";
-import * as XLSX from "xlsx";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-
-const API_BASE = "http://localhost:3000/api";
 
 const WfhReport = () => {
+  const API_BASE = "http://localhost:3000/api";
   const [openModal, setOpenModal] = useState(false);
   const [wfhReport, setWfhReport] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [modalOpenSelectedItem, setModalOpenSelectedItem] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  // Dropdown data
-  const [companyOptions, setCompanyOptions] = useState([]);
   const [employeeOptions, setEmployeeOptions] = useState([]);
+
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
+
+  const fetchEmployees = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/employee`);
+      setEmployeeOptions(res.data || []);
+    
+    } catch (error) {
+      console.error("Failed to fetch employees", error);
+      toast.error("Unable to load employees");
+    }
+  };
 
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [showFromDateSpinner, setShowFromDateSpinner] = useState(false);
-  const [showToDateSpinner, setShowToDateSpinner] = useState(false);
+  const [showPunchDateSpinner, setShowPunchDateSpinner] = useState(false);
+  const [showToPunchDateSpinner, setShowToPunchDateSpinner] = useState(false);
 
   const [formData, setFormData] = useState({
-    company: "",
-    company_id: "",
     employee: "",
-    employee_id: "",
+    employee_name: "",
     fromdateinform: "",
     todateinform: "",
   });
 
-  const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
-  const labelStyle =
-    "text-sm lg:text-base 3xl:text-xl font-semibold text-gray-700 mb-2 block";
+  const handleGenerate = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (formData.employee) params.append("company_enrollment_id", formData.employee);
+      if (formData.fromdateinform) params.append("from_date", formData.fromdateinform);
+      if (formData.todateinform) params.append("to_date", formData.todateinform);
 
-  const filteredReport = wfhReport.filter((emp) => {
-    const fromDate = parseDate(emp.fromDate);
-    const toDate = parseDate(emp.toDate);
-    const fromDateinform = parseDate(formData.fromdateinform);
-    const toDateinform = parseDate(formData.todateinform);
-
-    if (toDateinform) {
-      toDateinform.setHours(23, 59, 59, 999);
+      const res = await axios.get(`${API_BASE}/requests/wfh/report?${params.toString()}`);
+      console.log(res.data);
+      setWfhReport(res.data || []);
+      setOpenModal(true);
+    } catch (error) {
+      console.error("Failed to generate report", error);
+      toast.error("Error generating report");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    return (
-      (!formData.employee || emp.employee === formData.employee) &&
-      (!fromDateinform || fromDate >= fromDateinform) &&
-      (!toDateinform || toDate <= toDateinform)
-    );
-  });
+  const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base  rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+  const labelStyle =
+    "text-sm xl:text-base font-semibold text-gray-700 mb-2 block";
 
-  const filteredwfhReport = filteredReport.filter((x) =>
-    x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()),
+  const filteredwfhReport = wfhReport.filter((x) =>
+    (x.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
   const startIndex = endIndex - entriesPerPage;
-  const currentData = filteredReport.slice(startIndex, endIndex);
-  const totalPages = Math.max(1, Math.ceil(filteredReport.length / entriesPerPage));
+  const currentwfhReport = filteredwfhReport.slice(startIndex, endIndex);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredwfhReport.length / entriesPerPage),
+  );
 
   const selectedItem = wfhReport.find((item) => item.id === selectedId);
-
-  const handleCopy = () => {
-    const header = ["Sl.No", "Employee", "Company", "From Date", "To Date", "Days", "Reason", "Status"].join("\t");
-    const rows = filteredReport
-      .map((item, i) =>
-        [
-          i + 1,
-          item.employee_name,
-          item.company_name,
-          item.start_date ? new Date(item.start_date).toLocaleDateString() : "—",
-          item.end_date ? new Date(item.end_date).toLocaleDateString() : "—",
-          item.number_of_days,
-          item.reason,
-          item.status,
-        ].join("\t")
-      )
-      .join("\n");
-    navigator.clipboard.writeText(`${header}\n${rows}`);
-    toast.success("Copied to clipboard");
-  };
-
-  const handleExcel = () => {
-    const data = filteredReport.map((item, i) => ({
-      "Sl.No": i + 1,
-      Employee: item.employee_name,
-      "Employee ID": item.employee_code,
-      Company: item.company_name,
-      "From Date": item.start_date ? new Date(item.start_date).toLocaleDateString() : "—",
-      "To Date": item.end_date ? new Date(item.end_date).toLocaleDateString() : "—",
-      Days: item.number_of_days,
-      Reason: item.reason,
-      Status: item.status,
-    }));
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "WFHReport");
-    XLSX.writeFile(wb, "WFHReport.xlsx");
-  };
-
-  const handlePDF = () => {
-    const doc = new jsPDF("landscape");
-    doc.text("WFH Report", 14, 14);
-    autoTable(doc, {
-      startY: 20,
-      head: [["Sl.No", "Employee", "Company", "From Date", "To Date", "Days", "Status"]],
-      body: filteredReport.map((item, i) => [
-        i + 1,
-        item.employee_name,
-        item.company_name,
-        item.start_date ? new Date(item.start_date).toLocaleDateString() : "—",
-        item.end_date ? new Date(item.end_date).toLocaleDateString() : "—",
-        item.number_of_days,
-        item.status,
-      ]),
-    });
-    doc.save("WFHReport.pdf");
-  };
-
-  const statusClass = (status) => {
-    if (status === "Approved") return "bg-green-100 text-green-700";
-    if (status === "Rejected") return "bg-red-100 text-red-700";
-    return "bg-yellow-100 text-yellow-700";
-  };
 
   return (
     <>
       <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-          <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+          <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl font-semibold text-gray-900">
             <FaAngleRight className="text-blue-500 text-base" />
             <span className="text-gray-500">Reports</span>
             <FaAngleRight className="text-blue-500 text-base" />
@@ -161,49 +108,22 @@ const WfhReport = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <div>
                 <SearchDropdown
-                  label="Company"
-                  name="company"
-                  value={formData.company}
-                  options={companyOptions}
-                  labelKey="name"
-                  valueKey="id"
-                  labelName="company"
+                  label="Employee"
+                  name="employee"
+                  value={formData.employee}
+                  displayValue={formData.employee_name}
+                  options={employeeOptions}
+                  valueKey="company_enrollment_id"
+                  labelKey="full_name"
+                  labelName="employee_name"
                   formData={formData}
-                  setFormData={(updated) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      company: updated.company,
-                      company_id: updated.company_id ?? updated.company,
-                    }))
-                  }
+                  setFormData={setFormData}
                   inputStyle={inputStyle}
                   labelStyle={labelStyle}
                 />
               </div>
 
               <div>
-                <SearchDropdown
-                  label="Employee"
-                  name="employee"
-                  value={formData.employee}
-                  options={employeeOptions}
-                  labelKey="full_name"
-                  valueKey="id"
-                  labelName="employee"
-                  formData={formData}
-                  setFormData={(updated) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      employee: updated.employee,
-                      employee_id: updated.employee_id ?? updated.employee,
-                    }))
-                  }
-                  inputStyle={inputStyle}
-                  labelStyle={labelStyle}
-                />
-              </div>
-
-              <div className="relative">
                 <label className={labelStyle}>From Date</label>
                 <input
                   name="fromdateinform"
@@ -211,21 +131,20 @@ const WfhReport = () => {
                   onClick={() => setShowPunchDateSpinner(true)}
                   readOnly
                   placeholder="dd/mm/yyyy"
-                  readOnly
-                  className={`${inputStyle} cursor-pointer`}
+                  className={inputStyle}
                 />
                 {showPunchDateSpinner && (
                   <SpinnerDatePicker
                     value={formData.fromdateinform}
                     onChange={(date) =>
-                      setFormData((prev) => ({ ...prev, fromdateinform: date }))
+                      setFormData({ ...formData, fromdateinform: date })
                     }
-                    onClose={() => setShowFromDateSpinner(false)}
+                    onClose={() => setShowPunchDateSpinner(false)}
                   />
                 )}
               </div>
 
-              <div className="relative">
+              <div>
                 <label className={labelStyle}>To Date</label>
                 <input
                   name="todateinform"
@@ -233,16 +152,15 @@ const WfhReport = () => {
                   onClick={() => setShowToPunchDateSpinner(true)}
                   readOnly
                   placeholder="dd/mm/yyyy"
-                  readOnly
-                  className={`${inputStyle} cursor-pointer`}
+                  className={inputStyle}
                 />
                 {showToPunchDateSpinner && (
                   <SpinnerDatePicker
                     value={formData.todateinform}
                     onChange={(date) =>
-                      setFormData((prev) => ({ ...prev, todateinform: date }))
+                      setFormData({ ...formData, todateinform: date })
                     }
-                    onClose={() => setShowToDateSpinner(false)}
+                    onClose={() => setShowToPunchDateSpinner(false)}
                   />
                 )}
               </div>
@@ -250,8 +168,9 @@ const WfhReport = () => {
 
             <div className="flex justify-end mt-10">
               <button
-                onClick={() => setOpenModal(true)}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md lg:text-lg 3xl:text-xl transition-all duration-200"
+                disabled={loading}
+                onClick={handleGenerate}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md xl:text-base transition-all duration-200 disabled:opacity-50"
               >
                 {loading ? "Generating..." : "Generate Report"}
               </button>
@@ -264,7 +183,7 @@ const WfhReport = () => {
           <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
             <div className="p-6 border-b border-blue-100/30">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl lg:text-2xl 3xl:text-3xl font-bold text-gray-800">
+                <h2 className="text-xl font-bold text-gray-800">
                   WFH Summary View
                 </h2>
                 <RxCross2
@@ -275,7 +194,7 @@ const WfhReport = () => {
 
               <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  <label className="text-sm xl:text-base font-medium text-gray-600">
                     Display
                   </label>
                   <select
@@ -284,7 +203,7 @@ const WfhReport = () => {
                       setEntriesPerPage(Number(e.target.value));
                       setCurrentPage(1);
                     }}
-                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
+                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base focus:ring-2 focus:ring-blue-500/60 transition-all"
                   >
                     {[10, 25, 50, 100].map((v) => (
                       <option key={v} value={v}>
@@ -292,7 +211,7 @@ const WfhReport = () => {
                       </option>
                     ))}
                   </select>
-                  <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  <span className="text-sm xl:text-base  font-medium text-gray-600">
                     entries
                   </span>
                 </div>
@@ -305,7 +224,7 @@ const WfhReport = () => {
                       setSearchTerm(e.target.value);
                       setCurrentPage(1);
                     }}
-                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
                   />
                 </div>
               </div>
@@ -315,7 +234,7 @@ const WfhReport = () => {
               className="overflow-x-auto min-h-[350px]"
               style={{ scrollbarWidth: "none" }}
             >
-              <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+              <table className="w-full text-[17px]">
                 <thead>
                   <tr className="bg-slate-50 border-b border-blue-100/50">
                     <th className="px-4 py-3 text-center font-semibold text-gray-700">
@@ -339,7 +258,7 @@ const WfhReport = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {currentData.length === 0 ? (
+                  {currentwfhReport.length === 0 ? (
                     <tr>
                       <td
                         colSpan="6"
@@ -349,25 +268,25 @@ const WfhReport = () => {
                       </td>
                     </tr>
                   ) : (
-                    currentData.map((item) => (
+                    currentwfhReport.map((item) => (
                       <tr
                         key={item.id}
                         className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                       >
                         <td className="px-4 py-3 text-center font-medium text-gray-900">
-                          {item.employee}
+                          {item.employee_name}
                         </td>
                         <td className="px-4 py-3 text-center hidden md:table-cell text-gray-600">
-                          {item.fromDate}
+                          {item.start_date ? new Date(item.start_date).toLocaleDateString() : "-"}
                         </td>
                         <td className="px-4 py-3 text-center hidden md:table-cell text-gray-600">
-                          {item.toDate}
+                          {item.end_date ? new Date(item.end_date).toLocaleDateString() : "-"}
                         </td>
                         <td className="px-4 py-3 text-center hidden lg:table-cell text-gray-500 truncate max-w-xs">
                           {item.reason}
                         </td>
                         <td className="px-4 py-3 text-center hidden md:table-cell font-bold text-blue-600">
-                          {item.numberOfDays}
+                          {item.number_of_days}
                         </td>
                         <td className="px-4 py-3 text-center">
                           <div className="flex justify-center">
@@ -376,7 +295,7 @@ const WfhReport = () => {
                                 setSelectedId(item.id);
                                 setModalOpenSelectedItem(true);
                               }}
-                              className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                              className="text-blue-500 hover:text-blue-700 xl:text-xl cursor-pointer transition-all"
                             />
                           </div>
                         </td>
@@ -389,7 +308,7 @@ const WfhReport = () => {
 
             {/* Pagination */}
             <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-              <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
+              <span className="text-sm xl:text-base text-gray-600">
                 Showing{" "}
                 <span className="font-bold text-gray-900">
                   {startIndex + 1}
@@ -408,7 +327,7 @@ const WfhReport = () => {
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(1)}
-                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50"
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
                 >
                   First
                 </button>
@@ -419,7 +338,7 @@ const WfhReport = () => {
                 >
                   <GrPrevious />
                 </button>
-                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm lg:text-base 3xl:text-xl min-w-[45px] text-center">
+                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm  min-w-[45px] text-center">
                   {currentPage}
                 </div>
                 <button
@@ -432,7 +351,7 @@ const WfhReport = () => {
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(totalPages)}
-                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50"
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
                 >
                   Last
                 </button>
@@ -452,8 +371,8 @@ const WfhReport = () => {
               style={{ scrollbarWidth: "none" }}
             >
               <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
-                <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
-                  {selectedItem.employee} WFH Details
+                <h2 className="text-xl font-bold text-gray-900">
+                  {selectedItem.employee_name} WFH Details
                 </h2>
                 <button
                   onClick={() => {
@@ -472,25 +391,21 @@ const WfhReport = () => {
                   <p className={inputStyle}>{selectedItem.employee_name}</p>
                 </div>
                 <div>
-                  <p className={labelStyle}>Employee ID</p>
-                  <p className={inputStyle}>{selectedItem.employee_code || "—"}</p>
-                </div>
-                <div>
-                  <p className={labelStyle}>Company</p>
-                  <p className={inputStyle}>{selectedItem.company_name || "—"}</p>
-                </div>
-                <div>
                   <p className={labelStyle}>From Date</p>
-                  <p className={inputStyle}>{selectedItem.fromDate}</p>
+                  <p className={inputStyle}>
+                    {selectedItem.start_date ? new Date(selectedItem.start_date).toLocaleDateString() : "-"}
+                  </p>
                 </div>
                 <div>
                   <p className={labelStyle}>To Date</p>
-                  <p className={inputStyle}>{selectedItem.toDate}</p>
+                  <p className={inputStyle}>
+                    {selectedItem.end_date ? new Date(selectedItem.end_date).toLocaleDateString() : "-"}
+                  </p>
                 </div>
                 <div>
                   <p className={labelStyle}>Number of Days</p>
                   <p className={`${inputStyle} font-bold text-blue-600`}>
-                    {selectedItem.numberOfDays}
+                    {selectedItem.number_of_days}
                   </p>
                 </div>
                 <div className="sm:col-span-2 md:col-span-3">

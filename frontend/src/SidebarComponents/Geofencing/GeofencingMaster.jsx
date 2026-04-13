@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FaAngleRight } from "react-icons/fa6";
+import {
+  FaAngleRight,
+  FaEye,
+  FaPen,
+  FaFileExcel,
+  FaFilePdf,
+} from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
-import { FaEye, FaPen } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { GoCopy } from "react-icons/go";
-import { FaFileExcel } from "react-icons/fa";
-import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import {
   MapContainer,
@@ -18,11 +21,13 @@ import {
   Marker,
   Circle,
   useMapEvents,
+  useMap,
 } from "react-leaflet";
 import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
+// Fix for default Leaflet icon paths in React
 delete L.Icon.Default.prototype._getIconUrl;
-
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
@@ -30,13 +35,28 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-const MapClickHandler = ({ setMarkerPosition, setFormData }) => {
+/**
+ * Helper component to physically move the map when coordinates change
+ */
+const RecenterMap = ({ center }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (center.lat && center.lng) {
+      map.setView([center.lat, center.lng], 13, { animate: true });
+    }
+  }, [center, map]);
+  return null;
+};
+
+/**
+ * Component to handle manual clicks on the map to set coordinates
+ */
+const MapClickHandler = ({ setMarkerPosition, setFormData, disabled }) => {
   useMapEvents({
     click(e) {
+      if (disabled) return;
       const { lat, lng } = e.latlng;
-
       setMarkerPosition({ lat, lng });
-
       setFormData((prev) => ({
         ...prev,
         latitude: lat.toFixed(6),
@@ -415,9 +435,11 @@ const GeofencingMaster = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto min-h-[350px]"
-          style={{scrollbarWidth:"none"}}>
-            <table className="w-full text-[16px] xl:text-[20px] text-gray-700">
+          <div
+            className="overflow-x-auto min-h-[350px]"
+            style={{ scrollbarWidth: "none" }}
+          >
+            <table className="w-full text-[17px] text-gray-700">
               <thead>
                 <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
                   <th className="px-6 py-3 text-center font-semibold text-gray-700 hidden sm:table-cell">
@@ -600,7 +622,7 @@ const GeofencingMaster = () => {
               </div>
 
               {/* Form Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 items-end">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 items-end mb-4">
                 <div>
                   <label className="text-xs xl:text-sm font-bold uppercase tracking-wider text-slate-500 mb-2 block">
                     Latitude <span className="text-rose-500">*</span>
@@ -652,6 +674,7 @@ const GeofencingMaster = () => {
                   </label>
                   <div className="flex gap-2">
                     <input
+                      type="Number"
                       name="searchradius"
                       value={formData.searchradius}
                       onChange={handleChange}
@@ -682,23 +705,19 @@ const GeofencingMaster = () => {
                 )}
               </div>
 
-              {/* Map Section */}
-              <div className="mt-8 w-full h-[450px] rounded-2xl overflow-hidden border-4 border-white shadow-inner relative group">
-                <div className="absolute inset-0 bg-slate-200 animate-pulse group-data-[loaded=true]:hidden"></div>
+              {/* MAP AREA */}
+              <div className="h-[500px] w-full rounded-2xl border-4 border-slate-50 overflow-hidden shadow-inner relative z-0">
                 <MapContainer
                   center={[mapCenter.lat, mapCenter.lng]}
-                  zoom={10}
-                  className="h-full w-full z-0"
-                  data-loaded="true"
+                  zoom={13}
+                  className="h-full w-full"
                 >
-                  <TileLayer
-                    attribution=""
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
-
+                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  <RecenterMap center={mapCenter} />
                   <MapClickHandler
                     setMarkerPosition={setMarkerPosition}
                     setFormData={setFormData}
+                    disabled={mode === "view"}
                   />
 
                   {markerPosition && (
@@ -715,16 +734,15 @@ const GeofencingMaster = () => {
                         color: "#3b82f6",
                         fillColor: "#3b82f6",
                         fillOpacity: 0.2,
-                        weight: 2,
                       }}
                     />
                   )}
                 </MapContainer>
-
-                {/* Map Overlay Info (Optional) */}
-                <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-3 py-1.5 rounded-lg text-[10px] font-bold text-slate-500 shadow-sm pointer-events-none uppercase tracking-widest border border-slate-200">
-                  Click map to set location
-                </div>
+                {mode !== "view" && (
+                  <div className="absolute bottom-4 left-4 z-[400] bg-white/90 px-3 py-1 rounded text-[10px] font-bold text-blue-600 shadow-sm border border-blue-100 uppercase">
+                    Click map to pin location
+                  </div>
+                )}
               </div>
             </div>
           </div>

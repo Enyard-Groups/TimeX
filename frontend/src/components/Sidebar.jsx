@@ -53,11 +53,11 @@ const Sidebar = ({ user }) => {
 
       {isAdmin && (
         <div
-          className={`mt-2.5 mb-7 px-3 mx-2.5 rounded-xl text-md transition-all ${
+          className={`mt-2.5 mb-5 px-3 mx-2.5 rounded-xl text-md transition-all ${
             isdashboardActive ? activeClass : hoverClass
           }`}
         >
-          <div className="flex items-center gap-4 text-[18px] xl:text-[20px] pl-2">
+          <div className="flex items-center gap-3 text-[16px] pl-2">
             <RxDashboard />
             <Link to="/dashboard">Dashboard</Link>
           </div>
@@ -66,7 +66,7 @@ const Sidebar = ({ user }) => {
 
       {/* MIDDLE (Scrollable Area) */}
       <div
-        className="flex-1 overflow-y-auto px-3 space-y-7"
+        className="flex-1 overflow-y-auto px-3 space-y-5"
         style={{ scrollbarWidth: "none" }}
       >
         {isAdmin ? (
@@ -104,7 +104,7 @@ const Sidebar = ({ user }) => {
       <div className="p-4 mt-4">
         <button
           onClick={handleLogout}
-          className="w-full xl:text-lg flex pl-2 items-center gap-2 font-semibold text-blue-100 hover:text-white transition-all gap-3"
+          className="w-full xl:text-base flex pl-2 items-center gap-2 font-semibold text-blue-100 hover:text-white transition-all gap-3"
         >
           <span className="text-lg bg-[#1E3A8A] rounded-full p-1 text-white">
             <IoIosLogOut />

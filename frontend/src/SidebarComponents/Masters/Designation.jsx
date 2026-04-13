@@ -457,7 +457,7 @@ console.log("Fetched designations:", res.data);
             className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-[16px] lg:text-[19px] 3xl:text-[22px]">
+            <table className="w-full text-[17px]">
               <thead>
                 <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
                   <th className="px-4 py-3 text-center font-semibold text-gray-700 hidden sm:table-cell">

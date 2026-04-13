@@ -1,50 +1,69 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { FaAngleRight } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import SearchDropdown from "../../SearchDropdown";
 import SpinnerDatePicker from "../../SpinnerDatePicker";
 import { FaEye } from "react-icons/fa";
-import { GoCopy } from "react-icons/go";
-import { FaFileExcel, FaFilePdf } from "react-icons/fa";
-import toast from "react-hot-toast";
-import * as XLSX from "xlsx";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-
-const API_BASE = "http://localhost:3000/api";
 
 const EarlyOutReport = () => {
   const [openModal, setOpenModal] = useState(false);
   const [earlyOutReport, setEarlyOutReport] = useState([]);
+
   const [selectedId, setSelectedId] = useState(null);
   const [modalOpenSelectedItem, setModalOpenSelectedItem] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  // Dropdown data
-  const [companyOptions, setCompanyOptions] = useState([]);
-  const [employeeOptions, setEmployeeOptions] = useState([]);
+  useEffect(() => {
+    const stored =
+      JSON.parse(localStorage.getItem("mannualEntryRequests")) || [];
+    setEarlyOutReport(stored);
+  }, []);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [showFromDateSpinner, setShowFromDateSpinner] = useState(false);
-  const [showToDateSpinner, setShowToDateSpinner] = useState(false);
+  const [showPunchDateSpinner, setShowPunchDateSpinner] = useState(false);
+  const [showToPunchDateSpinner, setShowToPunchDateSpinner] = useState(false);
+
+  const parseDate = (dateStr) => {
+    if (!dateStr) return null;
+
+    const [day, month, year] = dateStr.split("/");
+    return new Date(year, month - 1, day);
+  };
+
+  const getTimeDiff = (inTime, outTime) => {
+    const [ih, im, is] = inTime.split(":").map(Number);
+    const [oh, om, os] = outTime.split(":").map(Number);
+
+    const inSeconds = ih * 3600 + im * 60 + is;
+    const outSeconds = oh * 3600 + om * 60 + os;
+
+    let diff = outSeconds - inSeconds;
+
+    if (diff <= 0) return "00:00:00";
+
+    const hours = Math.floor(diff / 3600);
+    const minutes = Math.floor((diff % 3600) / 60);
+    const seconds = diff % 60;
+
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  };
 
   const [formData, setFormData] = useState({
+    employeeCategory: "",
     company: "",
-    company_id: "",
+    location: "",
+    department: "",
     employee: "",
-    employee_id: "",
     fromPunchDate: "",
     toPunchDate: "",
   });
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base  rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-sm lg:text-base 3xl:text-xl font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base  font-semibold text-gray-700 mb-2 block";
 
   const filteredReport = earlyOutReport.filter((emp) => {
     const punchDate = new Date(emp.createdDate);
@@ -70,84 +89,35 @@ const EarlyOutReport = () => {
     );
   });
 
-  const filteredReportData = earlyOutReport.filter(
+  const filteredearlyOutReport = filteredReport.filter(
     (x) =>
-      (x.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (x.company_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (x.employee_code || "").toLowerCase().includes(searchTerm.toLowerCase())
+      x.company.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      x.employeeCategory.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      x.location.toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
-  const totalPages = Math.max(1, Math.ceil(filteredReportData.length / entriesPerPage));
-  const startIndex = (currentPage - 1) * entriesPerPage;
-  const currentData = filteredReportData.slice(startIndex, startIndex + entriesPerPage);
+  const endIndex = currentPage * entriesPerPage;
+
+  const startIndex = endIndex - entriesPerPage;
+
+  const currentearlyOutReport = filteredearlyOutReport.slice(
+    startIndex,
+    endIndex,
+  );
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredearlyOutReport.length / entriesPerPage),
+  );
 
   const selectedItem = earlyOutReport.find((item) => item.id === selectedId);
-
-  const handleCopy = () => {
-    const header = ["Sl.No", "Employee", "Date", "Shift Hrs", "Work Hrs", "Missed Hrs"].join("\t");
-    const rows = filteredReportData.map((item, i) => {
-      const total = getTimeDiff(item.in_time, item.out_time);
-      const dt = item.created_at ? new Date(item.created_at) : null;
-      return [
-        i + 1,
-        item.employee_name,
-        dt ? dt.toLocaleDateString() : "—",
-        "07:00:00",
-        total,
-        getMissedHours(total),
-      ].join("\t");
-    }).join("\n");
-    navigator.clipboard.writeText(`${header}\n${rows}`);
-    toast.success("Copied to clipboard");
-  };
-
-  const handleExcel = () => {
-    const data = filteredReportData.map((item, i) => {
-      const total = getTimeDiff(item.in_time, item.out_time);
-      const dt = item.created_at ? new Date(item.created_at) : null;
-      return {
-        "Sl.No": i + 1,
-        Employee: item.employee_name,
-        Date: dt ? dt.toLocaleDateString() : "—",
-        "Shift Hrs": "07:00:00",
-        "Work Hrs": total,
-        "Missed Hrs": getMissedHours(total),
-      };
-    });
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "EarlyOutReport");
-    XLSX.writeFile(wb, "EarlyOutReport.xlsx");
-  };
-
-  const handlePDF = () => {
-    const doc = new jsPDF("landscape");
-    doc.text("Early Out Report", 14, 14);
-    autoTable(doc, {
-      startY: 20,
-      head: [["Sl.No", "Employee", "Date", "Shift Hrs", "Work Hrs", "Missed Hrs"]],
-      body: filteredReportData.map((item, i) => {
-        const total = getTimeDiff(item.in_time, item.out_time);
-        const dt = item.created_at ? new Date(item.created_at) : null;
-        return [
-          i + 1,
-          item.employee_name,
-          dt ? dt.toLocaleDateString() : "—",
-          "07:00:00",
-          total,
-          getMissedHours(total),
-        ];
-      }),
-    });
-    doc.save("EarlyOutReport.pdf");
-  };
 
   return (
     <>
       <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-          <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900 ">
+          <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl 3xl:text-4xl font-semibold text-gray-900 ">
             <FaAngleRight className="text-blue-500 text-base" />
             <span className="text-gray-500">Reports</span>
             <FaAngleRight className="text-blue-500 text-base" />
@@ -169,10 +139,7 @@ const EarlyOutReport = () => {
                   label="Company"
                   name="company"
                   value={formData.company}
-                  options={companyOptions}
-                  labelKey="name"
-                  valueKey="id"
-                  labelName="company"
+                  options={["Company 1", "Company 2"]}
                   formData={formData}
                   setFormData={setFormData}
                   inputStyle={inputStyle}
@@ -223,6 +190,7 @@ const EarlyOutReport = () => {
                   labelStyle={labelStyle}
                 />
               </div>
+
               <div>
                 <SearchDropdown
                   label="Employee"
@@ -235,22 +203,24 @@ const EarlyOutReport = () => {
                   labelStyle={labelStyle}
                 />
               </div>
-              <div className="relative">
-                <label className={labelStyle}>From Date</label>
+
+              <div>
+                <label className={labelStyle}>From Punch Date</label>
                 <input
                   name="fromPunchDate"
                   value={formData.fromPunchDate}
                   onClick={() => setShowPunchDateSpinner(true)}
                   readOnly
                   placeholder="dd/mm/yyyy"
-                  readOnly
-                  className={`${inputStyle} cursor-pointer`}
+                  className={inputStyle}
                 />
                 {showPunchDateSpinner && (
                   <SpinnerDatePicker
                     value={formData.fromPunchDate}
-                    onChange={(date) => setFormData((prev) => ({ ...prev, fromPunchDate: date }))}
-                    onClose={() => setShowFromDateSpinner(false)}
+                    onChange={(date) =>
+                      setFormData({ ...formData, fromPunchDate: date })
+                    }
+                    onClose={() => setShowPunchDateSpinner(false)}
                   />
                 )}
               </div>
@@ -260,16 +230,20 @@ const EarlyOutReport = () => {
                 <input
                   name="toPunchDate"
                   value={formData.toPunchDate}
-                  onClick={() => setShowToDateSpinner(true)}
+                  onClick={() => {
+                    setShowToPunchDateSpinner(true);
+                  }}
                   placeholder="dd/mm/yyyy"
-                  readOnly
-                  className={`${inputStyle} cursor-pointer`}
+                  className={inputStyle}
                 />
-                {showToDateSpinner && (
+
+                {showToPunchDateSpinner && (
                   <SpinnerDatePicker
                     value={formData.toPunchDate}
-                    onChange={(date) => setFormData((prev) => ({ ...prev, toPunchDate: date }))}
-                    onClose={() => setShowToDateSpinner(false)}
+                    onChange={(date) =>
+                      setFormData({ ...formData, toPunchDate: date })
+                    }
+                    onClose={() => setShowToPunchDateSpinner(false)}
                   />
                 )}
               </div>
@@ -278,9 +252,9 @@ const EarlyOutReport = () => {
             <div className="flex justify-end mt-10">
               <button
                 onClick={() => setOpenModal(true)}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md lg:text-lg 3xl:text-xl transition-all duration-200"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-2.5 rounded-lg shadow-md xl:text-lg  transition-all duration-200"
               >
-                {loading ? "Generating..." : "Generate Report"}
+                Generate Report
               </button>
             </div>
           </div>
@@ -291,7 +265,7 @@ const EarlyOutReport = () => {
           <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border border-blue-100/50 shadow-xl animate-in fade-in duration-500">
             <div className="p-6 border-b border-blue-100/30">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl lg:text-2xl 3xl:text-3xl font-bold text-gray-800">
+                <h2 className="text-xl  3xl:text-3xl font-bold text-gray-800">
                   Early Out Summary
                 </h2>
                 <RxCross2
@@ -302,7 +276,7 @@ const EarlyOutReport = () => {
 
               <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  <label className="text-sm xl:text-base  font-medium text-gray-600">
                     Display
                   </label>
                   <select
@@ -311,7 +285,7 @@ const EarlyOutReport = () => {
                       setEntriesPerPage(Number(e.target.value));
                       setCurrentPage(1);
                     }}
-                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl"
+                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base "
                   >
                     {[10, 25, 50, 100].map((v) => (
                       <option key={v} value={v}>
@@ -319,7 +293,7 @@ const EarlyOutReport = () => {
                       </option>
                     ))}
                   </select>
-                  <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                  <span className="text-sm xl:text-base  font-medium text-gray-600">
                     entries
                   </span>
                 </div>
@@ -332,7 +306,7 @@ const EarlyOutReport = () => {
                       setSearchTerm(e.target.value);
                       setCurrentPage(1);
                     }}
-                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all"
+                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all"
                   />
                 </div>
               </div>
@@ -342,7 +316,7 @@ const EarlyOutReport = () => {
               className="overflow-x-auto min-h-[350px]"
               style={{ scrollbarWidth: "none" }}
             >
-              <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+              <table className="w-full text-[17px]">
                 <thead>
                   <tr className="bg-slate-50 border-b border-blue-100/50">
                     <th className="px-4 py-3 text-center hidden sm:table-cell font-semibold text-gray-700">
@@ -433,7 +407,7 @@ const EarlyOutReport = () => {
                                 setSelectedId(item.id);
                                 setModalOpenSelectedItem(true);
                               }}
-                              className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer mx-auto"
+                              className="text-blue-500 hover:text-blue-700 xl:text-xl 3xl:text-3xl cursor-pointer mx-auto"
                             />
                           </td>
                         </tr>
@@ -446,7 +420,7 @@ const EarlyOutReport = () => {
 
             {/* Pagination */}
             <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-              <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
+              <span className="text-sm xl:text-base  text-gray-600">
                 Showing{" "}
                 <span className="font-bold text-gray-900">
                   {startIndex + 1}
@@ -465,7 +439,7 @@ const EarlyOutReport = () => {
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(1)}
-                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50"
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50"
                 >
                   First
                 </button>
@@ -476,7 +450,7 @@ const EarlyOutReport = () => {
                 >
                   <GrPrevious />
                 </button>
-                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm lg:text-base 3xl:text-xl">
+                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm xl:text-base ">
                   {currentPage}
                 </div>
                 <button
@@ -489,7 +463,7 @@ const EarlyOutReport = () => {
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(totalPages)}
-                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm lg:text-base 3xl:text-xl font-medium disabled:opacity-50"
+                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50"
                 >
                   Last
                 </button>
@@ -524,7 +498,7 @@ const EarlyOutReport = () => {
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
-                    <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+                    <h2 className="text-xl  3xl:text-4xl font-bold text-gray-900">
                       {selectedItem.employee} Early Out Details
                     </h2>
                     <button
@@ -590,7 +564,7 @@ const EarlyOutReport = () => {
                     <div>
                       <p className={labelStyle}>Status</p>
                       <p
-                        className={`py-1 px-3 w-fit rounded lg:text-lg 3xl:text-xl font-semibold border ${selectedItem.intime && selectedItem.outtime ? "bg-green-100 text-green-700 border-green-200" : "bg-red-100 text-red-700 border-red-200"}`}
+                        className={`py-1 px-3 w-fit rounded xl:text-lg  font-semibold border ${selectedItem.intime && selectedItem.outtime ? "bg-green-100 text-green-700 border-green-200" : "bg-red-100 text-red-700 border-red-200"}`}
                       >
                         {selectedItem.intime && selectedItem.outtime
                           ? "Normal Shift"

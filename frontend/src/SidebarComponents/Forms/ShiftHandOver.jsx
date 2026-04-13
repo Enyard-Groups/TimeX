@@ -24,15 +24,11 @@ const ShiftHandOver = () => {
   const [requestData, setRequestData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [editId, setEditId] = useState(null);
   const [showDateSpinner, setShowDateSpinner] = useState(false);
   const [showInTimePicker, setShowInTimePicker] = useState(false);
   const [showOutTimePicker, setShowOutTimePicker] = useState(false);
-
-  const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
-  const labelStyle =
-    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const defaultFormData = {
     school_name: "",
@@ -72,6 +68,7 @@ const ShiftHandOver = () => {
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(API_URL);
       // Backend returns date/time as strings, need to convert to Date objects for pickers
       const data = response.data.map((item) => ({
@@ -85,6 +82,8 @@ const ShiftHandOver = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to fetch data");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -288,7 +287,7 @@ const ShiftHandOver = () => {
     <div className="mb-6 max-w-[1920px] mx-auto">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+        <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl  font-semibold text-gray-900">
           <FaAngleRight className="text-blue-500 text-base" />
           <span className="text-gray-500">Forms</span>
           <FaAngleRight className="text-blue-500 text-base" />
@@ -308,7 +307,7 @@ const ShiftHandOver = () => {
                 setFormData(defaultFormData);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -322,7 +321,7 @@ const ShiftHandOver = () => {
           <div className="p-6 border-b border-blue-100/30">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
-                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <label className="text-sm xl:text-base  font-medium text-gray-600">
                   Show
                 </label>
                 <select
@@ -331,7 +330,7 @@ const ShiftHandOver = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -339,7 +338,7 @@ const ShiftHandOver = () => {
                     </option>
                   ))}
                 </select>
-                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <span className="text-sm xl:text-base  font-medium text-gray-600">
                   entries
                 </span>
               </div>
@@ -376,7 +375,7 @@ const ShiftHandOver = () => {
             className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+            <table className="w-full text-[17px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-blue-100/50">
                   <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
@@ -400,7 +399,19 @@ const ShiftHandOver = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentrequestData.length === 0 ? (
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      className="px-4 py-12 text-center text-gray-500"
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        <span>Loading...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : currentrequestData.length === 0 ? (
                   <tr>
                     <td
                       colSpan="6"
@@ -449,18 +460,18 @@ const ShiftHandOver = () => {
                               /* View Logic */ setMode("view");
                               setOpenModal(true);
                             }}
-                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-blue-500 hover:text-blue-700 xl:text-xl  cursor-pointer transition-all"
                           />
                           <FaPen
                             onClick={() => {
                               /* Edit Logic */ setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-green-500 hover:text-green-700 xl:text-xl  cursor-pointer transition-all"
                           />
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-red-500 hover:text-red-700 xl:text-xl  cursor-pointer transition-all"
                           />
                         </div>
                       </td>
@@ -474,7 +485,7 @@ const ShiftHandOver = () => {
           {/* Pagination Footer */}
           {/* Pagination */}
           <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-            <span className="text-sm lg:text-base 3xl:text-xl text-gray-600">
+            <span className="text-sm xl:text-base  text-gray-600">
               Showing{" "}
               <span className="text-gray-900 font-semibold">
                 {requestData.length === 0 ? "0" : startIndex + 1}
@@ -546,7 +557,7 @@ const ShiftHandOver = () => {
             style={{ scrollbarWidth: "none" }}
           >
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
-              <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+              <h2 className="text-xl   font-bold text-gray-900">
                 {mode === "view"
                   ? "Handover Record Details"
                   : mode === "edit"
@@ -570,7 +581,7 @@ const ShiftHandOver = () => {
                 <div className="grid sm:grid-cols-2 gap-8 mt-4 mb-8">
                   <div className="flex flex-row items-center gap-4">
                     <label
-                      className={`whitespace-nowrap font-bold text-gray-700 lg:text-lg 3xl:text-2xl`}
+                      className={`whitespace-nowrap font-bold text-gray-700 xl:text-base `}
                     >
                       School Name
                     </label>
@@ -580,11 +591,11 @@ const ShiftHandOver = () => {
                       value={formData.school_name}
                       onChange={handleChange}
                       disabled={mode === "view"}
-                      className="w-full border-b-2 border-gray-200 focus:border-blue-500 px-2 py-1 outline-none lg:text-lg 3xl:text-2xl transition-all"
+                      className="w-full border-b-2 border-gray-200 focus:border-blue-500 px-2 py-1 outline-none xl:text-base  transition-all"
                     />
                   </div>
                   <div className="flex flex-row items-center gap-4 relative">
-                    <label className="font-bold text-gray-700 lg:text-lg 3xl:text-2xl">
+                    <label className="font-bold text-gray-700 xl:text-base ">
                       Date
                     </label>
                     <input
@@ -596,7 +607,7 @@ const ShiftHandOver = () => {
                       readOnly
                       disabled={mode === "view"}
                       placeholder="dd/mm/yyyy"
-                      className="w-full border-b-2 border-gray-200 focus:border-blue-500 px-2 py-1 outline-none lg:text-lg 3xl:text-2xl transition-all cursor-pointer"
+                      className="w-full border-b-2 border-gray-200 focus:border-blue-500 px-2 py-1 outline-none xl:text-base  transition-all cursor-pointer"
                     />
                     {showDateSpinner && (
                       <div className="absolute z-10 top-12">
@@ -617,131 +628,121 @@ const ShiftHandOver = () => {
                 </p>
 
                 {/* Shift Timings Table */}
-                <div className=" rounded-xl border border-gray-200 mb-8 shadow-sm">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="bg-slate-100 text-gray-700">
-                        <th className="p-3 border border-gray-200 text-center font-bold lg:text-lg 3xl:text-2xl">
-                          Shift Detail
-                        </th>
-                        <th className="p-3 border border-gray-200 text-center font-bold lg:text-lg 3xl:text-2xl">
-                          Outgoing Party
-                        </th>
-                        <th className="p-3 border border-gray-200 text-center font-bold lg:text-lg 3xl:text-2xl">
-                          Incoming Party
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td className="p-3 border border-gray-200 font-bold bg-slate-50/50 text-gray-600">
-                          Handover Timing
-                        </td>
-                        <td className="p-3 border border-gray-200 relative group">
-                          <div
-                            className="cursor-pointer  text-center font-mono lg:text-xl text-blue-600 hover:bg-blue-50 p-2 rounded transition-all"
-                            onClick={() =>
-                              mode !== "view" && setShowOutTimePicker(true)
-                            }
-                          >
-                            {formData.time_out
-                              ? formData.time_out.toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: false,
-                              })
-                              : "HH:MM:SS"}
-                          </div>
-                          {showOutTimePicker && (
-                            <SpinnerTimePicker
-                              value={formData.time_out}
-                              onChange={(d) =>
-                                setFormData({ ...formData, time_out: d })
-                              }
-                              onClose={() => setShowOutTimePicker(false)}
-                            />
-                          )}
-                        </td>
-                        <td className="p-3 border border-gray-200 relative group">
-                          <div
-                            className="cursor-pointer text-center font-mono lg:text-xl text-blue-600 hover:bg-blue-50 p-2 rounded transition-all"
-                            onClick={() =>
-                              mode !== "view" && setShowInTimePicker(true)
-                            }
-                          >
-                            {formData.time_in
-                              ? formData.time_in.toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: false,
-                              })
-                              : "HH:MM:SS"}
-                          </div>
-                          {showInTimePicker && (
-                            <SpinnerTimePicker
-                              value={formData.time_in}
-                              onChange={(d) =>
-                                setFormData({ ...formData, time_in: d })
-                              }
-                              onClose={() => setShowInTimePicker(false)}
-                            />
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="p-3 border border-gray-200 font-bold bg-slate-50/50 text-gray-600">
-                          Guard Name
-                        </td>
-                        <td className="p-3 border border-gray-200">
-                          <input
-                            type="text"
-                            name="guard_out"
-                            value={formData.guard_out}
-                            onChange={handleChange}
-                            disabled={mode === "view"}
-                            className="w-full text-center outline-none focus:bg-blue-50 py-1"
-                          />
-                        </td>
-                        <td className="p-3 border border-gray-200">
-                          <input
-                            type="text"
-                            name="guard_in"
-                            value={formData.guard_in}
-                            onChange={handleChange}
-                            disabled={mode === "view"}
-                            className="w-full text-center outline-none focus:bg-blue-50 py-1"
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="p-3 border border-gray-200 font-bold bg-slate-50/50 text-gray-600">
-                          ID Card Number
-                        </td>
-                        <td className="p-3 border border-gray-200">
-                          <input
-                            type="number"
-                            name="id_out"
-                            value={formData.id_out}
-                            onChange={handleChange}
-                            disabled={mode === "view"}
-                            className="w-full text-center outline-none focus:bg-blue-50 py-1"
-                            placeholder="Numbers only"
-                          />
-                        </td>
-                        <td className="p-3 border border-gray-200">
-                          <input
-                            type="number"
-                            name="id_in"
-                            value={formData.id_in}
-                            onChange={handleChange}
-                            disabled={mode === "view"}
-                            className="w-full text-center outline-none focus:bg-blue-50 py-1"
-                            placeholder="Numbers only"
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                <div className="rounded-xl border border-gray-200 mb-8 shadow-sm overflow-hidden">
+                  <div className="hidden md:grid grid-cols-3 bg-slate-100 text-gray-700 border-b border-gray-200">
+                    <div className="p-2 border-r border-gray-200 text-center font-bold xl:text-lg ">
+                      Shift Detail
+                    </div>
+                    <div className="p-2 border-r border-gray-200 text-center font-bold xl:text-lg ">
+                      Outgoing Party
+                    </div>
+                    <div className="p-2 text-center font-bold xl:text-lg ">
+                      Incoming Party
+                    </div>
+                  </div>
+
+                  {/* Row 1: Handover Timing */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-200">
+                    <div className="p-2 bg-slate-50 md:bg-slate-50/50 font-bold text-gray-600 border-b md:border-b-0 md:border-r text-center border-gray-200 text-sm md:text-base">
+                      Handover Timing
+                    </div>
+                    <div className="p-3 md:p-2 border-b md:border-b-0 md:border-r border-gray-200 flex flex-col md:block">
+                      <span className="md:hidden text-[10px] uppercase text-center text-gray-400 font-bold mb-1">
+                        Outgoing
+                      </span>
+                      <div
+                        className="cursor-pointer text-center font-mono text-lg md:text-xl text-blue-600 hover:bg-blue-50 p-1 rounded"
+                        onClick={() =>
+                          mode !== "view" && setShowOutTimePicker(true)
+                        }
+                      >
+                        {formData.time_out
+                          ? formData.time_out.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            })
+                          : "HH:MM:SS"}
+                      </div>
+                    </div>
+                    <div className="p-3 md:p-2 flex flex-col md:block">
+                      <span className="md:hidden text-[10px] uppercase text-center text-gray-400 font-bold mb-1">
+                        Incoming
+                      </span>
+                      <div
+                        className="cursor-pointer text-center font-mono text-lg md:text-xl text-blue-600 hover:bg-blue-50 p-1 rounded"
+                        onClick={() =>
+                          mode !== "view" && setShowInTimePicker(true)
+                        }
+                      >
+                        {formData.time_in
+                          ? formData.time_in.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            })
+                          : "HH:MM:SS"}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Row 2: Guard Name */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-200">
+                    <div className="p-2 bg-slate-50 md:bg-slate-50/50 font-bold text-gray-600 border-b md:border-b-0 md:border-r text-center border-gray-200 text-sm md:text-base">
+                      Guard Name
+                    </div>
+                    <div className="p-2 border-b md:border-b-0 md:border-r border-gray-200">
+                      <input
+                        type="text"
+                        placeholder="Outgoing Name"
+                        name="guard_out"
+                        value={formData.guard_out}
+                        onChange={handleChange}
+                        disabled={mode === "view"}
+                        className="w-full text-center outline-none focus:bg-blue-50 py-1"
+                      />
+                    </div>
+                    <div className="p-2">
+                      <input
+                        type="text"
+                        placeholder="Incoming Name"
+                        name="guard_in"
+                        value={formData.guard_in}
+                        onChange={handleChange}
+                        disabled={mode === "view"}
+                        className="w-full text-center outline-none focus:bg-blue-50 py-1"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Row 3: ID Card Number */}
+                  <div className="grid grid-cols-1 md:grid-cols-3">
+                    <div className="p-2 bg-slate-50 md:bg-slate-50/50 font-bold text-gray-600 border-b md:border-b-0 md:border-r text-center border-gray-200 text-sm md:text-base">
+                      ID Card Number
+                    </div>
+                    <div className="p-2 border-b md:border-b-0 md:border-r border-gray-200">
+                      <input
+                        type="number"
+                        placeholder="ID Out"
+                        name="id_out"
+                        value={formData.id_out}
+                        onChange={handleChange}
+                        disabled={mode === "view"}
+                        className="w-full text-center outline-none focus:bg-blue-50 py-1"
+                      />
+                    </div>
+                    <div className="p-2">
+                      <input
+                        type="number"
+                        placeholder="ID In"
+                        name="id_in"
+                        value={formData.id_in}
+                        onChange={handleChange}
+                        disabled={mode === "view"}
+                        className="w-full text-center outline-none focus:bg-blue-50 py-1"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Description/Remarks Table */}
@@ -752,10 +753,10 @@ const ShiftHandOver = () => {
                   <table className="w-full border-collapse">
                     <thead>
                       <tr className="bg-slate-100">
-                        <th className="p-3 border border-gray-200 text-left font-bold lg:text-lg 3xl:text-2xl w-1/2">
+                        <th className="p-3 border border-gray-200 text-left font-bold xl:text-lg  w-1/2">
                           Key Description Items
                         </th>
-                        <th className="p-3 border border-gray-200 text-left font-bold lg:text-lg 3xl:text-2xl w-1/2">
+                        <th className="p-3 border border-gray-200 text-left font-bold xl:text-lg  w-1/2">
                           Detailed Remarks
                         </th>
                       </tr>
@@ -790,10 +791,10 @@ const ShiftHandOver = () => {
                   <table className="w-full border-collapse">
                     <thead>
                       <tr className="bg-slate-100">
-                        <th className="p-3 border border-gray-200 text-left font-bold lg:text-lg 3xl:text-2xl">
+                        <th className="p-3 border border-gray-200 text-left font-bold xl:text-lg ">
                           Security Equipment Assets
                         </th>
-                        <th className="p-3 border border-gray-200 text-left font-bold lg:text-lg 3xl:text-2xl">
+                        <th className="p-3 border border-gray-200 text-left font-bold xl:text-lg ">
                           Status Assessment / Notes
                         </th>
                       </tr>
@@ -827,7 +828,7 @@ const ShiftHandOver = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
                   <div className="flex justify-center">
                     <div>
-                      <label className="block text-sm lg:text-base font-bold text-gray-500 uppercase tracking-widest mb-4 text-center">
+                      <label className="block text-sm xl:text-base font-bold text-gray-500 uppercase tracking-widest mb-4 text-center">
                         Prepared By (Outgoing Party)
                       </label>
                       <div className=" flex flex-col">
@@ -976,7 +977,7 @@ const ShiftHandOver = () => {
 
                   <div className="flex justify-center">
                     <div>
-                      <label className="block text-sm lg:text-base font-bold text-gray-500 uppercase tracking-widest mb-4 text-center">
+                      <label className="block text-sm xl:text-base font-bold text-gray-500 uppercase tracking-widest mb-4 text-center">
                         Acknowledged By (Incoming Party)
                       </label>
                       <div className=" flex justify-center ">
@@ -1128,7 +1129,7 @@ const ShiftHandOver = () => {
                   <div className="flex justify-end mt-12 pb-6 border-t pt-8">
                     <button
                       onClick={handleSubmit}
-                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-3 rounded-xl font-bold lg:text-xl shadow-xl hover:shadow-blue-200 hover:-translate-y-1 transition-all"
+                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-3 rounded-xl font-bold xl:text-xl shadow-xl hover:shadow-blue-200 hover:-translate-y-1 transition-all"
                     >
                       Complete Handover
                     </button>

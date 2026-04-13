@@ -25,7 +25,7 @@ const Forms = ({ user }) => {
               isformsActive ? activeClass : hoverClass
             }`}
           >
-            <div className="flex items-center gap-4 text-[18px] xl:text-[21px]">
+            <div className="flex items-center gap-4 text-[16px] ">
               <LuClipboardList />
               <span>Forms</span>
             </div>
@@ -38,7 +38,7 @@ const Forms = ({ user }) => {
 
           {/* Sub Menu */}
           {openForms && (
-            <div className="mt-2 flex flex-col pl-10 gap-2 text-md xl:text-[19px]">
+            <div className="mt-2 flex flex-col pl-10 gap-2 text-[15px]">
               <NavLink
                 to="/forms/monthly-fire-safety-inspections"
                 className={({ isActive }) =>

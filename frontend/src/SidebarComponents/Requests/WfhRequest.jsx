@@ -285,7 +285,7 @@ const WfhRequest = () => {
   };
 
   const inputStyle =
-    "w-full bg-white text-sm xl:text-lg border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm";
+    "w-full bg-white text-sm xl:text-base border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm";
   const labelStyle =
     "text-sm xl:text-base font-semibold text-gray-700 mb-2 block";
 
@@ -391,7 +391,7 @@ const WfhRequest = () => {
           className="overflow-x-auto min-h-[350px]"
           style={{ scrollbarWidth: "none" }}
         >
-          <table className="w-full text-[16px] xl:text-[20px] text-gray-700">
+          <table className="w-full text-[17px] text-gray-700">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
                 <th className="px-6 py-3 text-center font-semibold text-gray-700">

@@ -29,11 +29,11 @@ const VisitorBooking = () => {
   const [editId, setEditId] = useState(null);
   const [showCicpaExpiryPicker, setShowCicpaExpiryPicker] = useState(false);
   const [showIdExpiryPicker, setShowIdExpiryPicker] = useState(false);
+  const [employees, setEmployees] = useState([]);
   const now = new Date();
   const today = now.toLocaleDateString("en-GB").split("/").join("/");
   const currentTime = now.toTimeString().slice(0, 8);
 
-  const [companyOptions, setCompanyOptions] = useState([]);
   const [formData, setFormData] = useState({
     searchType: "Mobile no.",
     searchValue: "",
@@ -42,7 +42,6 @@ const VisitorBooking = () => {
     visit_date: today,
     visit_time: currentTime,
     company: "",
-    company_name: "",
     mobile_no: "",
     point_of_contact: "",
     email: "",
@@ -135,7 +134,7 @@ const VisitorBooking = () => {
       const mapped = (Array.isArray(payload) ? payload : []).map((v) => ({
         ...v,
         vDateTime: `${v.visit_date} (${v.visit_time})`,
-        organization: v.company_name || v.company || "N/A", // Default if blank
+        organization: v.company || "N/A", // Default if blank
         meetingPerson: v.point_of_contact || "N/A",
         // Carry over other fields if present in DB
         visitorCode: `VS-${v.id}`,
@@ -147,20 +146,20 @@ const VisitorBooking = () => {
     }
   };
 
-  const fetchCompanies = async () => {
+  const fetchEmployees = async () => {
     try {
-      const res = await axios.get(`${API_BASE}/companies`, {
+      const res = await axios.get("http://localhost:3000/api/employee", {
         headers: getHeaders(),
       });
-      setCompanyOptions(res.data || []);
+      setEmployees(res.data || []);
     } catch (error) {
-      console.error("Failed to fetch companies", error);
+      console.error("Failed to fetch employees", error);
     }
   };
 
   useEffect(() => {
     fetchVisitors();
-    fetchCompanies();
+    fetchEmployees();
   }, []);
 
   const filteredVisitors = visitors.filter((visitor) =>
@@ -251,7 +250,6 @@ const VisitorBooking = () => {
         visit_date: today,
         visit_time: currentTime,
         company: "",
-        company_name: "",
         mobile_no: "",
         point_of_contact: "",
         email: "",
@@ -458,7 +456,7 @@ const VisitorBooking = () => {
             className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+            <table className="w-full text-[17px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-blue-100/50">
                   <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
@@ -757,11 +755,13 @@ const VisitorBooking = () => {
                       required
                     />
                   </div>
-                  <SearchDropdown
+                   <SearchDropdown
                     label="F1 Point of Contact"
                     name="point_of_contact"
                     value={formData.point_of_contact}
-                    options={["Name 1", "Name 2"]}
+                    options={employees}
+                    labelKey="full_name"
+                    valueKey="full_name"
                     formData={formData}
                     setFormData={setFormData}
                     inputStyle={inputStyle}
@@ -820,7 +820,7 @@ const VisitorBooking = () => {
                       name="cicpa_expiry_date"
                       value={formData.cicpa_expiry_date}
                       onClick={() =>
-                        !mode === "view" && setShowCicpaExpiryPicker(true)
+                        mode !== "view" && setShowCicpaExpiryPicker(true)
                       }
                       readOnly
                       disabled={mode === "view"}
@@ -889,7 +889,7 @@ const VisitorBooking = () => {
                         name="id_expiry_date"
                         value={formData.id_expiry_date}
                         onClick={() =>
-                          !mode === "view" && setShowIdExpiryPicker(true)
+                          mode !== "view" && setShowIdExpiryPicker(true)
                         }
                         readOnly
                         disabled={mode === "view"}

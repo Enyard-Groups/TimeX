@@ -256,7 +256,8 @@ export const deleteLeaveRequest = async (req, res) => {
 // Claim Report
 export const getClaimReport = async (req, res) => {
   try {
-    const { company_id, employee_id, from_date, to_date, status } = req.query;
+    const { company_id, company_enrollment_id, from_date, to_date, status } = req.query;
+    console.log(req.query);
 
     const conditions = [];
     const params = [];
@@ -265,8 +266,8 @@ export const getClaimReport = async (req, res) => {
       params.push(company_id);
       conditions.push(`e.company = CAST($${params.length} AS int)`);
     }
-    if (employee_id) {
-      params.push(employee_id);
+    if (company_enrollment_id) {
+      params.push(company_enrollment_id);
       conditions.push(`cr.employee_id = $${params.length}`);
     }
     if (from_date) {
@@ -591,7 +592,8 @@ export const deleteTravelRequest = async (req, res) => {
 // WFH Report
 export const getWfhReport = async (req, res) => {
   try {
-    const { company_id, employee_id, from_date, to_date, status } = req.query;
+    const { company_id, company_enrollment_id, from_date, to_date, status } = req.query;
+    console.log(req.query);
 
     const conditions = [];
     const params = [];
@@ -600,8 +602,8 @@ export const getWfhReport = async (req, res) => {
       params.push(company_id);
       conditions.push(`e.company = CAST($${params.length} AS int)`);
     }
-    if (employee_id) {
-      params.push(employee_id);
+    if (company_enrollment_id) {
+      params.push(company_enrollment_id);
       conditions.push(`w.employee_id = $${params.length}`);
     }
     if (from_date) {
@@ -759,7 +761,8 @@ export const deleteWfhRequest = async (req, res) => {
 // Manual Entry Report
 export const getManualEntryReport = async (req, res) => {
   try {
-    const { company_id, employee_id, status, location, designation_id, from_date, to_date } = req.query;
+    const { company_id, company_enrollment_id, status, location, designation_id, from_date, to_date } = req.query;
+    console.log(req.query);
 
     const conditions = [];
     const params = [];
@@ -768,8 +771,8 @@ export const getManualEntryReport = async (req, res) => {
       params.push(company_id);
       conditions.push(`c.id = $${params.length}`);
     }
-    if (employee_id) {
-      params.push(employee_id);
+    if (company_enrollment_id) {
+      params.push(company_enrollment_id);
       conditions.push(`m.employee_id = $${params.length}`);
     }
     if (location) {

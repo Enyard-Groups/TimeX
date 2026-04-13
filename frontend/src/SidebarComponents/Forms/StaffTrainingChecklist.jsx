@@ -25,12 +25,15 @@ const StaffTrainingChecklist = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [showDateSpinner, setShowDateSpinner] = useState(false);
+  const [employees, setEmployees] = useState([]);
+  const [locations, setLocations] = useState([]);
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-lg 3xl:text-xl rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
   const labelStyle =
-    "text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base  focus:outline-none font-semibold text-gray-700 mb-2 block";
 
   const defaultFormData = {
     employee_name: "",
@@ -101,18 +104,49 @@ const StaffTrainingChecklist = () => {
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(API_URL);
       setRequestData(response.data);
       console.log(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to fetch data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchOptions = async () => {
+    try {
+      const [empRes, locRes] = await Promise.all([
+        axios.get("http://localhost:3000/api/employee"),
+        axios.get("http://localhost:3000/api/master/geofencing"),
+      ]);
+      setEmployees(empRes.data);
+      setLocations(locRes.data);
+    } catch (error) {
+      console.error("Error fetching options:", error);
     }
   };
 
   useEffect(() => {
     fetchData();
+    fetchOptions();
   }, []);
+
+  useEffect(() => {
+    if (formData.employee_name && mode !== "view") {
+      const selectedEmp = employees.find(
+        (emp) => emp.full_name === formData.employee_name
+      );
+      if (selectedEmp) {
+        setFormData((prev) => ({
+          ...prev,
+          enrollment_id: selectedEmp.company_enrollment_id || "",
+        }));
+      }
+    }
+  }, [formData.employee_name, employees]);
 
   const data = {
     Safety_Familiarisation: [
@@ -418,7 +452,7 @@ const StaffTrainingChecklist = () => {
     <div className="mb-6 max-w-[1920px] mx-auto">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900">
+        <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl  font-semibold text-gray-900">
           <FaAngleRight className="text-blue-500 text-base" />
           <span className="text-gray-500">Forms</span>
           <FaAngleRight className="text-blue-500 text-base" />
@@ -438,7 +472,7 @@ const StaffTrainingChecklist = () => {
                 setFormData(defaultFormData);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -452,7 +486,7 @@ const StaffTrainingChecklist = () => {
           <div className="p-6 border-b border-blue-100/30">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
-                <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <label className="text-sm xl:text-base  font-medium text-gray-600">
                   Show
                 </label>
                 <select
@@ -461,7 +495,7 @@ const StaffTrainingChecklist = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm lg:text-base 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -469,7 +503,7 @@ const StaffTrainingChecklist = () => {
                     </option>
                   ))}
                 </select>
-                <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+                <span className="text-sm xl:text-base  font-medium text-gray-600">
                   entries
                 </span>
               </div>
@@ -481,21 +515,21 @@ const StaffTrainingChecklist = () => {
                     className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 p-2.5 rounded-lg transition-all"
                     title="Copy"
                   >
-                    <GoCopy className="text-lg lg:text-xl 3xl:text-3xl" />
+                    <GoCopy className="text-lg xl:text-xl " />
                   </button>
                   <button
                     onClick={handleExcel}
                     className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 p-2.5 rounded-lg transition-all"
                     title="Excel"
                   >
-                    <FaFileExcel className="text-lg lg:text-xl 3xl:text-3xl" />
+                    <FaFileExcel className="text-lg xl:text-xl " />
                   </button>
                   <button
                     onClick={handlePDF}
                     className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 p-2.5 rounded-lg transition-all"
                     title="PDF"
                   >
-                    <FaFilePdf className="text-lg lg:text-xl 3xl:text-3xl" />
+                    <FaFilePdf className="text-lg xl:text-xl " />
                   </button>
                 </div>
               </div>
@@ -506,7 +540,7 @@ const StaffTrainingChecklist = () => {
             className="overflow-x-auto min-h-[350px]"
             style={{ scrollbarWidth: "none" }}
           >
-            <table className="w-full text-[16px] lg:text-[18px] 3xl:text-[22px]">
+            <table className="w-full text-[17px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-blue-100/50">
                   <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
@@ -530,7 +564,19 @@ const StaffTrainingChecklist = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentrequestData.length === 0 ? (
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      className="px-4 py-12 text-center text-gray-500"
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        <span>Loading...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : currentrequestData.length === 0 ? (
                   <tr>
                     <td
                       colSpan="6"
@@ -567,18 +613,18 @@ const StaffTrainingChecklist = () => {
                               /* View logic */ setMode("view");
                               setOpenModal(true);
                             }}
-                            className="text-blue-500 hover:text-blue-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-blue-500 hover:text-blue-700 xl:text-xl  cursor-pointer transition-all"
                           />
                           <FaPen
                             onClick={() => {
                               /* Edit logic */ setMode("edit");
                               setOpenModal(true);
                             }}
-                            className="text-green-500 hover:text-green-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-green-500 hover:text-green-700 xl:text-xl  cursor-pointer transition-all"
                           />
                           <MdDeleteForever
                             onClick={() => handleDelete(item.id)}
-                            className="text-red-500 hover:text-red-700 lg:text-xl 3xl:text-3xl cursor-pointer transition-all"
+                            className="text-red-500 hover:text-red-700 xl:text-xl  cursor-pointer transition-all"
                           />
                         </div>
                       </td>
@@ -591,7 +637,7 @@ const StaffTrainingChecklist = () => {
 
           {/* Pagination */}
           <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-            <span className="text-sm lg:text-base 3xl:text-xl text-gray-600">
+            <span className="text-sm xl:text-base  text-gray-600">
               Showing{" "}
               <span className="text-gray-900 font-semibold">
                 {requestData.length === 0 ? "0" : startIndex + 1}
@@ -663,7 +709,7 @@ const StaffTrainingChecklist = () => {
             style={{ scrollbarWidth: "none" }}
           >
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
-              <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
+              <h2 className="text-xl   font-bold text-gray-900">
                 {mode === "view"
                   ? "Checklist Details"
                   : mode === "edit"
@@ -680,19 +726,21 @@ const StaffTrainingChecklist = () => {
 
             <div className="border p-6 rounded-xl border-gray-400/20 shadow-sm bg-white">
               <div
-                className="max-h-[75vh] overflow-y-auto pr-2 text-sm lg:text-base 3xl:text-xl"
+                className="max-h-[75vh] overflow-y-auto pr-2 text-sm xl:text-base "
                 style={{ scrollbarWidth: "none" }}
               >
                 {/* Form Top Section */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700  block">
+                    <label className="text-sm xl:text-base  focus:outline-none font-semibold text-gray-700  block">
                       Staff Full Name <span className="text-red-500">*</span>
                     </label>
                     <SearchDropdown
                       name="employee_name"
                       value={formData.employee_name}
-                      options={["Employee 1", "Employee 2"]}
+                      options={employees}
+                      labelKey="full_name"
+                      valueKey="full_name"
                       formData={formData}
                       setFormData={setFormData}
                       disabled={mode === "view"}
@@ -713,13 +761,17 @@ const StaffTrainingChecklist = () => {
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className={labelStyle}>Trainer Name</label>
-                    <input
+                    <SearchDropdown
                       name="trainer_name"
                       value={formData.trainer_name}
-                      onChange={handleChange}
-                      className={inputStyle}
+                      options={employees}
+                      labelKey="full_name"
+                      valueKey="full_name"
+                      formData={formData}
+                      setFormData={setFormData}
                       disabled={mode === "view"}
-                      placeholder="Enter trainer name"
+                      inputStyle={inputStyle}
+                      labelStyle={labelStyle}
                     />
                   </div>
                   <div className="flex flex-col gap-2 relative">
@@ -761,13 +813,15 @@ const StaffTrainingChecklist = () => {
                     />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm lg:text-base 3xl:text-xl focus:outline-none font-semibold text-gray-700  block">
+                    <label className="text-sm xl:text-base  focus:outline-none font-semibold text-gray-700  block">
                       Location Name
                     </label>
                     <SearchDropdown
                       name="location"
                       value={formData.location}
-                      options={["Location 1", "Location 2"]}
+                      options={locations}
+                      labelKey="name"
+                      valueKey="name"
                       formData={formData}
                       setFormData={setFormData}
                       disabled={mode === "view"}
@@ -782,7 +836,7 @@ const StaffTrainingChecklist = () => {
                   <h4 className="font-bold text-blue-900 mb-3 underline">
                     Assessment Criteria Notes:
                   </h4>
-                  <div className="grid md:grid-cols-2 gap-8 text-sm lg:text-base 3xl:text-lg text-blue-800">
+                  <div className="grid md:grid-cols-2 gap-8 text-sm xl:text-base  text-blue-800">
                     <div>
                       <p className="mb-2">
                         <b>Training Status:</b> Acknowledgment that staff has
@@ -806,82 +860,88 @@ const StaffTrainingChecklist = () => {
                 {Object.entries(data).map(([key, value], index) => (
                   <div
                     key={key}
-                    className="mb-10 rounded-2xl border border-gray-200 shadow-sm"
+                    className="mb-10 rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
                   >
-                    <table className="w-full border-collapse">
-                      <thead>
-                        <tr className="bg-slate-100 text-gray-700">
-                          <th className="p-4 border-b border-gray-200 w-16 text-center font-bold">
-                            #{index + 1}
-                          </th>
-                          <th className="p-4 border-b border-gray-200 text-center font-bold uppercase tracking-wider">
-                            {key}
-                          </th>
-                          <th className="p-4 border-b border-gray-200 w-1/4 text-center font-bold">
-                            Training Status
-                          </th>
-                          <th className="p-4 border-b border-gray-200 w-1/4 text-center font-bold">
-                            Assessment Level
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {value.map((item, i) => (
-                          <tr
-                            key={item.name}
-                            className="hover:bg-slate-50 transition-colors"
-                          >
-                            <td className="p-4 border-b border-gray-100 text-center text-gray-400 font-mono">
-                              {index + 1}.{i + 1}
-                            </td>
-                            <td className="p-4 border-b border-gray-100 font-medium text-gray-700">
-                              {item.label}
-                            </td>
-                            <td className="p-2 border-b border-gray-100">
-                              <SearchDropdown
-                                name={`${item.name}_status`}
-                                value={formData[`${item.name}_status`]}
-                                displayValue={
-                                  formData[`${item.name}_status`] || "Select"
-                                }
-                                options={["Completed (√)", "Incompleted (x)"]}
-                                formData={formData}
-                                inputStyle={inputStyle}
-                                setFormData={setFormData}
-                                disabled={mode === "view"}
-                              />
-                            </td>
-                            <td className="p-2 border-b border-gray-100">
-                              <SearchDropdown
-                                name={`${item.name}_level`}
-                                value={formData[`${item.name}_level`]}
-                                displayValue={
-                                  formData[`${item.name}_level`] || "Select"
-                                }
-                                options={[
-                                  "Excellent",
-                                  "Very Good",
-                                  "Good",
-                                  "Fair",
-                                  "Poor",
-                                ]}
-                                formData={formData}
-                                inputStyle={inputStyle}
-                                setFormData={setFormData}
-                                disabled={mode === "view"}
-                              />
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                    <div className="hidden md:grid grid-cols-[64px_1fr_25%_25%] bg-slate-100 text-gray-700 font-bold border-b border-gray-200">
+                      <div className="p-4 text-center">#{index + 1}</div>
+                      <div className="p-4 uppercase tracking-wider">{key}</div>
+                      <div className="p-4 text-center">Training Status</div>
+                      <div className="p-4 text-center">Assessment Level</div>
+                    </div>
+
+                    {/* Table Body / Mobile Cards */}
+                    <div className="flex flex-col">
+                      {value.map((item, i) => (
+                        <div
+                          key={item.name}
+                          className="flex flex-col md:grid md:grid-cols-[64px_1fr_25%_25%] border-b border-gray-100 last:border-0 hover:bg-slate-50 transition-colors"
+                        >
+                          {/* Index Row: On mobile, acts as a sub-header */}
+                          <div className="p-2 md:p-4 bg-slate-50 md:bg-transparent text-center text-gray-400 font-mono text-xs md:text-base border-b md:border-b-0">
+                            {index + 1}.{i + 1}
+                          </div>
+
+                          {/* Label Row */}
+                          <div className="p-3 md:p-4 font-medium text-gray-700 text-sm md:text-base border-b md:border-b-0">
+                            <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1">
+                              Task
+                            </span>
+                            {item.label}
+                          </div>
+
+                          {/* Training Status Dropdown */}
+                          <div className="p-3 md:p-2 border-b md:border-b-0">
+                            <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1 px-1">
+                              Training Status
+                            </span>
+                            <SearchDropdown
+                              name={`${item.name}_status`}
+                              value={formData[`${item.name}_status`]}
+                              displayValue={
+                                formData[`${item.name}_status`] || "Select"
+                              }
+                              options={["Completed (√)", "Incompleted (x)"]}
+                              formData={formData}
+                              inputStyle={inputStyle}
+                              setFormData={setFormData}
+                              disabled={mode === "view"}
+                            />
+                          </div>
+
+                          {/* Assessment Level Dropdown */}
+                          <div className="p-3 md:p-2">
+                            <span className="md:hidden text-[10px] uppercase text-gray-400 block mb-1 px-1">
+                              Assessment Level
+                            </span>
+                            <SearchDropdown
+                              name={`${item.name}_level`}
+                              value={formData[`${item.name}_level`]}
+                              displayValue={
+                                formData[`${item.name}_level`] || "Select"
+                              }
+                              options={[
+                                "Excellent",
+                                "Very Good",
+                                "Good",
+                                "Fair",
+                                "Poor",
+                              ]}
+                              formData={formData}
+                              inputStyle={inputStyle}
+                              setFormData={setFormData}
+                              disabled={mode === "view"}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
                   <div className="flex justify-center">
                     <div>
-                      <label className="block text-sm lg:text-base font-bold text-gray-500 uppercase tracking-widest mb-4 text-center">
+                      <label className="block text-sm xl:text-base font-bold text-gray-500 uppercase tracking-widest mb-4 text-center">
                         Signature by Trainee
                       </label>
                       <div className="flex flex-col">
@@ -1029,7 +1089,7 @@ const StaffTrainingChecklist = () => {
 
                   <div className="flex justify-center">
                     <div>
-                      <label className="block text-sm lg:text-base font-bold text-gray-500 uppercase tracking-widest mb-4 text-center">
+                      <label className="block text-sm xl:text-base font-bold text-gray-500 uppercase tracking-widest mb-4 text-center">
                         Signature by Trainee
                       </label>
                       <div className="flex flex-col">
@@ -1181,7 +1241,7 @@ const StaffTrainingChecklist = () => {
                   <div className="flex justify-end mt-12 pb-6 border-t pt-8">
                     <button
                       onClick={handleSubmit}
-                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-3 rounded-xl font-bold lg:text-xl shadow-xl hover:shadow-blue-200 hover:-translate-y-1 transition-all"
+                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-16 py-3 rounded-xl font-bold xl:text-xl shadow-xl hover:shadow-blue-200 hover:-translate-y-1 transition-all"
                     >
                       Save Training Record
                     </button>
