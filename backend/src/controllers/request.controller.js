@@ -841,10 +841,20 @@ export const getManualRequests = async (req, res) => {
   try {
     const { status } = req.query;
     let query = `
-      SELECT m.*, e.full_name as employee_name, gm.name as location_name 
+      SELECT 
+        m.*, 
+        e.full_name             AS employee_name,
+        e.type                  AS employee_category,
+        gm.name                 AS location_name,
+        c.name                  AS company_name,
+        ds.name                 AS designation,
+        d.name                  AS department
       FROM manual_entry_requests m
-      LEFT JOIN employees e ON m.employee_id = e.company_enrollment_id
+      LEFT JOIN employees e     ON m.employee_id = e.company_enrollment_id
       LEFT JOIN geofencing_masters gm ON m.location = gm.id
+      LEFT JOIN companies c     ON e.company = CAST(c.id AS int)
+      LEFT JOIN designations ds  ON e.designation_id = ds.id
+      LEFT JOIN departments d    ON e.department_id = d.id
     `;
     const params = [];
     if (status) {

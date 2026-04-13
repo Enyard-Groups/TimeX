@@ -3,14 +3,47 @@ import SpinnerDatePicker from "../SpinnerDatePicker";
 import toast from "react-hot-toast";
 import { FaAngleRight } from "react-icons/fa";
 import * as XLSX from "xlsx";
+import axios from "axios";
+import SearchDropdown from "../SearchDropdown";
+
+const API_BASE = "http://localhost:3000/api";
 
 const ShiftUpload = () => {
   const [formData, setFormData] = useState({
     frompunch: "",
     topunch: "",
-    location: "",
-    employee: "",
   });
+
+  const [locationOptions, setLocationOptions] = useState([]);
+  const [employeeOptions, setEmployeeOptions] = useState([]);
+  const [shiftMasters, setShiftMasters] = useState([]);
+
+  const getHeaders = () => {
+    const token = localStorage.getItem("token");
+    return {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  };
+
+  const fetchData = async () => {
+    try {
+      const [locRes, empRes, shiftRes] = await Promise.all([
+        axios.get(`${API_BASE}/master/geofencing`, { headers: getHeaders() }),
+        axios.get(`${API_BASE}/employee`, { headers: getHeaders() }),
+        axios.get(`${API_BASE}/master/shifts`, { headers: getHeaders() }),
+      ]);
+      setLocationOptions(locRes.data || []);
+      setEmployeeOptions(empRes.data || []);
+      setShiftMasters(shiftRes.data || []);
+    } catch (error) {
+      console.error("Failed to fetch masters:", error);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
 
   const inputStyle =
     "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2  rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm";
@@ -80,23 +113,47 @@ const ShiftUpload = () => {
       selectedFile.name.endsWith(".xls")
     ) {
       const reader = new FileReader();
-
       reader.readAsArrayBuffer(selectedFile);
-
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         const data = new Uint8Array(e.target.result);
-
         const workbook = XLSX.read(data, { type: "array" });
-
         const sheetName = workbook.SheetNames[0];
-
         const worksheet = workbook.Sheets[sheetName];
-
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-        console.log("Excel Data:", jsonData);
+        // Process jsonData for Bulk Assign
+        // Expected Excel Format: columns for 'Employee ID', 'Location', and dates 'dd/mm/yyyy'
+        try {
+          const bulkData = jsonData.map((row) => {
+            const employee_enrollment_id = row["Employee ID"] || row["EmployeeID"];
+            const location_name = row["Location"];
+            const location = locationOptions.find((l) => l.name === location_name);
+            const roster = {};
+            
+            Object.keys(row).forEach(key => {
+              if (key.includes("/")) { // Assuming dates are in dd/mm/yyyy
+                const shiftName = row[key];
+                const shift = shiftMasters.find(s => s.shift_name === shiftName);
+                if (shift) roster[key] = shift.id;
+                else if (shiftName === "Off") roster[key] = "Off";
+              }
+            });
 
-        toast.success("Excel uploaded successfully");
+            return {
+              employee_enrollment_id,
+              location_id: location?.id,
+              roster
+            };
+          });
+
+          await axios.post(`${API_BASE}/shift-planner/bulk-assign`, { rosters: bulkData }, { headers: getHeaders() });
+          toast.success("Shift roster uploaded successfully");
+          setPreview(null);
+          setSelectedFile(null);
+        } catch (error) {
+          console.error("Bulk upload failed:", error);
+          toast.error("Format error or server error");
+        }
       };
     }
 
@@ -113,8 +170,8 @@ const ShiftUpload = () => {
     }
 
     const row = {
-      Location: formData.location,
-      Employee: formData.employee,
+      "Employee ID": "",
+      Location: "",
     };
 
     dateRange.forEach((date) => {
@@ -204,12 +261,12 @@ const ShiftUpload = () => {
           </div>
 
           {/* Download Button */}
-          <div className="flex items-end">
+          <div className="flex items-end mb-1">
             <button
               onClick={handleDownload}
-              className="w-full md:w-fit bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 xl:text-lg hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
             >
-              Download
+              Download Template
             </button>
           </div>
         </div>
@@ -223,12 +280,12 @@ const ShiftUpload = () => {
               type="file"
               accept=".xlsx,.xls,image/*"
               onChange={handleFileChange}
-              className=" w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+              className=" w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
             />
 
             <button
               onClick={handleUpload}
-              className="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-semibold px-5 py-2 xl:text-base rounded-lg shadow hover:shadow-md transition-all whitespace-nowrap"
+              className="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-semibold px-5 py-2 rounded-lg shadow hover:shadow-md transition-all whitespace-nowrap"
             >
               Import File
             </button>

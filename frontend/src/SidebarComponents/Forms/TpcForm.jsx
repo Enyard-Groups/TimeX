@@ -20,6 +20,19 @@ import SignPad from "./SignPad";
 import SpinnerTimePicker from "../SpinnerTimePicker";
 
 const TpcForm = () => {
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "—";
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return dateStr;
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    } catch (e) {
+      return dateStr;
+    }
+  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState([]);
@@ -151,11 +164,11 @@ const TpcForm = () => {
   };
 
   const handleCopy = () => {
-    const header = ["Employee Name", "Location", "EnrollmentID"].join("\t");
+    const header = ["Employee Name", "Location", "EnrollmentID", "Date"].join("\t");
 
     const rows = requestData
       .map((item) => {
-        return [item.employee_name, item.location, item.enrollment_id].join(
+        return [item.employee_name, item.location, item.enrollment_id, formatDate(item.date)].join(
           "\t",
         );
       })
@@ -172,6 +185,7 @@ const TpcForm = () => {
       EmployeeName: item.employee_name,
       EnrollmentID: item.enrollment_id,
       Location: item.location,
+      Date: formatDate(item.date),
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -185,12 +199,12 @@ const TpcForm = () => {
   const handlePDF = () => {
     const doc = new jsPDF("landscape");
 
-    const tableColumn = ["Employee Name", "EnrollmentID", "Location"];
+    const tableColumn = ["Employee Name", "EnrollmentID", "Location", "Date"];
 
     const tableRows = [];
 
     requestData.forEach((item) => {
-      const row = [item.employee_name, item.enrollment_id, item.location];
+      const row = [item.employee_name, item.enrollment_id, item.location, formatDate(item.date)];
 
       tableRows.push(row);
     });
@@ -310,6 +324,9 @@ const TpcForm = () => {
                   <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Enrollment Id
                   </th>
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
+                    Date
+                  </th>
                   <th className="py-3 px-6 font-semibold text-gray-700">
                     Action
                   </th>
@@ -352,8 +369,11 @@ const TpcForm = () => {
                       <td className="py-3 px-6 hidden md:table-cell text-gray-600">
                         {item.location}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono text-center">
                         {item.enrollment_id}
+                      </td>
+                      <td className="py-3 px-6 text-gray-600 text-center">
+                        {formatDate(item.date)}
                       </td>
                       <td className="py-3 px-6 text-center">
                         <div className="flex justify-center gap-3">
@@ -545,7 +565,7 @@ const TpcForm = () => {
                         <label className={labelStyle}>Request Date</label>
                         <input
                           name="date"
-                          value={formData.date || ""}
+                          value={formatDate(formData.date) || ""}
                           onClick={() =>
                             mode !== "view" && setShowDateSpinner(true)
                           }

@@ -19,6 +19,19 @@ import axios from "axios";
 const API_URL = "http://localhost:3000/api/form/shiftHandOver";
 
 const ShiftHandOver = () => {
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "—";
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return dateStr;
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    } catch (e) {
+      return dateStr;
+    }
+  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState([]);
@@ -230,7 +243,7 @@ const ShiftHandOver = () => {
           item.school_name,
           item.time_in ? item.time_in.toLocaleTimeString() : "",
           item.time_out ? item.time_out.toLocaleTimeString() : "",
-          item.date,
+          formatDate(item.date),
         ].join("\t");
       })
       .join("\n");
@@ -246,7 +259,7 @@ const ShiftHandOver = () => {
       SchoolName: item.school_name,
       TimeIn: item.time_in ? item.time_in.toLocaleTimeString() : "",
       TimeOut: item.time_out ? item.time_out.toLocaleTimeString() : "",
-      Date: item.date,
+      Date: formatDate(item.date),
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -269,7 +282,7 @@ const ShiftHandOver = () => {
         item.school_name,
         item.time_in ? item.time_in.toLocaleTimeString() : "",
         item.time_out ? item.time_out.toLocaleTimeString() : "",
-        item.date,
+        formatDate(item.date),
       ];
 
       tableRows.push(row);
@@ -451,7 +464,7 @@ const ShiftHandOver = () => {
                           : "-"}
                       </td>
                       <td className="py-3 px-6 hidden lg:table-cell text-gray-600 text-center">
-                        {item.date}
+                        {formatDate(item.date)}
                       </td>
                       <td className="py-3 px-6">
                         <div className="flex justify-center gap-3">
@@ -600,7 +613,7 @@ const ShiftHandOver = () => {
                     </label>
                     <input
                       name="date"
-                      value={formData.date || ""}
+                      value={formatDate(formData.date) || ""}
                       onClick={() =>
                         mode !== "view" && setShowDateSpinner(true)
                       }

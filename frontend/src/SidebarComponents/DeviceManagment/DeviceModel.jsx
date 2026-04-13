@@ -54,6 +54,7 @@ const DeviceModel = () => {
       const mapped = (Array.isArray(payload) ? payload : []).map((d) => ({
         ...d,
         company_id: d.company,
+        company_name: d.company_name || d.company || "",
         active:
           d.active === true ||
           d.active === 1 ||
@@ -375,7 +376,7 @@ const DeviceModel = () => {
                       {item.code || "-"}
                     </td>
                     <td className="px-6 py-2 text-center hidden lg:table-cell text-gray-600">
-                      {item.company || "-"}
+                      {item.company_name || item.company || "-"}
                     </td>
                     <td className="px-4 py-3 hidden lg:table-cell text-center">
                       <div className="flex justify-center">

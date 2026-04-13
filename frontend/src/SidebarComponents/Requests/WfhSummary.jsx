@@ -31,13 +31,30 @@ const WfhSummary = () => {
     try {
       setLoading(true);
       const res = await axios.get(`${API_BASE}/requests/wfh`);
-      setWfhData(res.data);
+      const formattedData = (res.data || []).map((w) => ({
+        ...w,
+        start_date: formatDate(w.start_date),
+        end_date: formatDate(w.end_date),
+      }));
+      setWfhData(formattedData);
     } catch (error) {
       console.error("Failed to fetch WFH entries", error);
       toast.error("Failed to load WFH summary");
     } finally {
       setLoading(false);
     }
+  };
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    if (dateStr.includes("T")) {
+      const date = new Date(dateStr);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+    return dateStr;
   };
 
   useEffect(() => {

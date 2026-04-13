@@ -19,6 +19,32 @@ import SignPad from "./SignPad";
 const API_URL = "http://localhost:3000/api/form/incident";
 
 const IncidentAccident = () => {
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "—";
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return dateStr;
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    } catch (e) {
+      return dateStr;
+    }
+  };
+
+  const formatTime = (timeStr) => {
+    if (!timeStr) return "—";
+    if (timeStr instanceof Date) {
+      return timeStr.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+    }
+    return timeStr;
+  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [incidentData, setIncidentData] = useState([]);
@@ -197,7 +223,7 @@ const IncidentAccident = () => {
 
     const rows = filteredincidentData
       .map((item) => {
-        return [item.location, item.building, item.date_of_incident].join("\t");
+        return [item.location, item.building, formatDate(item.date_of_incident)].join("\t");
       })
       .join("\n");
 
@@ -211,7 +237,7 @@ const IncidentAccident = () => {
     const excelData = filteredincidentData.map((item) => ({
       Location: item.location,
       BuildingName: item.building,
-      Date: item.date_of_incident,
+      Date: formatDate(item.date_of_incident),
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -230,7 +256,7 @@ const IncidentAccident = () => {
     const tableRows = [];
 
     filteredincidentData.forEach((item) => {
-      const row = [item.location, item.building, item.date_of_incident];
+      const row = [item.location, item.building, formatDate(item.date_of_incident)];
 
       tableRows.push(row);
     });
@@ -387,7 +413,7 @@ const IncidentAccident = () => {
                         {startIndex + index + 1}
                       </td>
                       <td className="py-3 px-6 font-medium text-gray-900">
-                        {item.date_of_incident}
+                        {formatDate(item.date_of_incident)}
                       </td>
                       <td className="py-3 px-6 hidden md:table-cell text-gray-600">
                         {item.location}
@@ -520,7 +546,7 @@ const IncidentAccident = () => {
                     <label className={labelStyle}>Date of Incident</label>
                     <input
                       name="date_of_incident"
-                      value={formData.date_of_incident}
+                      value={formatDate(formData.date_of_incident)}
                       onClick={() =>
                         mode !== "view" && setShowDateSpinner(true)
                       }
@@ -553,13 +579,7 @@ const IncidentAccident = () => {
                       }}
                       disabled={mode === "view"}
                     >
-                      {formData.time_of_incident
-                        ? formData.time_of_incident instanceof Date
-                          ? formData.time_of_incident.toLocaleTimeString([], {
-                              hour12: false,
-                            })
-                          : formData.time_of_incident
-                        : "HH:MM:SS"}
+                      {formatTime(formData.time_of_incident) || "HH:MM:SS"}
                     </div>
                     {showTimeSpinner && (
                       <div className="absolute mt-8 ml-8 sm:ml-14 md:ml-16 lg:ml-20 ">

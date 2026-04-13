@@ -61,6 +61,18 @@ const VisitorBooking = () => {
   const labelStyle =
     "text-sm lg:text-base 3xl:text-xl font-semibold text-gray-700 mb-2 block";
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    if (dateStr.includes("T")) {
+      const date = new Date(dateStr);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+    return dateStr;
+  };
+
   const handleSearch = () => {
     const { searchType, searchValue } = formData;
 
@@ -133,7 +145,10 @@ const VisitorBooking = () => {
       // Map backend fields to frontend state format if necessary
       const mapped = (Array.isArray(payload) ? payload : []).map((v) => ({
         ...v,
-        vDateTime: `${v.visit_date} (${v.visit_time})`,
+        visit_date: formatDate(v.visit_date),
+        cicpa_expiry_date: formatDate(v.cicpa_expiry_date),
+        id_expiry_date: formatDate(v.id_expiry_date),
+        vDateTime: `${formatDate(v.visit_date)} (${v.visit_time})`,
         organization: v.company || "N/A", // Default if blank
         meetingPerson: v.point_of_contact || "N/A",
         // Carry over other fields if present in DB

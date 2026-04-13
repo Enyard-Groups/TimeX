@@ -3,6 +3,9 @@ import toast from "react-hot-toast";
 import * as XLSX from "xlsx";
 import SpinnerDatePicker from "../SpinnerDatePicker";
 import SearchDropdown from "../SearchDropdown";
+import axios from "axios";
+
+const API_BASE = "http://localhost:3000/api";
 
 const CalenderView = () => {
   const [openCalenderGrid, setOpenCalenderGrid] = useState(false);
@@ -14,8 +17,41 @@ const CalenderView = () => {
     startdate: "",
     enddate: "",
     location: "",
+    location_id: "",
     employee: "",
+    employee_id: "",
   });
+
+  const [locationOptions, setLocationOptions] = useState([]);
+  const [employeeOptions, setEmployeeOptions] = useState([]);
+  const [shiftMasters, setShiftMasters] = useState([]);
+
+  const getHeaders = () => {
+    const token = localStorage.getItem("token");
+    return {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  };
+
+  const fetchData = async () => {
+    try {
+      const [locRes, empRes, shiftRes] = await Promise.all([
+        axios.get(`${API_BASE}/master/geofencing`, { headers: getHeaders() }),
+        axios.get(`${API_BASE}/employee`, { headers: getHeaders() }),
+        axios.get(`${API_BASE}/master/shifts`, { headers: getHeaders() }),
+      ]);
+      setLocationOptions(locRes.data || []);
+      setEmployeeOptions(empRes.data || []);
+      setShiftMasters(shiftRes.data || []);
+    } catch (error) {
+      console.error("Failed to fetch Master data:", error);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleShiftChange = (date, value) => {
     const key = date.toLocaleDateString("en-GB");
@@ -42,9 +78,9 @@ const CalenderView = () => {
   };
 
   const handlecalendergrid = () => {
-    const { startdate, enddate, location, employee } = formData;
+    const { startdate, enddate, location_id, employee_id } = formData;
 
-    if (!startdate || !enddate || !location || !employee) {
+    if (!startdate || !enddate || !location_id || !employee_id) {
       toast.error("Please fill all required fields");
       return; // stop execution
     }
@@ -61,6 +97,30 @@ const CalenderView = () => {
       return;
     }
 
+    // Fetch existing roster
+    const fetchExistingRoster = async () => {
+      try {
+        const res = await axios.get(`${API_BASE}/shift-planner`, {
+          params: {
+            employee_id: employee_id,
+            start_date: `${sy}-${sm.padStart(2, "0")}-${sd.padStart(2, "0")}`,
+            end_date: `${ey}-${em.padStart(2, "0")}-${ed.padStart(2, "0")}`,
+          },
+          headers: getHeaders(),
+        });
+        const existing = {};
+        res.data.forEach((r) => {
+          const date = new Date(r.roster_date);
+          const key = date.toLocaleDateString("en-GB");
+          existing[key] = r.shift_id || "Off";
+        });
+        setShifts(existing);
+      } catch (error) {
+        console.error("Failed to fetch existing roster:", error);
+      }
+    };
+
+    fetchExistingRoster();
     setOpenCalenderGrid(!openCalenderGrid);
   };
 
@@ -92,34 +152,43 @@ const CalenderView = () => {
   // find first day index (0 = Sun, 1 = Mon...)
   const startDayIndex = startDateObj ? startDateObj.getDay() : 0;
 
-  const handleAssign = () => {
+  const handleAssign = async () => {
     const totalDates = dateRange.length;
-
-    const selectedShifts = Object.values(shifts).filter(
-      (shift) => shift !== "",
-    );
+    const selectedShifts = Object.values(shifts).filter((shift) => shift !== "");
 
     if (selectedShifts.length !== totalDates) {
       toast.error("Please select shift for all dates");
       return;
     }
 
-    toast.success("Roster Assigned Successfully");
+    try {
+      const payload = {
+        employee_id: formData.employee_id,
+        location_id: formData.location_id,
+        roster: shifts, // Backend expects { "dd/mm/yyyy": shift_id }
+      };
 
-    console.log({
-      employee: formData.employee,
-      location: formData.location,
-      roster: shifts,
-    });
+      await axios.post(`${API_BASE}/shift-planner/assign`, payload, {
+        headers: getHeaders(),
+      });
 
-    setFormData({
-      startdate: "",
-      enddate: "",
-      location: "",
-      employee: "",
-    });
+      toast.success("Roster Assigned Successfully");
 
-    setOpenCalenderGrid(false);
+      setFormData({
+        startdate: "",
+        enddate: "",
+        location: "",
+        location_id: "",
+        employee: "",
+        employee_id: "",
+      });
+
+      setShifts({});
+      setOpenCalenderGrid(false);
+    } catch (error) {
+      console.error("Failed to assign roster:", error);
+      toast.error(error.response?.data?.message || "Failed to assign roster");
+    }
   };
 
   const handleDownload = () => {
@@ -224,12 +293,16 @@ const CalenderView = () => {
                   Location <span className="text-red-500">*</span>
                 </>
               }
-              name="location"
-              value={formData.location}
-              options={["Head Office"]}
+              name="location_id"
+              value={formData.location_id}
+              displayValue={formData.location}
+              options={locationOptions}
+              labelKey="name"
+              valueKey="id"
+              labelName="location"
               formData={formData}
               setFormData={setFormData}
-              inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2  rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+              inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
               labelStyle="text-base font-semibold text-gray-700 mb-2 block"
             />
           </div>
@@ -242,15 +315,16 @@ const CalenderView = () => {
                   Employee <span className="text-red-500">*</span>
                 </>
               }
-              name="employee"
-              value={formData.employee}
-              options={[
-                "Employee 1",
-                "Employee 2",
-                "Employee 3",
-                "Employee 4",
-                "Employee 5",
-              ]}
+              name="employee_id"
+              value={formData.employee_id}
+              displayValue={formData.employee}
+              options={employeeOptions.map((e) => ({
+                id: e.id,
+                name: `${e.full_name} (${e.company_enrollment_id})`,
+              }))}
+              labelKey="name"
+              valueKey="id"
+              labelName="employee"
               formData={formData}
               setFormData={setFormData}
               inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
@@ -314,11 +388,12 @@ const CalenderView = () => {
                       onChange={(e) => handleShiftChange(date, e.target.value)}
                     >
                       <option value="">Select Shift</option>
-                      <option>General Shift</option>
-                      <option>Night Shift</option>
-                      <option>RS</option>
-                      <option>AL</option>
-                      <option>Off</option>
+                      {shiftMasters.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.shift_name}
+                        </option>
+                      ))}
+                      <option value="Off">Weekly Off</option>
                     </select>
                   </div>
                 ))}

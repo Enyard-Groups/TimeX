@@ -8,13 +8,14 @@ import { FaEye, FaFileExcel } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import { RxCross2 } from "react-icons/rx";
+import axios from "axios";
+import SearchDropdown from "../SearchDropdown";
+import SpinnerDatePicker from "../SpinnerDatePicker";
+
+const API_BASE = "http://localhost:3000/api";
 
 const EmployeeView = () => {
-  const [employee] = useState([
-    { name: "Sharma", id: "000971001", role: "Senior Banking Officer" },
-    { name: "Drishti", id: "000971004", role: "Banking Officer" },
-  ]);
-
+  const [employee, setEmployee] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,10 +24,62 @@ const EmployeeView = () => {
   const [loading, setLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
-  const filteredemployee = employee.filter(
+  const [openMassModal, setOpenMassModal] = useState(false);
+  const [shifts, setShifts] = useState({});
+  const [shiftMasters, setShiftMasters] = useState([]);
+  const [locationOptions, setLocationOptions] = useState([]);
+  const [showstartSpinner, setshowstartSpinner] = useState(false);
+  const [showendSpinner, setshowendSpinner] = useState(false);
+
+  const [formData, setFormData] = useState({
+    startdate: "",
+    enddate: "",
+    location_id: "",
+    location: "",
+  });
+
+  const getHeaders = () => {
+    const token = localStorage.getItem("token");
+    return {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  };
+
+  const fetchEmployees = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`${API_BASE}/employee`, { headers: getHeaders() });
+      setEmployee(res.data || []);
+    } catch (error) {
+      console.error("Failed to fetch employees:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMasters = async () => {
+    try {
+      const [shiftRes, locRes] = await Promise.all([
+        axios.get(`${API_BASE}/master/shifts`, { headers: getHeaders() }),
+        axios.get(`${API_BASE}/master/geofencing`, { headers: getHeaders() }),
+      ]);
+      setShiftMasters(shiftRes.data || []);
+      setLocationOptions(locRes.data || []);
+    } catch (error) {
+      console.error("Failed to fetch masters:", error);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchEmployees();
+    fetchMasters();
+  }, []);
+
+  const filteredemployee = (employee || []).filter(
     (x) =>
-      x.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.role.toLowerCase().startsWith(searchTerm.toLowerCase()),
+      (x.full_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+      (x.designation_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
   const handleSelect = (id) => {
@@ -51,7 +104,7 @@ const EmployeeView = () => {
 
     const rows = filteredemployee
       .map((item, index) => {
-        return [index + 1, item.name, item.id, item.role].join("\t");
+        return [index + 1, item.full_name, item.company_enrollment_id, item.designation_name].join("\t");
       })
       .join("\n");
 
@@ -64,9 +117,9 @@ const EmployeeView = () => {
   const handleExcel = () => {
     const excelData = filteredemployee.map((item, index) => ({
       "SL.NO": index + 1,
-      Name: item.name,
-      EnrollmentID: item.id,
-      Designation: item.role,
+      Name: item.full_name,
+      EnrollmentID: item.company_enrollment_id,
+      Designation: item.designation_name,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -85,8 +138,7 @@ const EmployeeView = () => {
     const tableRows = [];
 
     filteredemployee.forEach((item, index) => {
-      const row = [index + 1, item.name, item.id, item.role];
-
+      const row = [index + 1, item.full_name, item.company_enrollment_id, item.designation_name];
       tableRows.push(row);
     });
 
@@ -103,14 +155,68 @@ const EmployeeView = () => {
       toast.error("Please select employees");
       return;
     }
+    setOpenMassModal(true);
+  };
 
-    const selectedData = employee.filter((emp) =>
-      selectedEmployees.includes(emp.id),
-    );
+  const handleApplyMassRoster = async () => {
+    const { startdate, enddate, location_id } = formData;
+    if (!startdate || !enddate || !location_id) {
+      toast.error("Please fill all fields");
+      return;
+    }
 
-    console.log("Mass Update Employees:", selectedData);
+    const parseDate = (dateStr) => {
+      const [d, m, y] = dateStr.split("/");
+      return new Date(y, m - 1, d);
+    };
 
-    toast.success(`${selectedEmployees.length} employees selected for update`);
+    const start = parseDate(startdate);
+    const end = parseDate(enddate);
+
+    if (end < start) {
+      toast.error("End date cannot be before start date");
+      return;
+    }
+
+    const dates = [];
+    let current = new Date(start);
+    while (current <= end) {
+      dates.push(current.toLocaleDateString("en-GB"));
+      current.setDate(current.getDate() + 1);
+    }
+
+    const rosterData = {};
+    dates.forEach((d) => {
+      rosterData[d] = shifts[d] || "";
+    });
+
+    if (Object.values(rosterData).some((v) => v === "")) {
+      toast.error("Please select shifts for all dates");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await Promise.all(
+        selectedEmployees.map((empId) =>
+          axios.post(
+            `${API_BASE}/shift-planner/assign`,
+            { employee_id: empId, location_id, roster: rosterData },
+            { headers: getHeaders() }
+          )
+        )
+      );
+      toast.success("Roster assigned to selected employees");
+      setOpenMassModal(false);
+      setSelectedEmployees([]);
+      setShifts({});
+      setFormData({ startdate: "", enddate: "", location_id: "", location: "" });
+    } catch (error) {
+      console.error("Failed to assign roster:", error);
+      toast.error("Failed to assign roster");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -259,12 +365,12 @@ const EmployeeView = () => {
                     <td className="px-4 py-2 text-center hidden sm:table-cell">
                       {index + 1}
                     </td>
-                    <td className="px-4 py-2 text-center">{item.name}</td>
+                    <td className="px-4 py-2 text-center">{item.full_name}</td>
                     <td className="px-4 py-2 text-center hidden md:table-cell">
-                      {item.id}
+                      {item.company_enrollment_id}
                     </td>
                     <td className="px-4 py-2 text-center  hidden md:table-cell">
-                      {item.role}
+                      {item.designation_name}
                     </td>
                     <td className="px-6 py-3 text-center flex justify-center mt-1">
                       <FaEye
@@ -369,24 +475,129 @@ const EmployeeView = () => {
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 text-lg font-semibold">
-                  {selectedItem.name.charAt(0)}
+                  {selectedItem.full_name?.charAt(0)}
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">
-                    {selectedItem.name}
+                    {selectedItem.full_name}
                   </h3>
                 </div>
               </div>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <p className="text-sm text-gray-700">
                   <span className="font-medium">Enrollment ID:</span>{" "}
-                  {selectedItem.id}
+                  {selectedItem.company_enrollment_id}
                 </p>
                 <p className="text-sm text-gray-700 mt-2">
                   <span className="font-medium">Designation:</span>{" "}
-                  {selectedItem.role}
+                  {selectedItem.designation_name}
                 </p>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {openMassModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl border border-blue-100 w-full max-w-4xl p-8 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Mass Shift Update</h2>
+              <button onClick={() => setOpenMassModal(false)}><RxCross2 className="text-2xl" /></button>
+            </div>
+
+            <div className="grid grid-cols-3 gap-6 mb-6">
+              <div>
+                <label className="text-sm font-semibold text-gray-700 mb-1 block">Start Date</label>
+                <input
+                  value={formData.startdate}
+                  onChange={(e) => setFormData({ ...formData, startdate: e.target.value })}
+                  onClick={() => setshowstartSpinner(true)}
+                  className="w-full border rounded-lg p-2"
+                  placeholder="dd/mm/yyyy"
+                />
+                {showstartSpinner && (
+                  <SpinnerDatePicker
+                    value={formData.startdate}
+                    onChange={(d) => setFormData({ ...formData, startdate: d })}
+                    onClose={() => setshowstartSpinner(false)}
+                  />
+                )}
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-700 mb-1 block">End Date</label>
+                <input
+                  value={formData.enddate}
+                  onChange={(e) => setFormData({ ...formData, enddate: e.target.value })}
+                  onClick={() => setshowendSpinner(true)}
+                  className="w-full border rounded-lg p-2"
+                  placeholder="dd/mm/yyyy"
+                />
+                {showendSpinner && (
+                  <SpinnerDatePicker
+                    value={formData.enddate}
+                    onChange={(d) => setFormData({ ...formData, enddate: d })}
+                    onClose={() => setshowendSpinner(false)}
+                  />
+                )}
+              </div>
+              <div>
+                <SearchDropdown
+                  label="Location"
+                  name="location_id"
+                  value={formData.location_id}
+                  displayValue={formData.location}
+                  options={locationOptions}
+                  labelKey="name"
+                  valueKey="id"
+                  labelName="location"
+                  formData={formData}
+                  setFormData={setFormData}
+                  inputStyle="w-full border rounded-lg p-2"
+                  labelStyle="text-sm font-semibold text-gray-700 mb-1 block"
+                />
+              </div>
+            </div>
+
+            {formData.startdate && formData.enddate && (
+              <div className="grid grid-cols-4 gap-4 mb-6">
+                {(() => {
+                  const [sd, sm, sy] = formData.startdate.split("/");
+                  const [ed, em, ey] = formData.enddate.split("/");
+                  const start = new Date(sy, sm - 1, sd);
+                  const end = new Date(ey, em - 1, ed);
+                  const dates = [];
+                  let curr = new Date(start);
+                  while (curr <= end) {
+                    dates.push(new Date(curr));
+                    curr.setDate(curr.getDate() + 1);
+                  }
+                  return dates.map((d) => {
+                    const k = d.toLocaleDateString("en-GB");
+                    return (
+                      <div key={k} className="p-2 border rounded-lg bg-gray-50">
+                        <p className="text-xs font-bold text-blue-600 mb-1">{k}</p>
+                        <select
+                          className="w-full text-xs p-1 border rounded"
+                          value={shifts[k] || ""}
+                          onChange={(e) => setShifts({ ...shifts, [k]: e.target.value })}
+                        >
+                          <option value="">Shift</option>
+                          {shiftMasters.map((s) => (
+                            <option key={s.id} value={s.id}>{s.shift_name}</option>
+                          ))}
+                          <option value="Off">Off</option>
+                        </select>
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+            )}
+
+            <div className="flex justify-end gap-4 mt-8">
+              <button onClick={() => setOpenMassModal(false)} className="px-6 py-2 border rounded-lg font-semibold">Cancel</button>
+              <button onClick={handleApplyMassRoster} className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold">Apply to {selectedEmployees.length} Employees</button>
             </div>
           </div>
         </div>

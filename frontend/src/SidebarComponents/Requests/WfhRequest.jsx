@@ -51,7 +51,13 @@ const WfhRequest = () => {
         axios.get(`${API_BASE}/requests/wfh`),
         axios.get(`${API_BASE}/employee`),
       ]);
-      setWfh(wfhRes.data);
+      const formattedWfh = (wfhRes.data || []).map((w) => ({
+        ...w,
+        start_date: formatDate(w.start_date),
+        end_date: formatDate(w.end_date),
+        request_date: formatDate(w.request_date),
+      }));
+      setWfh(formattedWfh);
       setEmployeeOptions(empRes.data);
     } catch (error) {
       console.error("Failed to fetch data", error);
@@ -288,6 +294,18 @@ const WfhRequest = () => {
     "w-full bg-white text-sm xl:text-base border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm";
   const labelStyle =
     "text-sm xl:text-base font-semibold text-gray-700 mb-2 block";
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    if (dateStr.includes("T")) {
+      const date = new Date(dateStr);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+    return dateStr;
+  };
 
   return (
     <div className="mb-6">

@@ -50,7 +50,12 @@ const BusinessTravelRequest = () => {
         axios.get(`${API_BASE}/requests/travel`),
         axios.get(`${API_BASE}/employee`),
       ]);
-      setTravel(travelRes.data);
+      const formattedTravel = (travelRes.data || []).map((t) => ({
+        ...t,
+        start_date: formatDate(t.start_date),
+        end_date: formatDate(t.end_date),
+      }));
+      setTravel(formattedTravel);
       setEmployeeOptions(empRes.data);
     } catch (error) {
       console.error("Failed to fetch data", error);
@@ -247,6 +252,18 @@ const BusinessTravelRequest = () => {
   const inputStyle =
     "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
   const labelStyle = "text-lg font-medium mb-1 block";
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    if (dateStr.includes("T")) {
+      const date = new Date(dateStr);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+    return dateStr;
+  };
 
   return (
     <div className="mb-6">

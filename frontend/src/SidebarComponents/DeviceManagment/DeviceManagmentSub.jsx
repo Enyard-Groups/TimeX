@@ -123,7 +123,9 @@ const DeviceManagementSub = () => {
       (device.deviceip ?? "")
         .toLowerCase()
         .startsWith(searchTerm.toLowerCase()) ||
-      (device.company ?? "").toLowerCase().startsWith(searchTerm.toLowerCase()),
+      (device.company_name ?? device.company ?? "")
+        .toLowerCase()
+        .startsWith(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -230,7 +232,7 @@ const DeviceManagementSub = () => {
     const rows = filteredDevicemanagement
       .map(
         (d, i) =>
-          `${i + 1}\t${d.deviceserialno}\t${d.name}\t${d.deviceip}\t${d.isFace ? "Y" : "N"}\t${d.isFingerprint ? "Y" : "N"}\t${d.isCardNo ? "Y" : "N"}\t${d.isPinNo ? "Y" : "N"}\t${d.company}\t${d.isActive ? "Y" : "N"}`,
+          `${i + 1}\t${d.deviceserialno}\t${d.name}\t${d.deviceip}\t${d.isFace ? "Y" : "N"}\t${d.isFingerprint ? "Y" : "N"}\t${d.isCardNo ? "Y" : "N"}\t${d.isPinNo ? "Y" : "N"}\t${d.company_name || d.company}\t${d.isActive ? "Y" : "N"}`,
       )
       .join("\n");
     navigator.clipboard.writeText(header + "\n" + rows);
@@ -247,7 +249,7 @@ const DeviceManagementSub = () => {
       FingerPrint: d.isFingerprint ? "Y" : "N",
       "Card No": d.isCardNo ? "Y" : "N",
       "Pin No": d.isPinNo ? "Y" : "N",
-      Company: d.company,
+      Company: d.company_name || d.company,
       Active: d.isActive ? "Y" : "N",
     }));
     const worksheet = XLSX.utils.json_to_sheet(data);
@@ -279,7 +281,7 @@ const DeviceManagementSub = () => {
       d.isFingerprint ? "Y" : "N",
       d.isCardNo ? "Y" : "N",
       d.isPinNo ? "Y" : "N",
-      d.company,
+      d.company_name || d.company,
       d.isActive ? "Y" : "N",
     ]);
     autoTable(doc, { head: [tableColumn], body: tableRows });
@@ -502,7 +504,7 @@ const DeviceManagementSub = () => {
                       </div>
                     </td>
                     <td className="px-6 py-2 text-center hidden 2xl:table-cell text-gray-600">
-                      {item.company || "-"}
+                      {item.company_name || item.company || "-"}
                     </td>
                     <td className="px-4 py-3 hidden md:table-cell text-center">
                       <div className="flex justify-center">

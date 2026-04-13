@@ -19,6 +19,20 @@ const WfhApproval = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "—";
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return dateStr;
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    } catch (e) {
+      return dateStr;
+    }
+  };
+
   const fetchRequests = async () => {
     try {
       setLoading(true);
@@ -287,10 +301,10 @@ const WfhApproval = () => {
                       {item.employee_name}
                     </td>
                     <td className="px-4 py-2 text-center hidden md:table-cell text-gray-600 text-sm">
-                      {item.start_date}
+                      {formatDate(item.start_date)}
                     </td>
                     <td className="px-4 py-2 text-center hidden md:table-cell text-gray-600 text-sm">
-                      {item.end_date}
+                      {formatDate(item.end_date)}
                     </td>
                     <td className="px-4 py-2 text-center hidden lg:table-cell text-gray-600 max-w-xs truncate italic">
                       {item.reason || "NIL"}
@@ -413,8 +427,8 @@ const WfhApproval = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 { label: "Employee Name", value: selectedItem.employee_name },
-                { label: "From Date", value: selectedItem.start_date },
-                { label: "To Date", value: selectedItem.end_date },
+                { label: "From Date", value: formatDate(selectedItem.start_date) },
+                { label: "To Date", value: formatDate(selectedItem.end_date) },
               ].map((field, idx) => (
                 <div key={idx}>
                   <label className="text-xs xl:text-sm font-bold uppercase tracking-wider text-slate-500 mb-2 block">

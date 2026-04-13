@@ -18,6 +18,19 @@ import axios from "axios";
 const API_URL = "http://localhost:3000/api/form/passportRequest";
 
 const PassportRequest = () => {
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "—";
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return dateStr;
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    } catch (e) {
+      return dateStr;
+    }
+  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState([]);
@@ -138,7 +151,7 @@ const PassportRequest = () => {
       .map((item) => {
         return [
           item.employee_name,
-          item.request_date,
+          formatDate(item.request_date),
           item.enrollment_id,
           item.reason_for_request,
         ].join("\t");
@@ -154,7 +167,7 @@ const PassportRequest = () => {
   const handleExcel = () => {
     const excelData = requestData.map((item) => ({
       Employee: item.employee_name,
-      Date: item.request_date,
+      Date: formatDate(item.request_date),
       EnrollmentId: item.enrollment_id,
       PassportPurpose: item.reason_for_request,
     }));
@@ -182,7 +195,7 @@ const PassportRequest = () => {
     requestData.forEach((item) => {
       const row = [
         item.employee_name,
-        item.request_date,
+        formatDate(item.request_date),
         item.enrollment_id,
         item.reason_for_request,
       ];
@@ -354,7 +367,7 @@ const PassportRequest = () => {
                         {item.reason_for_request}
                       </td>
                       <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
-                        {item.request_date}
+                        {formatDate(item.request_date)}
                       </td>
                       <td className="py-3 px-6">
                         <div className="flex justify-center gap-3">
@@ -501,7 +514,7 @@ const PassportRequest = () => {
                       </label>
                       <input
                         name="request_date"
-                        value={formData.request_date || ""}
+                        value={formatDate(formData.request_date) || ""}
                         onChange={handleChange}
                         onClick={() =>
                           mode !== "view" && setShowDateSpinner(true)
@@ -546,7 +559,7 @@ const PassportRequest = () => {
                       I will return the passport to you latest by
                       <input
                         name="expected_return_date"
-                        value={formData.expected_return_date}
+                        value={formatDate(formData.expected_return_date)}
                         onChange={handleChange}
                         disabled={mode === "view"}
                         placeholder="dd/mm/yyyy"

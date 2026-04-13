@@ -52,7 +52,11 @@ const ClaimRequest = () => {
         axios.get(`${API_BASE}/employee`),
         axios.get(`${API_BASE}/master/claim-categories`),
       ]);
-      setClaims(claimsRes.data);
+      const formattedClaims = (claimsRes.data || []).map((c) => ({
+        ...c,
+        date: formatDate(c.date),
+      }));
+      setClaims(formattedClaims);
       setEmployeeOptions(empRes.data);
       setCategoryOptions(catRes.data);
     } catch (error) {
@@ -66,6 +70,18 @@ const ClaimRequest = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    if (dateStr.includes("T")) {
+      const date = new Date(dateStr);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+    return dateStr;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;

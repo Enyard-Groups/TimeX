@@ -9,16 +9,46 @@ import { FaFilePdf } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import { RxCross2 } from "react-icons/rx";
+import axios from "axios";
+
+const API_BASE = "http://localhost:3000/api";
 
 const Monitoring = () => {
-  const [monitoring] = useState([]);
+  const [monitoring, setMonitoring] = useState([]);
+  const [attendanceData, setAttendanceData] = useState({
+    total: 0,
+    present: 0,
+    absent: 0,
+    leave: 0,
+  });
 
-  const attendanceData = {
-    total: 100,
-    present: 77,
-    absent: 15,
-    leave: 8,
+  const getHeaders = () => {
+    const token = localStorage.getItem("token");
+    return {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
   };
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [logsRes, statsRes] = await Promise.all([
+        axios.get(`${API_BASE}/attendence/logs`, { headers: getHeaders() }),
+        axios.get(`${API_BASE}/attendence/stats`, { headers: getHeaders() }),
+      ]);
+      setMonitoring(logsRes.data || []);
+      setAttendanceData(statsRes.data || { total: 0, present: 0, absent: 0, leave: 0 });
+    } catch (error) {
+      console.error("Failed to fetch monitoring data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
 
   const inputStyle =
     "w-full bg-white border border-gray-200 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm";
@@ -32,8 +62,8 @@ const Monitoring = () => {
   const [loading, setLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
-  const filteredmonitoring = monitoring.filter((device) =>
-    device.employee.toLowerCase().includes(searchTerm.toLowerCase()),
+  const filteredmonitoring = monitoring.filter((item) =>
+    (item.full_name || item.employee || "").toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -63,13 +93,13 @@ const Monitoring = () => {
     const rows = filteredmonitoring
       .map(
         (d) =>
-          `${d.status}\t${d.employee}\t${d.date.toLocaleDateString()}\t${d.date.toLocaleDateString(
+          `${d.status || "Online"}\t${d.full_name || d.employee}\t${new Date(d.date || d.created_at).toLocaleDateString()}\t${new Date(d.date || d.created_at).toLocaleDateString(
             "en-US",
             { weekday: "long" },
-          )}\t${d.login}\t${d.logout}\t${calculateWH(
-            d.login,
-            d.logout,
-          )}\t${d.location}`,
+          )}\t${d.punch_time || d.login}\t${d.logout || "-"}\t${calculateWH(
+            d.punch_time || d.login,
+            d.logout || d.punch_time || "00:00:00",
+          )}\t${d.location_name || d.location}`,
       )
       .join("\n");
 
@@ -82,14 +112,14 @@ const Monitoring = () => {
   // Export Excel
   const handleExcel = () => {
     const excelData = filteredmonitoring.map((item) => ({
-      Status: item.status,
-      Employee: item.employee,
-      Date: item.date.toLocaleDateString(),
-      Day: item.date.toLocaleDateString("en-US", { weekday: "long" }),
-      Login: item.login,
-      Logout: item.logout,
-      "Working Hours": calculateWH(item.login, item.logout),
-      Location: item.location,
+      Status: item.status || "Online",
+      Employee: item.full_name || item.employee,
+      Date: new Date(item.date || item.created_at).toLocaleDateString(),
+      Day: new Date(item.date || item.created_at).toLocaleDateString("en-US", { weekday: "long" }),
+      Login: item.punch_time || item.login,
+      Logout: item.logout || "-",
+      "Working Hours": calculateWH(item.punch_time || item.login, item.logout || item.punch_time || "00:00:00"),
+      Location: item.location_name || item.location,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -140,7 +170,11 @@ const Monitoring = () => {
 
   const calculateWH = (login, logout) => {
     const toSeconds = (time) => {
-      const [h, m, s] = time.split(":").map(Number);
+      if (!time || time === "-") return 0;
+      const parts = time.split(":");
+      const h = Number(parts[0]) || 0;
+      const m = Number(parts[1]) || 0;
+      const s = Number(parts[2]) || 0;
       return h * 3600 + m * 60 + s;
     };
 
@@ -335,26 +369,26 @@ const Monitoring = () => {
                       />
                     </td>
 
-                    <td className="px-6 py-2 text-center">{item.employee}</td>
+                    <td className="px-6 py-2 text-center">{item.full_name || item.employee}</td>
                     <td className="px-6 py-2 hidden sm:table-cell text-center">
-                      {item.date.toLocaleDateString()}
+                      {new Date(item.date || item.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-2 hidden lg:table-cell text-center">
-                      {item.date.toLocaleDateString("en-US", {
+                      {new Date(item.date || item.created_at).toLocaleDateString("en-US", {
                         weekday: "long",
                       })}
                     </td>
                     <td className="px-6 py-2 hidden lg:table-cell text-center">
-                      {item.login}
+                      {item.punch_time || item.login}
                     </td>
                     <td className="px-6 py-2 hidden lg:table-cell text-center">
-                      {item.logout}
+                      {item.logout || "-"}
                     </td>
                     <td className="px-6 py-2 hidden sm:table-cell text-center">
-                      {calculateWH(item.login, item.logout)}
+                      {calculateWH(item.punch_time || item.login, item.logout || item.punch_time || "00:00:00")}
                     </td>
                     <td className="px-6 py-2 hidden lg:table-cell text-center">
-                      {item.location}
+                      {item.location_name || item.location}
                     </td>
                     {/* Action */}
                     <td className="px-4 py-2 text-center">
@@ -448,39 +482,39 @@ const Monitoring = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
               <p>
                 <p className={labelStyle}>Employee:</p>{" "}
-                <p className={inputStyle}>{selectedItem.employee}</p>
+                <p className={inputStyle}>{selectedItem.full_name || selectedItem.employee}</p>
               </p>
               <p>
                 <p className={labelStyle}>Date:</p>{" "}
                 <p className={inputStyle}>
-                  {selectedItem.date.toLocaleDateString()}
+                  {new Date(selectedItem.date || selectedItem.created_at).toLocaleDateString()}
                 </p>
               </p>
               <p>
                 <p className={labelStyle}>Day:</p>{" "}
                 <p className={inputStyle}>
-                  {selectedItem.date.toLocaleDateString("en-US", {
+                  {new Date(selectedItem.date || selectedItem.created_at).toLocaleDateString("en-US", {
                     weekday: "long",
                   })}
                 </p>
               </p>
               <p>
                 <p className={labelStyle}>Login Time:</p>{" "}
-                <p className={inputStyle}>{selectedItem.login}</p>
+                <p className={inputStyle}>{selectedItem.punch_time || selectedItem.login}</p>
               </p>
               <p>
                 <p className={labelStyle}>Logout Time:</p>{" "}
-                <p className={inputStyle}>{selectedItem.logout}</p>
+                <p className={inputStyle}>{selectedItem.logout || "-"}</p>
               </p>
               <p>
                 <p className={labelStyle}>Working Hours:</p>{" "}
                 <p className={inputStyle}>
-                  {calculateWH(selectedItem.login, selectedItem.logout)}
+                  {calculateWH(selectedItem.punch_time || selectedItem.login, selectedItem.logout || selectedItem.punch_time || "00:00:00")}
                 </p>
               </p>
               <p>
                 <p className={labelStyle}>Location:</p>{" "}
-                <p className={inputStyle}>{selectedItem.location}</p>
+                <p className={inputStyle}>{selectedItem.location_name || selectedItem.location}</p>
               </p>
               <p>
                 <p className={labelStyle}>Status:</p>{" "}

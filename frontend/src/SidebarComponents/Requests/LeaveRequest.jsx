@@ -72,6 +72,18 @@ const LeaveRequest = () => {
   const labelStyle =
     "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    if (dateStr.includes("T")) {
+      const date = new Date(dateStr);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+    return dateStr;
+  };
+
   const filteredLeave = leave.filter((x) =>
     (x.employee_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()) ||
     (x.company_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
@@ -139,7 +151,13 @@ const LeaveRequest = () => {
         axios.get(`${API_BASE}/employee`),
         axios.get(`${API_BASE}/master/leave-types`),
       ]);
-      setLeave(leaveRes.data);
+      const formattedLeave = (leaveRes.data || []).map((l) => ({
+        ...l,
+        start_date: formatDate(l.start_date),
+        end_date: formatDate(l.end_date),
+        resume_date: formatDate(l.resume_date),
+      }));
+      setLeave(formattedLeave);
       setEmployeeOptions(empRes.data);
       setLeaveTypeOptions(typeRes.data);
     } catch (error) {

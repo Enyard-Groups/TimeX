@@ -118,12 +118,12 @@ const ManualEntryRequest = () => {
           prev.map((item) =>
             item.id === editId
               ? {
-                  ...item,
-                  ...res.data,
-                  employee_name: employeeOptions.find(
-                    (e) => e.company_enrollment_id === employee_id,
-                  )?.full_name,
-                }
+                ...item,
+                ...res.data,
+                employee_name: employeeOptions.find(
+                  (e) => e.company_enrollment_id === employee_id,
+                )?.full_name,
+              }
               : item,
           ),
         );
@@ -195,8 +195,8 @@ const ManualEntryRequest = () => {
         [
           item.employee_name,
           item.location_name ||
-            locationOptions.find((l) => l.id == item.location)?.name ||
-            item.location,
+          locationOptions.find((l) => l.id == item.location)?.name ||
+          item.location,
           item.in_time ? new Date(item.in_time).toLocaleString() : "-",
           item.out_time ? new Date(item.out_time).toLocaleString() : "-",
           item.status,
@@ -239,8 +239,8 @@ const ManualEntryRequest = () => {
     const tableRows = filteredEntry.map((item) => [
       item.employee_name,
       item.location_name ||
-        locationOptions.find((l) => l.id == item.location)?.name ||
-        item.location,
+      locationOptions.find((l) => l.id == item.location)?.name ||
+      item.location,
       item.in_time ? new Date(item.in_time).toLocaleString() : "-",
       item.out_time ? new Date(item.out_time).toLocaleString() : "-",
       item.status,
@@ -252,6 +252,34 @@ const ManualEntryRequest = () => {
     });
 
     doc.save("ManualEntryData.pdf");
+  };
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "—";
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return dateStr;
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    } catch (e) {
+      return dateStr;
+    }
+  };
+
+  const formatTime = (timeStr) => {
+    if (!timeStr) return "—";
+    if (typeof timeStr === "string" && timeStr.includes(":") && !timeStr.includes("-") && !timeStr.includes("T")) {
+      return timeStr;
+    }
+    try {
+      const date = new Date(timeStr);
+      if (isNaN(date.getTime())) return timeStr;
+      return date.toLocaleTimeString([], { hour12: false });
+    } catch (e) {
+      return timeStr;
+    }
   };
 
   return (
@@ -416,20 +444,19 @@ const ManualEntryRequest = () => {
                       {item.location}
                     </td>
                     <td className="px-6 py-2.5 text-center text-gray-600 font-mono text-sm hidden md:table-cell">
-                      {item.in_time || "-"}
+                      {formatTime(item.in_time)}
                     </td>
                     <td className="px-6 py-2.5 text-center text-gray-600 font-mono text-sm hidden md:table-cell">
-                      {item.out_time || "-"}
+                      {formatTime(item.out_time)}
                     </td>
                     <td className="px-6 py-2.5 text-center hidden sm:table-cell">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs xl:text-sm font-bold ${
-                          item.status === "Approved"
+                        className={`px-3 py-1 rounded-full text-xs xl:text-sm font-bold ${item.status === "Approved"
                             ? "bg-green-100 text-green-700"
                             : item.status === "Rejected"
                               ? "bg-red-100 text-red-700"
                               : "bg-yellow-100 text-yellow-700"
-                        }`}
+                          }`}
                       >
                         {item.status}
                       </span>

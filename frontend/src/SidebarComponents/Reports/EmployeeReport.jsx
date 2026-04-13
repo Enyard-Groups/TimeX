@@ -178,11 +178,13 @@ const EmployeeReport = () => {
             <div>
               <SearchDropdown
                 label="Company"
-                name="company"
-                value={formData.company}
+                name="company_id"
+                value={formData.company_id}
+                displayValue={formData.company}
                 options={companyOptions}
                 labelKey="name"
                 valueKey="id"
+                labelName="company"
                 formData={formData}
                 setFormData={setFormData}
                 inputStyle={inputStyle}
@@ -225,11 +227,13 @@ const EmployeeReport = () => {
             <div>
               <SearchDropdown
                 label="Designation"
-                name="designation"
-                value={formData.designation}
+                name="designation_id"
+                value={formData.designation_id}
+                displayValue={formData.designation}
                 options={designationOptions}
                 labelKey="name"
                 valueKey="id"
+                labelName="designation"
                 formData={formData}
                 setFormData={setFormData}
                 inputStyle={inputStyle}

@@ -11,6 +11,7 @@ import visitorRouter from "./routes/visitor.route.js";
 import cors from "cors";
 import formRouter from "./routes/form.route.js";
 import companiesRouter from "./routes/companies.route.js";
+import shiftPlannerRouter from "./routes/shiftPlanner.route.js";
 
 
 
@@ -33,6 +34,7 @@ app.use("/api/requests", requestRouter);
 app.use("/api/visitor", visitorRouter);
 app.use("/api/form", formRouter);
 app.use("/api/companies", companiesRouter);
+app.use("/api/shift-planner", shiftPlannerRouter);
 
 
 

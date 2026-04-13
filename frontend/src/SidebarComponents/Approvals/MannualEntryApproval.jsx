@@ -11,6 +11,20 @@ const API_BASE = "http://localhost:3000/api";
 
 const MannualEntryApproval = () => {
   const [requests, setRequests] = useState([]);
+
+  const formatTime = (timeStr) => {
+    if (!timeStr) return "—";
+    if (typeof timeStr === "string" && timeStr.includes(":") && !timeStr.includes("-") && !timeStr.includes("T")) {
+      return timeStr;
+    }
+    try {
+      const date = new Date(timeStr);
+      if (isNaN(date.getTime())) return timeStr;
+      return date.toLocaleTimeString([], { hour12: false });
+    } catch (e) {
+      return timeStr;
+    }
+  };
   const [selectedIds, setSelectedIds] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
@@ -280,29 +294,19 @@ const MannualEntryApproval = () => {
                       />
                     </td>
                     <td className="px-4 py-2 text-center font-medium text-gray-800">
-                      {item.employee}
+                      {item.employee_name || "—"}
                     </td>
                     <td className="px-4 py-2 text-center hidden xl:table-cell text-gray-600">
-                      {item.location}
+                      {item.location_name || "—"}
                     </td>
                     <td className="px-4 py-2 text-center hidden md:table-cell text-gray-600">
-                      {item.intime
-                        ? new Date(item.intime).toLocaleTimeString([], {
-                            hour12: false,
-                          })
-                        : "—"}
+                      {formatTime(item.in_time)}
                     </td>
                     <td className="px-4 py-2 text-center hidden md:table-cell text-gray-600">
-                      {item.outtime
-                        ? new Date(item.outtime).toLocaleTimeString([], {
-                            hour12: false,
-                          })
-                        : "—"}
+                      {formatTime(item.out_time)}
                     </td>
                     <td className="px-4 py-2 text-center hidden sm:table-cell text-gray-500">
-                      {item.createdDate
-                        ? new Date(item.createdDate).toLocaleDateString()
-                        : "Missed"}
+                      {item.created_at ? new Date(item.created_at).toLocaleDateString() : "—"}
                     </td>
                     <td className="px-4 py-2 text-center hidden xl:table-cell text-gray-500 italic truncate">
                       {item.remarks || "—"}
@@ -415,40 +419,31 @@ const MannualEntryApproval = () => {
                 <RxCross2 className="text-2xl" />
               </button>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
-                { label: "Employee Name", value: selectedItem.employee },
-                { label: "Work Location", value: selectedItem.location },
-                { label: "Company", value: selectedItem.company || "N/A" },
+                { label: "Employee Name", value: selectedItem.employee_name || "—" },
+                { label: "Work Location", value: selectedItem.location_name || "—" },
+                { label: "Company", value: selectedItem.company_name || "N/A" },
                 {
                   label: "Designation",
                   value: selectedItem.designation || "N/A",
                 },
                 {
                   label: "Emp Category",
-                  value: selectedItem.employeeCategory || "N/A",
+                  value: selectedItem.employee_category || "N/A",
                 },
                 {
                   label: "In Time",
-                  value: selectedItem.intime
-                    ? new Date(selectedItem.intime).toLocaleTimeString([], {
-                        hour12: false,
-                      })
-                    : "No Checkin",
+                  value: formatTime(selectedItem.in_time),
                 },
                 {
                   label: "Out Time",
-                  value: selectedItem.outtime
-                    ? new Date(selectedItem.outtime).toLocaleTimeString([], {
-                        hour12: false,
-                      })
-                    : "No Checkout",
+                  value: formatTime(selectedItem.out_time),
                 },
                 {
                   label: "Created Date",
-                  value: selectedItem.createdDate
-                    ? new Date(selectedItem.createdDate).toLocaleDateString()
+                  value: selectedItem.created_at
+                    ? new Date(selectedItem.created_at).toLocaleDateString()
                     : "N/A",
                 },
                 {

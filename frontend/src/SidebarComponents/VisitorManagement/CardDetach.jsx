@@ -535,7 +535,7 @@ const CardDetach = () => {
                         {item.visitorCode}
                       </td>
                       <td className="py-3 px-6 font-medium text-gray-900 text-left">
-                        {item.visitorName}
+                        {item.visitor_name}
                       </td>
                       <td className="py-3 px-6 hidden xl:table-cell text-gray-600">
                         {item.organization}

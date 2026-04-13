@@ -20,6 +20,19 @@ import { getNames } from "country-list";
 import SignPad from "./SignPad";
 
 const LeaveApplication = () => {
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "—";
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return dateStr;
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    } catch (e) {
+      return dateStr;
+    }
+  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [leaveData, setLeaveData] = useState([]);
@@ -307,6 +320,7 @@ const LeaveApplication = () => {
       "Location",
       "Enrollment Id",
       "Designation",
+      "Date",
     ].join("\t");
 
     const rows = filteredleaveData
@@ -316,6 +330,7 @@ const LeaveApplication = () => {
           item.location,
           item.enrollmentId,
           item.designation,
+          formatDate(item.created_at || item.date),
         ].join("\t");
       })
       .join("\n");
@@ -332,6 +347,7 @@ const LeaveApplication = () => {
       Location: item.location,
       EnrollmentId: item.enrollmentId,
       Designation: item.designation,
+      Date: formatDate(item.created_at || item.date),
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -350,6 +366,7 @@ const LeaveApplication = () => {
       "Location",
       "Enrollment Id",
       "Designation",
+      "Date",
     ];
 
     const tableRows = [];
@@ -360,6 +377,7 @@ const LeaveApplication = () => {
         item.location,
         item.enrollmentId,
         item.designation,
+        formatDate(item.created_at || item.date),
       ];
 
       tableRows.push(row);
@@ -493,6 +511,9 @@ const LeaveApplication = () => {
                   <th className="py-3 px-6 hidden lg:table-cell font-semibold text-gray-700">
                     Designation
                   </th>
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
+                    Date
+                  </th>
                   <th className="py-3 px-6 font-semibold text-gray-700">
                     Action
                   </th>
@@ -540,6 +561,9 @@ const LeaveApplication = () => {
                       </td>
                       <td className="py-3 px-6 hidden lg:table-cell text-gray-600">
                         {item.designation}
+                      </td>
+                      <td className="py-3 px-6 text-gray-600 text-center">
+                        {formatDate(item.created_at || item.date)}
                       </td>
                       <td className="py-3 px-6 text-center">
                         <div className="flex justify-center gap-3">
@@ -696,7 +720,7 @@ const LeaveApplication = () => {
                     <label className={labelStyle}>Application Date</label>
                     <input
                       name="date"
-                      value={formData.date}
+                      value={formatDate(formData.date)}
                       onClick={() =>
                         mode !== "view" && setShowDateSpinner(true)
                       }
