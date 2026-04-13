@@ -26,7 +26,6 @@ const PerformanceDashboard = () => {
       icon: <FaUsers />,
       color: "from-gray-300 to-gray-500 text-gray-900",
     },
-
     {
       title: "Total Present Employees",
       value: attendanceData[attendanceData.length - 1].presentToday || 0,
