@@ -24,15 +24,40 @@ const Dashboard = () => {
   const isAdmin = user.role === "admin";
 
   const handleUpdate = () => {
-    if (password !== confirmPassword) {
-      setError("Password not match");
-    } else {
-      toast.success("Password Updated");
-      setPassword("");
-      setConfirmPassword("");
-      setError("");
-      setopenModal(false);
+    //  Remove whitespace
+    const trimmedPassword = password.trim();
+    const trimmedConfirm = confirmPassword.trim();
+
+    //  empty fields
+    if (!trimmedPassword || !trimmedConfirm) {
+      setError("All fields are required");
+      return;
     }
+
+    // Length requirement 
+    if (trimmedPassword.length < 8) {
+      setError("Password must be at least 8 characters long");
+      return;
+    }
+
+    // Regex for at least one letter and one number
+    const complexityRegex = /^(?=.*[A-Za-z])(?=.*\d).+$/;
+    if (!complexityRegex.test(trimmedPassword)) {
+      setError("Password must contain at least one letter and one number");
+      return;
+    }
+
+    // Equality Check
+    if (trimmedPassword !== trimmedConfirm) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    toast.success("Password Updated Successfully");
+    setPassword("");
+    setConfirmPassword("");
+    setError("");
+    setopenModal(false);
   };
 
   return (
@@ -64,9 +89,7 @@ const Dashboard = () => {
 
       {/* FULL SCREEN MODAL AT DASHBOARD CENTER */}
       {openModal && (
-        <div
-          className="fixed inset-0 w-screen h-screen z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-        >
+        <div className="fixed inset-0 w-screen h-screen z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div
             className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200"
             onClick={(e) => e.stopPropagation()}
