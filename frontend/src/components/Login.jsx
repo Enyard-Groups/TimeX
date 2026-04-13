@@ -100,7 +100,7 @@ const Login = () => {
               <h2 className="text-5xl font-black text-white tracking-tight mb-3">
                 Welcome Back
               </h2>
-              <p className="text-slate-400 text-lg font-light italic">
+              <p className="text-slate-400 text-base font-light italic">
                 Access your workforce dashboard.
               </p>
             </div>
