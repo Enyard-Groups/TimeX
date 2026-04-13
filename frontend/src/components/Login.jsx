@@ -141,7 +141,7 @@ const Login = () => {
               <p className="text-xs font-bold uppercase tracking-[0.4em] text-blue-400 mb-2">
                 Smart Attendance
               </p>
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight">
+              <h1 className="text-xl md:text-3xl lg:text-4xl font-bold leading-tight">
                 Simplify your <br />{" "}
                 <span className="text-blue-400">workforce</span> management.
               </h1>
