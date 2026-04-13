@@ -203,7 +203,7 @@ const LoginForm = ({
         type="text"
         value={userName}
         onChange={(e) => setUserName(e.target.value)}
-        className="w-full px-6 py-4 rounded-2xl border border-slate-800 bg-slate-900/40 text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+        className="w-full px-6 py-4 rounded-2xl border border-slate-600 bg-slate-900/40 text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
         placeholder="Enter username"
       />
     </div>
@@ -218,7 +218,7 @@ const LoginForm = ({
           type={showPassword ? "text" : "password"}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-6 py-4 rounded-2xl border border-slate-800 bg-slate-900/40 text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+          className="w-full px-6 py-4 rounded-2xl border border-slate-600 bg-slate-900/40 text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
           placeholder="••••••••"
         />
         <button
