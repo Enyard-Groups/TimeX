@@ -92,7 +92,7 @@ const Login = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
+      <div className="grid grid-cols-1  md:grid-cols-2 xl:grid-cols-3 h-screen">
         {/* DESKTOP LEFT FORM */}
         <div className="hidden md:flex justify-center items-center p-12 lg:p-20 bg-[#0f172a] z-20">
           <div className="w-full max-w-md">
@@ -119,7 +119,7 @@ const Login = () => {
         </div>
 
         {/* IMAGE SIDE (Visible on Mobile as Background) */}
-        <div className="relative h-full w-full flex items-end overflow-hidden">
+        <div className="relative h-full xl:col-span-2 w-full flex items-end overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/20 to-transparent z-10"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a] via-transparent to-transparent hidden md:block z-10"></div>
 
