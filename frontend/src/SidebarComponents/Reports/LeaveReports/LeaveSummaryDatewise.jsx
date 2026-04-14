@@ -85,7 +85,7 @@ const LeaveSummaryDatewise = () => {
       <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-          <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl 3xl:text-4xl font-semibold text-gray-900 ">
+  <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
             <FaAngleRight className="text-blue-500 text-base" />
             <span className="text-gray-500">Reports</span>
             <FaAngleRight className="text-blue-500 text-base" />
@@ -202,7 +202,7 @@ const LeaveSummaryDatewise = () => {
                       setEntriesPerPage(Number(e.target.value));
                       setCurrentPage(1);
                     }}
-                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60 transition-all"
+                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/60 transition-all"
                   >
                     {[10, 25, 50, 100].map((v) => (
                       <option key={v} value={v}>
@@ -223,7 +223,7 @@ const LeaveSummaryDatewise = () => {
                       setSearchTerm(e.target.value);
                       setCurrentPage(1);
                     }}
-                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
                   />
                 </div>
               </div>
@@ -307,11 +307,11 @@ const LeaveSummaryDatewise = () => {
 
             {/* Pagination */}
             <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-              <span className="text-sm xl:text-base  text-gray-600">
-                Showing{" "}
-                <span className="font-bold text-gray-900">
-                  {startIndex + 1}
-                </span>{" "}
+              <span className="text-sm xl:text-base text-gray-600">
+              Showing{" "}
+              <span className="text-gray-900 font-semibold">
+                {filteredleaveSummaryDatewise.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
                 to{" "}
                 <span className="font-bold text-gray-900">
                   {Math.min(endIndex, filteredleaveSummaryDatewise.length)}

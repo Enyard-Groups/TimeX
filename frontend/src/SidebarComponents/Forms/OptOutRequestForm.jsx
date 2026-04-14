@@ -127,7 +127,7 @@ const OptOutRequestForm = () => {
   useEffect(() => {
     if (formData.employee && mode !== "view") {
       const selectedEmp = employees.find(
-        (emp) => emp.full_name === formData.employee
+        (emp) => emp.full_name === formData.employee,
       );
       if (selectedEmp) {
         setFormData((prev) => ({
@@ -284,7 +284,7 @@ const OptOutRequestForm = () => {
                 setFormData(defaultFormData);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -299,7 +299,7 @@ const OptOutRequestForm = () => {
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
                 <label className="text-sm xl:text-base  font-medium text-gray-600">
-                  Show
+                  Display
                 </label>
                 <select
                   value={entriesPerPage}
@@ -307,7 +307,7 @@ const OptOutRequestForm = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60 transition-all"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm  focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -328,7 +328,7 @@ const OptOutRequestForm = () => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
                 />
                 <div className="flex gap-2">
                   <button
@@ -924,10 +924,11 @@ const OptOutRequestForm = () => {
                                     nameSignMode: "upload",
                                   }))
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.nameSignMode === "upload"
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.nameSignMode === "upload"
                                     ? "bg-[#0f172a] text-white border-[#0f172a]"
                                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                  }`}
+                                }`}
                               >
                                 Upload
                               </button>
@@ -939,10 +940,11 @@ const OptOutRequestForm = () => {
                                     nameSignMode: "draw",
                                   }))
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.nameSignMode === "draw"
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.nameSignMode === "draw"
                                     ? "bg-[#0f172a] text-white border-[#0f172a]"
                                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                  }`}
+                                }`}
                               >
                                 Sign Here
                               </button>
@@ -1079,10 +1081,11 @@ const OptOutRequestForm = () => {
                                     approvedByMode: "upload",
                                   }))
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.approvedByMode === "upload"
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.approvedByMode === "upload"
                                     ? "bg-[#0f172a] text-white border-[#0f172a]"
                                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                  }`}
+                                }`}
                               >
                                 Upload
                               </button>
@@ -1094,10 +1097,11 @@ const OptOutRequestForm = () => {
                                     approvedByMode: "draw",
                                   }))
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.approvedByMode === "draw"
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.approvedByMode === "draw"
                                     ? "bg-[#0f172a] text-white border-[#0f172a]"
                                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                  }`}
+                                }`}
                               >
                                 Sign Here
                               </button>
@@ -1236,10 +1240,11 @@ const OptOutRequestForm = () => {
                                   concurredByMode: "upload",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.concurredByMode === "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.concurredByMode === "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                              }`}
                             >
                               Upload
                             </button>
@@ -1251,10 +1256,11 @@ const OptOutRequestForm = () => {
                                   concurredByMode: "draw",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.concurredByMode === "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.concurredByMode === "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                              }`}
                             >
                               Sign Here
                             </button>

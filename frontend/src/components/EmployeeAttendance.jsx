@@ -1,19 +1,33 @@
 import React from "react";
-import { UserCheck, UserX, Calendar } from "lucide-react";
+import {
+  UserCheck,
+  UserX,
+  Calendar,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 import { ResponsiveContainer, Area, AreaChart } from "recharts";
 
 const EmployeeAttendance = ({ attendanceData = [] }) => {
   const latest = attendanceData?.[attendanceData.length - 1] || {};
+  const previous = attendanceData?.[attendanceData.length - 7] || {}; // Data from 7 days ago
+
   const total = Number(latest?.totalEmployees) || 0;
   const present = Number(latest?.presentToday) || 0;
   const leave = Number(latest?.leave) || 0;
   const absent = Math.max(0, total - (present + leave));
 
+  // Helper to calculate percentage change
+  const getPercentage = (current, prev) => {
+    if (!prev || prev === 0) return 0;
+    const diff = ((current - prev) / prev) * 100;
+    return Math.round(diff);
+  };
+
   const getWeeklyProgressData = () => {
     const today = new Date();
-    const dayOfWeek = today.getDay(); // 0 (Sun) to 6 (Sat)
+    const dayOfWeek = today.getDay();
 
-    // Sunday reset: If Sunday, show a flat line at 0
     if (dayOfWeek === 0)
       return ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => ({
         day: d,
@@ -23,13 +37,11 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
         isLast: false,
       }));
 
-    const currentDayIndex = dayOfWeek - 1; // Mon=0, Tue=1...
+    const currentDayIndex = dayOfWeek - 1;
     const recentHistory = attendanceData.slice(-(currentDayIndex + 1));
 
-    // Create a full Mon-Sat array
     const weekData = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
       (dayName, index) => {
-        // If the day has passed or is today, use real data
         if (index <= currentDayIndex && recentHistory[index]) {
           const d = recentHistory[index];
           return {
@@ -37,10 +49,9 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
             presentToday: d.presentToday || 0,
             absent: (d.totalEmployees || 0) - (d.presentToday || 0),
             leave: d.leave || 0,
-            isToday: index === currentDayIndex, // Logic for the marker
+            isToday: index === currentDayIndex,
           };
         }
-        // Future days: Set values to 0 so the line drops to the bottom
         return {
           day: dayName,
           presentToday: 0,
@@ -60,6 +71,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
     {
       title: "Present",
       value: present,
+      percentage: getPercentage(present, previous?.presentToday),
       icon: <UserCheck size={20} />,
       dataKey: "presentToday",
       color: "#2563EB",
@@ -69,6 +81,10 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
     {
       title: "Absent",
       value: absent,
+      percentage: getPercentage(
+        absent,
+        previous?.totalEmployees - previous?.presentToday,
+      ),
       icon: <UserX size={20} />,
       dataKey: "absent",
       color: "#EF4444",
@@ -78,6 +94,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
     {
       title: "Leave",
       value: leave,
+      percentage: getPercentage(leave, previous?.leave),
       icon: <Calendar size={20} />,
       dataKey: "leave",
       color: "#06B6D4",
@@ -94,11 +111,26 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
             key={index}
             className="bg-white rounded-xl shadow-md flex items-center justify-between overflow-hidden relative h-[90px] border border-gray-200"
           >
+            {/* Top Right Percentage Indicator */}
+            <div className="absolute top-2 right-2 flex flex-col items-center gap-0.5 text-[10px] font-bold">
+              <div
+                className={`flex flex-row ${item.percentage >= 0 ? "text-emerald-600" : "text-rose-600"}`}
+              >
+                {item.percentage >= 0 ? (
+                  <ArrowUp size={12} />
+                ) : (
+                  <ArrowDown size={12} />
+                )}
+                {Math.abs(item.percentage)}%
+              </div>
+
+              <p className="text-gray-500">this week</p>
+            </div>
+
             <h3 className="text-lg font-bold text-gray-800 absolute top-2 left-26 z-20">
               {item.value}
             </h3>
 
-            {/* Left Header Info */}
             <div
               className={`${item.bg} ${item.text} h-full flex flex-col justify-center items-center min-w-[90px] z-10`}
             >
@@ -106,7 +138,6 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
               <span>{item.icon}</span>
             </div>
 
-            {/* Progress Chart */}
             <div className="flex-1 h-full pt-12 pb-1 pr-1">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
@@ -139,12 +170,9 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
                     stroke={item.color}
                     strokeWidth={3}
                     fill={`url(#grad-${index})`}
-                    style={{ outline: "none" }}
-                    className="focus:outline-none"
                     isAnimationActive={true}
                     dot={(props) => {
                       const { cx, cy, payload } = props;
-                      // Only render the marker dot on the "Current Day" node
                       if (payload.isToday) {
                         return (
                           <circle
@@ -154,10 +182,6 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
                             fill={item.color}
                             stroke="#fff"
                             strokeWidth={2}
-                            style={{
-                              filter:
-                                "drop-shadow(0px 2px 2px rgba(0,0,0,0.2))",
-                            }}
                           />
                         );
                       }

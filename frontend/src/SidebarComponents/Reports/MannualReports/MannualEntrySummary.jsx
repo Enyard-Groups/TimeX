@@ -73,12 +73,17 @@ const MannualEntrySummary = () => {
       const params = new URLSearchParams();
       if (formData.company_id) params.append("company_id", formData.company_id);
       if (formData.location_id) params.append("location", formData.location_id);
-      if (formData.employee_id) params.append("company_enrollment_id", formData.employee_id);
-      if (formData.designation_id) params.append("designation_id", formData.designation_id);
-      if (formData.fromPunchDate) params.append("from_date", formData.fromPunchDate);
+      if (formData.employee_id)
+        params.append("company_enrollment_id", formData.employee_id);
+      if (formData.designation_id)
+        params.append("designation_id", formData.designation_id);
+      if (formData.fromPunchDate)
+        params.append("from_date", formData.fromPunchDate);
       if (formData.toPunchDate) params.append("to_date", formData.toPunchDate);
 
-      const res = await axios.get(`${API_BASE}/requests/manual/report?${params.toString()}`);
+      const res = await axios.get(
+        `${API_BASE}/requests/manual/report?${params.toString()}`,
+      );
       setMannualEntrySummary(res.data || []);
       setOpenModal(true);
       setCurrentPage(1);
@@ -99,8 +104,12 @@ const MannualEntrySummary = () => {
     if (!inTime || !outTime) return "00:00:00";
     try {
       // Handles both HH:mm:ss and ISO strings
-      const start = inTime.includes("T") ? new Date(inTime) : new Date(`1970-01-01T${inTime}`);
-      const end = outTime.includes("T") ? new Date(outTime) : new Date(`1970-01-01T${outTime}`);
+      const start = inTime.includes("T")
+        ? new Date(inTime)
+        : new Date(`1970-01-01T${inTime}`);
+      const end = outTime.includes("T")
+        ? new Date(outTime)
+        : new Date(`1970-01-01T${outTime}`);
       let diff = (end - start) / 1000;
       if (diff < 0) diff += 86400; // overnight handling
 
@@ -109,7 +118,7 @@ const MannualEntrySummary = () => {
       const s = Math.floor(diff % 60);
 
       return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-    } catch(e) {
+    } catch (e) {
       return "00:00:00";
     }
   };
@@ -126,25 +135,48 @@ const MannualEntrySummary = () => {
 
   const endIndex = currentPage * entriesPerPage;
   const startIndex = endIndex - entriesPerPage;
-  const currentmannualEntrySummary = filteredmannualEntrySummary.slice(startIndex, endIndex);
-  const totalPages = Math.max(1, Math.ceil(filteredmannualEntrySummary.length / entriesPerPage));
+  const currentmannualEntrySummary = filteredmannualEntrySummary.slice(
+    startIndex,
+    endIndex,
+  );
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredmannualEntrySummary.length / entriesPerPage),
+  );
 
-  const selectedItem = mannualEntrySummary.find((item) => item.id === selectedId);
+  const selectedItem = mannualEntrySummary.find(
+    (item) => item.id === selectedId,
+  );
 
   const handleCopy = () => {
-    const header = ["Sl.No", "Employee", "Location", "Punch Date", "Punch Day", "Check in", "Check out", "Total Hours"].join("\t");
+    const header = [
+      "Sl.No",
+      "Employee",
+      "Location",
+      "Punch Date",
+      "Punch Day",
+      "Check in",
+      "Check out",
+      "Total Hours",
+    ].join("\t");
     const rows = filteredmannualEntrySummary
       .map((item, i) =>
         [
           i + 1,
           item.employee_name,
           item.location_name,
-          item.created_at ? new Date(item.created_at).toLocaleDateString() : "—",
-          item.created_at ? new Date(item.created_at).toLocaleString("en-US", { weekday: "long" }) : "—",
+          item.created_at
+            ? new Date(item.created_at).toLocaleDateString()
+            : "—",
+          item.created_at
+            ? new Date(item.created_at).toLocaleString("en-US", {
+                weekday: "long",
+              })
+            : "—",
           item.in_time || "—",
           item.out_time || "—",
           getTimeDiff(item.in_time, item.out_time),
-        ].join("\t")
+        ].join("\t"),
       )
       .join("\n");
     navigator.clipboard.writeText(`${header}\n${rows}`);
@@ -157,7 +189,9 @@ const MannualEntrySummary = () => {
       Employee: item.employee_name,
       "Employee ID": item.employee_code,
       Location: item.location_name,
-      "Punch Date": item.created_at ? new Date(item.created_at).toLocaleDateString() : "—",
+      "Punch Date": item.created_at
+        ? new Date(item.created_at).toLocaleDateString()
+        : "—",
       "Check in": item.in_time || "—",
       "Check out": item.out_time || "—",
       "Total Hours": getTimeDiff(item.in_time, item.out_time),
@@ -174,7 +208,17 @@ const MannualEntrySummary = () => {
     doc.text("Manual Entry Summary", 14, 14);
     autoTable(doc, {
       startY: 20,
-      head: [["Sl.No", "Employee", "Location", "Punch Date", "Check in", "Check out", "Total Hours"]],
+      head: [
+        [
+          "Sl.No",
+          "Employee",
+          "Location",
+          "Punch Date",
+          "Check in",
+          "Check out",
+          "Total Hours",
+        ],
+      ],
       body: filteredmannualEntrySummary.map((item, i) => [
         i + 1,
         item.employee_name,
@@ -193,7 +237,7 @@ const MannualEntrySummary = () => {
       <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-          <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl font-semibold text-gray-900 ">
+          <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
             <FaAngleRight className="text-blue-500 text-base" />
             <span className="text-gray-500">Reports</span>
             <FaAngleRight className="text-blue-500 text-base" />
@@ -273,7 +317,8 @@ const MannualEntrySummary = () => {
                     setFormData((prev) => ({
                       ...prev,
                       department: updated.department,
-                      designation_id: updated.designation_id ?? updated.department,
+                      designation_id:
+                        updated.designation_id ?? updated.department,
                     }))
                   }
                   inputStyle={inputStyle}
@@ -384,7 +429,7 @@ const MannualEntrySummary = () => {
                       setEntriesPerPage(Number(e.target.value));
                       setCurrentPage(1);
                     }}
-                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base focus:ring-2 focus:ring-blue-500/60 transition-all"
+                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/60 transition-all"
                   >
                     {[10, 25, 50, 100].map((v) => (
                       <option key={v} value={v}>
@@ -428,7 +473,7 @@ const MannualEntrySummary = () => {
                       setSearchTerm(e.target.value);
                       setCurrentPage(1);
                     }}
-                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
                   />
                 </div>
               </div>
@@ -496,10 +541,17 @@ const MannualEntrySummary = () => {
                           {item.location_name}
                         </td>
                         <td className="px-4 py-3 text-center hidden md:table-cell text-gray-600">
-                          {item.created_at ? new Date(item.created_at).toLocaleDateString() : "—"}
+                          {item.created_at
+                            ? new Date(item.created_at).toLocaleDateString()
+                            : "—"}
                         </td>
                         <td className="px-4 py-3 text-center hidden md:table-cell text-gray-600">
-                          {item.created_at ? new Date(item.created_at).toLocaleString("en-US", { weekday: "long" }) : "—"}
+                          {item.created_at
+                            ? new Date(item.created_at).toLocaleString(
+                                "en-US",
+                                { weekday: "long" },
+                              )
+                            : "—"}
                         </td>
                         <td className="px-4 py-3 text-center hidden xl:table-cell text-gray-600">
                           {item.in_time || "—"}
@@ -530,11 +582,11 @@ const MannualEntrySummary = () => {
 
             {/* Pagination */}
             <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-              <span className="text-sm xl:text-base text-gray-600">
-                Showing{" "}
-                <span className="font-bold text-gray-900">
-                  {startIndex + 1}
-                </span>{" "}
+             <span className="text-sm xl:text-base text-gray-600">
+              Showing{" "}
+              <span className="text-gray-900 font-semibold">
+                {filteredmannualEntrySummary.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
                 to{" "}
                 <span className="font-bold text-gray-900">
                   {Math.min(endIndex, filteredmannualEntrySummary.length)}
@@ -623,13 +675,20 @@ const MannualEntrySummary = () => {
                 <div>
                   <p className={labelStyle}>Punch Date</p>
                   <p className={inputStyle}>
-                    {selectedItem.created_at ? new Date(selectedItem.created_at).toLocaleDateString() : "—"}
+                    {selectedItem.created_at
+                      ? new Date(selectedItem.created_at).toLocaleDateString()
+                      : "—"}
                   </p>
                 </div>
                 <div>
                   <p className={labelStyle}>Punch Day</p>
                   <p className={inputStyle}>
-                    {selectedItem.created_at ? new Date(selectedItem.created_at).toLocaleString("en-US", { weekday: "long" }) : "—"}
+                    {selectedItem.created_at
+                      ? new Date(selectedItem.created_at).toLocaleString(
+                          "en-US",
+                          { weekday: "long" },
+                        )
+                      : "—"}
                   </p>
                 </div>
                 <div>

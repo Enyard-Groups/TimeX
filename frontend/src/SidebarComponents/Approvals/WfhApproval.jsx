@@ -38,7 +38,7 @@ const WfhApproval = () => {
       setLoading(true);
       const res = await axios.get(`${API_BASE}/requests/wfh`);
       setRequests(res.data);
-      console.log
+      console.log;
     } catch (error) {
       console.error("Failed to fetch WFH requests", error);
       toast.error("Failed to load requests");
@@ -199,7 +199,9 @@ const WfhApproval = () => {
                 <option value={50}>50</option>
                 <option value={100}>100</option>
               </select>
-              <span className="text-sm xl:text-base font-medium text-gray-600">entries</span>
+              <span className="text-sm xl:text-base font-medium text-gray-600">
+                entries
+              </span>
             </div>
 
             <div className="w-full sm:w-64">
@@ -210,15 +212,17 @@ const WfhApproval = () => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm xl:text-base placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all"
+                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
               />
             </div>
           </div>
         </div>
 
         {/* Table Section */}
-        <div className="overflow-x-auto min-h-[350px]"
-          style={{scrollbarWidth:"none"}}>
+        <div
+          className="overflow-x-auto min-h-[350px]"
+          style={{ scrollbarWidth: "none" }}
+        >
           <table className="w-full text-[17px]">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
@@ -408,10 +412,14 @@ const WfhApproval = () => {
 
       {/* Modal Section */}
       {openModal && selectedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
-          style={{scrollbarWidth:"none"}}>
-          <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-5xl max-h-[90vh] overflow-y-auto p-8"
-          style={{scrollbarWidth:"none"}}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
+          style={{ scrollbarWidth: "none" }}
+        >
+          <div
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-5xl max-h-[90vh] overflow-y-auto p-8"
+            style={{ scrollbarWidth: "none" }}
+          >
             <div className="flex justify-between items-center mb-8 pb-4 border-b border-blue-100/30">
               <h2 className="text-xl font-bold text-slate-800">
                 Work From Home Details
@@ -427,7 +435,10 @@ const WfhApproval = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 { label: "Employee Name", value: selectedItem.employee_name },
-                { label: "From Date", value: formatDate(selectedItem.start_date) },
+                {
+                  label: "From Date",
+                  value: formatDate(selectedItem.start_date),
+                },
                 { label: "To Date", value: formatDate(selectedItem.end_date) },
               ].map((field, idx) => (
                 <div key={idx}>

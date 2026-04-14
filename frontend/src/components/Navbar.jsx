@@ -47,7 +47,7 @@ export default function Navbar({
       <div className="pt-3">
         {/* Mobile Menu Button */}
         <button
-          className="absolute top-8 left-6 rounded-xl lg:hidden text-xl font-bold z-30"
+          className="absolute top-11 left-6 rounded-xl lg:hidden text-xl font-bold z-30"
           onClick={() => {
             setSidebarOpen(!sidebarOpen);
             setRightSidebarOpen(false);

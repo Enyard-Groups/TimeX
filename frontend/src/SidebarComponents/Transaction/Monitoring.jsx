@@ -38,7 +38,9 @@ const Monitoring = () => {
         axios.get(`${API_BASE}/attendence/stats`, { headers: getHeaders() }),
       ]);
       setMonitoring(logsRes.data || []);
-      setAttendanceData(statsRes.data || { total: 0, present: 0, absent: 0, leave: 0 });
+      setAttendanceData(
+        statsRes.data || { total: 0, present: 0, absent: 0, leave: 0 },
+      );
     } catch (error) {
       console.error("Failed to fetch monitoring data:", error);
     } finally {
@@ -63,7 +65,9 @@ const Monitoring = () => {
   const [selectedItem, setSelectedItem] = useState(null);
 
   const filteredmonitoring = monitoring.filter((item) =>
-    (item.full_name || item.employee || "").toLowerCase().includes(searchTerm.toLowerCase()),
+    (item.full_name || item.employee || "")
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -93,10 +97,11 @@ const Monitoring = () => {
     const rows = filteredmonitoring
       .map(
         (d) =>
-          `${d.status || "Online"}\t${d.full_name || d.employee}\t${new Date(d.date || d.created_at).toLocaleDateString()}\t${new Date(d.date || d.created_at).toLocaleDateString(
-            "en-US",
-            { weekday: "long" },
-          )}\t${d.punch_time || d.login}\t${d.logout || "-"}\t${calculateWH(
+          `${d.status || "Online"}\t${d.full_name || d.employee}\t${new Date(d.date || d.created_at).toLocaleDateString()}\t${new Date(
+            d.date || d.created_at,
+          ).toLocaleDateString("en-US", {
+            weekday: "long",
+          })}\t${d.punch_time || d.login}\t${d.logout || "-"}\t${calculateWH(
             d.punch_time || d.login,
             d.logout || d.punch_time || "00:00:00",
           )}\t${d.location_name || d.location}`,
@@ -115,10 +120,15 @@ const Monitoring = () => {
       Status: item.status || "Online",
       Employee: item.full_name || item.employee,
       Date: new Date(item.date || item.created_at).toLocaleDateString(),
-      Day: new Date(item.date || item.created_at).toLocaleDateString("en-US", { weekday: "long" }),
+      Day: new Date(item.date || item.created_at).toLocaleDateString("en-US", {
+        weekday: "long",
+      }),
       Login: item.punch_time || item.login,
       Logout: item.logout || "-",
-      "Working Hours": calculateWH(item.punch_time || item.login, item.logout || item.punch_time || "00:00:00"),
+      "Working Hours": calculateWH(
+        item.punch_time || item.login,
+        item.logout || item.punch_time || "00:00:00",
+      ),
       Location: item.location_name || item.location,
     }));
 
@@ -193,7 +203,7 @@ const Monitoring = () => {
     <div className="mb-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-900">
+        <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
           <FaAngleRight className="text-blue-500 text-base" />
           <p className="text-gray-500">Transaction</p>
           <FaAngleRight className="text-blue-500 text-base" />
@@ -213,9 +223,7 @@ const Monitoring = () => {
             key={idx}
             className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-2xl border border-blue-100/50 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
           >
-            <p className="text-base text-gray-500 mb-2">
-              {item.label}
-            </p>
+            <p className="text-base text-gray-500 mb-2">{item.label}</p>
             <h3 className="text-2xl font-bold text-gray-800">{item.value}</h3>
             <div className="mt-3 h-1 w-10 bg-blue-500 rounded-full" />
           </div>
@@ -244,7 +252,7 @@ const Monitoring = () => {
                   setEntriesPerPage(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg text-sm"
+                className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/60 transition-all"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -264,27 +272,30 @@ const Monitoring = () => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm xl:text-base placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
               />
 
               <div className="flex gap-2">
                 <button
                   onClick={handleCopy}
-                  className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 p-2 rounded-lg"
+                  className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
+                  title="Copy to clipboard"
                 >
-                  <GoCopy className="text-lg" />
+                  <GoCopy className="text-lg xl:text-xl" />
                 </button>
                 <button
                   onClick={handleExcel}
-                  className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 p-2 rounded-lg"
+                  className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
+                  title="Export to Excel"
                 >
-                  <FaFileExcel className="text-lg" />
+                  <FaFileExcel className="text-lg xl:text-xl" />
                 </button>
                 <button
                   onClick={handlePDF}
-                  className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 p-2 rounded-lg"
+                  className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
+                  title="Export to PDF"
                 >
-                  <FaFilePdf className="text-lg" />
+                  <FaFilePdf className="text-lg xl:text-xl" />
                 </button>
               </div>
             </div>
@@ -369,12 +380,18 @@ const Monitoring = () => {
                       />
                     </td>
 
-                    <td className="px-6 py-2 text-center">{item.full_name || item.employee}</td>
+                    <td className="px-6 py-2 text-center">
+                      {item.full_name || item.employee}
+                    </td>
                     <td className="px-6 py-2 hidden sm:table-cell text-center">
-                      {new Date(item.date || item.created_at).toLocaleDateString()}
+                      {new Date(
+                        item.date || item.created_at,
+                      ).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-2 hidden lg:table-cell text-center">
-                      {new Date(item.date || item.created_at).toLocaleDateString("en-US", {
+                      {new Date(
+                        item.date || item.created_at,
+                      ).toLocaleDateString("en-US", {
                         weekday: "long",
                       })}
                     </td>
@@ -385,7 +402,10 @@ const Monitoring = () => {
                       {item.logout || "-"}
                     </td>
                     <td className="px-6 py-2 hidden sm:table-cell text-center">
-                      {calculateWH(item.punch_time || item.login, item.logout || item.punch_time || "00:00:00")}
+                      {calculateWH(
+                        item.punch_time || item.login,
+                        item.logout || item.punch_time || "00:00:00",
+                      )}
                     </td>
                     <td className="px-6 py-2 hidden lg:table-cell text-center">
                       {item.location_name || item.location}
@@ -412,7 +432,7 @@ const Monitoring = () => {
 
         {/* Pagination */}
         <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm xl:text-base text-gray-600">
             Showing {filteredmonitoring.length === 0 ? 0 : startIndex + 1} to{" "}
             {Math.min(endIndex, filteredmonitoring.length)} of{" "}
             {filteredmonitoring.length}
@@ -482,25 +502,33 @@ const Monitoring = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
               <p>
                 <p className={labelStyle}>Employee:</p>{" "}
-                <p className={inputStyle}>{selectedItem.full_name || selectedItem.employee}</p>
+                <p className={inputStyle}>
+                  {selectedItem.full_name || selectedItem.employee}
+                </p>
               </p>
               <p>
                 <p className={labelStyle}>Date:</p>{" "}
                 <p className={inputStyle}>
-                  {new Date(selectedItem.date || selectedItem.created_at).toLocaleDateString()}
+                  {new Date(
+                    selectedItem.date || selectedItem.created_at,
+                  ).toLocaleDateString()}
                 </p>
               </p>
               <p>
                 <p className={labelStyle}>Day:</p>{" "}
                 <p className={inputStyle}>
-                  {new Date(selectedItem.date || selectedItem.created_at).toLocaleDateString("en-US", {
+                  {new Date(
+                    selectedItem.date || selectedItem.created_at,
+                  ).toLocaleDateString("en-US", {
                     weekday: "long",
                   })}
                 </p>
               </p>
               <p>
                 <p className={labelStyle}>Login Time:</p>{" "}
-                <p className={inputStyle}>{selectedItem.punch_time || selectedItem.login}</p>
+                <p className={inputStyle}>
+                  {selectedItem.punch_time || selectedItem.login}
+                </p>
               </p>
               <p>
                 <p className={labelStyle}>Logout Time:</p>{" "}
@@ -509,12 +537,19 @@ const Monitoring = () => {
               <p>
                 <p className={labelStyle}>Working Hours:</p>{" "}
                 <p className={inputStyle}>
-                  {calculateWH(selectedItem.punch_time || selectedItem.login, selectedItem.logout || selectedItem.punch_time || "00:00:00")}
+                  {calculateWH(
+                    selectedItem.punch_time || selectedItem.login,
+                    selectedItem.logout ||
+                      selectedItem.punch_time ||
+                      "00:00:00",
+                  )}
                 </p>
               </p>
               <p>
                 <p className={labelStyle}>Location:</p>{" "}
-                <p className={inputStyle}>{selectedItem.location_name || selectedItem.location}</p>
+                <p className={inputStyle}>
+                  {selectedItem.location_name || selectedItem.location}
+                </p>
               </p>
               <p>
                 <p className={labelStyle}>Status:</p>{" "}

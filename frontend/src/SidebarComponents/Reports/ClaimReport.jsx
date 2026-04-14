@@ -57,11 +57,16 @@ const ClaimReport = () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
-      if (formData.employee) params.append("company_enrollment_id", formData.employee);
-      if (formData.fromdateinform) params.append("from_date", formData.fromdateinform);
-      if (formData.todateinform) params.append("to_date", formData.todateinform);
+      if (formData.employee)
+        params.append("company_enrollment_id", formData.employee);
+      if (formData.fromdateinform)
+        params.append("from_date", formData.fromdateinform);
+      if (formData.todateinform)
+        params.append("to_date", formData.todateinform);
 
-      const res = await axios.get(`${API_BASE}/requests/claim/report?${params.toString()}`);
+      const res = await axios.get(
+        `${API_BASE}/requests/claim/report?${params.toString()}`,
+      );
       setClaimReport(res.data || []);
       setOpenModal(true);
       setCurrentPage(1);
@@ -94,7 +99,16 @@ const ClaimReport = () => {
   const selectedItem = claimReport.find((item) => item.id === selectedId);
 
   const handleCopy = () => {
-    const header = ["Sl.No", "Employee", "ID", "Claim Date", "Category", "Amount", "Purpose", "Status"].join("\t");
+    const header = [
+      "Sl.No",
+      "Employee",
+      "ID",
+      "Claim Date",
+      "Category",
+      "Amount",
+      "Purpose",
+      "Status",
+    ].join("\t");
     const rows = filteredclaimReport
       .map((item, i) =>
         [
@@ -106,7 +120,7 @@ const ClaimReport = () => {
           item.amount,
           item.purpose,
           item.status,
-        ].join("\t")
+        ].join("\t"),
       )
       .join("\n");
     navigator.clipboard.writeText(`${header}\n${rows}`);
@@ -136,7 +150,17 @@ const ClaimReport = () => {
     doc.text("Claim Report", 14, 14);
     autoTable(doc, {
       startY: 20,
-      head: [["Sl.No", "Employee", "ID", "Claim Date", "Category", "Amount", "Status"]],
+      head: [
+        [
+          "Sl.No",
+          "Employee",
+          "ID",
+          "Claim Date",
+          "Category",
+          "Amount",
+          "Status",
+        ],
+      ],
       body: filteredclaimReport.map((item, i) => [
         i + 1,
         item.employee_name,
@@ -155,7 +179,7 @@ const ClaimReport = () => {
       <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-          <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl font-semibold text-gray-900 ">
+          <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
             <FaAngleRight className="text-blue-500 text-base" />
             <span className="text-gray-500">Reports</span>
             <FaAngleRight className="text-blue-500 text-base" />
@@ -269,7 +293,7 @@ const ClaimReport = () => {
                       setEntriesPerPage(Number(e.target.value));
                       setCurrentPage(1);
                     }}
-                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base focus:ring-2 focus:ring-blue-500/60 transition-all"
+                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/60 transition-all"
                   >
                     {[10, 25, 50, 100].map((v) => (
                       <option key={v} value={v}>
@@ -313,7 +337,7 @@ const ClaimReport = () => {
                       setSearchTerm(e.target.value);
                       setCurrentPage(1);
                     }}
-                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
                   />
                 </div>
               </div>
@@ -366,7 +390,9 @@ const ClaimReport = () => {
                           {item.employee_name}
                         </td>
                         <td className="px-4 py-3 text-center hidden md:table-cell text-gray-600">
-                          {item.date ? new Date(item.date).toLocaleDateString() : "—"}
+                          {item.date
+                            ? new Date(item.date).toLocaleDateString()
+                            : "—"}
                         </td>
                         <td className="px-4 py-3 text-center hidden md:table-cell text-gray-600">
                           {item.claim_category}
@@ -397,11 +423,11 @@ const ClaimReport = () => {
 
             {/* Pagination Section */}
             <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-              <span className="text-sm xl:text-base text-gray-600">
-                Showing{" "}
-                <span className="font-bold text-gray-900">
-                  {startIndex + 1}
-                </span>{" "}
+             <span className="text-sm xl:text-base text-gray-600">
+              Showing{" "}
+              <span className="text-gray-900 font-semibold">
+                {filteredclaimReport.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
                 to{" "}
                 <span className="font-bold text-gray-900">
                   {Math.min(endIndex, filteredclaimReport.length)}
@@ -481,15 +507,23 @@ const ClaimReport = () => {
                 </div>
                 <div>
                   <p className={labelStyle}>Employee ID</p>
-                  <p className={inputStyle}>{selectedItem.employee_code || "—"}</p>
+                  <p className={inputStyle}>
+                    {selectedItem.employee_code || "—"}
+                  </p>
                 </div>
                 <div>
                   <p className={labelStyle}>Company</p>
-                  <p className={inputStyle}>{selectedItem.company_name || "—"}</p>
+                  <p className={inputStyle}>
+                    {selectedItem.company_name || "—"}
+                  </p>
                 </div>
                 <div>
                   <p className={labelStyle}>Claim Date</p>
-                  <p className={inputStyle}>{selectedItem.date ? new Date(selectedItem.date).toLocaleDateString() : "—"}</p>
+                  <p className={inputStyle}>
+                    {selectedItem.date
+                      ? new Date(selectedItem.date).toLocaleDateString()
+                      : "—"}
+                  </p>
                 </div>
                 <div>
                   <p className={labelStyle}>Claim Category</p>

@@ -48,8 +48,7 @@ const ShiftUpload = () => {
   const inputStyle =
     "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2  rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm";
 
-  const labelStyle =
-    "text-base font-semibold text-gray-700 mb-2 block";
+  const labelStyle = "text-base font-semibold text-gray-700 mb-2 block";
 
   const getDatesBetween = (start, end) => {
     const dates = [];
@@ -125,15 +124,21 @@ const ShiftUpload = () => {
         // Expected Excel Format: columns for 'Employee ID', 'Location', and dates 'dd/mm/yyyy'
         try {
           const bulkData = jsonData.map((row) => {
-            const employee_enrollment_id = row["Employee ID"] || row["EmployeeID"];
+            const employee_enrollment_id =
+              row["Employee ID"] || row["EmployeeID"];
             const location_name = row["Location"];
-            const location = locationOptions.find((l) => l.name === location_name);
+            const location = locationOptions.find(
+              (l) => l.name === location_name,
+            );
             const roster = {};
-            
-            Object.keys(row).forEach(key => {
-              if (key.includes("/")) { // Assuming dates are in dd/mm/yyyy
+
+            Object.keys(row).forEach((key) => {
+              if (key.includes("/")) {
+                // Assuming dates are in dd/mm/yyyy
                 const shiftName = row[key];
-                const shift = shiftMasters.find(s => s.shift_name === shiftName);
+                const shift = shiftMasters.find(
+                  (s) => s.shift_name === shiftName,
+                );
                 if (shift) roster[key] = shift.id;
                 else if (shiftName === "Off") roster[key] = "Off";
               }
@@ -142,11 +147,15 @@ const ShiftUpload = () => {
             return {
               employee_enrollment_id,
               location_id: location?.id,
-              roster
+              roster,
             };
           });
 
-          await axios.post(`${API_BASE}/shift-planner/bulk-assign`, { rosters: bulkData }, { headers: getHeaders() });
+          await axios.post(
+            `${API_BASE}/shift-planner/bulk-assign`,
+            { rosters: bulkData },
+            { headers: getHeaders() },
+          );
           toast.success("Shift roster uploaded successfully");
           setPreview(null);
           setSelectedFile(null);

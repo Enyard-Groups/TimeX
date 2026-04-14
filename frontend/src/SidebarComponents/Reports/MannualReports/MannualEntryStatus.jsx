@@ -31,12 +31,13 @@ const MannualEntryStatus = () => {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const [companies, employees, locations, designations] = await Promise.all([
-          axios.get(`${API_BASE}/companies`),
-          axios.get(`${API_BASE}/employee`),
-          axios.get(`${API_BASE}/master/geofencing`),
-          axios.get(`${API_BASE}/master/designation`),
-        ]);
+        const [companies, employees, locations, designations] =
+          await Promise.all([
+            axios.get(`${API_BASE}/companies`),
+            axios.get(`${API_BASE}/employee`),
+            axios.get(`${API_BASE}/master/geofencing`),
+            axios.get(`${API_BASE}/master/designation`),
+          ]);
         setCompanyOptions(companies.data);
         setEmployeeOptions(employees.data);
         setLocationOptions(locations.data || []);
@@ -73,14 +74,20 @@ const MannualEntryStatus = () => {
       setLoading(true);
       const params = new URLSearchParams();
       if (formData.company_id) params.append("company_id", formData.company_id);
-      if (formData.employee_id) params.append("company_enrollment_id", formData.employee_id);
-      if (formData.status && formData.status !== "All") params.append("status", formData.status);
+      if (formData.employee_id)
+        params.append("company_enrollment_id", formData.employee_id);
+      if (formData.status && formData.status !== "All")
+        params.append("status", formData.status);
       if (formData.location_id) params.append("location", formData.location_id);
-      if (formData.designation_id) params.append("designation_id", formData.designation_id);
-      if (formData.fromPunchDate) params.append("from_date", formData.fromPunchDate);
+      if (formData.designation_id)
+        params.append("designation_id", formData.designation_id);
+      if (formData.fromPunchDate)
+        params.append("from_date", formData.fromPunchDate);
       if (formData.toPunchDate) params.append("to_date", formData.toPunchDate);
 
-      const res = await axios.get(`${API_BASE}/requests/manual/report?${params.toString()}`);
+      const res = await axios.get(
+        `${API_BASE}/requests/manual/report?${params.toString()}`,
+      );
       setMannualEntryStatus(res.data || []);
       setOpenModal(true);
       setCurrentPage(1);
@@ -109,13 +116,29 @@ const MannualEntryStatus = () => {
 
   const endIndex = currentPage * entriesPerPage;
   const startIndex = endIndex - entriesPerPage;
-  const currentmannualEntryStatus = filteredmannualEntryStatus.slice(startIndex, endIndex);
-  const totalPages = Math.max(1, Math.ceil(filteredmannualEntryStatus.length / entriesPerPage));
+  const currentmannualEntryStatus = filteredmannualEntryStatus.slice(
+    startIndex,
+    endIndex,
+  );
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredmannualEntryStatus.length / entriesPerPage),
+  );
 
-  const selectedItem = mannualEntryStatus.find((item) => item.id === selectedId);
+  const selectedItem = mannualEntryStatus.find(
+    (item) => item.id === selectedId,
+  );
 
   const handleCopy = () => {
-    const header = ["Sl.No", "Employee", "Company", "In Time", "Out Time", "Date", "Status"].join("\t");
+    const header = [
+      "Sl.No",
+      "Employee",
+      "Company",
+      "In Time",
+      "Out Time",
+      "Date",
+      "Status",
+    ].join("\t");
     const rows = filteredmannualEntryStatus
       .map((item, i) =>
         [
@@ -124,9 +147,11 @@ const MannualEntryStatus = () => {
           item.company_name,
           item.in_time || "—",
           item.out_time || "—",
-          item.created_at ? new Date(item.created_at).toLocaleDateString() : "—",
+          item.created_at
+            ? new Date(item.created_at).toLocaleDateString()
+            : "—",
           item.status,
-        ].join("\t")
+        ].join("\t"),
       )
       .join("\n");
     navigator.clipboard.writeText(`${header}\n${rows}`);
@@ -141,7 +166,9 @@ const MannualEntryStatus = () => {
       Company: item.company_name,
       "In Time": item.in_time || "—",
       "Out Time": item.out_time || "—",
-      Date: item.created_at ? new Date(item.created_at).toLocaleDateString() : "—",
+      Date: item.created_at
+        ? new Date(item.created_at).toLocaleDateString()
+        : "—",
       Status: item.status,
     }));
     const ws = XLSX.utils.json_to_sheet(data);
@@ -155,7 +182,18 @@ const MannualEntryStatus = () => {
     doc.text("Mannual Entry Status", 14, 14);
     autoTable(doc, {
       startY: 20,
-      head: [["Sl.No", "Employee", "ID", "Company", "In Time", "Out Time", "Date", "Status"]],
+      head: [
+        [
+          "Sl.No",
+          "Employee",
+          "ID",
+          "Company",
+          "In Time",
+          "Out Time",
+          "Date",
+          "Status",
+        ],
+      ],
       body: filteredmannualEntryStatus.map((item, i) => [
         i + 1,
         item.employee_name,
@@ -175,7 +213,7 @@ const MannualEntryStatus = () => {
       <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-          <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl font-semibold text-gray-900 ">
+          <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
             <FaAngleRight className="text-blue-500 text-base" />
             <span className="text-gray-500">Reports</span>
             <FaAngleRight className="text-blue-500 text-base" />
@@ -266,7 +304,9 @@ const MannualEntryStatus = () => {
                 <select
                   name="status"
                   value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, status: e.target.value })
+                  }
                   className={inputStyle}
                 >
                   <option value="All">All Status</option>
@@ -291,7 +331,8 @@ const MannualEntryStatus = () => {
                     setFormData((prev) => ({
                       ...prev,
                       designation: updated.designation,
-                      designation_id: updated.designation_id ?? updated.designation,
+                      designation_id:
+                        updated.designation_id ?? updated.designation,
                     }))
                   }
                   inputStyle={inputStyle}
@@ -379,7 +420,7 @@ const MannualEntryStatus = () => {
                       setEntriesPerPage(Number(e.target.value));
                       setCurrentPage(1);
                     }}
-                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base focus:ring-2 focus:ring-blue-500/60 transition-all"
+                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/60 transition-all"
                   >
                     {[10, 25, 50, 100].map((v) => (
                       <option key={v} value={v}>
@@ -423,7 +464,7 @@ const MannualEntryStatus = () => {
                       setSearchTerm(e.target.value);
                       setCurrentPage(1);
                     }}
-                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
                   />
                 </div>
               </div>
@@ -526,10 +567,10 @@ const MannualEntryStatus = () => {
             {/* Pagination Section */}
             <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
               <span className="text-sm xl:text-base text-gray-600">
-                Showing{" "}
-                <span className="font-bold text-gray-900">
-                  {startIndex + 1}
-                </span>{" "}
+              Showing{" "}
+              <span className="text-gray-900 font-semibold">
+                {filteredmannualEntryStatus.length === 0 ? "0" : startIndex + 1}
+              </span>{" "}
                 to{" "}
                 <span className="font-bold text-gray-900">
                   {Math.min(endIndex, filteredmannualEntryStatus.length)}

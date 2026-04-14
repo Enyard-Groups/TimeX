@@ -441,7 +441,6 @@ const MonthlyFireSafetyInspections = () => {
   const labelStyle =
     "text-sm xl:text-base  focus:outline-none font-semibold text-gray-700 mb-2 block";
 
-
   const filteredinspectionData = inspectionData.filter(
     (x) =>
       x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
@@ -503,7 +502,6 @@ const MonthlyFireSafetyInspections = () => {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
-
 
   const fetchData = async () => {
     try {
@@ -602,7 +600,11 @@ const MonthlyFireSafetyInspections = () => {
 
     const rows = filteredinspectionData
       .map((item) => {
-        return [item.location, item.employee, formatDate(item.createdDate)].join("\t");
+        return [
+          item.location,
+          item.employee,
+          formatDate(item.createdDate),
+        ].join("\t");
       })
       .join("\n");
 
@@ -673,7 +675,7 @@ const MonthlyFireSafetyInspections = () => {
                   setFormData(defaultFormData);
                   setOpenModal(true);
                 }}
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
               >
                 + Add New
               </button>
@@ -688,7 +690,7 @@ const MonthlyFireSafetyInspections = () => {
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
                 <label className="text-sm xl:text-base  font-medium text-gray-600">
-                  Show
+                  Display
                 </label>
                 <select
                   value={entriesPerPage}
@@ -696,7 +698,7 @@ const MonthlyFireSafetyInspections = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm  focus:ring-2 focus:ring-blue-500/60"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -717,7 +719,7 @@ const MonthlyFireSafetyInspections = () => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base focus:outline-none  rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
                 />
                 <div className="flex gap-2">
                   <button
@@ -1076,7 +1078,7 @@ const MonthlyFireSafetyInspections = () => {
                                 className="w-full border-gray-200 rounded-lg xl:text-base  focus:ring-blue-500"
                                 value={
                                   formData[sectionItem.section].remarks[
-                                  field.key
+                                    field.key
                                   ] || ""
                                 }
                                 disabled={mode === "view"}
@@ -1181,7 +1183,9 @@ const MonthlyFireSafetyInspections = () => {
                             <input
                               type="text"
                               className={inputStyle}
-                              value={formatDate(formData.remarks[0]?.targetDate)}
+                              value={formatDate(
+                                formData.remarks[0]?.targetDate,
+                              )}
                               disabled={mode === "view"}
                               onChange={(e) =>
                                 handleRemarkDetailChange(
@@ -1216,10 +1220,11 @@ const MonthlyFireSafetyInspections = () => {
                               signatureMode: "upload",
                             })
                           }
-                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.signatureMode === "upload"
-                            ? "bg-[#0f172a] text-white border-[#0f172a]"
-                            : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                            }`}
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                            formData.signatureMode === "upload"
+                              ? "bg-[#0f172a] text-white border-[#0f172a]"
+                              : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                          }`}
                         >
                           Upload
                         </button>
@@ -1233,10 +1238,11 @@ const MonthlyFireSafetyInspections = () => {
                               signatureMode: "draw",
                             })
                           }
-                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.signatureMode === "draw"
-                            ? "bg-[#0f172a] text-white border-[#0f172a]"
-                            : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                            }`}
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                            formData.signatureMode === "draw"
+                              ? "bg-[#0f172a] text-white border-[#0f172a]"
+                              : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                          }`}
                         >
                           Sign Here
                         </button>

@@ -8,13 +8,17 @@ import { RxCross2 } from "react-icons/rx";
 
 const API_BASE = "http://localhost:3000/api";
 
-
 const MannualEntryApproval = () => {
   const [requests, setRequests] = useState([]);
 
   const formatTime = (timeStr) => {
     if (!timeStr) return "—";
-    if (typeof timeStr === "string" && timeStr.includes(":") && !timeStr.includes("-") && !timeStr.includes("T")) {
+    if (
+      typeof timeStr === "string" &&
+      timeStr.includes(":") &&
+      !timeStr.includes("-") &&
+      !timeStr.includes("T")
+    ) {
       return timeStr;
     }
     try {
@@ -125,7 +129,7 @@ const MannualEntryApproval = () => {
   const currentData = filteredData.slice(startIndex, endIndex);
   const totalPages = Math.max(
     1,
-    Math.ceil(filteredData.length / entriesPerPage)
+    Math.ceil(filteredData.length / entriesPerPage),
   );
 
   const selectedItem = requests.find((item) => item.id === selectedId);
@@ -136,7 +140,7 @@ const MannualEntryApproval = () => {
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
         <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
           <FaAngleRight className="text-blue-500 text-base" />
-          <span className="text-gray-500">Requests</span>
+          <span className="text-gray-500">Approvals</span>
           <FaAngleRight className="text-blue-500 text-base" />
           <div className="text-blue-600">Manual Entry Approval</div>
         </h1>
@@ -201,7 +205,7 @@ const MannualEntryApproval = () => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm xl:text-base placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all"
+                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
               />
             </div>
           </div>
@@ -306,7 +310,9 @@ const MannualEntryApproval = () => {
                       {formatTime(item.out_time)}
                     </td>
                     <td className="px-4 py-2 text-center hidden sm:table-cell text-gray-500">
-                      {item.created_at ? new Date(item.created_at).toLocaleDateString() : "—"}
+                      {item.created_at
+                        ? new Date(item.created_at).toLocaleDateString()
+                        : "—"}
                     </td>
                     <td className="px-4 py-2 text-center hidden xl:table-cell text-gray-500 italic truncate">
                       {item.remarks || "—"}
@@ -421,8 +427,14 @@ const MannualEntryApproval = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
-                { label: "Employee Name", value: selectedItem.employee_name || "—" },
-                { label: "Work Location", value: selectedItem.location_name || "—" },
+                {
+                  label: "Employee Name",
+                  value: selectedItem.employee_name || "—",
+                },
+                {
+                  label: "Work Location",
+                  value: selectedItem.location_name || "—",
+                },
                 { label: "Company", value: selectedItem.company_name || "N/A" },
                 {
                   label: "Designation",

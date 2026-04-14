@@ -155,7 +155,7 @@ const DeviceCommunication = () => {
     <div className="mb-6 max-w-[1920px] mx-auto">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center gap-2 h-[30px] text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-800">
+        <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
           <FaAngleRight className="text-blue-500 text-base" />
           <span className="text-gray-500">Device Management</span>
           <FaAngleRight className="text-blue-500 text-base" />
@@ -171,7 +171,7 @@ const DeviceCommunication = () => {
         <div className="p-6 border-b border-blue-100/30">
           <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+              <label className="text-sm xl:text-base  font-medium text-gray-600">
                 Display
               </label>
               <select
@@ -187,7 +187,7 @@ const DeviceCommunication = () => {
                 <option value={50}>50</option>
                 <option value={100}>100</option>
               </select>
-              <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+              <span className="text-sm xl:text-base font-medium text-gray-600">
                 entries
               </span>
             </div>
@@ -200,7 +200,7 @@ const DeviceCommunication = () => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
               />
               <div className="flex gap-2">
                 <button
@@ -208,21 +208,21 @@ const DeviceCommunication = () => {
                   className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
                   title="Copy to clipboard"
                 >
-                  <GoCopy className="text-lg lg:text-xl 3xl:text-3xl" />
+                  <GoCopy className="text-lg xl:text-xl" />
                 </button>
                 <button
                   onClick={handleExcel}
                   className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
                   title="Export to Excel"
                 >
-                  <FaFileExcel className="text-lg lg:text-xl 3xl:text-3xl" />
+                  <FaFileExcel className="text-lg  xl:text-xl" />
                 </button>
                 <button
                   onClick={handlePDF}
                   className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
                   title="Export to PDF"
                 >
-                  <FaFilePdf className="text-lg lg:text-xl 3xl:text-3xl" />
+                  <FaFilePdf className="text-lg xl:text-xl " />
                 </button>
               </div>
             </div>
@@ -337,7 +337,7 @@ const DeviceCommunication = () => {
 
         {/* Pagination */}
         <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-          <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
+          <span className="text-sm xl:text-base text-gray-600">
             Showing{" "}
             <span className="text-gray-900 font-semibold">
               {filtereddevicecommunication.length === 0 ? "0" : startIndex + 1}
@@ -392,12 +392,12 @@ const DeviceCommunication = () => {
       {openModal && selectedItem && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-2 overflow-y-auto"
-          style={{scrollbarWidth:"none"}}
+          style={{ scrollbarWidth: "none" }}
           onClick={() => setopenModal(false)}
         >
           <div
             className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
-          style={{scrollbarWidth:"none"}}
+            style={{ scrollbarWidth: "none" }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center pb-4 border-b border-blue-100/30 mb-6">

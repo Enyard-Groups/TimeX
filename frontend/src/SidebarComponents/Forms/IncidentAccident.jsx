@@ -51,7 +51,7 @@ const IncidentAccident = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
-  const [loading , setLoading ] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [showDateSpinner, setShowDateSpinner] = useState(false);
   const [showMsoDateSpinner, setShowMsoDateSpinner] = useState(false);
@@ -63,15 +63,15 @@ const IncidentAccident = () => {
 
   const fetchData = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const response = await axios.get(API_URL);
       setIncidentData(response.data);
-      console.log(response.data)
+      console.log(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to fetch data");
-    } finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,10 +84,9 @@ const IncidentAccident = () => {
   const labelStyle =
     "text-sm xl:text-base  focus:outline-none font-semibold text-gray-700 mb-2 block";
 
-  const filteredincidentData = incidentData.filter(
-    (x) =>
-      // x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.location.toLowerCase().startsWith(searchTerm.toLowerCase()),
+  const filteredincidentData = incidentData.filter((x) =>
+    // x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+    x.location.toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
   const defaultFormData = {
@@ -223,7 +222,11 @@ const IncidentAccident = () => {
 
     const rows = filteredincidentData
       .map((item) => {
-        return [item.location, item.building, formatDate(item.date_of_incident)].join("\t");
+        return [
+          item.location,
+          item.building,
+          formatDate(item.date_of_incident),
+        ].join("\t");
       })
       .join("\n");
 
@@ -256,7 +259,11 @@ const IncidentAccident = () => {
     const tableRows = [];
 
     filteredincidentData.forEach((item) => {
-      const row = [item.location, item.building, formatDate(item.date_of_incident)];
+      const row = [
+        item.location,
+        item.building,
+        formatDate(item.date_of_incident),
+      ];
 
       tableRows.push(row);
     });
@@ -293,7 +300,7 @@ const IncidentAccident = () => {
                 setFormData(defaultFormData);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -309,7 +316,7 @@ const IncidentAccident = () => {
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
                 <label className="text-sm xl:text-base  font-medium text-gray-600">
-                  Show
+                  Display
                 </label>
                 <select
                   value={entriesPerPage}
@@ -317,7 +324,7 @@ const IncidentAccident = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/60"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -337,21 +344,30 @@ const IncidentAccident = () => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
                 />
-                <div className="flex gap-2 text-xl  ">
-                  <GoCopy
+                <div className="flex gap-2">
+                  <button
                     onClick={handleCopy}
-                    className="cursor-pointer text-gray-600 hover:text-blue-600 transition-colors"
-                  />
-                  <FaFileExcel
+                    className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
+                    title="Copy to clipboard"
+                  >
+                    <GoCopy className="text-lg xl:text-xl" />
+                  </button>
+                  <button
                     onClick={handleExcel}
-                    className="cursor-pointer text-green-600 hover:text-green-700 transition-colors"
-                  />
-                  <FaFilePdf
+                    className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
+                    title="Export to Excel"
+                  >
+                    <FaFileExcel className="text-lg xl:text-xl" />
+                  </button>
+                  <button
                     onClick={handlePDF}
-                    className="cursor-pointer text-red-600 hover:text-red-700 transition-colors"
-                  />
+                    className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
+                    title="Export to PDF"
+                  >
+                    <FaFilePdf className="text-lg xl:text-xl" />
+                  </button>
                 </div>
               </div>
             </div>
