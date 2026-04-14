@@ -43,9 +43,9 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
         // Future days: Set values to 0 so the line drops to the bottom
         return {
           day: dayName,
-          presentToday: 10,
-          absent: 5,
-          leave: 3,
+          presentToday: 0,
+          absent: 0,
+          leave: 0,
           isToday: false,
         };
       },
