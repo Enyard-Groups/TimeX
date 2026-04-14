@@ -117,7 +117,7 @@ const EarlyOutReport = () => {
       <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-         <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
+          <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
             <FaAngleRight className="text-blue-500 text-base" />
             <span className="text-gray-500">Reports</span>
             <FaAngleRight className="text-blue-500 text-base" />
@@ -421,10 +421,10 @@ const EarlyOutReport = () => {
             {/* Pagination */}
             <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
               <span className="text-sm xl:text-base text-gray-600">
-              Showing{" "}
-              <span className="text-gray-900 font-semibold">
-                {filteredearlyOutReport.length === 0 ? "0" : startIndex + 1}
-              </span>{" "}
+                Showing{" "}
+                <span className="text-gray-900 font-semibold">
+                  {filteredearlyOutReport.length === 0 ? "0" : startIndex + 1}
+                </span>{" "}
                 to{" "}
                 <span className="font-bold text-gray-900">
                   {Math.min(endIndex, filteredearlyOutReport.length)}
@@ -437,33 +437,41 @@ const EarlyOutReport = () => {
               </span>
               <div className="flex gap-2">
                 <button
-                  disabled={currentPage === 1}
+                  disabled={currentPage == 1}
                   onClick={() => setCurrentPage(1)}
-                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50"
+                  className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                  title="First page"
                 >
                   First
                 </button>
+
                 <button
-                  disabled={currentPage === 1}
+                  disabled={currentPage == 1}
                   onClick={() => setCurrentPage(currentPage - 1)}
-                  className="p-2.5 border rounded-lg bg-white disabled:opacity-50"
+                  className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                  title="Previous page"
                 >
                   <GrPrevious />
                 </button>
-                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm xl:text-base ">
+
+                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
                   {currentPage}
                 </div>
+
                 <button
-                  disabled={currentPage === totalPages}
+                  disabled={currentPage == totalPages}
                   onClick={() => setCurrentPage(currentPage + 1)}
-                  className="p-2.5 border rounded-lg bg-white disabled:opacity-50"
+                  className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                  title="Next page"
                 >
                   <GrNext />
                 </button>
+
                 <button
-                  disabled={currentPage === totalPages}
+                  disabled={currentPage == totalPages}
                   onClick={() => setCurrentPage(totalPages)}
-                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50"
+                  className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                  title="Last page"
                 >
                   Last
                 </button>

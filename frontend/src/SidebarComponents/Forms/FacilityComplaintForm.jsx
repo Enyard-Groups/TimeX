@@ -23,11 +23,11 @@ const FacilityComplaintForm = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const response = await axios.get(API_URL);
       setRequestData(response.data);
       // console.log(response.data)
@@ -35,7 +35,7 @@ const FacilityComplaintForm = () => {
       console.error("Error fetching data:", error);
       toast.error("Failed to fetch data");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -288,7 +288,7 @@ const FacilityComplaintForm = () => {
                     className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
                     title="Export to Excel"
                   >
-                    <FaFileExcel  className="text-lg xl:text-xl"/>
+                    <FaFileExcel className="text-lg xl:text-xl" />
                   </button>
 
                   <button
@@ -397,10 +397,11 @@ const FacilityComplaintForm = () => {
                       <td className="px-4 py-3 hidden lg:table-cell text-center">
                         <div className="flex justify-center">
                           <span
-                            className={`px-3 py-1 rounded-full text-sm font-semibold border ${item.urgent
+                            className={`px-3 py-1 rounded-full text-sm font-semibold border ${
+                              item.urgent
                                 ? "bg-red-100 text-red-700 border-red-300"
                                 : "bg-green-100 text-green-700 border-green-300"
-                              }`}
+                            }`}
                           >
                             {item.urgent ? "Urgent" : "Normal"}
                           </span>
@@ -473,7 +474,7 @@ const FacilityComplaintForm = () => {
 
             <div className="flex gap-2">
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
                 title="First page"
@@ -482,7 +483,7 @@ const FacilityComplaintForm = () => {
               </button>
 
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
                 title="Previous page"
@@ -495,7 +496,7 @@ const FacilityComplaintForm = () => {
               </div>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
                 title="Next page"
@@ -504,7 +505,7 @@ const FacilityComplaintForm = () => {
               </button>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(totalPages)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
                 title="Last page"
