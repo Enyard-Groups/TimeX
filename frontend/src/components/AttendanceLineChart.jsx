@@ -14,7 +14,7 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
 
     // 1. Daily/Weekly Views (7d, 15d, 1m)
     if (range === "7d" || range === "15d" || range === "1m") {
-      const sliceSize = range === "7d" ? -7 : range === "15d" ? -15 : -30;
+      const sliceSize = range === "7d" ? -6 : range === "15d" ? -15 : -30;
       return filteredData.slice(sliceSize).map((item) => {
         const dateObj = new Date(item.date);
         return {
@@ -135,29 +135,31 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
         stops: [20, 100],
       },
     },
-    // ADD THIS GRID SECTION
     grid: {
       show: true,
-      xaxis: {
-        lines: { show: false },
-      },
-      yaxis: {
-        lines: { show: false },
-      },
-      padding: {
-        left: 10,
-        right: 10,
-      },
+      xaxis: { lines: { show: false } },
+      yaxis: { lines: { show: false } },
+      padding: { left: 15, right:17 },
     },
     xaxis: {
       categories: processedData.map((d) => d.label),
       axisBorder: { show: false },
       axisTicks: { show: false },
-      labels: { style: { colors: "#94a3b8", fontSize: "11px" } },
+      labels: {
+        style: {
+          colors: "#94a3b8",
+          fontSize: "11px",
+        },
+        // --- TILT SETTINGS START HERE ---
+        rotate: -45,
+        rotateAlways: false,
+        hideOverlappingLabels: true,
+        trim: true,
+        maxHeight: 60,
+      },
     },
     yaxis: {
       labels: { style: { colors: "#94a3b8", fontSize: "11px" } },
-
       axisBorder: { show: false },
       axisTicks: { show: false },
     },
