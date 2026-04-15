@@ -91,6 +91,13 @@ const GeofencingMaster = () => {
     searchradius: "",
   });
 
+   const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
+
+  const labelStyle =
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
+
+
   const getHeaders = () => {
     const token = localStorage.getItem("token");
     return {
@@ -127,11 +134,6 @@ const GeofencingMaster = () => {
     fetchLocations();
   }, []);
 
-  const inputStyle =
-    "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-lg py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
-
-  const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const filteredlocation = location.filter((x) =>
     x.name.toLowerCase().startsWith(searchTerm.toLowerCase()),
@@ -635,7 +637,7 @@ const GeofencingMaster = () => {
               {/* Form Fields */}
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 items-end mb-4">
                 <div>
-                  <label className="text-xs xl:text-sm font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                  <label className={labelStyle}>
                     Latitude <span className="text-rose-500">*</span>
                   </label>
                   <input
@@ -644,13 +646,13 @@ const GeofencingMaster = () => {
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="0.0000"
-                    className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all text-sm xl:text-base"
+                    className={inputStyle}
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs xl:text-sm font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                  <label className={labelStyle}>
                     Longitude <span className="text-rose-500">*</span>
                   </label>
                   <input
@@ -659,13 +661,13 @@ const GeofencingMaster = () => {
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="0.0000"
-                    className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all text-sm xl:text-base"
+                    className={inputStyle}
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs xl:text-sm font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                  <label className={labelStyle}>
                     Location Name <span className="text-rose-500">*</span>
                   </label>
                   <input
@@ -674,13 +676,13 @@ const GeofencingMaster = () => {
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Office Branch"
-                    className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all font-medium text-sm xl:text-base"
+                    className={inputStyle}
                     required
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="text-xs xl:text-sm font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                  <label className={labelStyle}>
                     Radius (Meters) <span className="text-rose-500">*</span>
                   </label>
                   <div className="flex gap-2">
@@ -691,7 +693,7 @@ const GeofencingMaster = () => {
                       onChange={handleChange}
                       disabled={mode === "view"}
                       placeholder="e.g. 100"
-                      className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all font-medium text-sm xl:text-base"
+                      className={inputStyle}
                     />
                     <button
                       disabled={mode === "view"}

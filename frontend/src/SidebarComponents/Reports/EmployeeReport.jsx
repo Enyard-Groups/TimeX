@@ -43,9 +43,10 @@ const EmployeeReport = () => {
   });
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 lg:text-base rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
+
   const labelStyle =
-    "text-sm lg:text-base font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
 
   useEffect(() => {
     fetchOptions();
@@ -520,12 +521,8 @@ const EmployeeReport = () => {
                   { label: "Finger", value: selectedItem.finger },
                 ].map((field) => (
                   <div key={field.label} className="space-y-1">
-                    <p className="text-xs xl:text-sm font-bold text-gray-700">
-                      {field.label}
-                    </p>
-                    <p className="bg-white border border-gray-200 p-3 rounded-xl text-gray-800 font-medium xl:text-lg  shadow-sm">
-                      {field.value || "-"}
-                    </p>
+                    <p className={labelStyle}>{field.label}</p>
+                    <p className={inputStyle}>{field.value || "-"}</p>
                   </div>
                 ))}
               </div>

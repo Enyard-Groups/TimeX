@@ -44,6 +44,12 @@ const ClaimRequest = () => {
 
   const [formData, setFormData] = useState(emptyForm);
 
+  const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
+
+  const labelStyle =
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -574,8 +580,8 @@ const ClaimRequest = () => {
                 formData={formData}
                 setFormData={setFormData}
                 disabled={mode === "view"}
-                inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 transition-all shadow-sm font-medium"
-                labelStyle="text-sm xl:text-base font-bold text-gray-700 mb-2 block"
+                inputStyle={inputStyle}
+                labelStyle={labelStyle}
               />
 
               <SearchDropdown
@@ -592,12 +598,12 @@ const ClaimRequest = () => {
                 formData={formData}
                 setFormData={setFormData}
                 disabled={mode === "view"}
-                inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 transition-all shadow-sm font-medium"
-                labelStyle="text-sm xl:text-base font-bold text-gray-700 mb-2 block"
+                inputStyle={inputStyle}
+                labelStyle={labelStyle}
               />
 
               <div>
-                <label className="text-sm xl:text-base font-bold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -607,7 +613,7 @@ const ClaimRequest = () => {
                   disabled={mode === "view"}
                   readOnly
                   placeholder="dd/mm/yyyy"
-                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className={inputStyle}
                 />
                 {dateSpinner && (
                   <SpinnerDatePicker
@@ -619,7 +625,7 @@ const ClaimRequest = () => {
               </div>
 
               <div>
-                <label className="text-sm xl:text-base font-bold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Amount <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -628,13 +634,13 @@ const ClaimRequest = () => {
                   value={formData.amount}
                   onChange={handleChange}
                   disabled={mode === "view"}
-                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className={inputStyle}
                   placeholder="Enter amount"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="text-sm xl:text-base font-bold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Purpose <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -642,13 +648,13 @@ const ClaimRequest = () => {
                   value={formData.purpose}
                   onChange={handleChange}
                   disabled={mode === "view"}
-                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className={inputStyle}
                   placeholder="Enter purpose of claim"
                 />
               </div>
 
               <div className="md:col-span-3">
-                <label className="text-sm xl:text-base font-bold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Remarks
                 </label>
                 <textarea
@@ -656,7 +662,7 @@ const ClaimRequest = () => {
                   value={formData.remarks}
                   onChange={handleChange}
                   disabled={mode === "view"}
-                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2 xl:text-base rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm h-24"
+                  className={inputStyle}
                   placeholder="Enter optional remarks..."
                 />
               </div>

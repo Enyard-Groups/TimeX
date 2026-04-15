@@ -53,9 +53,10 @@ const Monitoring = () => {
   }, []);
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
-  const labelStyle = "text-sm font-semibold text-gray-700 mb-2 block";
+  const labelStyle =
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
 
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
@@ -509,7 +510,7 @@ const Monitoring = () => {
               <p>
                 <p className={labelStyle}>Employee:</p>{" "}
                 <p className={inputStyle}>
-                  {selectedItem.full_name || selectedItem.employee}
+                  {selectedItem.full_name || selectedItem.employee || "-"}
                 </p>
               </p>
               <p>
@@ -533,7 +534,7 @@ const Monitoring = () => {
               <p>
                 <p className={labelStyle}>Login Time:</p>{" "}
                 <p className={inputStyle}>
-                  {selectedItem.punch_time || selectedItem.login}
+                  {selectedItem.punch_time || selectedItem.login || "-"}
                 </p>
               </p>
               <p>
@@ -554,7 +555,7 @@ const Monitoring = () => {
               <p>
                 <p className={labelStyle}>Location:</p>{" "}
                 <p className={inputStyle}>
-                  {selectedItem.location_name || selectedItem.location}
+                  {selectedItem.location_name || selectedItem.location || "-"}
                 </p>
               </p>
               <p>
@@ -566,7 +567,13 @@ const Monitoring = () => {
                       : "text-red-600"
                   }`}
                 >
-                  <p className={inputStyle}>
+                  <p
+                    className={`${inputStyle} ${
+                      selectedItem.status === "Online"
+                        ? "text-green-600"
+                        : "text-red-500"
+                    }`}
+                  >
                     {selectedItem.status === "Online"
                       ? "● Online"
                       : "○ Offline"}

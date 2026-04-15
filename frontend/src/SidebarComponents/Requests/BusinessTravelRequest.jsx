@@ -43,6 +43,13 @@ const BusinessTravelRequest = () => {
 
   const [formData, setFormData] = useState(emptyForm);
 
+   const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
+
+  const labelStyle =
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
+
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -250,10 +257,6 @@ const BusinessTravelRequest = () => {
 
     doc.save("TravelRequestData.pdf");
   };
-
-  const inputStyle =
-    "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
-  const labelStyle = "text-lg font-medium mb-1 block";
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
@@ -604,14 +607,14 @@ const BusinessTravelRequest = () => {
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
-                  inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 xl:text-base px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                  labelStyle="text-sm xl:text-base font-bold text-gray-700 mb-2 block"
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
                 />
               </div>
 
               {/* Travel Start Date */}
               <div>
-                <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Travel Start Date <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -622,7 +625,7 @@ const BusinessTravelRequest = () => {
                     disabled={mode === "view"}
                     placeholder="dd/mm/yyyy"
                     readOnly
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm cursor-pointer"
+                    className={inputStyle}
                   />
                   {fromDateSpinner && (
                     <SpinnerDatePicker
@@ -638,7 +641,7 @@ const BusinessTravelRequest = () => {
 
               {/* Travel Return Date */}
               <div>
-                <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Travel Return Date <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -649,7 +652,7 @@ const BusinessTravelRequest = () => {
                     disabled={mode === "view"}
                     placeholder="dd/mm/yyyy"
                     readOnly
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm cursor-pointer"
+                    className={inputStyle}
                   />
                   {toDateSpinner && (
                     <SpinnerDatePicker
@@ -665,7 +668,7 @@ const BusinessTravelRequest = () => {
 
               {/* Purpose */}
               <div className="sm:col-span-2">
-                <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Purpose <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -674,13 +677,13 @@ const BusinessTravelRequest = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Enter purpose of travel"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                  className={inputStyle}
                 />
               </div>
 
               {/* Remarks */}
               <div className="sm:col-span-2">
-                <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Remarks
                 </label>
                 <textarea
@@ -690,7 +693,7 @@ const BusinessTravelRequest = () => {
                   disabled={mode === "view"}
                   placeholder="Enter optional remarks..."
                   rows="4"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm resize-none"
+                  className={inputStyle}
                 />
               </div>
             </div>
