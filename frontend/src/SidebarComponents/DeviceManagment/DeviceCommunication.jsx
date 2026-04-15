@@ -49,10 +49,10 @@ const DeviceCommunication = () => {
   }, []);
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
 
   const labelStyle =
-    "text-sm xl:text-lg font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
 
   const filtereddevicecommunication = devicecommunication.filter(
     (device) =>
@@ -437,12 +437,8 @@ const DeviceCommunication = () => {
                 },
               ].map((field) => (
                 <div key={field.label}>
-                  <p className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-1">
-                    {field.label}
-                  </p>
-                  <p className="w-full bg-blue-50/50 border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl">
-                    {field.value || "-"}
-                  </p>
+                  <p className={labelStyle}>{field.label}</p>
+                  <p className={inputStyle}>{field.value || "-"}</p>
                 </div>
               ))}
             </div>

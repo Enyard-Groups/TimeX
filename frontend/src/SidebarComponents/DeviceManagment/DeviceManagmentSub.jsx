@@ -45,6 +45,12 @@ const DeviceManagementSub = () => {
     isActive: false,
   });
 
+  const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+
+  const labelStyle =
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
+
   const getHeaders = () => {
     const token = localStorage.getItem("token");
     return {
@@ -647,7 +653,7 @@ const DeviceManagementSub = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               <div key="deviceserialno">
-                <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Device Serial Number <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -656,11 +662,11 @@ const DeviceManagementSub = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Enter serial number"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className={inputStyle}
                 />
               </div>
               <div key="name">
-                <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -669,11 +675,11 @@ const DeviceManagementSub = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Enter device name"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className={inputStyle}
                 />
               </div>
               <div key="deviceip">
-                <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Device IP <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -682,33 +688,29 @@ const DeviceManagementSub = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="e.g. 192.168.1.1"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className={inputStyle}
                 />
               </div>
               <div key="longitude">
-                <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
-                  Longitude
-                </label>
+                <label className={labelStyle}>Longitude</label>
                 <input
                   name="longitude"
                   value={formData.longitude}
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="0"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className={inputStyle}
                 />
               </div>
               <div key="latitude">
-                <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
-                  Latitude
-                </label>
+                <label className={labelStyle}>Latitude</label>
                 <input
                   name="latitude"
                   value={formData.latitude}
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="0"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className={inputStyle}
                 />
               </div>
 
@@ -729,8 +731,8 @@ const DeviceManagementSub = () => {
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
-                  inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
-                  labelStyle="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block"
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
                 />
               </div>
               <div>
@@ -746,8 +748,8 @@ const DeviceManagementSub = () => {
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
-                  inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm font-medium"
-                  labelStyle="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block"
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
                 />
               </div>
             </div>
@@ -761,10 +763,7 @@ const DeviceManagementSub = () => {
                 { name: "isCardNo", label: "Card No" },
                 { name: "isPinNo", label: "Pin No" },
               ].map(({ name, label }) => (
-                <label
-                  key={name}
-                  className="flex items-center gap-3 px-4 py-3 bg-white border border-gray-100 rounded-xl shadow-sm cursor-pointer group"
-                >
+                <label key={name} className={`${inputStyle} flex flex-row gap-4 pt-4`}>
                   <input
                     type="checkbox"
                     name={name}
@@ -773,9 +772,7 @@ const DeviceManagementSub = () => {
                     disabled={mode === "view"}
                     className="w-5 h-5 accent-blue-600"
                   />
-                  <span className="text-gray-700 font-semibold text-sm lg:text-base 3xl:text-lg group-hover:text-blue-600 transition-colors">
-                    {label}
-                  </span>
+                  <span className={labelStyle}>{label}</span>
                 </label>
               ))}
             </div>
@@ -784,13 +781,13 @@ const DeviceManagementSub = () => {
               <div className="flex justify-end gap-3 pt-6 border-t border-blue-100/30">
                 <button
                   onClick={() => setOpenModal(false)}
-                  className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 lg:text-lg 3xl:text-xl hover:bg-gray-50 font-semibold transition-all"
+                  className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 xl:text-base hover:bg-gray-50 font-semibold transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold lg:text-lg 3xl:text-xl px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold xl:text-base px-6 py-2 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                 >
                   Save
                 </button>

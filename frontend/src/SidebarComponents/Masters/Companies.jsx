@@ -33,10 +33,10 @@ const Companies = () => {
   });
 
   const inputStyle =
-    "w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 text-lg py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
 
   const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
 
   const filteredcompany = company.filter(
     (x) =>
@@ -485,7 +485,7 @@ const Companies = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
                 <div>
-                  <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Company Name
                     <span className="text-red-500"> *</span>
                   </label>
@@ -495,13 +495,13 @@ const Companies = () => {
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Enter company name"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className={inputStyle}
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Company Code
                     <span className="text-red-500"> *</span>
                   </label>
@@ -511,22 +511,20 @@ const Companies = () => {
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Enter company code"
-                    className="w-full bg-white border border-gray-200 lg:text-lg 3xl:text-xl text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className={inputStyle}
                     required
                   />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
-                    Description
-                  </label>
+                  <label className={labelStyle}>Description</label>
                   <input
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Enter description"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className={inputStyle}
                   />
                 </div>
 
@@ -539,7 +537,7 @@ const Companies = () => {
                     disabled={mode === "view"}
                     className="w-5 h-5 cursor-pointer accent-blue-500 disabled:cursor-not-allowed"
                   />
-                  <label className="text-gray-700 font-medium lg:text-lg 3xl:text-xl cursor-pointer">
+                  <label className={labelStyle}>
                     Active
                   </label>
                 </div>
@@ -550,13 +548,13 @@ const Companies = () => {
                 <div className="flex justify-end gap-3">
                   <button
                     onClick={() => setOpenModal(false)}
-                    className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 lg:text-lg 3xl:text-xl hover:bg-gray-50 font-medium transition-all"
+                    className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 xl:text-base hover:bg-gray-50 font-medium transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSubmit}
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg lg:text-lg 3xl:text-xl hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg xl:text-base hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                   >
                     Save
                   </button>

@@ -33,6 +33,12 @@ const LocationGroup = () => {
     time_keeper: "",
   });
 
+  const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+
+  const labelStyle =
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
+
   const [siteManagers, setSiteManagers] = useState([]);
   const [timeKeepers, setTimeKeepers] = useState([]);
 
@@ -603,7 +609,7 @@ const LocationGroup = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               <div>
-                <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Company <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -612,12 +618,12 @@ const LocationGroup = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Enter company"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className={inputStyle}
                   required
                 />
               </div>
               <div>
-                <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Location Group Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -626,12 +632,12 @@ const LocationGroup = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Enter group name"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className={inputStyle}
                   required
                 />
               </div>
               <div>
-                <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Description <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -640,7 +646,7 @@ const LocationGroup = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Enter description"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className={inputStyle}
                   required
                 />
               </div>
@@ -652,8 +658,8 @@ const LocationGroup = () => {
                 formData={formData}
                 setFormData={setFormData}
                 disabled={mode === "view"}
-                inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm font-medium"
-                labelStyle="text-sm lg:text-lg 3xl:text-xl font-bold text-gray-700 mb-2 block"
+                inputStyle={inputStyle}
+                labelStyle={labelStyle}
               />
               <SearchDropdown
                 label="Time Keeper Name"
@@ -663,8 +669,8 @@ const LocationGroup = () => {
                 formData={formData}
                 setFormData={setFormData}
                 disabled={mode === "view"}
-                inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm font-medium"
-                labelStyle="text-sm lg:text-lg 3xl:text-xl font-bold text-gray-700 mb-2 block"
+                inputStyle={inputStyle}
+                labelStyle={labelStyle}
               />
             </div>
 
@@ -672,13 +678,13 @@ const LocationGroup = () => {
               <div className="flex justify-end gap-3 pt-4 border-t border-blue-100/30">
                 <button
                   onClick={() => setOpenModal(false)}
-                  className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 lg:text-lg 3xl:text-xl hover:bg-gray-50 font-semibold transition-all"
+                  className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 xl:text-base hover:bg-gray-50 font-semibold transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg lg:text-lg 3xl:text-xl transition-all duration-200"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg xl:text-base transition-all duration-200"
                 >
                   Save
                 </button>
