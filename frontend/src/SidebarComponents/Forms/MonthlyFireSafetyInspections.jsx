@@ -17,19 +17,6 @@ import SpinnerDatePicker from "../SpinnerDatePicker";
 import SignPad from "./SignPad";
 
 const MonthlyFireSafetyInspections = () => {
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
-    try {
-      const date = new Date(dateStr);
-      if (isNaN(date.getTime())) return dateStr;
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
-    } catch (e) {
-      return dateStr;
-    }
-  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [inspectionData, setInspectionData] = useState([]);
@@ -600,11 +587,7 @@ const MonthlyFireSafetyInspections = () => {
 
     const rows = filteredinspectionData
       .map((item) => {
-        return [
-          item.location,
-          item.employee,
-          formatDate(item.createdDate),
-        ].join("\t");
+        return [item.location, item.employee, item.createdDate].join("\t");
       })
       .join("\n");
 
@@ -618,7 +601,7 @@ const MonthlyFireSafetyInspections = () => {
     const excelData = filteredinspectionData.map((item) => ({
       Location: item.location,
       InspectedBy: item.employee,
-      Date: formatDate(item.createdDate),
+      Date: item.createdDate,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -637,7 +620,7 @@ const MonthlyFireSafetyInspections = () => {
     const tableRows = [];
 
     filteredinspectionData.forEach((item) => {
-      const row = [item.location, item.employee, formatDate(item.createdDate)];
+      const row = [item.location, item.employee, item.createdDate];
 
       tableRows.push(row);
     });
@@ -808,7 +791,7 @@ const MonthlyFireSafetyInspections = () => {
                         {item.location}
                       </td>
                       <td className="py-3 px-6 hidden md:table-cell text-gray-600">
-                        {formatDate(item.createdDate)}
+                        {item.createdDate}
                       </td>
                       <td className="py-3 px-6 hidden md:table-cell text-gray-600">
                         {item.employee}
@@ -986,13 +969,13 @@ const MonthlyFireSafetyInspections = () => {
                     </label>
                     <input
                       name="createdDate"
-                      value={formatDate(formData.createdDate)}
+                      value={formData.createdDate}
                       onClick={() =>
                         mode !== "view" && setShowDateSpinner(true)
                       }
+                      placeholder="dd/mm/yyyy"
                       readOnly
                       disabled={mode === "view"}
-                      placeholder="dd/mm/yyyy"
                       className={inputStyle}
                     />
                     {showDateSpinner && (
@@ -1191,9 +1174,8 @@ const MonthlyFireSafetyInspections = () => {
                             <input
                               type="text"
                               className={inputStyle}
-                              value={formatDate(
-                                formData.remarks[0]?.targetDate,
-                              )}
+                              value={formData.remarks[0]?.targetDate}
+                              placeholder="dd/mm/yyyy"
                               disabled={mode === "view"}
                               onChange={(e) =>
                                 handleRemarkDetailChange(

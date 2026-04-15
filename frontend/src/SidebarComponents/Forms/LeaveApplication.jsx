@@ -20,19 +20,6 @@ import { getNames } from "country-list";
 import SignPad from "./SignPad";
 
 const LeaveApplication = () => {
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
-    try {
-      const date = new Date(dateStr);
-      if (isNaN(date.getTime())) return dateStr;
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
-    } catch (e) {
-      return dateStr;
-    }
-  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [leaveData, setLeaveData] = useState([]);
@@ -334,7 +321,7 @@ const LeaveApplication = () => {
           item.location,
           item.enrollmentId,
           item.designation,
-          formatDate(item.created_at || item.date),
+          item.created_at || item.date,
         ].join("\t");
       })
       .join("\n");
@@ -351,7 +338,7 @@ const LeaveApplication = () => {
       Location: item.location,
       EnrollmentId: item.enrollmentId,
       Designation: item.designation,
-      Date: formatDate(item.created_at || item.date),
+      Date: item.created_at || item.date,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -381,7 +368,7 @@ const LeaveApplication = () => {
         item.location,
         item.enrollmentId,
         item.designation,
-        formatDate(item.created_at || item.date),
+        item.created_at || item.date,
       ];
 
       tableRows.push(row);
@@ -567,7 +554,7 @@ const LeaveApplication = () => {
                         {item.designation}
                       </td>
                       <td className="py-3 px-6 text-gray-600 text-center">
-                        {formatDate(item.created_at || item.date)}
+                        {item.created_at || item.date}
                       </td>
                       <td className="py-3 px-6 text-center">
                         <div className="flex justify-center gap-3">
@@ -673,7 +660,7 @@ const LeaveApplication = () => {
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1300px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
             style={{ scrollbarWidth: "none" }}
           >
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
@@ -732,7 +719,7 @@ const LeaveApplication = () => {
                     <label className={labelStyle}>Application Date</label>
                     <input
                       name="date"
-                      value={formatDate(formData.date)}
+                      value={formData.date}
                       onClick={() =>
                         mode !== "view" && setShowDateSpinner(true)
                       }

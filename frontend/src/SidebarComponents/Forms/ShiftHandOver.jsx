@@ -19,19 +19,6 @@ import axios from "axios";
 const API_URL = "http://localhost:3000/api/form/shiftHandOver";
 
 const ShiftHandOver = () => {
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
-    try {
-      const date = new Date(dateStr);
-      if (isNaN(date.getTime())) return dateStr;
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
-    } catch (e) {
-      return dateStr;
-    }
-  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState([]);
@@ -243,7 +230,7 @@ const ShiftHandOver = () => {
           item.school_name,
           item.time_in ? item.time_in.toLocaleTimeString() : "",
           item.time_out ? item.time_out.toLocaleTimeString() : "",
-          formatDate(item.date),
+          item.date,
         ].join("\t");
       })
       .join("\n");
@@ -259,7 +246,7 @@ const ShiftHandOver = () => {
       SchoolName: item.school_name,
       TimeIn: item.time_in ? item.time_in.toLocaleTimeString() : "",
       TimeOut: item.time_out ? item.time_out.toLocaleTimeString() : "",
-      Date: formatDate(item.date),
+      Date: item.date,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -282,7 +269,7 @@ const ShiftHandOver = () => {
         item.school_name,
         item.time_in ? item.time_in.toLocaleTimeString() : "",
         item.time_out ? item.time_out.toLocaleTimeString() : "",
-        formatDate(item.date),
+        item.date,
       ];
 
       tableRows.push(row);
@@ -464,7 +451,7 @@ const ShiftHandOver = () => {
                           : "-"}
                       </td>
                       <td className="py-3 px-6 hidden lg:table-cell text-gray-600 text-center">
-                        {formatDate(item.date)}
+                        {item.date}
                       </td>
                       <td className="py-3 px-6">
                         <div className="flex justify-center gap-3">
@@ -566,7 +553,7 @@ const ShiftHandOver = () => {
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1400px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
             style={{ scrollbarWidth: "none" }}
           >
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
@@ -613,7 +600,7 @@ const ShiftHandOver = () => {
                     </label>
                     <input
                       name="date"
-                      value={formatDate(formData.date) || ""}
+                      value={formData.date || ""}
                       onClick={() =>
                         mode !== "view" && setShowDateSpinner(true)
                       }
@@ -670,13 +657,23 @@ const ShiftHandOver = () => {
                         }
                       >
                         {formData.time_out
-                          ? formData.time_out.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: false,
-                            })
+                          ? formData.time_out.toLocaleTimeString()
                           : "HH:MM:SS"}
                       </div>
+                      {showOutTimePicker && (
+                        <div className="absolute  ml-8 sm:ml-14 md:ml-16 lg:ml-20 ">
+                          <SpinnerTimePicker
+                            value={formData.time_out}
+                            onChange={(date) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                time_out: date,
+                              }))
+                            }
+                            onClose={() => setShowOutTimePicker(false)}
+                          />
+                        </div>
+                      )}
                     </div>
                     <div className="p-3 md:p-2 flex flex-col md:block">
                       <span className="md:hidden text-[10px] uppercase text-center text-gray-400 font-bold mb-1">
@@ -689,13 +686,23 @@ const ShiftHandOver = () => {
                         }
                       >
                         {formData.time_in
-                          ? formData.time_in.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: false,
-                            })
+                          ? formData.time_in.toLocaleTimeString()
                           : "HH:MM:SS"}
                       </div>
+                      {showInTimePicker && (
+                        <div className="absolute ml-8 sm:ml-14 md:ml-16 lg:ml-20 ">
+                          <SpinnerTimePicker
+                            value={formData.time_in}
+                            onChange={(date) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                time_in: date,
+                              }))
+                            }
+                            onClose={() => setShowInTimePicker(false)}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
 

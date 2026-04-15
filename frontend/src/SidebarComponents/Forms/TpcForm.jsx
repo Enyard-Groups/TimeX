@@ -20,19 +20,6 @@ import SignPad from "./SignPad";
 import SpinnerTimePicker from "../SpinnerTimePicker";
 
 const TpcForm = () => {
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
-    try {
-      const date = new Date(dateStr);
-      if (isNaN(date.getTime())) return dateStr;
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
-    } catch (e) {
-      return dateStr;
-    }
-  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState([]);
@@ -174,7 +161,7 @@ const TpcForm = () => {
           item.employee_name,
           item.location,
           item.enrollment_id,
-          formatDate(item.date),
+          item.date,
         ].join("\t");
       })
       .join("\n");
@@ -190,7 +177,7 @@ const TpcForm = () => {
       EmployeeName: item.employee_name,
       EnrollmentID: item.enrollment_id,
       Location: item.location,
-      Date: formatDate(item.date),
+      Date: item.date,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -213,7 +200,7 @@ const TpcForm = () => {
         item.employee_name,
         item.enrollment_id,
         item.location,
-        formatDate(item.date),
+        item.date,
       ];
 
       tableRows.push(row);
@@ -383,7 +370,7 @@ const TpcForm = () => {
                         {item.enrollment_id}
                       </td>
                       <td className="py-3 px-6 text-gray-600 text-center">
-                        {formatDate(item.date)}
+                        {item.date}
                       </td>
                       <td className="py-3 px-6 text-center">
                         <div className="flex justify-center gap-3">
@@ -575,7 +562,7 @@ const TpcForm = () => {
                         <label className={labelStyle}>Request Date</label>
                         <input
                           name="date"
-                          value={formatDate(formData.date) || ""}
+                          value={formData.date || ""}
                           onClick={() =>
                             mode !== "view" && setShowDateSpinner(true)
                           }
@@ -585,7 +572,7 @@ const TpcForm = () => {
                           className={`${inputStyle} cursor-pointer`}
                         />
                         {showDateSpinner && (
-                          <div className="absolute z-10 bottom-full mb-2">
+                          <div className="absolute top-20 bottom-full mb-2">
                             <SpinnerDatePicker
                               value={formData.date}
                               onChange={(date) =>

@@ -603,11 +603,7 @@ const PatrollingChecklist = () => {
                     >
                       {formData.shift_timing
                         ? formData.shift_timing instanceof Date
-                          ? formData.shift_timing.toLocaleTimeString([], {
-                              hour12: false,
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })
+                          ? formData.shift_timing.toLocaleTimeString()
                           : formData.shift_timing
                         : "HH:MM:SS"}
                     </div>

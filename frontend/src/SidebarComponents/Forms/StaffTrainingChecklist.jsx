@@ -19,19 +19,6 @@ import SpinnerDatePicker from "../SpinnerDatePicker";
 import SignPad from "./SignPad";
 
 const StaffTrainingChecklist = () => {
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
-    try {
-      const date = new Date(dateStr);
-      if (isNaN(date.getTime())) return dateStr;
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
-    } catch (e) {
-      return dateStr;
-    }
-  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState([]);
@@ -399,7 +386,7 @@ const StaffTrainingChecklist = () => {
           item.employee_name,
           item.enrollment_id,
           item.trainer_name,
-          formatDate(item.date),
+          item.date,
         ].join("\t");
       })
       .join("\n");
@@ -415,7 +402,7 @@ const StaffTrainingChecklist = () => {
       EmployeeName: item.employee_name,
       EnrollmentID: item.enrollment_id,
       TrainerName: item.trainer_name,
-      Date: formatDate(item.date),
+      Date: item.date,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -447,7 +434,7 @@ const StaffTrainingChecklist = () => {
         item.employee_name,
         item.enrollment_id,
         item.trainer_name,
-        formatDate(item.date),
+        item.date,
       ];
 
       tableRows.push(row);
@@ -617,7 +604,7 @@ const StaffTrainingChecklist = () => {
                         {item.trainer_name}
                       </td>
                       <td className="py-3 px-6 hidden lg:table-cell text-gray-600 text-center">
-                        {formatDate(item.date)}
+                        {item.date}
                       </td>
                       <td className="py-3 px-6 text-center">
                         <div className="flex justify-center gap-3">
@@ -743,7 +730,7 @@ const StaffTrainingChecklist = () => {
                 style={{ scrollbarWidth: "none" }}
               >
                 {/* Form Top Section */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="grid grid-cols-1 p-2 md:grid-cols-2 gap-6 mb-8">
                   <div className="flex flex-col gap-2">
                     <label className="text-sm xl:text-base  focus:outline-none font-semibold text-gray-700  block">
                       Staff Full Name <span className="text-red-500">*</span>
@@ -791,7 +778,7 @@ const StaffTrainingChecklist = () => {
                     <label className={labelStyle}>Training Date</label>
                     <input
                       name="date"
-                      value={formatDate(formData.date) || ""}
+                      value={formData.date || ""}
                       onClick={() =>
                         mode !== "view" && setShowDateSpinner(true)
                       }

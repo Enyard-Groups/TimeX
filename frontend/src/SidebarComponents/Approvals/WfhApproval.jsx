@@ -50,11 +50,6 @@ const WfhApproval = () => {
   useEffect(() => {
     fetchRequests();
   }, []);
-  const inputStyle =
-    "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
-
-  const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const approverName =
     JSON.parse(localStorage.getItem("user")).role.charAt(0).toUpperCase() +
@@ -425,7 +420,7 @@ const WfhApproval = () => {
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-5xl max-h-[90vh] overflow-y-auto p-8"
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1000px] max-h-[90vh] overflow-y-auto p-8"
             style={{ scrollbarWidth: "none" }}
           >
             <div className="flex justify-between items-center mb-8 pb-4 border-b border-blue-100/30">

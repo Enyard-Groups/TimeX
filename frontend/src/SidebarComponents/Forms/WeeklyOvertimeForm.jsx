@@ -20,19 +20,6 @@ import axios from "axios";
 const API_URL = "http://localhost:3000/api/form/weeklyOvertime";
 
 const WeeklyOvertimeForm = () => {
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
-    try {
-      const date = new Date(dateStr);
-      if (isNaN(date.getTime())) return dateStr;
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
-    } catch (e) {
-      return dateStr;
-    }
-  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState([]);
@@ -313,7 +300,7 @@ const WeeklyOvertimeForm = () => {
           item.employee_name,
           item.enrollment_id,
           item.designation,
-          formatDate(item.created_at),
+          item.created_at,
         ].join("\t");
       })
       .join("\n");
@@ -329,7 +316,7 @@ const WeeklyOvertimeForm = () => {
       EmployeeName: item.employee_name,
       EnrollmentID: item.enrollment_id,
       Designation: item.designation,
-      Date: formatDate(item.created_at),
+      Date: item.created_at,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -357,7 +344,7 @@ const WeeklyOvertimeForm = () => {
         item.employee_name,
         item.enrollment_id,
         item.designation,
-        formatDate(item.created_at),
+        item.created_at,
       ];
 
       tableRows.push(row);
@@ -527,7 +514,7 @@ const WeeklyOvertimeForm = () => {
                         {item.designation}
                       </td>
                       <td className="py-3 px-6 text-gray-600 text-center">
-                        {formatDate(item.created_at)}
+                        {item.created_at}
                       </td>
                       <td className="py-3 px-6 text-center">
                         <div className="flex justify-center gap-3">
@@ -748,7 +735,7 @@ const WeeklyOvertimeForm = () => {
                     </label>
                   </div>
 
-                  <div className="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                  <div className="rounded-xl border border-gray-200 shadow-sm">
                     <div className="hidden md:grid grid-cols-[48px_1fr_1fr_1fr_1fr_80px_1fr_60px] bg-slate-100 text-gray-700 font-bold border-b border-gray-200 text-sm">
                       <div className="p-3 text-center">#</div>
                       <div className="p-3 text-center">Day</div>
@@ -806,7 +793,7 @@ const WeeklyOvertimeForm = () => {
                                 Date
                               </span>
                               <input
-                                value={formatDate(row.date) || ""}
+                                value={row.date || ""}
                                 onClick={() =>
                                   mode !== "view" && setActiveDateIndex(index)
                                 }

@@ -19,19 +19,6 @@ import axios from "axios";
 const API_URL = "http://localhost:3000/api/form/optRequest";
 
 const OptOutRequestForm = () => {
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
-    try {
-      const date = new Date(dateStr);
-      if (isNaN(date.getTime())) return dateStr;
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
-    } catch (e) {
-      return dateStr;
-    }
-  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState([]);
@@ -205,7 +192,7 @@ const OptOutRequestForm = () => {
       .map((item) => {
         return [
           item.employee,
-          formatDate(item.date),
+          item.date,
           item.enrollment_id,
           item.designation,
         ].join("\t");
@@ -221,7 +208,7 @@ const OptOutRequestForm = () => {
   const handleExcel = () => {
     const excelData = filteredrequestData.map((item) => ({
       Employee: item.employee,
-      Date: formatDate(item.date),
+      Date: item.date,
       EnrollmentId: item.enrollment_id,
       Designation: item.designation,
     }));
@@ -244,7 +231,7 @@ const OptOutRequestForm = () => {
     filteredrequestData.forEach((item) => {
       const row = [
         item.employee,
-        formatDate(item.date),
+        item.date,
         item.enrollment_id,
         item.designation,
       ];
@@ -425,7 +412,7 @@ const OptOutRequestForm = () => {
                         {item.designation}
                       </td>
                       <td className="py-3 px-6 hidden md:table-cell text-gray-600">
-                        {formatDate(item.date)}
+                        {item.date}
                       </td>
                       <td className="py-3 px-6 text-center">
                         <div className="flex justify-center gap-3">
@@ -532,7 +519,7 @@ const OptOutRequestForm = () => {
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1300px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
             style={{ scrollbarWidth: "none" }}
           >
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
@@ -572,7 +559,7 @@ const OptOutRequestForm = () => {
                     <div className="relative w-48">
                       <input
                         name="date"
-                        value={formatDate(formData.date) || ""}
+                        value={formData.date || ""}
                         onChange={handleChange}
                         onClick={() =>
                           mode !== "view" && setShowDateSpinner(true)
@@ -663,7 +650,7 @@ const OptOutRequestForm = () => {
                       <div className="inline-block relative mx-2">
                         <input
                           name="effectiveFrom"
-                          value={formatDate(formData.effectiveFrom) || ""}
+                          value={formData.effectiveFrom || ""}
                           onChange={handleChange}
                           onClick={() =>
                             mode !== "view" &&

@@ -418,7 +418,7 @@ const Performance = () => {
             onClick={() => setOpenModal(false)}
           >
             <div
-              className="bg-white rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-2xl overflow-y-auto"
+              className="bg-white rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1000px] overflow-y-auto"
               style={{ maxHeight: "90vh", scrollbarWidth: "none" }}
               onClick={(e) => e.stopPropagation()}
             >
