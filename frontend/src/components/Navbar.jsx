@@ -47,7 +47,7 @@ export default function Navbar({
       <div className="pt-3">
         {/* Mobile Menu Button */}
         <button
-          className="absolute top-11 left-6 rounded-xl lg:hidden text-xl font-bold z-30"
+          className="absolute top-8 left-6 rounded-xl lg:hidden text-xl font-bold z-30"
           onClick={() => {
             setSidebarOpen(!sidebarOpen);
             setRightSidebarOpen(false);
@@ -59,25 +59,25 @@ export default function Navbar({
         {/* Top Right Icons */}
         {isDashboard && (
           <div
-            className={`flex flex-row absolute top-7 right-4 z-40 gap-2 ${!sidebarOpen ? "flex" : "hidden"} lg:flex`}
+            className={`flex flex-row absolute top-8 right-4 z-40 gap-2 ${!sidebarOpen ? "flex" : "hidden"} lg:flex`}
           >
             <button
               onClick={handleLogout}
               className="bg-[#0f172a] rounded-full text-white p-1 cursor-pointer"
             >
-              <IoIosLogOut className=" text-base xl:text-lg" />
+              <IoIosLogOut className="text-lg" />
             </button>
 
             <button
               onClick={() => setRightSidebarOpen(true)}
               className="bg-[#0f172a] rounded-full text-white p-1 cursor-pointer"
             >
-              <IoMdNotificationsOutline className=" text-base xl:text-lg" />
+              <IoMdNotificationsOutline className="text-lg" />
             </button>
 
             <div
               onClick={() => setRightSidebarOpen(true)}
-              className=" px-2 bg-[#0f172a] rounded-full text-white cursor-pointer text-base xl:text-lg"
+              className=" px-2 bg-[#0f172a] rounded-full text-white cursor-pointer text-lg"
             >
               {user?.user_name?.charAt(0).toUpperCase()}
             </div>
