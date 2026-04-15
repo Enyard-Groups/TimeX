@@ -60,7 +60,7 @@ const SignPad = ({ fieldName, name, formData, setFormData, mode }) => {
             </div>
           )}
 
-          <div className="flex gap-3 mt-4 justify-center items-center">
+          <div className="flex gap-3 mt-4">
             <button
               onClick={handleClear}
               className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-400 rounded-lg cursor-pointer transition-all duration-200 active:scale-95"
