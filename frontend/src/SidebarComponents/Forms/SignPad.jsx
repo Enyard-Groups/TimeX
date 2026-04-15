@@ -51,25 +51,25 @@ const SignPad = ({ fieldName, name, formData, setFormData, mode }) => {
               className="w-[230px] h-[150px] border mt-2"
             />
           ) : (
-            <div className="border border-gray-400 w-full max-w-[500px] h-[150px] mt-2">
+            <div className="border border-gray-300 rounded-xl w-full max-w-[300px] h-[150px] mt-2">
               <SignatureCanvas
                 penColor="black"
-                canvasProps={{ width: "full", height: 100 }}
+                canvasProps={{ width: "full", height: 150 }}
                 ref={sigRef}
               />
             </div>
           )}
 
-          <div className="flex gap-2 mt-2">
+          <div className="flex gap-3 mt-4 justify-center items-center">
             <button
               onClick={handleClear}
-              className="border border-red-600 px-2 py-1 rounded text-red-600"
+              className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-400 rounded-lg cursor-pointer transition-all duration-200 active:scale-95"
             >
               Clear
             </button>
             <button
               onClick={handleSave}
-              className="bg-gray-500 text-white px-3 py-1 rounded"
+              className="px-5 py-2 text-sm font-medium text-white bg-[#1e2d51] rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-all duration-200 active:scale-95"
             >
               Save
             </button>
