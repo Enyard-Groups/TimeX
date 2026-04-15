@@ -70,11 +70,11 @@ const EmployeeMaster = () => {
 
   const [formData, setFormData] = useState(emptyForm);
 
-  const inputStyle =
-    "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+ const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
   const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
 
   // ── Fetch employees on mount ──────────────────────────────────────────────
   const fetchEmployees = async () => {
@@ -631,7 +631,7 @@ const EmployeeMaster = () => {
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div>
-                  <label className="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Device Enrollment ID <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -639,12 +639,12 @@ const EmployeeMaster = () => {
                     value={formData.device_enrollment_id}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                    className={inputStyle}
                     required
                   />
                 </div>
                 <div>
-                  <label className="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Company Enrollment ID{" "}
                     <span className="text-red-500">*</span>
                   </label>
@@ -653,12 +653,12 @@ const EmployeeMaster = () => {
                     value={formData.company_enrollment_id}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                    className={inputStyle}
                     required
                   />
                 </div>
                 <div>
-                  <label className="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Full Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -666,12 +666,12 @@ const EmployeeMaster = () => {
                     value={formData.full_name}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                    className={inputStyle}
                     required
                   />
                 </div>
                 <div>
-                  <label className="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Mobile
                   </label>
                   <input
@@ -679,7 +679,7 @@ const EmployeeMaster = () => {
                     value={formData.mobile}
                     onChange={handleChange}
                     disabled={mode === "view"}
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                    className={inputStyle}
                   />
                 </div>
               </div>
@@ -691,7 +691,7 @@ const EmployeeMaster = () => {
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div>
-                  <label className="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Date Of Birth
                   </label>
                   <input
@@ -700,7 +700,7 @@ const EmployeeMaster = () => {
                     onClick={() => mode !== "view" && setShowDobPicker(true)}
                     disabled={mode === "view"}
                     readOnly
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl cursor-pointer shadow-sm"
+                    className={inputStyle}
                   />
                   {showDobPicker && (
                     <SpinnerDatePicker
@@ -713,7 +713,7 @@ const EmployeeMaster = () => {
                   )}
                 </div>
                 <div>
-                  <label className="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Date Of Join
                   </label>
                   <input
@@ -722,7 +722,7 @@ const EmployeeMaster = () => {
                     onClick={() => mode !== "view" && setShowDojPicker(true)}
                     disabled={mode === "view"}
                     readOnly
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl cursor-pointer shadow-sm"
+                    className={inputStyle}
                   />
                   {showDojPicker && (
                     <SpinnerDatePicker
@@ -746,8 +746,8 @@ const EmployeeMaster = () => {
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
-                  inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-4 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
-                  labelStyle="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block"
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
                 />
                 <SearchDropdown
                   label="Location"
@@ -761,8 +761,8 @@ const EmployeeMaster = () => {
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
-                  inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-4 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
-                  labelStyle="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block"
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
                 />
                 <SearchDropdown
                   label="Department"
@@ -776,8 +776,8 @@ const EmployeeMaster = () => {
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
-                  inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-4 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
-                  labelStyle="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block"
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
                 />
                 <SearchDropdown
                   label="Designation"
@@ -791,8 +791,8 @@ const EmployeeMaster = () => {
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
-                  inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-4 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
-                  labelStyle="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block"
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
                 />
                 <SearchDropdown
                   label="Shift"
@@ -806,8 +806,8 @@ const EmployeeMaster = () => {
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
-                  inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-4 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
-                  labelStyle="text-sm lg:text-base 3xl:text-lg font-semibold text-gray-700 mb-2 block"
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
                 />
               </div>
             </div>
@@ -826,7 +826,7 @@ const EmployeeMaster = () => {
                     disabled={mode === "view"}
                     className="w-5 h-5 cursor-pointer accent-blue-500"
                   />
-                  <label className="text-gray-700 lg:text-base 3xl:text-lg font-semibold cursor-pointer">
+                  <label className={`pt-1.5 ${labelStyle}`}>
                     Is Manager
                   </label>
                 </div>
@@ -839,7 +839,7 @@ const EmployeeMaster = () => {
                     disabled={mode === "view"}
                     className="w-5 h-5 cursor-pointer accent-blue-500"
                   />
-                  <label className="text-gray-700 lg:text-base 3xl:text-lg font-semibold cursor-pointer">
+                  <label className={`pt-1.5 ${labelStyle}`}>
                     Active
                   </label>
                 </div>

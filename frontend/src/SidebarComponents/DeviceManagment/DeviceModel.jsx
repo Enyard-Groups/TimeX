@@ -36,7 +36,7 @@ const DeviceModel = () => {
   });
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
   const labelStyle =
     "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
@@ -587,7 +587,7 @@ const DeviceModel = () => {
                   disabled={mode === "view"}
                   className="w-5 h-5 cursor-pointer accent-blue-500"
                 />
-                <label className={`${labelStyle} pt-1`}>
+                <label className={`${labelStyle} pt-1.5`}>
                   Active
                 </label>
               </div>

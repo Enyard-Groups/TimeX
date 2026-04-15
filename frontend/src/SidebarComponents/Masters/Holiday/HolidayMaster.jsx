@@ -43,6 +43,12 @@ const HolidayMaster = () => {
     isActive: false,
   });
 
+  const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
+
+  const labelStyle =
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
+
   const fetchCompanies = async () => {
     try {
       const [compRes, locRes] = await Promise.all([
@@ -634,7 +640,7 @@ const HolidayMaster = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
               <div>
-                <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Holiday Code <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -643,12 +649,12 @@ const HolidayMaster = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Enter holiday code"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className={inputStyle}
                   required
                 />
               </div>
               <div>
-                <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Holiday Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -657,12 +663,12 @@ const HolidayMaster = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Enter holiday name"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className={inputStyle}
                   required
                 />
               </div>
               <div>
-                <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Start Date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -672,7 +678,7 @@ const HolidayMaster = () => {
                   readOnly
                   disabled={mode === "view"}
                   placeholder="dd/mm/yyyy"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl cursor-pointer shadow-sm"
+                  className={inputStyle}
                 />
                 {showHstartSpinner && (
                   <SpinnerDatePicker
@@ -685,7 +691,7 @@ const HolidayMaster = () => {
                 )}
               </div>
               <div>
-                <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   End Date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -695,7 +701,7 @@ const HolidayMaster = () => {
                   readOnly
                   disabled={mode === "view"}
                   placeholder="dd/mm/yyyy"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl cursor-pointer shadow-sm"
+                  className={inputStyle}
                 />
                 {showHendSpinner && (
                   <SpinnerDatePicker
@@ -722,8 +728,8 @@ const HolidayMaster = () => {
                 disabled={mode === "view"}
                 labelKey="name"
                 valueKey="id"
-                inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm font-medium"
-                labelStyle="text-sm lg:text-lg 3xl:text-xl font-bold text-gray-700 mb-2 block"
+                inputStyle={inputStyle}
+                labelStyle={labelStyle}
               />
               <SearchDropdown
                 label="Location"
@@ -737,8 +743,8 @@ const HolidayMaster = () => {
                 formData={formData}
                 setFormData={setFormData}
                 disabled={mode === "view"}
-                inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm font-medium"
-                labelStyle="text-sm lg:text-lg 3xl:text-xl font-bold text-gray-700 mb-2 block"
+                inputStyle={inputStyle}
+                labelStyle={labelStyle}
               />
               <div className="flex items-center gap-3 h-fit sm:mt-8">
                 <input
@@ -749,9 +755,7 @@ const HolidayMaster = () => {
                   disabled={mode === "view"}
                   className="w-5 h-5 cursor-pointer accent-blue-500"
                 />
-                <label className="text-gray-700 font-semibold lg:text-lg 3xl:text-xl cursor-pointer">
-                  Active Status
-                </label>
+                <label className={`pt-1.5 ${labelStyle}`}>Active Status</label>
               </div>
             </div>
 

@@ -11,13 +11,26 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import { RxCross2 } from "react-icons/rx";
 
 const Performance = () => {
-  const [performance] = useState([]);
+  const [performance] = useState([
+    {
+      firstname:"hgfds",
+
+    }
+  ]);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  
+  const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
+
+  const labelStyle =
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
+
 
   const filteredperformance = performance.filter(
     (item) =>
@@ -234,7 +247,7 @@ const Performance = () => {
                   <th className="px-6 py-3 text-center hidden 2xl:table-cell font-semibold text-gray-700">
                     Daily Target
                   </th>
-                  <th className="px-6 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
                     Daily Status
                   </th>
                   <th className="px-6 py-3 text-center hidden md:table-cell font-semibold text-gray-700">
@@ -243,7 +256,7 @@ const Performance = () => {
                   <th className="px-6 py-3 text-center hidden 2xl:table-cell font-semibold text-gray-700">
                     Weekly Target
                   </th>
-                  <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
                     Weekly Status
                   </th>
                   <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
@@ -252,7 +265,7 @@ const Performance = () => {
                   <th className="px-6 py-3 text-center hidden 2xl:table-cell font-semibold text-gray-700">
                     Monthly Target
                   </th>
-                  <th className="px-6 py-3 text-center hidden lg:table-cell font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-center hidden xl:table-cell font-semibold text-gray-700">
                     Monthly Status
                   </th>
                   <th className="px-6 py-3 text-center font-semibold text-gray-700">
@@ -302,7 +315,7 @@ const Performance = () => {
                       <td className="px-4 py-3 text-center hidden 2xl:table-cell text-gray-600">
                         {item.dailytarget || "-"}
                       </td>
-                      <td className="px-4 py-3 text-center hidden md:table-cell">
+                      <td className="px-4 py-3 text-center hidden xl:table-cell">
                         <span
                           className={`px-2 py-1 rounded-full text-xs  lg:text-base 3xl:text-xl  font-semibold ${item.dailystatus === "Completed" || item.dailystatus === "✓" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
                         >
@@ -315,7 +328,7 @@ const Performance = () => {
                       <td className="px-4 py-3 text-center hidden 2xl:table-cell text-gray-600">
                         {item.targetweekly || "-"}
                       </td>
-                      <td className="px-4 py-3 text-center hidden lg:table-cell">
+                      <td className="px-4 py-3 text-center hidden xl:table-cell">
                         <span
                           className={`px-2 py-1 rounded-full text-xs  lg:text-base 3xl:text-xl  font-semibold ${item.weeklystatus === "Completed" || item.weeklystatus === "✓" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
                         >
@@ -328,7 +341,7 @@ const Performance = () => {
                       <td className="px-4 py-3 text-center hidden 2xl:table-cell text-gray-600">
                         {item.targetmonthly || "-"}
                       </td>
-                      <td className="px-4 py-3 text-center hidden lg:table-cell">
+                      <td className="px-4 py-3 text-center hidden xl:table-cell">
                         <span
                           className={`px-2 py-1 rounded-full text-xs  lg:text-base 3xl:text-xl  font-semibold ${item.monthlystatus === "Completed" || item.monthlystatus === "✓" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
                         >
@@ -473,7 +486,7 @@ const Performance = () => {
                       },
                     ].map(({ label, value, target, status }) => (
                       <div key={label} className="bg-slate-50 rounded-xl p-4">
-                        <p className="text-xs lg:text-lg 3xl:text-xl  text-gray-500 mb-1">
+                        <p className={labelStyle}>
                           {label}
                         </p>
                         <p className="text-xl xl:text-2xl 3xl:text-3xl  font-semibold text-gray-800">
@@ -502,7 +515,7 @@ const Performance = () => {
 
                 {/* Details Table */}
                 <div>
-                  <p className="text-xs lg:text-lg 3xl:text-xl  font-medium text-gray-400 uppercase tracking-wide mb-3">
+                  <p className="text-sm xl:text-base  font-medium text-gray-400 uppercase tracking-wide mb-3">
                     Details
                   </p>
                   <div className="divide-y divide-gray-100">
@@ -517,7 +530,7 @@ const Performance = () => {
                     ].map(([key, val]) => (
                       <div
                         key={key}
-                        className="flex justify-between py-2 text-sm lg:text-lg 3xl:text-xl "
+                        className="flex justify-between py-2 text-sm xl:text-base 3xl:text-xl "
                       >
                         <span className="text-gray-500">{key}</span>
                         <span className="text-gray-800">{val}</span>

@@ -46,7 +46,7 @@ const DeviceManagementSub = () => {
   });
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
   const labelStyle =
     "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
@@ -763,7 +763,10 @@ const DeviceManagementSub = () => {
                 { name: "isCardNo", label: "Card No" },
                 { name: "isPinNo", label: "Pin No" },
               ].map(({ name, label }) => (
-                <label key={name} className={`${inputStyle} flex flex-row gap-4 pt-4`}>
+                <label
+                  key={name}
+                  className={`${inputStyle} flex flex-row gap-4 pt-4`}
+                >
                   <input
                     type="checkbox"
                     name={name}

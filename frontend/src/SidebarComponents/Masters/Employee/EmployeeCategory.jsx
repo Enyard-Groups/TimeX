@@ -70,11 +70,11 @@ const EmployeeCategory = () => {
     fetchCompanies();
   }, []);
 
-  const inputStyle =
-    "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+    const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
   const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
 
   const filteredemployeeCategory = employeeCategory.filter(
     (x) =>
@@ -545,7 +545,7 @@ const EmployeeCategory = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
               <div>
-                <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Category Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -554,7 +554,7 @@ const EmployeeCategory = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Enter category name"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className={inputStyle}
                   required
                 />
               </div>
@@ -575,19 +575,19 @@ const EmployeeCategory = () => {
                 formData={formData}
                 setFormData={setFormData}
                 disabled={mode === "view"}
-                inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-4 py-2.5 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
-                labelStyle="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block"
+                inputStyle={inputStyle}
+                labelStyle={labelStyle}
               />
 
               <div>
-                <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Work Hours
                 </label>
                 <div
                   onClick={() =>
                     mode !== "view" && setShowWorkHoursPicker(true)
                   }
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm cursor-pointer flex items-center justify-center min-h-[44px]"
+                  className={inputStyle}
                 >
                   {formData.work_hours
                     ? formData.work_hours.toLocaleTimeString([], {
@@ -615,23 +615,23 @@ const EmployeeCategory = () => {
                   disabled={mode === "view"}
                   className="w-5 h-5 cursor-pointer accent-blue-500"
                 />
-                <label className="text-gray-700 font-semibold lg:text-lg 3xl:text-xl cursor-pointer">
+                <label className={`pt-1.5 ${labelStyle}`}>
                   Active Status
                 </label>
               </div>
             </div>
 
             {mode !== "view" && (
-              <div className="flex justify-end gap-3 pt-4 border-t">
+              <div className="flex justify-end gap-3 pt-4">
                 <button
                   onClick={() => setOpenModal(false)}
-                  className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 lg:text-lg 3xl:text-xl hover:bg-gray-50 font-semibold transition-all"
+                  className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 xl:text-base hover:bg-gray-50 font-semibold transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg lg:text-lg 3xl:text-xl transition-all duration-200"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg xl:text-base transition-all duration-200"
                 >
                   Save
                 </button>

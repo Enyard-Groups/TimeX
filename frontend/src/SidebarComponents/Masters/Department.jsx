@@ -35,7 +35,7 @@ const Department = () => {
   });
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
   const labelStyle =
     "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
@@ -626,7 +626,7 @@ const Department = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
                 <div>
-                  <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -635,13 +635,13 @@ const Department = () => {
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Name"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className={inputStyle}
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Code <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -650,7 +650,7 @@ const Department = () => {
                     onChange={handleChange}
                     disabled={mode === "view"}
                     placeholder="Code"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className={inputStyle}
                     required
                   />
                 </div>
@@ -672,15 +672,13 @@ const Department = () => {
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
-                    inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
-                    labelStyle="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block"
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
                   />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
-                    Description
-                  </label>
+                  <label className={labelStyle}>Description</label>
                   <textarea
                     name="description"
                     value={formData.description}
@@ -688,7 +686,7 @@ const Department = () => {
                     disabled={mode === "view"}
                     placeholder="Enter description"
                     rows="3"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className={inputStyle}
                   />
                 </div>
 
@@ -701,9 +699,7 @@ const Department = () => {
                     disabled={mode === "view"}
                     className="w-5 h-5 cursor-pointer accent-blue-500 disabled:cursor-not-allowed"
                   />
-                  <label className="text-gray-700 font-medium lg:text-lg 3xl:text-xl cursor-pointer">
-                    Active
-                  </label>
+                  <label className={`pt-1.5 ${labelStyle}`}>Active</label>
                 </div>
               </div>
 
@@ -711,13 +707,13 @@ const Department = () => {
                 <div className="flex justify-end gap-3">
                   <button
                     onClick={() => setOpenModal(false)}
-                    className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 lg:text-lg 3xl:text-xl hover:bg-gray-50 font-medium transition-all"
+                    className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 xl:text-base hover:bg-gray-50 font-medium transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSubmit}
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg lg:text-lg 3xl:text-xl hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg xl:text-base hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                   >
                     Save
                   </button>

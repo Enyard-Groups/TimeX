@@ -215,9 +215,10 @@ const UserMaster = () => {
   });
 
   const inputStyle =
-    "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-md focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
-  const labelStyle = "text-lg font-medium mb-1 block";
+  const labelStyle =
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
 
   const filteredUsers = users.filter(
     (u) =>
@@ -785,7 +786,7 @@ const UserMaster = () => {
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div>
-                      <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                      <label className={labelStyle}>
                         User Name <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -793,12 +794,12 @@ const UserMaster = () => {
                         value={formData.userName}
                         onChange={handleChange}
                         disabled={mode === "view"}
-                        className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                        className={inputStyle}
                         placeholder="Enter user name"
                       />
                     </div>
                     <div>
-                      <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                      <label className={labelStyle}>
                         Employee Name <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -806,12 +807,12 @@ const UserMaster = () => {
                         value={formData.empname}
                         onChange={handleChange}
                         disabled={mode === "view"}
-                        className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                        className={inputStyle}
                         placeholder="Enter employee name"
                       />
                     </div>
                     <div>
-                      <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                      <label className={labelStyle}>
                         Enrollment ID / Email
                       </label>
                       <input
@@ -819,7 +820,7 @@ const UserMaster = () => {
                         value={formData.enrollmentId}
                         onChange={handleChange}
                         disabled={mode === "view"}
-                        className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                        className={inputStyle}
                         placeholder="ID or Email"
                       />
                     </div>
@@ -839,20 +840,18 @@ const UserMaster = () => {
                       formData={formData}
                       setFormData={setFormData}
                       disabled={mode === "view"}
-                      inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm font-medium"
-                      labelStyle="text-sm lg:text-lg 3xl:text-xl font-bold text-gray-700 mb-2 block"
+                      inputStyle={inputStyle}
+                      labelStyle={labelStyle}
                     />
                     <div>
-                      <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
-                        Password
-                      </label>
+                      <label className={labelStyle}>Password</label>
                       <input
                         type="password"
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
                         disabled={mode === "view"}
-                        className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                        className={inputStyle}
                         placeholder="Enter password"
                       />
                     </div>
@@ -865,9 +864,7 @@ const UserMaster = () => {
                         disabled={mode === "view"}
                         className="w-5 h-5 cursor-pointer accent-blue-500"
                       />
-                      <label className="text-gray-700 font-semibold lg:text-lg 3xl:text-xl cursor-pointer">
-                        Active
-                      </label>
+                      <label className={`pt-1.5 ${labelStyle}`}>Active</label>
                     </div>
                   </div>
                 </div>
@@ -899,7 +896,7 @@ const UserMaster = () => {
                       setFormData={setFormData}
                       disabled={mode === "view"}
                       inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 rounded-xl lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
-                      labelStyle="text-sm lg:text-lg 3xl:text-xl font-bold text-gray-700 mb-2 block"
+                      labelStyle={labelStyle}
                     />
                   </div>
                 </div>
@@ -999,13 +996,13 @@ const UserMaster = () => {
                 <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-blue-100/30">
                   <button
                     onClick={() => setOpenModal(false)}
-                    className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:text-gray-900 lg:text-lg 3xl:text-xl font-semibold transition-all"
+                    className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:text-gray-900 xl:text-base font-semibold transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSubmit}
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold px-6 py-2 rounded-lg shadow-lg lg:text-lg 3xl:text-xl hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold px-6 py-2 rounded-lg shadow-lg xl:text-base hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                   >
                     Save
                   </button>
