@@ -36,7 +36,6 @@ const StaffTrainingChecklist = () => {
   const labelStyle =
     "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
 
-
   const defaultFormData = {
     employee_name: "",
     enrollment_id: "",
@@ -104,37 +103,37 @@ const StaffTrainingChecklist = () => {
 
   const [formData, setFormData] = useState(defaultFormData);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(API_URL);
-      setRequestData(response.data);
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      toast.error("Failed to fetch data");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchData = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await axios.get(API_URL);
+  //     setRequestData(response.data);
+  //     console.log(response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //     toast.error("Failed to fetch data");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  const fetchOptions = async () => {
-    try {
-      const [empRes, locRes] = await Promise.all([
-        axios.get("http://localhost:3000/api/employee"),
-        axios.get("http://localhost:3000/api/master/geofencing"),
-      ]);
-      setEmployees(empRes.data);
-      setLocations(locRes.data);
-    } catch (error) {
-      console.error("Error fetching options:", error);
-    }
-  };
+  // const fetchOptions = async () => {
+  //   try {
+  //     const [empRes, locRes] = await Promise.all([
+  //       axios.get("http://localhost:3000/api/employee"),
+  //       axios.get("http://localhost:3000/api/master/geofencing"),
+  //     ]);
+  //     setEmployees(empRes.data);
+  //     setLocations(locRes.data);
+  //   } catch (error) {
+  //     console.error("Error fetching options:", error);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchData();
-    fetchOptions();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  //   fetchOptions();
+  // }, []);
 
   useEffect(() => {
     if (formData.employee_name && mode !== "view") {
@@ -309,69 +308,113 @@ const StaffTrainingChecklist = () => {
     Math.ceil(requestData.length / entriesPerPage),
   );
 
-  // Handle submit
-  const handleSubmit = async () => {
-    const coreFields = [
-      "employee_name",
-      "enrollment_id",
-      "trainer_name",
-      "date",
-      "position_title",
-      "location",
-    ];
-    const signatureFields = [
-      "signature",
-      "signature_drawn",
-      "signature2",
-      "signature_drawn2",
-    ];
+  // // Handle submit
+  // const handleSubmit = async () => {
+  //   const coreFields = [
+  //     "employee_name",
+  //     "enrollment_id",
+  //     "trainer_name",
+  //     "date",
+  //     "position_title",
+  //     "location",
+  //   ];
+  //   const signatureFields = [
+  //     "signature",
+  //     "signature_drawn",
+  //     "signature2",
+  //     "signature_drawn2",
+  //   ];
 
-    const payload = {};
-    const training_data = {};
-    const signatures = {};
+  //   const payload = {};
+  //   const training_data = {};
+  //   const signatures = {};
 
-    Object.keys(formData).forEach((key) => {
-      if (coreFields.includes(key)) {
-        payload[key] = formData[key];
-      } else if (signatureFields.includes(key)) {
-        signatures[key] = formData[key];
-      } else {
-        training_data[key] = formData[key];
-      }
-    });
+  //   Object.keys(formData).forEach((key) => {
+  //     if (coreFields.includes(key)) {
+  //       payload[key] = formData[key];
+  //     } else if (signatureFields.includes(key)) {
+  //       signatures[key] = formData[key];
+  //     } else {
+  //       training_data[key] = formData[key];
+  //     }
+  //   });
 
-    payload.training_data = training_data;
-    payload.signatures = signatures;
+  //   payload.training_data = training_data;
+  //   payload.signatures = signatures;
 
-    try {
-      if (editId) {
-        await axios.put(`${API_URL}/${editId}`, payload);
-        toast.success("Request Updated");
-      } else {
-        await axios.post(API_URL, payload);
-        toast.success("Request Submitted");
-      }
+  //   try {
+  //     if (editId) {
+  //       await axios.put(`${API_URL}/${editId}`, payload);
+  //       toast.success("Request Updated");
+  //     } else {
+  //       await axios.post(API_URL, payload);
+  //       toast.success("Request Submitted");
+  //     }
 
-      setOpenModal(false);
-      setEditId(null);
-      setFormData(defaultFormData);
-      fetchData();
-    } catch (error) {
-      console.error("Error saving data:", error);
-      toast.error("Failed to save data");
-    }
+  //     setOpenModal(false);
+  //     setEditId(null);
+  //     setFormData(defaultFormData);
+  //     fetchData();
+  //   } catch (error) {
+  //     console.error("Error saving data:", error);
+  //     toast.error("Failed to save data");
+  //   }
+  // };
+
+  // // Handle delete
+  // const handleDelete = async (id) => {
+  //   try {
+  //     await axios.delete(`${API_URL}/${id}`);
+  //     toast.success("Deleted Successfully");
+  //     fetchData();
+  //   } catch (error) {
+  //     console.error("Error deleting data:", error);
+  //     toast.error("Failed to delete data");
+  //   }
+  // };
+
+  // Sync with LocalStorage
+  const fetchData = () => {
+    setLoading(true);
+    const stored = JSON.parse(localStorage.getItem("shift_hand_over") || "[]");
+    setRequestData(stored);
+    setLoading(false);
   };
 
-  // Handle delete
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`${API_URL}/${id}`);
-      toast.success("Deleted Successfully");
-      fetchData();
-    } catch (error) {
-      console.error("Error deleting data:", error);
-      toast.error("Failed to delete data");
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSubmit = () => {
+    const stored = JSON.parse(localStorage.getItem("shift_hand_over") || "[]");
+
+    if (editId) {
+      const updated = stored.map((item) =>
+        item.id === editId ? { ...formData, id: editId } : item,
+      );
+      localStorage.setItem("shift_hand_over", JSON.stringify(updated));
+      toast.success("Inspection Updated");
+    } else {
+      const newEntry = { ...formData, id: Date.now(), status: "Pending" };
+      localStorage.setItem(
+        "shift_hand_over",
+        JSON.stringify([...stored, newEntry]),
+      );
+      toast.success("Inspection Submitted for Approval");
     }
+
+    fetchData();
+    setOpenModal(false);
+    setEditId(null);
+    setFormData(defaultFormData);
+  };
+
+  const handleDelete = (id) => {
+    const stored = JSON.parse(localStorage.getItem("shift_hand_over") || "[]");
+    const filtered = stored.filter((item) => item.id !== id);
+    localStorage.setItem("shift_hand_over", JSON.stringify(filtered));
+    fetchData();
+    toast.success("Deleted Successfully");
   };
 
   const handleCopy = () => {

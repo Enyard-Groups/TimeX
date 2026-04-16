@@ -746,13 +746,13 @@ const MonthlyFireSafetyInspections = () => {
                   <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Location
                   </th>
-                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Date
                   </th>
-                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Inspected By
                   </th>
-                  <th className="py-3 px-6 font-semibold text-gray-700">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Action
                   </th>
                 </tr>
@@ -785,16 +785,16 @@ const MonthlyFireSafetyInspections = () => {
                       key={item.id}
                       className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900">
+                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900 text-center">
                         {startIndex + index + 1}
                       </td>
-                      <td className="py-3 px-6 font-medium text-gray-900">
+                      <td className="py-3 px-6 font-medium text-gray-900 text-center">
                         {item.location}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.createdDate}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.employee}
                       </td>
                       <td className="py-3 px-6 text-center">
@@ -1102,22 +1102,22 @@ const MonthlyFireSafetyInspections = () => {
                     <table className="w-full text-sm xl:text-base ">
                       <thead className="bg-slate-50 text-gray-600">
                         <tr>
-                          <th className="border-b p-3 text-left">Area</th>
-                          <th className="border-b p-3 text-left">
+                          <th className="border-b p-3  text-center">Area</th>
+                          <th className="border-b p-3  text-center">
                             Observation
                           </th>
-                          <th className="border-b p-3 text-left">
+                          <th className="border-b p-3  text-center">
                             Action Required
                           </th>
-                          <th className="border-b p-3 text-left">Action By</th>
-                          <th className="border-b p-3 text-left">
+                          <th className="border-b p-3  text-center">Action By</th>
+                          <th className="border-b p-3  text-center">
                             Target Date
                           </th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr className="bg-white">
-                          <td className="p-2 border-r">
+                          <td className="p-2 border-r text-center">
                             <input
                               type="text"
                               className={inputStyle}
@@ -1128,7 +1128,7 @@ const MonthlyFireSafetyInspections = () => {
                               }
                             />
                           </td>
-                          <td className="p-2 border-r">
+                          <td className="p-2 border-r text-center">
                             <textarea
                               rows="1"
                               className={inputStyle}
@@ -1143,7 +1143,7 @@ const MonthlyFireSafetyInspections = () => {
                               style={{ scrollbarWidth: "none" }}
                             />
                           </td>
-                          <td className="p-2 border-r">
+                          <td className="p-2 border-r text-center">
                             <input
                               type="text"
                               className={inputStyle}
@@ -1157,7 +1157,7 @@ const MonthlyFireSafetyInspections = () => {
                               }
                             />
                           </td>
-                          <td className="p-2 border-r">
+                          <td className="p-2 border-r text-center">
                             <input
                               type="text"
                               className={inputStyle}
@@ -1171,7 +1171,7 @@ const MonthlyFireSafetyInspections = () => {
                               }
                             />
                           </td>
-                          <td className="p-2">
+                          <td className="p-2 text-center">
                             <input
                               type="text"
                               className={inputStyle}

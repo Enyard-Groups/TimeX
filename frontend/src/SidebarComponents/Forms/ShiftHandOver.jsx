@@ -434,18 +434,20 @@ const ShiftHandOver = () => {
                       </td>
                       <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.time_in
-                          ? item.time_in.toLocaleTimeString([], {
+                          ? new Date(item.time_in).toLocaleTimeString([], {
                               hour: "2-digit",
                               minute: "2-digit",
+                              second:"2-digit",
                               hour12: false,
                             })
                           : "-"}
                       </td>
                       <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.time_out
-                          ? item.time_out.toLocaleTimeString([], {
+                          ? new Date(item.time_out).toLocaleTimeString([], {
                               hour: "2-digit",
                               minute: "2-digit",
+                              second:"2-digit",
                               hour12: false,
                             })
                           : "-"}
@@ -453,18 +455,21 @@ const ShiftHandOver = () => {
                       <td className="py-3 px-6 hidden lg:table-cell text-gray-600 text-center">
                         {item.date}
                       </td>
-                      <td className="py-3 px-6">
+                      <td className="py-3 px-6 text-center">
                         <div className="flex justify-center gap-3">
                           <FaEye
                             onClick={() => {
-                              /* View Logic */ setMode("view");
+                              setFormData(item);
+                              setMode("view");
                               setOpenModal(true);
                             }}
                             className="text-blue-500 hover:text-blue-700 xl:text-xl  cursor-pointer transition-all"
                           />
                           <FaPen
                             onClick={() => {
-                              /* Edit Logic */ setMode("edit");
+                              setFormData(item);
+                              setEditId(item.id);
+                              setMode("edit");
                               setOpenModal(true);
                             }}
                             className="text-green-500 hover:text-green-700 xl:text-xl  cursor-pointer transition-all"
@@ -657,7 +662,7 @@ const ShiftHandOver = () => {
                         }
                       >
                         {formData.time_out
-                          ? formData.time_out.toLocaleTimeString()
+                          ? new Date(formData.time_out).toLocaleTimeString()
                           : "HH:MM:SS"}
                       </div>
                       {showOutTimePicker && (
@@ -686,7 +691,7 @@ const ShiftHandOver = () => {
                         }
                       >
                         {formData.time_in
-                          ? formData.time_in.toLocaleTimeString()
+                          ? new Date(formData.time_in).toLocaleTimeString()
                           : "HH:MM:SS"}
                       </div>
                       {showInTimePicker && (

@@ -25,30 +25,29 @@ const FacilityComplaintForm = () => {
   const [editId, setEditId] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(API_URL);
-      setRequestData(response.data);
-      // console.log(response.data)
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      toast.error("Failed to fetch data");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchData = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await axios.get(API_URL);
+  //     setRequestData(response.data);
+  //     // console.log(response.data)
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //     toast.error("Failed to fetch data");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
-   const inputStyle =
+  const inputStyle =
     "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
   const labelStyle =
     "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
-
 
   const defaultFormData = {
     name: "",
@@ -86,39 +85,82 @@ const FacilityComplaintForm = () => {
     Math.ceil(requestData.length / entriesPerPage),
   );
 
-  // Handle submit
-  const handleSubmit = async () => {
-    try {
-      if (editId) {
-        await axios.put(`${API_URL}/${editId}`, formData);
-        toast.success("Request Updated");
-      } else {
-        await axios.post(API_URL, formData);
-        console.log(formData);
-        toast.success("Request Submitted");
-      }
-      setOpenModal(false);
-      setEditId(null);
-      setFormData(defaultFormData);
-      fetchData();
-    } catch (error) {
-      console.error("Error saving data:", error);
-      toast.error("Failed to save data");
-    }
+  // // Handle submit
+  // const handleSubmit = async () => {
+  //   try {
+  //     if (editId) {
+  //       await axios.put(`${API_URL}/${editId}`, formData);
+  //       toast.success("Request Updated");
+  //     } else {
+  //       await axios.post(API_URL, formData);
+  //       console.log(formData);
+  //       toast.success("Request Submitted");
+  //     }
+  //     setOpenModal(false);
+  //     setEditId(null);
+  //     setFormData(defaultFormData);
+  //     fetchData();
+  //   } catch (error) {
+  //     console.error("Error saving data:", error);
+  //     toast.error("Failed to save data");
+  //   }
+  // };
+
+  // // Handle delete
+  // const handleDelete = async (id) => {
+  //   try {
+  //     await axios.delete(`${API_URL}/${id}`);
+  //     toast.success("Deleted Successfully");
+  //     fetchData();
+  //   } catch (error) {
+  //     console.error("Error deleting data:", error);
+  //     toast.error("Failed to delete data");
+  //   }
+  // };
+
+  // Sync with LocalStorage
+  const fetchData = () => {
+    setLoading(true);
+    const stored = JSON.parse(localStorage.getItem("shift_hand_over") || "[]");
+    setRequestData(stored);
+    setLoading(false);
   };
 
-  // Handle delete
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`${API_URL}/${id}`);
-      toast.success("Deleted Successfully");
-      fetchData();
-    } catch (error) {
-      console.error("Error deleting data:", error);
-      toast.error("Failed to delete data");
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSubmit = () => {
+    const stored = JSON.parse(localStorage.getItem("shift_hand_over") || "[]");
+
+    if (editId) {
+      const updated = stored.map((item) =>
+        item.id === editId ? { ...formData, id: editId } : item,
+      );
+      localStorage.setItem("shift_hand_over", JSON.stringify(updated));
+      toast.success("Inspection Updated");
+    } else {
+      const newEntry = { ...formData, id: Date.now(), status: "Pending" };
+      localStorage.setItem(
+        "shift_hand_over",
+        JSON.stringify([...stored, newEntry]),
+      );
+      toast.success("Inspection Submitted for Approval");
     }
+
+    fetchData();
+    setOpenModal(false);
+    setEditId(null);
+    setFormData(defaultFormData);
   };
 
+  const handleDelete = (id) => {
+    const stored = JSON.parse(localStorage.getItem("shift_hand_over") || "[]");
+    const filtered = stored.filter((item) => item.id !== id);
+    localStorage.setItem("shift_hand_over", JSON.stringify(filtered));
+    fetchData();
+    toast.success("Deleted Successfully");
+  };
   const handleCopy = () => {
     const header = [
       "name",

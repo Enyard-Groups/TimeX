@@ -46,12 +46,11 @@ const LeaveApplication = () => {
   const [designations, setDesignations] = useState([]);
   const countries = getNames();
 
-   const inputStyle =
+  const inputStyle =
     "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
   const labelStyle =
     "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
-
 
   const defaultFormData = {
     employee: "",
@@ -495,19 +494,19 @@ const LeaveApplication = () => {
                   <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Employee
                   </th>
-                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Location
                   </th>
-                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Enrollment ID
                   </th>
-                  <th className="py-3 px-6 hidden lg:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden lg:table-cell font-semibold text-gray-700 text-center">
                     Designation
                   </th>
                   <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Date
                   </th>
-                  <th className="py-3 px-6 font-semibold text-gray-700">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Action
                   </th>
                 </tr>
@@ -540,19 +539,19 @@ const LeaveApplication = () => {
                       key={item.id}
                       className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900">
+                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900 text-center">
                         {startIndex + index + 1}
                       </td>
                       <td className="py-3 px-6 font-medium text-gray-900 text-center">
                         {item.employee}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.location}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600  text-center">
                         {item.enrollmentId}
                       </td>
-                      <td className="py-3 px-6 hidden lg:table-cell text-gray-600">
+                      <td className="py-3 px-6 hidden lg:table-cell text-gray-600 text-center">
                         {item.designation}
                       </td>
                       <td className="py-3 px-6 text-gray-600 text-center">

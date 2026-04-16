@@ -35,30 +35,29 @@ const IncidentAccident = () => {
   const [showTimeSpinner, setShowTimeSpinner] = useState(false);
   const [showTimeSpinner2, setShowTimeSpinner2] = useState(false);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(API_URL);
-      setIncidentData(response.data);
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      toast.error("Failed to fetch data");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchData = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await axios.get(API_URL);
+  //     setIncidentData(response.data);
+  //     console.log(response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //     toast.error("Failed to fetch data");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
-   const inputStyle =
+  const inputStyle =
     "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
   const labelStyle =
     "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
-
 
   const filteredincidentData = incidentData.filter((x) =>
     // x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
@@ -159,38 +158,88 @@ const IncidentAccident = () => {
     Math.ceil(filteredincidentData.length / entriesPerPage),
   );
 
-  // Handle submit
-  const handleSubmit = async () => {
-    try {
-      if (editId) {
-        await axios.put(`${API_URL}/${editId}`, formData);
-        toast.success("Request Updated");
-      } else {
-        await axios.post(API_URL, formData);
-        toast.success("Request Submitted");
-      }
-      fetchData();
-      setOpenModal(false);
-      setEditId(null);
-      setFormData(defaultFormData);
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error("Failed to submit form");
-    }
+  // // Handle submit
+  // const handleSubmit = async () => {
+  //   try {
+  //     if (editId) {
+  //       await axios.put(`${API_URL}/${editId}`, formData);
+  //       toast.success("Request Updated");
+  //     } else {
+  //       await axios.post(API_URL, formData);
+  //       toast.success("Request Submitted");
+  //     }
+  //     fetchData();
+  //     setOpenModal(false);
+  //     setEditId(null);
+  //     setFormData(defaultFormData);
+  //   } catch (error) {
+  //     console.error("Error submitting form:", error);
+  //     toast.error("Failed to submit form");
+  //   }
+  // };
+
+  // // Handle delete
+  // const handleDelete = async (id) => {
+  //   if (window.confirm("Are you sure you want to delete this record?")) {
+  //     try {
+  //       await axios.delete(`${API_URL}/${id}`);
+  //       toast.success("Deleted Successfully");
+  //       fetchData();
+  //     } catch (error) {
+  //       console.error("Error deleting record:", error);
+  //       toast.error("Failed to delete record");
+  //     }
+  //   }
+  // };
+
+  // Sync with LocalStorage
+  const fetchData = () => {
+    setLoading(true);
+    const stored = JSON.parse(
+      localStorage.getItem("incident_accident") || "[]",
+    );
+    setIncidentData(stored);
+    setLoading(false);
   };
 
-  // Handle delete
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this record?")) {
-      try {
-        await axios.delete(`${API_URL}/${id}`);
-        toast.success("Deleted Successfully");
-        fetchData();
-      } catch (error) {
-        console.error("Error deleting record:", error);
-        toast.error("Failed to delete record");
-      }
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSubmit = () => {
+    const stored = JSON.parse(
+      localStorage.getItem("incident_accident") || "[]",
+    );
+
+    if (editId) {
+      const updated = stored.map((item) =>
+        item.id === editId ? { ...formData, id: editId } : item,
+      );
+      localStorage.setItem("incident_accident", JSON.stringify(updated));
+      toast.success("Inspection Updated");
+    } else {
+      const newEntry = { ...formData, id: Date.now(), status: "Pending" };
+      localStorage.setItem(
+        "incident_accident",
+        JSON.stringify([...stored, newEntry]),
+      );
+      toast.success("Inspection Submitted for Approval");
     }
+
+    fetchData();
+    setOpenModal(false);
+    setEditId(null);
+    setFormData(defaultFormData);
+  };
+
+  const handleDelete = (id) => {
+    const stored = JSON.parse(
+      localStorage.getItem("incident_accident") || "[]",
+    );
+    const filtered = stored.filter((item) => item.id !== id);
+    localStorage.setItem("incident_accident", JSON.stringify(filtered));
+    fetchData();
+    toast.success("Deleted Successfully");
   };
 
   const handleCopy = () => {
@@ -348,19 +397,19 @@ const IncidentAccident = () => {
             <table className="w-full text-[17px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-blue-100/50">
-                  <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700 text-center">
                     SL.No
                   </th>
-                  <th className="py-3 px-6 font-semibold text-gray-700">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Date of Incident
                   </th>
-                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Location
                   </th>
-                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Building
                   </th>
-                  <th className="py-3 px-6 font-semibold text-gray-700">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Action
                   </th>
                 </tr>
@@ -393,19 +442,19 @@ const IncidentAccident = () => {
                       key={item.id}
                       className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900">
+                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900 text-center">
                         {startIndex + index + 1}
                       </td>
-                      <td className="py-3 px-6 font-medium text-gray-900">
+                      <td className="py-3 px-6 font-medium text-gray-900 text-center">
                         {item.date_of_incident}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.location}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.building}
                       </td>
-                      <td className="py-3 px-6">
+                      <td className="py-3 px-6 text-center">
                         <div className="flex justify-center gap-3">
                           <FaEye
                             onClick={() => {
@@ -572,7 +621,14 @@ const IncidentAccident = () => {
                       disabled={mode === "view"}
                     >
                       {formData.time_of_incident
-                        ? formData.time_of_incident.toLocaleTimeString()
+                        ? new Date(
+                            formData.time_of_incident,
+                          ).toLocaleTimeString("en-GB", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: false,
+                          })
                         : "HH:MM:SS"}
                     </div>
                     {showTimeSpinner && (

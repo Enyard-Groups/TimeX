@@ -353,22 +353,22 @@ const OptOutRequestForm = () => {
             <table className="w-full text-[17px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-blue-100/50">
-                  <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700 text-center">
                     SL.No
                   </th>
                   <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Employee Name
                   </th>
-                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Enrollment ID
                   </th>
-                  <th className="py-3 px-6 hidden lg:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden lg:table-cell font-semibold text-gray-700 text-center">
                     Designation
                   </th>
-                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Date
                   </th>
-                  <th className="py-3 px-6 font-semibold text-gray-700">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Action
                   </th>
                 </tr>
@@ -401,19 +401,19 @@ const OptOutRequestForm = () => {
                       key={item.id}
                       className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900">
+                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900 text-center">
                         {startIndex + index + 1}
                       </td>
                       <td className="py-3 px-6 font-medium text-gray-900 text-center">
                         {item.employee}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono text-center">
                         {item.enrollment_id}
                       </td>
-                      <td className="py-3 px-6 hidden lg:table-cell text-gray-600">
+                      <td className="py-3 px-6 hidden lg:table-cell text-gray-600 text-center">
                         {item.designation}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.date}
                       </td>
                       <td className="py-3 px-6 text-center">
