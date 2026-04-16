@@ -32,30 +32,29 @@ const PatrollingChecklist = () => {
   const [openViewModal, setOpenViewModal] = useState(false);
   const [viewRow, setViewRow] = useState([]);
 
-  // const fetchData = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await axios.get(API_URL);
-  //     setRequestData(response.data);
-  //     console.log(response.data);
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //     toast.error("Failed to fetch data");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(API_URL);
+      setRequestData(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to fetch data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-   const inputStyle =
+  const inputStyle =
     "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
   const labelStyle =
     "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
-
 
   const defaultFormData = {
     name: "",
@@ -115,82 +114,39 @@ const PatrollingChecklist = () => {
     Math.ceil(requestData.length / entriesPerPage),
   );
 
-  // // Handle submit
-  // const handleSubmit = async () => {
-  //   try {
-  //     if (editId) {
-  //       await axios.put(`${API_URL}/${editId}`, formData);
-  //       toast.success("Request Updated");
-  //     } else {
-  //       await axios.post(API_URL, formData);
-  //       toast.success("Request Submitted");
-  //     }
+  // Handle submit
+  const handleSubmit = async () => {
+    try {
+      if (editId) {
+        await axios.put(`${API_URL}/${editId}`, formData);
+        toast.success("Request Updated");
+      } else {
+        await axios.post(API_URL, formData);
+        toast.success("Request Submitted");
+      }
 
-  //     setOpenModal(false);
-  //     setEditId(null);
-  //     setFormData(defaultFormData);
-  //     fetchData();
-  //   } catch (error) {
-  //     console.error("Error saving data:", error);
-  //     toast.error("Failed to save data");
-  //   }
-  // };
-
-  // // Handle delete
-  // const handleDelete = async (id) => {
-  //   try {
-  //     await axios.delete(`${API_URL}/${id}`);
-  //     toast.success("Deleted Successfully");
-  //     fetchData();
-  //   } catch (error) {
-  //     console.error("Error deleting data:", error);
-  //     toast.error("Failed to delete data");
-  //   }
-  // };
-
-  // Sync with LocalStorage
-  const fetchData = () => {
-    setLoading(true);
-    const stored = JSON.parse(localStorage.getItem("shift_hand_over") || "[]");
-    setRequestData(stored);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const handleSubmit = () => {
-    const stored = JSON.parse(localStorage.getItem("shift_hand_over") || "[]");
-
-    if (editId) {
-      const updated = stored.map((item) =>
-        item.id === editId ? { ...formData, id: editId } : item,
-      );
-      localStorage.setItem("shift_hand_over", JSON.stringify(updated));
-      toast.success("Inspection Updated");
-    } else {
-      const newEntry = { ...formData, id: Date.now(), status: "Pending" };
-      localStorage.setItem(
-        "shift_hand_over",
-        JSON.stringify([...stored, newEntry]),
-      );
-      toast.success("Inspection Submitted for Approval");
+      setOpenModal(false);
+      setEditId(null);
+      setFormData(defaultFormData);
+      fetchData();
+    } catch (error) {
+      console.error("Error saving data:", error);
+      toast.error("Failed to save data");
     }
-
-    fetchData();
-    setOpenModal(false);
-    setEditId(null);
-    setFormData(defaultFormData);
   };
 
-  const handleDelete = (id) => {
-    const stored = JSON.parse(localStorage.getItem("shift_hand_over") || "[]");
-    const filtered = stored.filter((item) => item.id !== id);
-    localStorage.setItem("shift_hand_over", JSON.stringify(filtered));
-    fetchData();
-    toast.success("Deleted Successfully");
+  // Handle delete
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      toast.success("Deleted Successfully");
+      fetchData();
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      toast.error("Failed to delete data");
+    }
   };
+
   const handleAddRow = () => {
     const newRow = {
       section: formData.section,
@@ -419,7 +375,7 @@ const PatrollingChecklist = () => {
                   <th className="py-3 px-6 hidden lg:table-cell font-semibold text-gray-700 text-center">
                     Shift Timing
                   </th>
-                  <th className="py-3 px-6 font-semibold text-gray-700">
+                  <th className="py-3 px-6 font-semibold  text-center text-gray-700">
                     Action
                   </th>
                 </tr>
@@ -455,27 +411,28 @@ const PatrollingChecklist = () => {
                       <td className="py-3 px-6 hidden sm:table-cell text-gray-900 text-center">
                         {startIndex + index + 1}
                       </td>
-                      <td className="py-3 px-6 font-medium text-gray-900">
+                      <td className="py-3 px-6 font-medium text-center  text-gray-900">
                         {item.name}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono">
+                      <td className="py-3 px-6 hidden md:table-cell  text-center text-gray-600 font-mono">
                         {item.staff_id}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
+                      <td className="py-3 px-6 hidden md:table-cell  text-center text-gray-600">
                         {item.school_name}
                       </td>
                       <td className="py-3 px-6 hidden lg:table-cell text-gray-600 text-center font-mono">
                         {item.shift_timing
-                          ? item.shift_timing instanceof Date
-                            ? item.shift_timing.toLocaleTimeString([], {
+                          ? item.shift_timing 
+                            ? new Date(item.shift_timing).toLocaleTimeString([], {
                                 hour: "2-digit",
                                 minute: "2-digit",
+                                second:"2-digit",
                                 hour12: false,
                               })
                             : item.shift_timing
                           : "-"}
                       </td>
-                      <td className="py-3 px-6">
+                      <td className="py-3 px-6 text-center ">
                         <div className="flex justify-center gap-3">
                           <FaEye
                             onClick={() => {
@@ -647,8 +604,8 @@ const PatrollingChecklist = () => {
                       }
                     >
                       {formData.shift_timing
-                        ? formData.shift_timing instanceof Date
-                          ? formData.shift_timing.toLocaleTimeString()
+                        ? formData.shift_timing 
+                          ? new Date(formData.shift_timing).toLocaleTimeString()
                           : formData.shift_timing
                         : "HH:MM:SS"}
                     </div>
@@ -802,65 +759,89 @@ const PatrollingChecklist = () => {
                     <table className="w-full text-center text-sm xl:text-base">
                       <thead>
                         <tr className="bg-slate-50 text-gray-400 text-[16px]  tracking-tighter">
-                          <th className="p-3 border-b border-r border-gray-100 hidden sm:table-cell">
+                          <th className="p-3 border-b border-r border-gray-100 hidden sm:table-cell text-center ">
                             #
                           </th>
-                          <th className="p-3 border-b border-r border-gray-100">
+                          <th className=" text-center p-3 border-b border-r border-gray-100">
                             Section/Task
                           </th>
                           <th
-                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            className="p-3 text-center  border-b border-r border-gray-100 hidden xl:table-cell"
                             colSpan="2"
                           >
                             Unattended
                           </th>
                           <th
-                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            className="p-3  text-center border-b border-r border-gray-100 hidden xl:table-cell"
                             colSpan="2"
                           >
                             Hazardous
                           </th>
                           <th
-                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            className="p-3  text-center border-b border-r border-gray-100 hidden xl:table-cell"
                             colSpan="2"
                           >
                             IAS
                           </th>
                           <th
-                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            className="p-3  text-center border-b border-r border-gray-100 hidden xl:table-cell"
                             colSpan="2"
                           >
                             Gems Assets
                           </th>
                           <th
-                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            className="p-3  text-center border-b border-r border-gray-100 hidden xl:table-cell"
                             colSpan="2"
                           >
                             Vehicle
                           </th>
                           <th
-                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            className="p-3  text-center border-b border-r border-gray-100 hidden xl:table-cell"
                             colSpan="2"
                           >
                             PTW
                           </th>
-                          <th className="p-3 border-b">Action</th>
+                          <th className="p-3 text-center  border-b">Action</th>
                         </tr>
                         <tr className="bg-slate-50/50 text-[13px] font-black text-slate-400">
-                          <th className="border-r hidden sm:table-cell"></th>
-                          <th className="border-r"></th>
-                          <th className="border-r hidden xl:table-cell">OK</th>
-                          <th className="border-r hidden xl:table-cell">OCC</th>
-                          <th className="border-r hidden xl:table-cell">OK</th>
-                          <th className="border-r hidden xl:table-cell">OCC</th>
-                          <th className="border-r hidden xl:table-cell">OK</th>
-                          <th className="border-r hidden xl:table-cell">OCC</th>
-                          <th className="border-r hidden xl:table-cell">OK</th>
-                          <th className="border-r hidden xl:table-cell">OCC</th>
-                          <th className="border-r hidden xl:table-cell">OK</th>
-                          <th className="border-r hidden xl:table-cell">OCC</th>
-                          <th className="border-r hidden xl:table-cell">OK</th>
-                          <th className="border-r hidden xl:table-cell">OCC</th>
+                          <th className="border-r text-center  hidden sm:table-cell"></th>
+                          <th className="border-r text-center "></th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OK
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OCC
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OK
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OCC
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OK
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OCC
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OK
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OCC
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OK
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OCC
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OK
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OCC
+                          </th>
                           <th></th>
                         </tr>
                       </thead>
@@ -877,54 +858,54 @@ const PatrollingChecklist = () => {
                               key={index}
                               className="border-b border-gray-50 hover:bg-blue-50 transition-colors font-medium"
                             >
-                              <td className="p-3 border-r border-gray-50 hidden sm:table-cell text-gray-400 font-mono">
+                              <td className="p-3  text-center border-r border-gray-50 hidden sm:table-cell text-gray-400 font-mono">
                                 {index + 1}
                               </td>
                               <td className="p-3 border-r border-gray-50 text-center">
-                                <span className="text-blue-700 font-bold block text-sm">
+                                <span className="text-blue-700 text-center  font-bold block text-sm">
                                   {row.section}
                                 </span>
-                                <span className="text-gray-900">
+                                <span className="text-gray-900 text-center ">
                                   {row.taskList}
                                 </span>
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell">
                                 {row.unattended_ok ? "✅" : "❌"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
                                 {row.unattended_reported_to || "-"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell">
                                 {row.hazardous_ok ? "✅" : "❌"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
                                 {row.hazardous_reported_to || "-"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell">
                                 {row.ias_ok ? "✅" : "❌"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
                                 {row.ias_reported_to || "-"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell">
                                 {row.gems_assets_ok ? "✅" : "❌"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
                                 {row.gems_assets_reported_to || "-"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell">
                                 {row.vehicle_parking_ok ? "✅" : "❌"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
                                 {row.vehicle_parking_reported_to || "-"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell">
                                 {row.ptw_ok ? "✅" : "❌"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
                                 {row.ptw_reported_to || "-"}
                               </td>
-                              <td className="p-3">
+                              <td className="p-3 text-center ">
                                 <FaEye
                                   className="text-blue-400 hover:text-blue-600 cursor-pointer mx-auto xl:text-xl"
                                   onClick={() => {

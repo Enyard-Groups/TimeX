@@ -53,36 +53,36 @@ const TpcForm = () => {
 
   const [formData, setFormData] = useState(defaultFormData);
 
-  // const fetchData = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await axios.get(API_URL);
-  //     setRequestData(response.data);
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //     toast.error("Failed to fetch data");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(API_URL);
+      setRequestData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to fetch data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // const fetchOptions = async () => {
-  //   try {
-  //     const [empRes, locRes] = await Promise.all([
-  //       axios.get("http://localhost:3000/api/employee"),
-  //       axios.get("http://localhost:3000/api/master/geofencing"),
-  //     ]);
-  //     setEmployees(empRes.data);
-  //     setLocations(locRes.data);
-  //   } catch (error) {
-  //     console.error("Error fetching options:", error);
-  //   }
-  // };
+  const fetchOptions = async () => {
+    try {
+      const [empRes, locRes] = await Promise.all([
+        axios.get("http://localhost:3000/api/employee"),
+        axios.get("http://localhost:3000/api/master/geofencing"),
+      ]);
+      setEmployees(empRes.data);
+      setLocations(locRes.data);
+    } catch (error) {
+      console.error("Error fetching options:", error);
+    }
+  };
 
-  // useEffect(() => {
-  //   fetchData();
-  //   fetchOptions();
-  // }, []);
+  useEffect(() => {
+    fetchData();
+    fetchOptions();
+  }, []);
 
   useEffect(() => {
     if (formData.employee_name && mode !== "view") {
@@ -118,82 +118,39 @@ const TpcForm = () => {
     Math.ceil(requestData.length / entriesPerPage),
   );
 
-  // // Handle submit
-  // const handleSubmit = async () => {
-  //   try {
-  //     if (editId) {
-  //       await axios.put(`${API_URL}/${editId}`, formData);
-  //       toast.success("Request Updated");
-  //     } else {
-  //       await axios.post(API_URL, formData);
-  //       toast.success("Request Submitted");
-  //     }
+  // Handle submit
+  const handleSubmit = async () => {
+    try {
+      if (editId) {
+        await axios.put(`${API_URL}/${editId}`, formData);
+        toast.success("Request Updated");
+      } else {
+        await axios.post(API_URL, formData);
+        toast.success("Request Submitted");
+      }
 
-  //     setOpenModal(false);
-  //     setEditId(null);
-  //     setFormData(defaultFormData);
-  //     fetchData();
-  //   } catch (error) {
-  //     console.error("Error saving data:", error);
-  //     toast.error("Failed to save data");
-  //   }
-  // };
-
-  // // Handle delete
-  // const handleDelete = async (id) => {
-  //   try {
-  //     await axios.delete(`${API_URL}/${id}`);
-  //     toast.success("Deleted Successfully");
-  //     fetchData();
-  //   } catch (error) {
-  //     console.error("Error deleting data:", error);
-  //     toast.error("Failed to delete data");
-  //   }
-  // };
-
-  // Sync with LocalStorage
-  const fetchData = () => {
-    setLoading(true);
-    const stored = JSON.parse(localStorage.getItem("shift_hand_over") || "[]");
-    setRequestData(stored);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const handleSubmit = () => {
-    const stored = JSON.parse(localStorage.getItem("shift_hand_over") || "[]");
-
-    if (editId) {
-      const updated = stored.map((item) =>
-        item.id === editId ? { ...formData, id: editId } : item,
-      );
-      localStorage.setItem("shift_hand_over", JSON.stringify(updated));
-      toast.success("Inspection Updated");
-    } else {
-      const newEntry = { ...formData, id: Date.now(), status: "Pending" };
-      localStorage.setItem(
-        "shift_hand_over",
-        JSON.stringify([...stored, newEntry]),
-      );
-      toast.success("Inspection Submitted for Approval");
+      setOpenModal(false);
+      setEditId(null);
+      setFormData(defaultFormData);
+      fetchData();
+    } catch (error) {
+      console.error("Error saving data:", error);
+      toast.error("Failed to save data");
     }
-
-    fetchData();
-    setOpenModal(false);
-    setEditId(null);
-    setFormData(defaultFormData);
   };
 
-  const handleDelete = (id) => {
-    const stored = JSON.parse(localStorage.getItem("shift_hand_over") || "[]");
-    const filtered = stored.filter((item) => item.id !== id);
-    localStorage.setItem("shift_hand_over", JSON.stringify(filtered));
-    fetchData();
-    toast.success("Deleted Successfully");
+  // Handle delete
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      toast.success("Deleted Successfully");
+      fetchData();
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      toast.error("Failed to delete data");
+    }
   };
+
 
   const handleCopy = () => {
     const header = ["Employee Name", "Location", "EnrollmentID", "Date"].join(
@@ -369,7 +326,7 @@ const TpcForm = () => {
                   <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Date
                   </th>
-                  <th className="py-3 px-6 font-semibold text-gray-700">
+                  <th className="py-3 px-6 font-semibold  text-center text-gray-700">
                     Action
                   </th>
                 </tr>
@@ -405,10 +362,10 @@ const TpcForm = () => {
                       <td className="py-3 px-6 hidden sm:table-cell text-gray-900 text-center">
                         {startIndex + index + 1}
                       </td>
-                      <td className="py-3 px-6 font-medium text-gray-900">
+                      <td className="py-3 px-6 font-medium text-center  text-gray-900">
                         {item.employee_name}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
+                      <td className="py-3 px-6 hidden md:table-cell text-center  text-gray-600">
                         {item.location}
                       </td>
                       <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono text-center">
