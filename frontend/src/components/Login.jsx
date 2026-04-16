@@ -39,6 +39,22 @@ const Login = () => {
       return;
     }
 
+      // Admin Bypass Logic (for development)
+    if (userName === "employee" && password === "employee123") {
+      const adminUserData = {
+        id: 0,
+        user_name: "employee",
+        name: "Employee",
+        role: "employee",
+      };
+      localStorage.setItem("user", JSON.stringify(adminUserData));
+      localStorage.setItem("token", "admin-bypass");
+      dispatch(setUser(adminUserData));
+      dispatch(setAuth(true));
+      navigate("/");
+      return;
+    }
+
     try {
       const res = await axios.post("http://localhost:3000/api/users/login", {
         user_name: userName,

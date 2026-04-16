@@ -14,6 +14,7 @@ import { RxDashboard } from "react-icons/rx";
 import { useDispatch } from "react-redux";
 import { logout } from "../action";
 import { IoIosLogOut } from "react-icons/io";
+import { MdCoPresent } from "react-icons/md";
 
 const Sidebar = ({ user }) => {
   if (!user) return null;
@@ -31,7 +32,7 @@ const Sidebar = ({ user }) => {
   const isAdmin = user.role === "admin";
 
   const isdashboardActive = location.pathname.startsWith("/dashboard");
-
+  const isattendanceActive = location.pathname.startsWith("/myattendance");
   const activeClass = "text-white rounded-xl bg-[#1E3A8A] p-2";
   const hoverClass =
     "text-white hover:text-black hover:bg-gray-100 p-2 rounded-xl";
@@ -83,19 +84,28 @@ const Sidebar = ({ user }) => {
           </>
         ) : (
           <>
-            <Link
-              to="/myattendance"
-              className="block px-4 py-3 rounded-2xl font-medium text-white"
+            <div
+              className={`mt-2.5 mb-5 px-4 rounded-xl text-md transition-all ${
+                isdashboardActive ? activeClass : hoverClass
+              }`}
             >
-              My Attendance
-            </Link>
-
-            <Link
-              to="/applyforleave"
-              className="block px-4 py-3 rounded-2xl font-medium text-white"
+              <div className="flex items-center gap-3 text-[16px] ">
+                <RxDashboard />
+                <Link to="/dashboard">Dashboard</Link>
+              </div>
+            </div>
+            <div
+              className={`mt-2.5 mb-5 px-4 rounded-xl text-md transition-all ${
+                isattendanceActive ? activeClass : hoverClass
+              }`}
             >
-              Apply for Leave
-            </Link>
+              <div className="flex items-center gap-3 text-[16px]">
+                <MdCoPresent />
+                <Link to="/myattendance">My Attendance</Link>
+              </div>
+            </div>
+            <Requests user={user} />
+            <Forms user={user} />
           </>
         )}
       </div>

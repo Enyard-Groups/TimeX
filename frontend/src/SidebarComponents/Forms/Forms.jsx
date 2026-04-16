@@ -6,7 +6,6 @@ import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 const Forms = ({ user }) => {
   const [openForms, setOpenForms] = useState(false);
 
-  const isAdmin = user.role === "admin";
   const isformsActive = location.pathname.startsWith("/forms");
   // const activeClass = "text-[oklch(0.645_0.246_16.439)]";
   const activeClass =
@@ -16,7 +15,7 @@ const Forms = ({ user }) => {
 
   return (
     <>
-      {isAdmin && (
+      
         <div>
           {/* Forms Main Button */}
           <div
@@ -162,7 +161,7 @@ const Forms = ({ user }) => {
             </div>
           )}
         </div>
-      )}
+  
     </>
   );
 };

@@ -1,12 +1,12 @@
 const EmployeeDashboard = ({ user }) => {
-  
   return (
     <div className="space-y-6">
-      <div className="mb-10 font-mono font-bold">
-        <h2 className="text-2xl tracking-tight">
-          Welcome back,{" "}
-          <span style={{ color: "oklch(0.645 0.246 16.439)" }}>
-            {user?.user_name || "User"}
+      <div className="mb-10 font-bold">
+        <h2 className="text-2xl tracking-tight mt-1 pl-8 lg:pl-0">
+          Welcome,{" "}
+          <span className="text-[#1b3f93]">
+            {user?.user_name.charAt(0).toUpperCase() +
+              user?.user_name.slice(1) || "User"}
           </span>
         </h2>
       </div>

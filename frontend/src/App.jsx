@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
@@ -16,7 +15,6 @@ import ReportsRoute from "./SidebarComponents/Reports/ReportsRoute";
 import VisitorRoute from "./SidebarComponents/VisitorManagement/VisitorRoute";
 import FormsRoute from "./SidebarComponents/Forms/FormsRoute";
 import MyAttendance from "./EmployeeSidebar/MyAttendance";
-import ApplyForLeave from "./EmployeeSidebar/ApplyForLeave";
 import { load, setAuth, setUser } from "./action";
 
 const App = () => {
@@ -90,7 +88,6 @@ const App = () => {
           <Route path="/visitor/*" element={privateRoute(VisitorRoute)} />
           <Route path="/forms/*" element={privateRoute(FormsRoute)} />
           <Route path="/myattendance" element={privateRoute(MyAttendance)} />
-          <Route path="/applyforleave" element={privateRoute(ApplyForLeave)} />
           {/* 404 */}
           <Route
             path="*"
