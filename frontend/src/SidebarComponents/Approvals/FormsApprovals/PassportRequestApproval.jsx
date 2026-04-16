@@ -211,7 +211,6 @@ const PassportRequestApproval = () => {
                 <tr>
                   <td colSpan="6" className="px-4 py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="text-4xl opacity-40">✅</div>
                       <p className="text-gray-500 text-base font-medium">
                         No Pending Requests
                       </p>
@@ -235,7 +234,7 @@ const PassportRequestApproval = () => {
                     <td className="py-3 px-6 font-medium text-gray-900 text-center">
                       {item.employee_name}
                     </td>
-                    <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono text-center">
+                    <td className="py-3 px-6 hidden md:table-cell text-gray-600  text-center">
                       {item.enrollment_id}
                     </td>
                     <td className="py-3 px-6 hidden lg:table-cell text-gray-600 italic truncate max-w-[200px] text-center">
@@ -257,13 +256,13 @@ const PassportRequestApproval = () => {
                         </button>
                         <button
                           onClick={() => updateStatus(item.id, "Approved")}
-                          className="bg-emerald-500 text-white px-3 py-1 rounded text-sm font-bold"
+                          className="bg-emerald-500 hidden sm:table-cell text-white px-3 py-1 rounded text-sm font-bold"
                         >
                           Approve
                         </button>
                         <button
                           onClick={() => updateStatus(item.id, "Rejected")}
-                          className="bg-rose-500 text-white px-3 py-1 rounded text-sm font-bold"
+                          className="bg-rose-500 hidden sm:table-cell text-white px-3 py-1 rounded text-sm font-bold"
                         >
                           Reject
                         </button>
@@ -357,7 +356,7 @@ const PassportRequestApproval = () => {
                 <p className="text-xs font-bold text-gray-400 uppercase">
                   Enrollment ID
                 </p>
-                <p className="font-semibold font-mono">
+                <p className="font-semibold ">
                   {selectedItem.enrollment_id}
                 </p>
               </div>
@@ -392,7 +391,7 @@ const PassportRequestApproval = () => {
                 <p className="text-xs font-bold text-gray-400 uppercase">
                   Passport Number
                 </p>
-                <p className="font-mono">
+                <p className="">
                   {selectedItem.passport_number || "—"}
                 </p>
               </div>

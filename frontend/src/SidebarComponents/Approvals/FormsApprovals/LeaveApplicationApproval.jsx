@@ -274,7 +274,6 @@ const LeaveApplicationApproval = () => {
                 <tr>
                   <td colSpan="7" className="px-4 py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="text-4xl opacity-40">✅</div>
                       <p className="text-gray-500 text-base font-medium">
                         No Pending Requests
                       </p>
@@ -323,13 +322,13 @@ const LeaveApplicationApproval = () => {
                         </button>
                         <button
                           onClick={() => updateStatus(item.id, "Approved")}
-                          className="bg-emerald-500 text-white px-3 py-1 rounded text-sm font-bold"
+                          className="bg-emerald-500 hidden sm:table-cell text-white px-3 py-1 rounded text-sm font-bold"
                         >
                           Approve
                         </button>
                         <button
                           onClick={() => updateStatus(item.id, "Rejected")}
-                          className="bg-rose-500 text-white px-3 py-1 rounded text-sm font-bold"
+                          className="bg-rose-500 hidden sm:table-cell text-white px-3 py-1 rounded text-sm font-bold"
                         >
                           Reject
                         </button>
@@ -406,7 +405,7 @@ const LeaveApplicationApproval = () => {
             style={{ scrollbarWidth: "none" }}
           >
             {/* Modal Header */}
-            <div className="flex justify-between items-center mb-6 pb-4 border-b">
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-400">
               <h2 className="text-xl font-bold text-gray-900">
                 Leave Application Details
               </h2>
@@ -419,7 +418,7 @@ const LeaveApplicationApproval = () => {
             </div>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 bg-slate-50 p-4 rounded-xl border">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 bg-slate-50 p-4 rounded-xl border border-gray-400">
               <DetailCard label="Employee" value={selectedItem.employee} />
               <DetailCard label="Location" value={selectedItem.location} />
               <DetailCard
@@ -430,7 +429,7 @@ const LeaveApplicationApproval = () => {
             </div>
 
             {/* Section I: Employee Details */}
-            <div className="border rounded-xl overflow-hidden mb-6">
+            <div className="border border-gray-400 rounded-xl overflow-hidden mb-6">
               <SectionHeader color="blue">I. Employee Details</SectionHeader>
               <FieldRow
                 label="Enrollment ID"
@@ -451,7 +450,7 @@ const LeaveApplicationApproval = () => {
 
             {/* Leave & TOIL Dates */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="border rounded-xl overflow-hidden">
+              <div className="border border-gray-400 rounded-xl overflow-hidden">
                 <SectionHeader color="teal">Leave Period</SectionHeader>
                 <FieldRow
                   label="Requested Days"
@@ -468,7 +467,7 @@ const LeaveApplicationApproval = () => {
                   value={selectedItem.rejoinDate}
                 />
               </div>
-              <div className="border rounded-xl overflow-hidden">
+              <div className="border border-gray-400 rounded-xl overflow-hidden">
                 <SectionHeader color="purple">TOIL Details</SectionHeader>
                 <FieldRow
                   label="TOIL Requested?"
@@ -488,7 +487,7 @@ const LeaveApplicationApproval = () => {
             </div>
 
             {/* Reason & Visa */}
-            <div className="border rounded-xl overflow-hidden mb-6">
+            <div className="border border-gray-400 rounded-xl overflow-hidden mb-6">
               <SectionHeader color="orange">
                 Additional Information
               </SectionHeader>
@@ -507,7 +506,7 @@ const LeaveApplicationApproval = () => {
             </div>
 
             {/* Section II: Admin Operations */}
-            <div className="border rounded-xl overflow-hidden mb-6">
+            <div className="border border-gray-400 rounded-xl overflow-hidden mb-6">
               <SectionHeader color="teal">II. Admin Operations</SectionHeader>
               <FieldRow
                 label="Employee Date of Joining"
@@ -561,7 +560,7 @@ const LeaveApplicationApproval = () => {
 
             {/* Section III: Final Approvals */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="border rounded-xl overflow-hidden">
+              <div className="border border-gray-400 rounded-xl overflow-hidden">
                 <SectionHeader color="blue">
                   III. Approval — 1 (Ops Rep.)
                 </SectionHeader>
@@ -574,17 +573,17 @@ const LeaveApplicationApproval = () => {
                   value={selectedItem.finalApproval?.nonApprove1Reason}
                 />
                 {selectedItem.finalApproval?.upload1signaturePreview && (
-                  <div className="px-4 py-3 text-sm border-b">
+                  <div className="px-4 py-3 text-sm border-b border-gray-400">
                     <p className="text-gray-500 mb-2">Signature</p>
                     <img
                       src={selectedItem.finalApproval.upload1signaturePreview}
                       alt="Approval 1 Signature"
-                      className="h-14 border rounded bg-white p-1 shadow-sm"
+                      className="h-14 border border-gray-400 rounded bg-white p-1 shadow-sm"
                     />
                   </div>
                 )}
               </div>
-              <div className="border rounded-xl overflow-hidden">
+              <div className="border border-gray-400 rounded-xl overflow-hidden">
                 <SectionHeader color="teal">
                   III. Approval — 2 (HR Rep.)
                 </SectionHeader>
@@ -597,12 +596,12 @@ const LeaveApplicationApproval = () => {
                   value={selectedItem.finalApproval?.nonApprove2Reason}
                 />
                 {selectedItem.finalApproval?.upload2signaturePreview && (
-                  <div className="px-4 py-3 text-sm border-b">
+                  <div className="px-4 py-3 text-sm border-b border-gray-400">
                     <p className="text-gray-500 mb-2">Signature</p>
                     <img
                       src={selectedItem.finalApproval.upload2signaturePreview}
                       alt="Approval 2 Signature"
-                      className="h-14 border rounded bg-white p-1 shadow-sm"
+                      className="h-14 border border-gray-400 rounded bg-white p-1 shadow-sm"
                     />
                   </div>
                 )}
@@ -610,7 +609,7 @@ const LeaveApplicationApproval = () => {
             </div>
 
             {/* Passport Collection */}
-            <div className="border rounded-xl overflow-hidden mb-6">
+            <div className="border border-gray-400 rounded-xl overflow-hidden mb-6">
               <SectionHeader color="orange">Passport Collection</SectionHeader>
               <FieldRow
                 label="Applicant Name"
@@ -621,19 +620,19 @@ const LeaveApplicationApproval = () => {
                 value={selectedItem.passportCollection?.date}
               />
               {selectedItem.passportCollection?.signaturePreview && (
-                <div className="px-4 py-3 text-sm border-b">
+                <div className="px-4 py-3 text-sm border-b border-gray-400">
                   <p className="text-gray-500 mb-2">Signature</p>
                   <img
                     src={selectedItem.passportCollection.signaturePreview}
                     alt="Passport Signature"
-                    className="h-14 border rounded bg-white p-1 shadow-sm"
+                    className="h-14 border border-gray-400 rounded bg-white p-1 shadow-sm"
                   />
                 </div>
               )}
             </div>
 
             {/* Section IV: Employee Form */}
-            <div className="border rounded-xl overflow-hidden mb-8">
+            <div className="border border-gray-400 rounded-xl overflow-hidden mb-8">
               <SectionHeader color="slate">
                 IV. Employee Declaration
               </SectionHeader>
@@ -668,14 +667,14 @@ const LeaveApplicationApproval = () => {
                   <img
                     src={selectedItem.finalSignaturePreview}
                     alt="Employee Signature"
-                    className="h-14 border rounded bg-white p-1 shadow-sm"
+                    className="h-14 border border-gray-400 rounded bg-white p-1 shadow-sm"
                   />
                 </div>
               )}
             </div>
 
             {/* Modal Footer Actions */}
-            <div className="flex justify-end gap-4 border-t pt-6">
+            <div className="flex justify-end gap-4 pt-6">
               <button
                 onClick={() => updateStatus(selectedItem.id, "Rejected")}
                 className="px-6 py-2 border-2 border-red-200 text-red-600 rounded-xl font-bold hover:bg-red-50 transition-all"

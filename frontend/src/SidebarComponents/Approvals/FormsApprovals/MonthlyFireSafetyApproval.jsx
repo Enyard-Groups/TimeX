@@ -460,7 +460,6 @@ const MonthlyFireSafetyApproval = () => {
                 <tr>
                   <td colSpan="8" className="px-4 py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="text-4xl opacity-40">✅</div>
                       <p className="text-gray-500 text-base font-medium">
                         No Pending Requests
                       </p>
@@ -503,13 +502,13 @@ const MonthlyFireSafetyApproval = () => {
                         </button>
                         <button
                           onClick={() => updateStatus(item.id, "Approved")}
-                          className="bg-emerald-500 text-white px-3 py-1 rounded text-sm font-bold"
+                          className="bg-emerald-500 hidden sm:table-cell text-white px-3 py-1 rounded text-sm font-bold"
                         >
                           Approve
                         </button>
                         <button
                           onClick={() => updateStatus(item.id, "Rejected")}
-                          className="bg-rose-500 text-white px-3 py-1 rounded text-sm font-bold"
+                          className="bg-rose-500 hidden sm:table-cell text-white px-3 py-1 rounded text-sm font-bold"
                         >
                           Reject
                         </button>
@@ -532,14 +531,14 @@ const MonthlyFireSafetyApproval = () => {
             className="bg-white rounded-2xl shadow-2xl w-full max-w-[1100px] max-h-[90vh] overflow-y-auto p-8"
             style={{ scrollbarWidth: "none" }}
           >
-            <div className="flex justify-between items-center mb-6 pb-4 border-b">
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-400">
               <h2 className="text-xl font-bold">Inspection Details</h2>
               <button onClick={() => setOpenModal(false)}>
                 <RxCross2 className="text-2xl" />
               </button>
             </div>
 
-            <div className="grid grid-cols-3 gap-6 mb-8 bg-slate-50 p-4 rounded-xl border">
+            <div className="grid grid-cols-3 gap-6 mb-8 bg-slate-50 p-4 rounded-xl border border-gray-400">
               <div>
                 <p className="text-xs font-bold text-gray-400 uppercase">
                   Employee
@@ -560,7 +559,7 @@ const MonthlyFireSafetyApproval = () => {
               </div>
             </div>
 
-            <div className="border rounded-xl overflow-hidden mb-8">
+            <div className="border border-gray-400 rounded-xl overflow-hidden mb-8">
               <div className="grid grid-cols-12 bg-slate-800 text-white font-bold text-sm">
                 <div className="col-span-6 p-4">Checklist Item</div>
                 <div className="col-span-2 text-center p-4">Status</div>
@@ -574,7 +573,7 @@ const MonthlyFireSafetyApproval = () => {
                   {section.fields.map((field) => (
                     <div
                       key={field.key}
-                      className="grid grid-cols-12 border-b items-center text-sm"
+                      className="grid grid-cols-12 border-b border-gray-400 items-center text-sm"
                     >
                       <div className="col-span-6 p-4">{field.label}</div>
                       <div className="col-span-2 text-center">
@@ -595,38 +594,38 @@ const MonthlyFireSafetyApproval = () => {
             </div>
 
             <h3 className="font-bold mb-3">Corrective Actions</h3>
-            <table className="w-full border rounded-xl text-sm mb-8">
+            <table className="w-full border  border-gray-400rounded-xl text-sm mb-8">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="p-3 border-b  text-center">Area</th>
-                  <th className="p-3 border-b  text-center">Observation</th>
-                  <th className="p-3 border-b  text-center">Action</th>
-                  <th className="p-3 border-b  text-center">Action By</th>
-                  <th className="p-3 border-b  text-center">Target Date</th>
+                  <th className="p-3 border-b border-gray-400  text-center">Area</th>
+                  <th className="p-3 border-b border-gray-400  text-center">Observation</th>
+                  <th className="p-3 border-b border-gray-400  text-center">Action</th>
+                  <th className="p-3 border-b border-gray-400  text-center">Action By</th>
+                  <th className="p-3 border-b border-gray-400 text-center">Target Date</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td className="p-3 border-b text-center">
+                  <td className="p-3 border-b border-gray-400 text-center">
                     {selectedItem.remarks?.[0]?.area || "—"}
                   </td>
-                  <td className="p-3 border-b text-center">
+                  <td className="p-3 border-b border-gray-400 text-center">
                     {selectedItem.remarks?.[0]?.observation || "—"}
                   </td>
-                  <td className="p-3 border-b text-center">
+                  <td className="p-3 border-bv text-center">
                     {selectedItem.remarks?.[0]?.actionRequired || "—"}
                   </td>
-                  <td className="p-3 border-b text-center">
+                  <td className="p-3 border-b border-gray-400 text-center">
                     {selectedItem.remarks?.[0]?.actionBy || "—"}
                   </td>
-                  <td className="p-3 border-b text-center">
+                  <td className="p-3 border-b border-gray-400 text-center">
                     {selectedItem.remarks?.[0]?.targetDate || "—"}
                   </td>
                 </tr>
               </tbody>
             </table>
 
-            <div className="flex justify-end gap-4 mt-8 border-t pt-6">
+            <div className="flex justify-end gap-4 mt-8 pt-6">
               <button
                 onClick={() => updateStatus(selectedItem.id, "Rejected")}
                 className="px-6 py-2 border-2 border-red-200 text-red-600 rounded-xl font-bold"

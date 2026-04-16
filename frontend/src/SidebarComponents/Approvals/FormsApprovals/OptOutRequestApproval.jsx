@@ -210,7 +210,7 @@ const OptOutRequestApproval = () => {
                 <tr>
                   <td colSpan="7" className="px-4 py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="text-4xl opacity-40">✅</div>
+                      
                       <p className="text-gray-500 text-base font-medium">
                         No Pending Requests
                       </p>
@@ -237,7 +237,7 @@ const OptOutRequestApproval = () => {
                     <td className="py-3 px-6 font-medium text-gray-900 text-center">
                       {item.employee}
                     </td>
-                    <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono text-center">
+                    <td className="py-3 px-6 hidden md:table-cell text-gray-600  text-center">
                       {item.enrollment_id}
                     </td>
                     <td className="py-3 px-6 hidden lg:table-cell text-gray-600 text-center">
@@ -259,13 +259,13 @@ const OptOutRequestApproval = () => {
                         </button>
                         <button
                           onClick={() => updateStatus(item.id, "Approved")}
-                          className="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 rounded text-sm font-bold transition-all"
+                          className="bg-emerald-500 hidden sm:table-cell hover:bg-emerald-600 text-white px-3 py-1 rounded text-sm font-bold transition-all"
                         >
                           Approve
                         </button>
                         <button
                           onClick={() => updateStatus(item.id, "Rejected")}
-                          className="bg-rose-500 hover:bg-rose-600 text-white px-3 py-1 rounded text-sm font-bold transition-all"
+                          className="bg-rose-500 hidden sm:table-cell hover:bg-rose-600 text-white px-3 py-1 rounded text-sm font-bold transition-all"
                         >
                           Reject
                         </button>
@@ -342,7 +342,7 @@ const OptOutRequestApproval = () => {
             className="bg-white rounded-2xl shadow-2xl w-full max-w-[900px] max-h-[90vh] overflow-y-auto p-8"
             style={{ scrollbarWidth: "none" }}
           >
-            <div className="flex justify-between items-center mb-6 pb-4 border-b">
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-400">
               <h2 className="text-xl font-bold text-gray-900">
                 Opt-Out Request Details
               </h2>
@@ -355,7 +355,7 @@ const OptOutRequestApproval = () => {
             </div>
 
             {/* Employee Info */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6 bg-slate-50 p-4 rounded-xl border">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6 bg-slate-50 p-4 rounded-xl border border-gray-400">
               <div>
                 <p className="text-xs font-bold text-gray-400 uppercase mb-1">
                   Employee
@@ -368,7 +368,7 @@ const OptOutRequestApproval = () => {
                 <p className="text-xs font-bold text-gray-400 uppercase mb-1">
                   Enrollment ID
                 </p>
-                <p className="font-semibold text-gray-800 font-mono">
+                <p className="font-semibold text-gray-800 ">
                   {selectedItem.enrollment_id || "—"}
                 </p>
               </div>
@@ -407,7 +407,7 @@ const OptOutRequestApproval = () => {
             </div>
 
             {/* Opt-Out Choices */}
-            <div className="mb-6 border rounded-xl overflow-hidden">
+            <div className="mb-6 border border-gray-400 rounded-xl overflow-hidden">
               <div className="bg-slate-800 text-white font-bold text-sm px-4 py-3">
                 Opt-Out Selections
               </div>
@@ -468,7 +468,7 @@ const OptOutRequestApproval = () => {
             </div>
 
             {/* Rented Accommodation Details */}
-            <div className="mb-6 border rounded-xl overflow-hidden">
+            <div className="mb-6 border border-gray-400 rounded-xl overflow-hidden">
               <div className="bg-blue-700 text-white font-bold text-sm px-4 py-3 uppercase tracking-wide">
                 Details of Rented Accommodation
               </div>
@@ -493,7 +493,7 @@ const OptOutRequestApproval = () => {
             </div>
 
             {/* Emergency Contacts */}
-            <div className="mb-6 border rounded-xl overflow-hidden">
+            <div className="mb-6 border border-gray-400 rounded-xl overflow-hidden">
               <div className="bg-red-700 text-white font-bold text-sm px-4 py-3 uppercase tracking-wide">
                 Emergency Contact Details
               </div>
@@ -552,7 +552,7 @@ const OptOutRequestApproval = () => {
             </div>
 
             {/* Signatures */}
-            <div className="mb-6 border rounded-xl overflow-hidden">
+            <div className="mb-6 border border-gray-400 rounded-xl overflow-hidden">
               <div className="bg-slate-700 text-white font-bold text-sm px-4 py-3 uppercase tracking-wide">
                 Signatures
               </div>
@@ -585,13 +585,13 @@ const OptOutRequestApproval = () => {
                       <img
                         src={preview}
                         alt="Signature"
-                        className="h-14 border rounded bg-white p-1 shadow-sm"
+                        className="h-14 border border-gray-400 rounded bg-white p-1 shadow-sm"
                       />
                     ) : drawn ? (
                       <img
                         src={drawn}
                         alt="Drawn Signature"
-                        className="h-14 border rounded bg-white p-1 shadow-sm"
+                        className="h-14 border border-gray-400 rounded bg-white p-1 shadow-sm"
                       />
                     ) : (
                       <div className="h-14 w-full border-b border-dashed border-gray-300 flex items-end justify-center pb-1">
@@ -606,7 +606,7 @@ const OptOutRequestApproval = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-end gap-4 mt-8 border-t pt-6">
+            <div className="flex justify-end gap-4 mt-8 pt-6">
               <button
                 onClick={() => updateStatus(selectedItem.id, "Rejected")}
                 className="px-6 py-2 border-2 border-red-200 text-red-600 rounded-xl font-bold hover:bg-red-50 transition-all"

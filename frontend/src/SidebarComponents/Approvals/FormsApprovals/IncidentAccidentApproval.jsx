@@ -92,14 +92,14 @@ const IncidentAccidentApproval = () => {
 
   const SectionHeader = ({ color = "blue", children }) => (
     <div
-      className={`bg-${color}-50 px-4 py-2 font-bold text-${color}-800 uppercase text-[10px] tracking-widest border-b`}
+      className={`bg-${color}-50 px-4 py-2 font-bold text-${color}-800 uppercase text-[10px] tracking-widest border-b border-gray-400`}
     >
       {children}
     </div>
   );
 
   const FieldRow = ({ label, value }) => (
-    <div className="grid grid-cols-2 border-b text-sm px-4 py-2.5 items-center">
+    <div className="grid grid-cols-2 border-b border-gray-400 text-sm px-4 py-2.5 items-center">
       <span className="text-gray-600">{label}</span>
       <span className="font-medium text-gray-800">{value || "—"}</span>
     </div>
@@ -241,7 +241,6 @@ const IncidentAccidentApproval = () => {
                 <tr>
                   <td colSpan="6" className="px-4 py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="text-4xl opacity-40">✅</div>
                       <p className="text-gray-500 text-base font-medium">
                         No Pending Requests
                       </p>
@@ -287,13 +286,13 @@ const IncidentAccidentApproval = () => {
                         </button>
                         <button
                           onClick={() => updateStatus(item.id, "Approved")}
-                          className="bg-emerald-500 text-white px-3 py-1 rounded text-sm font-bold"
+                          className="bg-emerald-500 hidden sm:table-cell text-white px-3 py-1 rounded text-sm font-bold"
                         >
                           Approve
                         </button>
                         <button
                           onClick={() => updateStatus(item.id, "Rejected")}
-                          className="bg-rose-500 text-white px-3 py-1 rounded text-sm font-bold"
+                          className="bg-rose-500 text-white hidden sm:table-cell px-3 py-1 rounded text-sm font-bold"
                         >
                           Reject
                         </button>
@@ -370,7 +369,7 @@ const IncidentAccidentApproval = () => {
             style={{ scrollbarWidth: "none" }}
           >
             {/* Modal Header */}
-            <div className="flex justify-between items-center mb-6 pb-4 border-b">
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-400">
               <h2 className="text-xl font-bold text-gray-900">
                 Incident / Accident Report Details
               </h2>
@@ -383,7 +382,7 @@ const IncidentAccidentApproval = () => {
             </div>
 
             {/* General Info Summary */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 bg-slate-50 p-4 rounded-xl border">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 bg-slate-50 p-4 rounded-xl border border-gray-400">
               <DetailRow
                 label="Date of Incident"
                 value={selectedItem.date_of_incident}
@@ -400,7 +399,7 @@ const IncidentAccidentApproval = () => {
             </div>
 
             {/* Section 1: Incident Details */}
-            <div className="border rounded-xl overflow-hidden mb-6">
+            <div className="border border-gray-400 rounded-xl overflow-hidden mb-6">
               <SectionHeader color="blue">
                 1. Incident General Details
               </SectionHeader>
@@ -435,7 +434,7 @@ const IncidentAccidentApproval = () => {
 
             {/* Section 2 & 3: Timeline & Actions */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="border rounded-xl overflow-hidden">
+              <div className="border border-gray-400 rounded-xl overflow-hidden">
                 <SectionHeader color="indigo">
                   2. Incident Timeline
                 </SectionHeader>
@@ -443,7 +442,7 @@ const IncidentAccidentApproval = () => {
                   {selectedItem.incident_timeline || "—"}
                 </p>
               </div>
-              <div className="border rounded-xl overflow-hidden">
+              <div className="border border-gray-400 rounded-xl overflow-hidden">
                 <SectionHeader color="orange">
                   3. Immediate Action Taken
                 </SectionHeader>
@@ -454,11 +453,11 @@ const IncidentAccidentApproval = () => {
             </div>
 
             {/* Section 4: Injury / Illness */}
-            <div className="border rounded-xl overflow-hidden mb-6">
+            <div className="border border-gray-400 rounded-xl overflow-hidden mb-6">
               <SectionHeader color="red">
                 4. Injury / Illness Details
               </SectionHeader>
-              <div className="grid grid-cols-12 border-b text-sm px-4 py-2.5 items-center">
+              <div className="grid grid-cols-12 border-b border-gray-400 text-sm px-4 py-2.5 items-center">
                 <span className="col-span-6 text-gray-600">
                   Anyone Injured?
                 </span>
@@ -514,7 +513,7 @@ const IncidentAccidentApproval = () => {
             </div>
 
             {/* Section 5: Communication Log */}
-            <div className="border rounded-xl overflow-hidden mb-6">
+            <div className="border border-gray-400 rounded-xl overflow-hidden mb-6">
               <SectionHeader color="amber">
                 5. Communication Log (MSO & OCC)
               </SectionHeader>
@@ -538,7 +537,7 @@ const IncidentAccidentApproval = () => {
 
             {/* Section 6: Authentication & Acknowledgement */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="border rounded-xl overflow-hidden">
+              <div className="border border-gray-400 rounded-xl overflow-hidden">
                 <SectionHeader color="purple">
                   6a. Reporter Information
                 </SectionHeader>
@@ -563,7 +562,7 @@ const IncidentAccidentApproval = () => {
                   value={selectedItem.signature?.date_of_filling_form}
                 />
               </div>
-              <div className="border rounded-xl overflow-hidden">
+              <div className="border border-gray-400 rounded-xl overflow-hidden">
                 <SectionHeader color="teal">
                   6b. MSO Acknowledgement
                 </SectionHeader>
@@ -576,12 +575,12 @@ const IncidentAccidentApproval = () => {
                   value={selectedItem.report_acknowledge?.date_time}
                 />
                 {selectedItem.signaturePreview && (
-                  <div className="px-4 py-3 border-b text-sm">
+                  <div className="px-4 py-3 border-b border-gray-400 text-sm">
                     <p className="text-gray-500 mb-2">Signature</p>
                     <img
                       src={selectedItem.signaturePreview}
                       alt="Signature"
-                      className="h-16 border rounded bg-white p-1 shadow-sm"
+                      className="h-16 border border-gray-400 rounded bg-white p-1 shadow-sm"
                     />
                   </div>
                 )}
@@ -589,7 +588,7 @@ const IncidentAccidentApproval = () => {
             </div>
 
             {/* Modal Footer Actions */}
-            <div className="flex justify-end gap-4 mt-8 border-t pt-6">
+            <div className="flex justify-end gap-4 mt-8 pt-6">
               <button
                 onClick={() => updateStatus(selectedItem.id, "Rejected")}
                 className="px-6 py-2 border-2 border-red-200 text-red-600 rounded-xl font-bold hover:bg-red-50 transition-all"

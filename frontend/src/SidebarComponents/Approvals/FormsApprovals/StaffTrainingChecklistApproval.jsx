@@ -395,7 +395,6 @@ const StaffTrainingChecklistApproval = () => {
                 <tr>
                   <td colSpan="7" className="px-4 py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="text-4xl opacity-40">✅</div>
                       <p className="text-gray-500 text-base font-medium">
                         No Pending Requests
                       </p>
@@ -422,7 +421,7 @@ const StaffTrainingChecklistApproval = () => {
                     <td className="py-3 px-6 font-medium text-gray-900 text-center">
                       {item.employee_name || "—"}
                     </td>
-                    <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono text-center">
+                    <td className="py-3 px-6 hidden md:table-cell text-gray-600  text-center">
                       {item.enrollment_id || "—"}
                     </td>
                     <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
@@ -444,13 +443,13 @@ const StaffTrainingChecklistApproval = () => {
                         </button>
                         <button
                           onClick={() => updateStatus(item.id, "Approved")}
-                          className="bg-emerald-500 text-white px-3 py-1 rounded text-sm font-bold"
+                          className="bg-emerald-500 hidden sm:table-cell text-white px-3 py-1 rounded text-sm font-bold"
                         >
                           Approve
                         </button>
                         <button
                           onClick={() => updateStatus(item.id, "Rejected")}
-                          className="bg-rose-500 text-white px-3 py-1 rounded text-sm font-bold"
+                          className="bg-rose-500 hidden sm:table-cell text-white px-3 py-1 rounded text-sm font-bold"
                         >
                           Reject
                         </button>
@@ -554,7 +553,7 @@ const StaffTrainingChecklistApproval = () => {
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
                   Enrollment ID
                 </p>
-                <p className="font-semibold text-gray-800 font-mono">
+                <p className="font-semibold text-gray-800 ">
                   {selectedItem.enrollment_id || "—"}
                 </p>
               </div>
@@ -625,13 +624,13 @@ const StaffTrainingChecklistApproval = () => {
                       className="flex flex-col md:grid md:grid-cols-12 border-b border-gray-400  last:border-b-0 items-center text-sm hover:bg-slate-50 transition-colors"
                     >
                       {/* Index Row */}
-                      <div className="hidden md:block col-span-1 p-3 text-center text-gray-400 font-mono text-xs">
+                      <div className="hidden md:block col-span-1 p-3 text-center text-gray-400  text-xs">
                         {sectionIndex + 1}.{i + 1}
                       </div>
 
                       {/* Label Field */}
                       <div className="w-full md:col-span-5 p-3 text-gray-700 font-medium md:font-normal bg-slate-50 md:bg-transparent border-b border-gray-400  md:border-b-0">
-                        <span className="md:hidden text-gray-400 mr-2 font-mono text-xs">
+                        <span className="md:hidden text-gray-400 mr-2  text-xs">
                           {sectionIndex + 1}.{i + 1}
                         </span>
                         {field.label}

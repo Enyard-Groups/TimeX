@@ -258,7 +258,6 @@ const ShiftHandOverApproval = () => {
                 <tr>
                   <td colSpan="7" className="px-4 py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="text-4xl opacity-40">✅</div>
                       <p className="text-gray-500 text-base font-medium">
                         No Pending Requests
                       </p>
@@ -325,13 +324,13 @@ const ShiftHandOverApproval = () => {
                         </button>
                         <button
                           onClick={() => updateStatus(item.id, "Approved")}
-                          className="bg-emerald-500 text-white px-3 py-1 rounded text-sm font-bold"
+                          className="bg-emerald-500 hidden sm:table-cell text-white px-3 py-1 rounded text-sm font-bold"
                         >
                           Approve
                         </button>
                         <button
                           onClick={() => updateStatus(item.id, "Rejected")}
-                          className="bg-rose-500 text-white px-3 py-1 rounded text-sm font-bold"
+                          className="bg-rose-500 hidden sm:table-cell text-white px-3 py-1 rounded text-sm font-bold"
                         >
                           Reject
                         </button>
@@ -452,7 +451,7 @@ const ShiftHandOverApproval = () => {
                   Incoming Party
                 </div>
               </div>
-              <div className="grid grid-cols-3 border-b text-sm">
+              <div className="grid grid-cols-3 border-b border-gray-400 text-sm">
                 <div className="p-3 bg-slate-50 font-medium text-gray-700 text-center">
                   Handover Timing
                 </div>
@@ -483,7 +482,7 @@ const ShiftHandOverApproval = () => {
                     : "-"}
                 </div>
               </div>
-              <div className="grid grid-cols-3 border-b text-sm">
+              <div className="grid grid-cols-3 border-b border-gray-400 text-sm">
                 <div className="p-3 bg-slate-50 font-medium text-gray-700 text-center">
                   Guard Name
                 </div>
@@ -518,7 +517,7 @@ const ShiftHandOverApproval = () => {
               {detailsFields.map((field, i) => (
                 <div
                   key={i}
-                  className="grid grid-cols-2 border-b last:border-b-0 text-sm hover:bg-slate-50"
+                  className="grid grid-cols-2 border-b border-gray-400 last:border-b-0 text-sm hover:bg-slate-50"
                 >
                   <div className="p-3 font-medium text-gray-700">
                     {field.label}
@@ -532,7 +531,7 @@ const ShiftHandOverApproval = () => {
 
             {/* Equipment Table */}
             <div className="border border-gray-400 rounded-xl overflow-hidden mb-8">
-              <div className="grid grid-cols-2 bg-slate-100 text-gray-700 font-bold text-sm border-b">
+              <div className="grid grid-cols-2 bg-slate-100 text-gray-700 font-bold text-sm border-b border-gray-400">
                 <div className="p-3">Security Equipment Assets</div>
                 <div className="p-3 border-l border-gray-200">
                   Status / Notes
@@ -541,7 +540,7 @@ const ShiftHandOverApproval = () => {
               {equipmentFields.map((field, i) => (
                 <div
                   key={i}
-                  className="grid grid-cols-2 border-b last:border-b-0 text-sm hover:bg-slate-50"
+                  className="grid grid-cols-2 border-b border-gray-400 last:border-b-0 text-sm hover:bg-slate-50"
                 >
                   <div className="p-3 font-medium text-gray-700">
                     {field.label}
@@ -564,13 +563,13 @@ const ShiftHandOverApproval = () => {
                   <img
                     src={selectedItem.preparedBySignPreview}
                     alt="Prepared By Signature"
-                    className="h-16 mx-auto border rounded bg-white p-2 shadow-sm"
+                    className="h-16 mx-auto border border-gray-400 rounded bg-white p-2 shadow-sm"
                   />
                 ) : selectedItem.preparedBySign_drawn ? (
                   <img
                     src={selectedItem.preparedBySign_drawn}
                     alt="Prepared By Signature"
-                    className="h-16 mx-auto border rounded bg-white p-2 shadow-sm"
+                    className="h-16 mx-auto border border-gray-400 rounded bg-white p-2 shadow-sm"
                   />
                 ) : (
                   <p className="text-gray-400 italic text-sm">
@@ -588,13 +587,13 @@ const ShiftHandOverApproval = () => {
                   <img
                     src={selectedItem.acknowledgedBySignPreview}
                     alt="Acknowledged By Signature"
-                    className="h-16 mx-auto border rounded bg-white p-2 shadow-sm"
+                    className="h-16 mx-auto border border-gray-400 rounded bg-white p-2 shadow-sm"
                   />
                 ) : selectedItem.acknowlegedBySign_drawn ? (
                   <img
                     src={selectedItem.acknowlegedBySign_drawn}
                     alt="Acknowledged By Signature"
-                    className="h-16 mx-auto border rounded bg-white p-2 shadow-sm"
+                    className="h-16 mx-auto border border-gray-400 rounded bg-white p-2 shadow-sm"
                   />
                 ) : (
                   <p className="text-gray-400 italic text-sm">
