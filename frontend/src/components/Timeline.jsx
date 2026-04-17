@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
+import { useSelector } from "react-redux";
 
-const Timeline = ({ userData = [] }) => {
+const Timeline = () => {
+  const records = useSelector((state) => state.record);
   const [now, setNow] = useState(new Date());
   const scrollRef = useRef(null);
 
@@ -21,30 +23,30 @@ const Timeline = ({ userData = [] }) => {
   // 2. Memoized Sorted Events
   const sortedEvents = useMemo(() => {
     const events = [];
-    userData.forEach((user) => {
-      const inSecs = getSecondsFromTime(user.checkin);
+    records.forEach((user) => {
+      const inSecs = getSecondsFromTime(user.checkIn);
       if (inSecs <= currentSecondsNow) {
         events.push({
           ...user,
           type: "IN",
           timeSecs: inSecs,
-          displayTime: user.checkin,
+          displayTime: user.checkIn,
         });
       }
       if (user.checkout) {
-        const outSecs = getSecondsFromTime(user.checkout);
+        const outSecs = getSecondsFromTime(user.checkOut);
         if (outSecs <= currentSecondsNow) {
           events.push({
             ...user,
             type: "OUT",
             timeSecs: outSecs,
-            displayTime: user.checkout,
+            displayTime: user.checkOut,
           });
         }
       }
     });
     return events.sort((a, b) => b.timeSecs - a.timeSecs);
-  }, [userData, currentSecondsNow]);
+  }, [records, currentSecondsNow]);
 
   // 3. Clock Timer (Updates State every second)
   useEffect(() => {
@@ -173,12 +175,23 @@ const Timeline = ({ userData = [] }) => {
                     }`}
                     style={{ left: `${leftPos}%`, top: `${rowTop}px` }}
                   >
-                    <div className="w-7 h-7 rounded-full bg-white flex justify-center items-center font-bold text-[10px]">
-                      {event.name.charAt(0).toUpperCase()}
+                    <div className="w-9 h-9 rounded-full bg-white flex justify-center items-center">
+                      {event?.photo ? (
+                        <img
+                          src={event.photo}
+                          alt={event?.username || "User"}
+                          className="w-9 h-9 rounded-full object-cover shadow-sm"
+                        />
+                      ) : (
+                        <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#002259] text-white font-semibold shadow-sm">
+                          {event?.username?.charAt(0)?.toUpperCase() || "U"}
+                        </div>
+                      )}
                     </div>
                     <div className="flex flex-col leading-tight whitespace-nowrap gap-1">
                       <span className="text-[12px] font-bold text-gray-800">
-                        {event.name}
+                        {event.username?.charAt(0).toUpperCase() +
+                          event.username?.slice(1)}
                       </span>
                       <span
                         className={`text-[9px] font-extrabold ${isCheckIn ? "text-[#3572ff]" : "text-[#11a5ac]"}`}

@@ -6,6 +6,8 @@ export const initState = {
   user: null,
   loading: true,
   attendanceData: [],
+  record: [],
+  error: null,
 };
 
 const reducer = (state = initState, action) => {
@@ -44,6 +46,29 @@ const reducer = (state = initState, action) => {
       };
     case types.GET_ATTENDANCE_FAILURE:
       return { ...state, loading: false, error: action.payload };
+
+    case types.GET_RECORD_REQUEST:
+      return { ...state, loading: true };
+    case types.GET_RECORD_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        record: action.payload,
+        error: null,
+      };
+    case types.GET_RECORD_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+
+    case types.ADD_RECORD:
+      return {
+        ...state,
+        record: [action.payload, ...state.record],
+      };
+    case types.UPDATE_RECORD:
+      return {
+        ...state,
+        record: action.payload, 
+      };
 
     default:
       return state;

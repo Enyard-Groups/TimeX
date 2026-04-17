@@ -39,18 +39,25 @@ const generateHistoricalData = () => {
 
     // Company growth logic
     const totalEmployees = 50 + Math.floor(((totalDays - i) / totalDays) * 100);
-    
+
     const presentToday = isWeekend
       ? Math.floor(Math.random() * (totalEmployees * 0.1)) + 5
-      : Math.floor(Math.random() * (totalEmployees * 0.2)) + Math.floor(totalEmployees * 0.7);
+      : Math.floor(Math.random() * (totalEmployees * 0.2)) +
+        Math.floor(totalEmployees * 0.7);
 
     dates.push({
       date: dateStr,
       totalEmployees,
       presentToday,
-      leave: isWeekend ? 0 : Math.floor(Math.random() * (totalEmployees * 0.05)),
-      earlyin: isWeekend ? 0 : Math.floor(Math.random() * (totalEmployees * 0.1)),
-      latein: isWeekend ? 0 : Math.floor(Math.random() * (totalEmployees * 0.08)),
+      leave: isWeekend
+        ? 0
+        : Math.floor(Math.random() * (totalEmployees * 0.05)),
+      earlyin: isWeekend
+        ? 0
+        : Math.floor(Math.random() * (totalEmployees * 0.1)),
+      latein: isWeekend
+        ? 0
+        : Math.floor(Math.random() * (totalEmployees * 0.08)),
     });
   }
   return dates;
@@ -60,7 +67,7 @@ export const fetchAttendanceStats = () => async (dispatch) => {
   dispatch({ type: types.GET_ATTENDANCE_REQUEST });
 
   try {
-    /** * Logic: If you want to use the API, uncomment below. 
+    /** * Logic: If you want to use the API, uncomment below.
      * Otherwise, use the generator for mock data.
      */
     // const res = await axios.get("/api/attendance/stats");
@@ -77,5 +84,28 @@ export const fetchAttendanceStats = () => async (dispatch) => {
       type: types.GET_ATTENDANCE_FAILURE,
       payload: error.message,
     });
+  }
+};
+
+// action.js
+export const addRecord = (data) => (dispatch) => {
+  const existing = JSON.parse(localStorage.getItem("records") || "[]");
+  const updated = [data, ...existing];
+  localStorage.setItem("records", JSON.stringify(updated));
+  dispatch({ type: types.ADD_RECORD, payload: data });
+};
+
+export const updateRecord = (data) => (dispatch) => {
+  localStorage.setItem("records", JSON.stringify(data));
+  dispatch({ type: types.UPDATE_RECORD, payload: data });
+};
+
+export const fetchRecord = () => async (dispatch) => {
+  dispatch({ type: types.GET_RECORD_REQUEST });
+  try {
+    const data = JSON.parse(localStorage.getItem("records") || "[]");
+    dispatch({ type: types.GET_RECORD_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({ type: types.GET_RECORD_FAILURE, payload: error.message });
   }
 };
