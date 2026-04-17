@@ -58,6 +58,9 @@ const RecentActivity = ({ userData = [] }) => {
 
   return (
     <div className="overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+      <h2 className="text-md font-bold text-gray-600 tracking-tight ml-3 my-4">
+        Recent Activity
+      </h2>
       <table className="w-full text-sm text-left border-collapse">
         <thead>
           <tr className="border-b border-gray-100 font-semibold text-gray-600">

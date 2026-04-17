@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  UserCheck,
-  UserX,
-  Calendar,
-  ArrowUp,
-  ArrowDown,
-} from "lucide-react";
+import { UserCheck, UserX, Calendar, ArrowUp, ArrowDown } from "lucide-react";
 import { ResponsiveContainer, Area, AreaChart } from "recharts";
 
 const EmployeeAttendance = ({ attendanceData = [] }) => {
@@ -75,7 +69,8 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
       icon: <UserCheck size={20} />,
       dataKey: "presentToday",
       color: "#2563EB",
-      bg: "bg-[#DBEAFE]",
+      bg: "bg-[#b2d3fe]",
+      iconbg: "bg-[#DBEAFE]",
       text: "text-[#0049a8]",
     },
     {
@@ -88,7 +83,8 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
       icon: <UserX size={20} />,
       dataKey: "absent",
       color: "#EF4444",
-      bg: "bg-[#FEE2E2]",
+      bg: "bg-[#ffcfcf]",
+      iconbg: "bg-[#FEE2E2]",
       text: "text-[#890000]",
     },
     {
@@ -98,7 +94,8 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
       icon: <Calendar size={20} />,
       dataKey: "leave",
       color: "#06B6D4",
-      bg: "bg-[#E0F2FE]",
+      bg: "bg-[#b8e3ff]",
+      iconbg: "bg-[#E0F2FE]",
       text: "text-[#004e82]",
     },
   ];
@@ -135,7 +132,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
               className={`${item.bg} ${item.text} h-full flex flex-col justify-center items-center min-w-[90px] z-10`}
             >
               <span className="text-xs font-medium mb-2">{item.title}</span>
-              <span>{item.icon}</span>
+              <span className={`${item.iconbg} p-2 rounded-full`}>{item.icon}</span>
             </div>
 
             <div className="flex-1 h-full pt-12 pb-1 pr-1">

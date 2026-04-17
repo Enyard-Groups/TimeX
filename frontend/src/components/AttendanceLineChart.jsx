@@ -168,12 +168,12 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
   };
 
   return (
-    <div className="w-full h-full p-4 bg-white rounded-2xl">
+    <div className="w-full h-full bg-white rounded-2xl">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3">
-        <h3 className="text-md font-bold text-slate-800">
+        <h3 className="text-md font-bold text-slate-800 p-5">
           Attendance Overview
         </h3>
-        <div className="flex bg-slate-100 p-1 rounded-xl">
+        <div className="flex bg-slate-100 p-1 m-4 rounded-xl">
           {["7d", "15d", "1m", "1y", "3y"].map((val) => (
             <button
               key={val}

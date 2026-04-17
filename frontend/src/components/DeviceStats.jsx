@@ -1,5 +1,7 @@
 import React from "react";
 import Chart from "react-apexcharts";
+import { FaFingerprint, FaMobileAlt } from "react-icons/fa";
+import { FaDesktop } from "react-icons/fa6";
 
 const DeviceStats = ({ data = [] }) => {
   // Count devices
@@ -63,9 +65,24 @@ const DeviceStats = ({ data = [] }) => {
   };
 
   const deviceList = [
-    { name: "Mobile", value: series[0], color: "#6366f1" },
-    { name: "Desktop", value: series[1], color: "#3b82f6" },
-    { name: "Biometric", value: series[2], color: "#228eb8" },
+    {
+      name: "Mobile",
+      value: series[0],
+      color: "#6366f1",
+      icon: <FaMobileAlt size={21} />,
+    },
+    {
+      name: "Desktop",
+      value: series[1],
+      color: "#3b82f6",
+      icon: <FaDesktop />,
+    },
+    {
+      name: "Biometric",
+      value: series[2],
+      color: "#228eb8",
+      icon: <FaFingerprint />,
+    },
   ];
 
   return (
@@ -90,9 +107,13 @@ const DeviceStats = ({ data = [] }) => {
             >
               <div className="flex items-center gap-2">
                 <span
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: item.color }}
-                ></span>
+                  className="flex items-center justify-center w-5 h-5 rounded-md"
+                  style={{
+                    color: item.color,
+                  }}
+                >
+                  {item.icon}
+                </span>
                 <span className="text-gray-600">{item.name}</span>
               </div>
               <span className="text-gray-800 font-medium">{item.value}%</span>
