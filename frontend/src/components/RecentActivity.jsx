@@ -135,7 +135,7 @@ const RecentActivity = () => {
                         <p className="font-medium text-gray-800 leading-none">
                           {user?.username || "Unknown"}
                         </p>
-                        <p className="text-sm text-gray-400">ID: {user.id}</p>
+                        <p className="text-sm text-gray-400">ID:{user.userID}</p>
                       </div>
                     </div>
                   </td>

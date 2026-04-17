@@ -1,5 +1,5 @@
 /* eslint-disable no-async-promise-executor */
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addRecord, fetchRecord, updateRecord } from "../action";
 
@@ -649,12 +649,39 @@ const AttendancePunch = ({ user }) => {
 
   const executePunch = useCallback(
     async (skipCamera = false, skipLocation = false, savedPhoto = null) => {
-      setLoading(true);
       const now = new Date();
+      const currentTime = now.getTime();
+
+      // ── 1. LOCKOUT CHECK (BEFORE CAMERA/LOCATION) ──────────────
+      if (!isPunchedIn) {
+        // Get the most recent record from the user's history
+        const lastRecord = filteredRecord[filteredRecord.length - 1];
+
+        if (lastRecord && lastRecord._inTime) {
+          // Ensure we compare numbers (timestamps)
+          const lastInTime =
+            typeof lastRecord._inTime === "string"
+              ? new Date(lastRecord._inTime).getTime()
+              : lastRecord._inTime;
+
+          const msPassed = currentTime - lastInTime;
+          const hoursPassed = msPassed / (1000 * 60 * 60);
+
+          if (hoursPassed < 12) {
+            const hoursLeft = (12 - hoursPassed).toFixed(1);
+            alert(
+              `Policy Restriction: You can only punch in once every 12 hours. Please wait ${hoursLeft} more hours.`,
+            );
+            return; // Exit function immediately
+          }
+        }
+      }
+
+      setLoading(true);
       let photo = savedPhoto || null;
       let location = null;
 
-      // ── 1. CAMERA ─────────────────────────────────────────────
+      // ── 2. CAMERA ─────────────────────────────────────────────
       if (!skipCamera) {
         try {
           photo = await capturePhoto();
@@ -664,11 +691,14 @@ const AttendancePunch = ({ user }) => {
             setPermissionModal("camera");
             setLoading(false);
             return;
+          } else {
+            setLoading(false); // User cancelled camera
+            return;
           }
         }
       }
 
-      // ── 2. LOCATION ───────────────────────────────────────────
+      // ── 3. LOCATION ───────────────────────────────────────────
       if (!skipLocation) {
         try {
           location = await getLocation();
@@ -682,10 +712,10 @@ const AttendancePunch = ({ user }) => {
         }
       }
 
-      // ── 3. DEVICE ─────────────────────────────────────────────
+      // ── 4. DEVICE ─────────────────────────────────────────────
       const device = getDeviceType();
 
-      // ── 4. PUNCH IN / OUT ─────────────────────────────────────
+      // ── 5. PUNCH IN / OUT ─────────────────────────────────────
       if (!isPunchedIn) {
         const newRecord = {
           id: Date.now(),
@@ -698,9 +728,9 @@ const AttendancePunch = ({ user }) => {
           hours: "-",
           location,
           photo,
-          checkinDevice: device, // ← device at punch-in
+          checkinDevice: device,
           checkoutDevice: null,
-          _inTime: now,
+          _inTime: currentTime, // Save as numeric timestamp
         };
         setTodayRecord(newRecord);
         setIsPunchedIn(true);
@@ -709,18 +739,20 @@ const AttendancePunch = ({ user }) => {
         const pad = (num) => String(num).padStart(2, "0");
         const updatedRecord = filteredRecord.map((r) => {
           if (r.id === todayRecord?.id) {
-            const inTime = r._inTime || now;
-            const diffInMs = now - inTime;
+            // Robust timestamp handling
+            const inTimeRaw = r._inTime || todayRecord?._inTime;
+            const inTime =
+              typeof inTimeRaw === "string"
+                ? new Date(inTimeRaw).getTime()
+                : inTimeRaw;
 
-            // Calculate total seconds first
-            const totalSeconds = Math.floor(diffInMs / 1000);
+            const diffInMs = currentTime - inTime;
+            const totalSeconds = Math.max(0, Math.floor(diffInMs / 1000));
 
-            // Breakdown into components
             const displayHrs = Math.floor(totalSeconds / 3600);
             const displayMins = Math.floor((totalSeconds % 3600) / 60);
             const displaySecs = totalSeconds % 60;
 
-            // Use decimal hours for the status logic (4h / 8h thresholds)
             const totalHrs = totalSeconds / 3600;
 
             let finalStatus = "Present";
@@ -731,7 +763,6 @@ const AttendancePunch = ({ user }) => {
               ...r,
               checkOut: formatTime(now),
               status: finalStatus,
-              // Updated string to include seconds
               hours: `${pad(displayHrs)}:${pad(displayMins)}:${pad(displaySecs)}`,
               location: location || r.location,
               photo: photo || r.photo,
@@ -839,6 +870,19 @@ const AttendancePunch = ({ user }) => {
     return () => clearInterval(interval);
   }, [isPunchedIn, todayRecord]);
 
+  // Add this near your other useMemo/state declarations
+  const canPunchIn = useMemo(() => {
+    if (isPunchedIn) return false; // Already in
+
+    const lastRecord = filteredRecord[filteredRecord.length - 1];
+    if (!lastRecord || !lastRecord._inTime) return true; // No history, go ahead
+
+    const lastInTime = new Date(lastRecord._inTime).getTime();
+    const hoursPassed = (new Date().getTime() - lastInTime) / (1000 * 60 * 60);
+
+    return hoursPassed >= 12;
+  }, [isPunchedIn, filteredRecord]);
+
   return (
     <div className=" mx-auto pb-10 px-4 sm:px-6">
       {showCamera && (
@@ -925,14 +969,14 @@ const AttendancePunch = ({ user }) => {
 
           <div className="flex gap-4">
             <button
-              onClick={() => !isPunchedIn && !loading && executePunch()}
-              disabled={isPunchedIn || loading}
+              onClick={() => canPunchIn && !loading && executePunch()}
+              disabled={!canPunchIn || loading}
               className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all active:scale-[0.98]
-        ${
-          isPunchedIn
-            ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
-            : "bg-gradient-to-br from-blue-700 to-blue-600 text-white shadow-md shadow-blue-200 hover:shadow-lg"
-        }`}
+    ${
+      !canPunchIn
+        ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
+        : "bg-gradient-to-br from-blue-700 to-blue-600 text-white shadow-md shadow-blue-200 hover:shadow-lg"
+    }`}
             >
               {loading && !isPunchedIn ? "Processing..." : "Punch In"}
             </button>

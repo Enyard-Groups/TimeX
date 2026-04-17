@@ -42,7 +42,7 @@ const Login = () => {
     // Admin Bypass Logic (for development)
     if (userName === "employee" && password === "employee123") {
       const adminUserData = {
-        id: 1,
+        id: "EMP01",
         user_name: "employee",
         name: "Employee",
         role: "employee",
