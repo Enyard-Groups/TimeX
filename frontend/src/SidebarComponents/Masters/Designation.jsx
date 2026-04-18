@@ -714,7 +714,7 @@ const Designation = () => {
                   displayValue={formData.company_name}
                   options={companyOptions}
                   labelKey="name"
-                  valueKey="id"
+                  valueKey="name"
                   labelName="company_name"
                   formData={formData}
                   setFormData={setFormData}
@@ -734,7 +734,7 @@ const Designation = () => {
                   displayValue={formData.department_name}
                   options={departmentOptions}
                   labelKey="name"
-                  valueKey="id"
+                  valueKey="name"
                   labelName="department_name"
                   formData={formData}
                   setFormData={setFormData}

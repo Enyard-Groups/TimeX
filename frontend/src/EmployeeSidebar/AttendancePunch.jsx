@@ -1,7 +1,8 @@
 /* eslint-disable no-async-promise-executor */
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addRecord, fetchRecord, updateRecord } from "../action";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
 const formatTime = (date) =>
   date.toLocaleTimeString("en-US", {
@@ -21,6 +22,28 @@ const getDeviceType = () => {
   return "desktop";
 };
 
+// ── DERIVE STATUS FROM TOTAL DAILY SECONDS ────────────────────
+// < 1h  → Absent | 1h–<4h → Half Day | ≥ 4h → Present
+const deriveStatus = (totalSeconds) => {
+  const totalHrs = totalSeconds / 3600;
+  if (totalHrs < 1) return "Absent";
+  if (totalHrs < 2) return "Half Day";
+  return "Present";
+};
+
+// ── SUM ALL COMPLETED SESSION SECONDS FOR A USER ON A DATE ────
+const sumDaySeconds = (records, userID, date) => {
+  return records
+    .filter(
+      (r) =>
+        r.userID === userID &&
+        r.date === date &&
+        r.checkOut !== "-" &&
+        r.status !== "In Progress",
+    )
+    .reduce((acc, r) => acc + (r._sessionSeconds || 0), 0);
+};
+
 const StatusBadge = ({ status }) => {
   const colors = {
     Present: "background:#dcfce7;color:#166534;border:1px solid #bbf7d0",
@@ -29,6 +52,7 @@ const StatusBadge = ({ status }) => {
     "Half Day": "background:#fef9c3;color:#854d0e;border:1px solid #fde047",
     "In Progress": "background:#dbeafe;color:#1e40af;border:1px solid #bfdbfe",
     Missed: "background:#fdf4ff;color:#7e22ce;border:1px solid #e9d5ff",
+    Leave: "background:#f0fdf4;color:#15803d;border:1px solid #86efac",
   };
   return (
     <span
@@ -50,7 +74,6 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-// Device badge shown in the table
 const DeviceBadge = ({ device }) => {
   const styles = {
     mobile: { bg: "#eff6ff", color: "#1d4ed8", label: "Mobile" },
@@ -500,20 +523,32 @@ const CameraModal = ({
   </div>
 );
 
+// ── FORMAT SECONDS → HH:MM:SS ─────────────────────────────────
+const formatSeconds = (totalSeconds) => {
+  const pad = (n) => String(n).padStart(2, "0");
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  return `${pad(h)}:${pad(m)}:${pad(s)}`;
+};
+
 const AttendancePunch = ({ user }) => {
   const dispatch = useDispatch();
   const records = useSelector((state) => state.record);
-  console.log(records);
 
+  // All records for this user
   const filteredRecord = records.filter((r) => r.userID === user.id);
 
-  const [loading, setLoading] = useState(false);
+  // 5 most recent records for the table
+  const recentRecords = [...filteredRecord]
+    .sort((a, b) => b.id - a.id)
+    .slice(0, 5);
 
+  const [loading, setLoading] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [cameraResolve, setCameraResolve] = useState(null);
   const [cameraReject, setCameraReject] = useState(null);
-
   const [permissionModal, setPermissionModal] = useState(null);
   const [pendingAction, setPendingAction] = useState(null);
   const [expandedPhoto, setExpandedPhoto] = useState(null);
@@ -523,7 +558,9 @@ const AttendancePunch = ({ user }) => {
   const streamRef = useRef(null);
   const canvasRef = useRef(document.createElement("canvas"));
 
-  // ── PERSIST PUNCH STATE TO LOCALSTORAGE ───────────────────────
+  // ── PUNCH STATE ───────────────────────────────────────────────
+  // isPunchedIn   → is a session currently open?
+  // activeRecord  → the open "In Progress" record for this session
   const [isPunchedIn, setIsPunchedIn] = useState(() => {
     try {
       return (
@@ -534,12 +571,11 @@ const AttendancePunch = ({ user }) => {
     }
   });
 
-  // Inside the todayRecord initializer, add a date check:
-  const [todayRecord, setTodayRecord] = useState(() => {
+  const [activeRecord, setActiveRecord] = useState(() => {
     try {
-      const saved = JSON.parse(localStorage.getItem(`todayRecord_${user.id}`));
+      const saved = JSON.parse(localStorage.getItem(`activeRecord_${user.id}`));
       if (saved && saved.date !== formatDate(new Date())) {
-        localStorage.removeItem(`todayRecord_${user.id}`);
+        localStorage.removeItem(`activeRecord_${user.id}`);
         localStorage.removeItem(`isPunchedIn_${user.id}`);
         return null;
       }
@@ -549,26 +585,68 @@ const AttendancePunch = ({ user }) => {
     }
   });
 
-  // Sync to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem(`isPunchedIn_${user.id}`, JSON.stringify(isPunchedIn));
   }, [isPunchedIn, user.id]);
 
   useEffect(() => {
-    if (todayRecord) {
+    if (activeRecord) {
       localStorage.setItem(
-        `todayRecord_${user.id}`,
-        JSON.stringify(todayRecord),
+        `activeRecord_${user.id}`,
+        JSON.stringify(activeRecord),
       );
     } else {
-      localStorage.removeItem(`todayRecord_${user.id}`);
+      localStorage.removeItem(`activeRecord_${user.id}`);
     }
-  }, [todayRecord, user.id]);
+  }, [activeRecord, user.id]);
 
   useEffect(() => {
     dispatch(fetchRecord());
   }, [dispatch]);
 
+  // ── MIDNIGHT FINALIZE ─────────────────────────────────────────
+  useEffect(() => {
+    const now = new Date();
+    const midnight = new Date();
+    midnight.setHours(24, 0, 0, 0);
+    const msUntilMidnight = midnight - now;
+
+    const timer = setTimeout(() => {
+      const today = formatDate(now);
+
+      // Close any open "In Progress" record at midnight
+      const finalized = records.map((r) => {
+        if (
+          r.userID === user.id &&
+          r.date === today &&
+          r.status === "In Progress"
+        ) {
+          const inTime = r._inTime ? new Date(r._inTime) : new Date();
+          const sessionSecs = Math.floor((midnight - inTime) / 1000);
+          const totalSecs = (r._prevDaySeconds || 0) + sessionSecs;
+          return {
+            ...r,
+            checkOut: "23:59:59",
+            status: deriveStatus(totalSecs),
+            hours: formatSeconds(totalSecs),
+            _sessionSeconds: sessionSecs,
+            _totalDaySeconds: totalSecs,
+          };
+        }
+        return r;
+      });
+
+      dispatch(updateRecord(finalized));
+      setIsPunchedIn(false);
+      setActiveRecord(null);
+      localStorage.removeItem(`isPunchedIn_${user.id}`);
+      localStorage.removeItem(`activeRecord_${user.id}`);
+    }, msUntilMidnight);
+
+    return () => clearTimeout(timer);
+  }, [user.id, dispatch, records]);
+
+  // ── CAMERA HELPERS ────────────────────────────────────────────
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((t) => t.stop());
@@ -628,9 +706,8 @@ const AttendancePunch = ({ user }) => {
 
   const handleRetake = useCallback(() => {
     setPhotoPreview(null);
-    if (videoRef.current && streamRef.current) {
+    if (videoRef.current && streamRef.current)
       videoRef.current.srcObject = streamRef.current;
-    }
   }, []);
 
   const handleConfirm = useCallback(() => {
@@ -647,41 +724,15 @@ const AttendancePunch = ({ user }) => {
     stopCamera();
   }, [cameraReject, stopCamera]);
 
+  // ── CORE PUNCH LOGIC ──────────────────────────────────────────
   const executePunch = useCallback(
     async (skipCamera = false, skipLocation = false, savedPhoto = null) => {
-      const now = new Date();
-      const currentTime = now.getTime();
-
-      // ── 1. LOCKOUT CHECK (BEFORE CAMERA/LOCATION) ──────────────
-      if (!isPunchedIn) {
-        // Get the most recent record from the user's history
-        const lastRecord = filteredRecord[filteredRecord.length - 1];
-
-        if (lastRecord && lastRecord._inTime) {
-          // Ensure we compare numbers (timestamps)
-          const lastInTime =
-            typeof lastRecord._inTime === "string"
-              ? new Date(lastRecord._inTime).getTime()
-              : lastRecord._inTime;
-
-          const msPassed = currentTime - lastInTime;
-          const hoursPassed = msPassed / (1000 * 60 * 60);
-
-          if (hoursPassed < 12) {
-            const hoursLeft = (12 - hoursPassed).toFixed(1);
-            alert(
-              `Policy Restriction: You can only punch in once every 12 hours. Please wait ${hoursLeft} more hours.`,
-            );
-            return; // Exit function immediately
-          }
-        }
-      }
-
       setLoading(true);
+      const now = new Date();
       let photo = savedPhoto || null;
       let location = null;
 
-      // ── 2. CAMERA ─────────────────────────────────────────────
+      // 1. CAMERA
       if (!skipCamera) {
         try {
           photo = await capturePhoto();
@@ -691,14 +742,11 @@ const AttendancePunch = ({ user }) => {
             setPermissionModal("camera");
             setLoading(false);
             return;
-          } else {
-            setLoading(false); // User cancelled camera
-            return;
           }
         }
       }
 
-      // ── 3. LOCATION ───────────────────────────────────────────
+      // 2. LOCATION
       if (!skipLocation) {
         try {
           location = await getLocation();
@@ -712,16 +760,17 @@ const AttendancePunch = ({ user }) => {
         }
       }
 
-      // ── 4. DEVICE ─────────────────────────────────────────────
+      // 3. DEVICE
       const device = getDeviceType();
+      const today = formatDate(now);
 
-      // ── 5. PUNCH IN / OUT ─────────────────────────────────────
       if (!isPunchedIn) {
+        // ── PUNCH IN: always create a brand-new record ────────────
         const newRecord = {
           id: Date.now(),
           userID: user.id,
           username: user.user_name,
-          date: formatDate(now),
+          date: today,
           checkIn: formatTime(now),
           checkOut: "-",
           status: "In Progress",
@@ -730,64 +779,68 @@ const AttendancePunch = ({ user }) => {
           photo,
           checkinDevice: device,
           checkoutDevice: null,
-          _inTime: currentTime, // Save as numeric timestamp
+          _inTime: now.toISOString(),
+          _sessionSeconds: 0,
+          // How many seconds this user already accumulated today (from prior closed sessions)
+          _prevDaySeconds: sumDaySeconds(records, user.id, today),
         };
-        setTodayRecord(newRecord);
+
+        setActiveRecord(newRecord);
         setIsPunchedIn(true);
         dispatch(addRecord(newRecord));
       } else {
-        const pad = (num) => String(num).padStart(2, "0");
-        const updatedRecord = filteredRecord.map((r) => {
-          if (r.id === todayRecord?.id) {
-            // Robust timestamp handling
-            const inTimeRaw = r._inTime || todayRecord?._inTime;
-            const inTime =
-              typeof inTimeRaw === "string"
-                ? new Date(inTimeRaw).getTime()
-                : inTimeRaw;
+        // ── PUNCH OUT: close the active record ────────────────────
+        if (!activeRecord) {
+          setLoading(false);
+          return;
+        }
 
-            const diffInMs = currentTime - inTime;
-            const totalSeconds = Math.max(0, Math.floor(diffInMs / 1000));
+        const inTime = activeRecord._inTime
+          ? new Date(activeRecord._inTime)
+          : now;
+        const sessionSeconds = Math.floor((now - inTime) / 1000);
 
-            const displayHrs = Math.floor(totalSeconds / 3600);
-            const displayMins = Math.floor((totalSeconds % 3600) / 60);
-            const displaySecs = totalSeconds % 60;
+        // Total day seconds = all prior closed sessions + this session
+        const prevSeconds = activeRecord._prevDaySeconds || 0;
+        const totalDaySeconds = prevSeconds + sessionSeconds;
 
-            const totalHrs = totalSeconds / 3600;
+        const closedRecord = {
+          ...activeRecord,
+          checkOut: formatTime(now),
+          status: deriveStatus(totalDaySeconds), // ← status based on full-day total
+          hours: formatSeconds(sessionSeconds), // ← this session's hours shown in record
+          _sessionSeconds: sessionSeconds,
+          _totalDaySeconds: totalDaySeconds, // ← running day total stored on record
+          location: location || activeRecord.location,
+          photo: photo || activeRecord.photo,
+          checkoutDevice: device,
+        };
 
-            let finalStatus = "Present";
-            if (totalHrs < 4) finalStatus = "Absent";
-            else if (totalHrs < 8) finalStatus = "Half Day";
+        // Also re-derive & update ALL other closed records for this user today
+        // so their "status" column reflects the same daily aggregate status
+        const updatedRecords = records.map((r) => {
+          if (r.id === activeRecord.id) return closedRecord;
 
-            return {
-              ...r,
-              checkOut: formatTime(now),
-              status: finalStatus,
-              hours: `${pad(displayHrs)}:${pad(displayMins)}:${pad(displaySecs)}`,
-              location: location || r.location,
-              photo: photo || r.photo,
-              checkoutDevice: device,
-            };
+          // Update sibling records from same user+date to reflect new daily status
+          if (
+            r.userID === user.id &&
+            r.date === today &&
+            r.status !== "In Progress"
+          ) {
+            return { ...r, status: deriveStatus(totalDaySeconds) };
           }
           return r;
         });
-        dispatch(updateRecord(updatedRecord));
+
+        dispatch(updateRecord(updatedRecords));
         setIsPunchedIn(false);
-        setTodayRecord(null);
+        setActiveRecord(null);
       }
 
       setPendingAction(null);
       setLoading(false);
     },
-    [
-      isPunchedIn,
-      todayRecord,
-      filteredRecord,
-      user,
-      capturePhoto,
-      stopCamera,
-      dispatch,
-    ],
+    [isPunchedIn, activeRecord, records, user, capturePhoto, dispatch],
   );
 
   const handlePermissionRetry = useCallback(async () => {
@@ -809,16 +862,22 @@ const AttendancePunch = ({ user }) => {
   }, [pendingAction, executePunch]);
 
   const handleAutoCheckout = useCallback(() => {
-    if (!todayRecord) return;
-
+    if (!activeRecord) return;
     const now = new Date();
-    const autoOutRecord = filteredRecord.map((r) => {
-      if (r.id === todayRecord?.id) {
+    const inTime = activeRecord._inTime ? new Date(activeRecord._inTime) : now;
+    const sessionSeconds = Math.floor((now - inTime) / 1000);
+    const totalDaySeconds =
+      (activeRecord._prevDaySeconds || 0) + sessionSeconds;
+
+    const autoOutRecord = records.map((r) => {
+      if (r.id === activeRecord.id) {
         return {
           ...r,
           checkOut: formatTime(now),
           status: "Missed",
-          hours: "—",
+          hours: formatSeconds(sessionSeconds),
+          _sessionSeconds: sessionSeconds,
+          _totalDaySeconds: totalDaySeconds,
           checkoutDevice: null,
         };
       }
@@ -827,31 +886,20 @@ const AttendancePunch = ({ user }) => {
 
     dispatch(updateRecord(autoOutRecord));
     setIsPunchedIn(false);
-    setTodayRecord(null);
-  }, [todayRecord, filteredRecord, dispatch]);
+    setActiveRecord(null);
+  }, [activeRecord, records, dispatch]);
 
-  const presentDays = filteredRecord.filter(
-    (r) => r.status === "Present",
-  ).length;
-  const absentDays = filteredRecord.filter((r) => r.status === "Absent").length;
-  const halfDays = filteredRecord.filter((r) => r.status === "Half Day").length;
-
-  const userName = user?.user_name
-    ? user.user_name.charAt(0).toUpperCase() + user.user_name.slice(1)
-    : "User";
-
-  // Add this state near your other states
+  // ── AUTO-CHECKOUT after 12 h ──────────────────────────────────
   const [timeLeft, setTimeLeft] = useState(null);
 
-  // Add this effect for the countdown
   useEffect(() => {
-    if (!isPunchedIn || !todayRecord) {
+    if (!isPunchedIn || !activeRecord) {
       setTimeLeft(null);
       return;
     }
 
     const interval = setInterval(() => {
-      const inTime = new Date(todayRecord._inTime);
+      const inTime = new Date(activeRecord._inTime);
       const deadline = new Date(inTime.getTime() + 12 * 60 * 60 * 1000);
       const remaining = deadline - new Date();
 
@@ -868,23 +916,46 @@ const AttendancePunch = ({ user }) => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isPunchedIn, todayRecord]);
+  }, [isPunchedIn, activeRecord, handleAutoCheckout]);
 
-  // Add this near your other useMemo/state declarations
-  const canPunchIn = useMemo(() => {
-    if (isPunchedIn) return false; // Already in
+  const today = formatDate(new Date());
+  // ── STATS ─────────────────────────────────────────────────────
 
-    const lastRecord = filteredRecord[filteredRecord.length - 1];
-    if (!lastRecord || !lastRecord._inTime) return true; // No history, go ahead
+  const uniqueDayStatuses = (() => {
+    const dayMap = {};
+    filteredRecord.forEach((r) => {
+      if (r.status === "In Progress") return;
+      if (r.date === today) return;
+      if (
+        !dayMap[r.date] ||
+        (r._totalDaySeconds || 0) > (dayMap[r.date]._totalDaySeconds || 0)
+      ) {
+        dayMap[r.date] = r;
+      }
+    });
+    return Object.values(dayMap);
+  })();
 
-    const lastInTime = new Date(lastRecord._inTime).getTime();
-    const hoursPassed = (new Date().getTime() - lastInTime) / (1000 * 60 * 60);
+  const presentDays = uniqueDayStatuses.filter(
+    (r) => r.status === "Present",
+  ).length;
+  const absentDays = uniqueDayStatuses.filter(
+    (r) => r.status === "Absent",
+  ).length;
+  const leaveDays = uniqueDayStatuses.filter(
+    (r) => r.status === "Leave",
+  ).length;
 
-    return hoursPassed >= 12;
-  }, [isPunchedIn, filteredRecord]);
+  const pieData = [
+    { name: "Present", value: presentDays, color: "#378ADD" },
+    { name: "Absent", value: absentDays, color: "#E24B4A" },
+    { name: "Leave", value: leaveDays, color: "#7F77DD" },
+  ].filter((d) => d.value > 0);
+
+  const totalDays = presentDays + absentDays + leaveDays;
 
   return (
-    <div className=" mx-auto pb-10 px-4 sm:px-6">
+    <div className="mx-auto pb-10 px-4 sm:px-6">
       {showCamera && (
         <CameraModal
           videoRef={videoRef}
@@ -917,51 +988,61 @@ const AttendancePunch = ({ user }) => {
         </div>
       )}
 
-      {/* Header */}
-
-      {/* Punch Card + Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-        <div className="md:col-span-2 bg-white border border-blue-100 rounded-2xl p-7 shadow-sm">
+      {/* ── PUNCH CARD + STATS ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+        <div className=" bg-white border border-blue-100 rounded-2xl p-7 shadow-sm">
           <h3 className="text-lg font-bold text-gray-900 mb-1">
             Today's Attendance
           </h3>
           <p className="text-sm text-gray-500 mb-6">
             {isPunchedIn
-              ? `Punched in at ${todayRecord?.checkIn} — remember to punch out`
+              ? `Punched in at ${activeRecord?.checkIn} — remember to punch out`
               : "Mark your attendance to stay on track"}
           </p>
 
-          {isPunchedIn && todayRecord && (
+          {isPunchedIn && activeRecord && (
             <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl flex flex-wrap gap-6 items-start">
               <div>
                 <div className="text-[10px] uppercase tracking-wider text-blue-400 font-bold mb-1">
                   Punched In
                 </div>
                 <div className="text-blue-900 font-bold text-base">
-                  {todayRecord.checkIn}
+                  {activeRecord.checkIn}
                 </div>
               </div>
 
-              {todayRecord.location && (
+              {activeRecord.location && (
                 <div>
                   <div className="text-[10px] uppercase tracking-wider text-blue-400 font-bold mb-1">
                     Location
                   </div>
                   <div className="text-blue-800 font-semibold text-sm flex items-center gap-1">
                     <span className="opacity-70">Lat:</span>{" "}
-                    {todayRecord.location.lat},
+                    {activeRecord.location.lat},
                     <span className="opacity-70 ml-1">Lng:</span>{" "}
-                    {todayRecord.location.lng}
+                    {activeRecord.location.lng}
                   </div>
                 </div>
               )}
 
-              {todayRecord.checkinDevice && (
+              {activeRecord.checkinDevice && (
                 <div>
                   <div className="text-[10px] uppercase tracking-wider text-blue-400 font-bold mb-1">
                     Device
                   </div>
-                  <DeviceBadge device={todayRecord.checkinDevice} />
+                  <DeviceBadge device={activeRecord.checkinDevice} />
+                </div>
+              )}
+
+              {/* Show how many hours already accumulated today */}
+              {(activeRecord._prevDaySeconds || 0) > 0 && (
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-blue-400 font-bold mb-1">
+                    Today So Far
+                  </div>
+                  <div className="text-blue-900 font-bold text-base">
+                    {formatSeconds(activeRecord._prevDaySeconds)}
+                  </div>
                 </div>
               )}
             </div>
@@ -969,88 +1050,129 @@ const AttendancePunch = ({ user }) => {
 
           <div className="flex gap-4">
             <button
-              onClick={() => canPunchIn && !loading && executePunch()}
-              disabled={!canPunchIn || loading}
+              onClick={() => !isPunchedIn && !loading && executePunch()}
+              disabled={isPunchedIn || loading}
               className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all active:scale-[0.98]
-    ${
-      !canPunchIn
-        ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
-        : "bg-gradient-to-br from-blue-700 to-blue-600 text-white shadow-md shadow-blue-200 hover:shadow-lg"
-    }`}
+                ${
+                  isPunchedIn
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
+                    : "bg-gradient-to-br from-blue-700 to-blue-600 text-white shadow-md shadow-blue-200 hover:shadow-lg"
+                }`}
             >
               {loading && !isPunchedIn ? "Processing..." : "Punch In"}
             </button>
+
             <button
               onClick={() => isPunchedIn && !loading && executePunch()}
               disabled={!isPunchedIn || loading}
               className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all active:scale-[0.98]
-        ${
-          !isPunchedIn
-            ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
-            : "bg-white text-red-600 border-2 border-red-200 hover:bg-red-50 hover:border-red-300"
-        }`}
+                ${
+                  !isPunchedIn
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
+                    : "bg-white text-red-600 border-2 border-red-200 hover:bg-red-50 hover:border-red-300"
+                }`}
             >
               {loading && isPunchedIn ? "Processing..." : "Punch Out"}
             </button>
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="flex flex-col gap-4">
-          <div className="bg-white border border-blue-50 rounded-2xl px-4 py-3 shadow-sm flex justify-between items-center hover:border-green-200 transition-colors">
-            <div>
-              <div className="text-xs font-semibold text-gray-400 mb-1">
-                Present Days
+        {/* Replace md:col-span-3 div with: */}
+        <div className=" bg-white border border-blue-100 rounded-2xl p-5 shadow-sm">
+          {/* Metric pills */}
+          <div className="grid grid-cols-3 gap-3 mb-5">
+            {[
+              { label: "Present", value: presentDays, color: "#185FA5" },
+              { label: "Absent", value: absentDays, color: "#A32D2D" },
+              { label: "Leave", value: leaveDays, color: "#534AB7" },
+            ].map(({ label, value, color }) => (
+              <div
+                key={label}
+                className="bg-gray-50 rounded-xl px-3 py-2.5 text-center"
+              >
+                <div className="text-[10px] font-semibold text-gray-400 mb-1 uppercase tracking-wider">
+                  {label}
+                </div>
+                <div className="text-2xl font-black" style={{ color }}>
+                  {value}
+                </div>
               </div>
-              <div className="text-3xl font-black text-gray-900">
-                {presentDays}
-              </div>
-            </div>
-            <div className="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center text-xl shadow-inner">
-              ✓
-            </div>
+            ))}
           </div>
-          <div className="bg-white border border-blue-50 rounded-2xl px-4 py-3 shadow-sm flex justify-between items-center hover:border-red-200 transition-colors">
-            <div>
-              <div className="text-xs font-semibold text-gray-400 mb-1">
-                Absent Days
+
+          {/* Pie chart */}
+          {totalDays > 0 ? (
+            <>
+              <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={55}
+                    outerRadius={88}
+                    paddingAngle={3}
+                    dataKey="value"
+                  >
+                    {pieData.map((entry) => (
+                      <Cell
+                        key={entry.name}
+                        fill={entry.color}
+                        stroke="#fff"
+                        strokeWidth={2}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      fontSize: 12,
+                      borderRadius: 10,
+                      border: "1px solid #e0e7ff",
+                    }}
+                    formatter={(value, name) => [
+                      `${value} days (${Math.round((value / totalDays) * 100)}%)`,
+                      name,
+                    ]}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+
+              {/* Legend */}
+              <div className="flex flex-wrap gap-3 justify-center mt-2">
+                {pieData.map(({ name, value, color }) => (
+                  <span
+                    key={name}
+                    className="flex items-center gap-1.5 text-[11px] text-gray-500"
+                  >
+                    <span
+                      className="w-2.5 h-2.5 rounded-sm"
+                      style={{ background: color }}
+                    />
+                    {name} · {Math.round((value / totalDays) * 100)}%
+                  </span>
+                ))}
               </div>
-              <div className="text-3xl font-black text-gray-900">
-                {absentDays}
-              </div>
+            </>
+          ) : (
+            <div className="h-[200px] flex items-center justify-center text-sm text-gray-400">
+              No data yet — punch in to see your breakdown.
             </div>
-            <div className="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center text-xl shadow-inner">
-              ✕
-            </div>
-          </div>
-          <div className="bg-white border border-amber-50 rounded-2xl px-4 py-4 shadow-sm flex justify-between items-center hover:border-amber-200 transition-colors">
-            <div>
-              <div className="text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">
-                Half Days
-              </div>
-              <div className="text-3xl font-black text-gray-900">
-                {halfDays}
-              </div>
-            </div>
-            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl shadow-inner border border-amber-100">
-              ⏳
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
-      {/* Table */}
+      {/* ── TABLE ── */}
       <div className="bg-white border border-blue-100 rounded-2xl overflow-hidden shadow-sm">
         <div className="px-6 py-4 border-b border-blue-50 bg-blue-50/50">
           <h3 className="text-sm font-bold text-gray-900">
             Recent Attendance History
           </h3>
           <p className="text-[11px] text-gray-400 mt-0.5">
-            Live-updated with location, device & photo capture
+            Each row = one punch-in/out session • status reflects full-day total
           </p>
         </div>
 
-        {/* Record Detail Modal for mobile */}
+        {/* Record Detail Modal */}
         {expandedRecord && (
           <div
             onClick={() => setExpandedRecord(null)}
@@ -1061,7 +1183,6 @@ const AttendancePunch = ({ user }) => {
               className="bg-white rounded-2xl w-full max-w-xl max-h-[90vh] shadow-2xl overflow-y-auto"
               style={{ scrollbarWidth: "none" }}
             >
-              {/* Modal Header */}
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-blue-50">
                 <div>
                   <div className="text-xs font-bold text-blue-400 uppercase tracking-wider">
@@ -1092,7 +1213,6 @@ const AttendancePunch = ({ user }) => {
                 </div>
               </div>
 
-              {/* Photo */}
               {expandedRecord.photo && (
                 <div className="px-5 pt-4">
                   <img
@@ -1104,12 +1224,17 @@ const AttendancePunch = ({ user }) => {
                 </div>
               )}
 
-              {/* Details Grid */}
               <div className="p-5 grid grid-cols-2 gap-3">
                 {[
                   { label: "Punch In", value: expandedRecord.checkIn },
                   { label: "Punch Out", value: expandedRecord.checkOut },
-                  { label: "Hours", value: expandedRecord.hours },
+                  { label: "Session Hours", value: expandedRecord.hours },
+                  {
+                    label: "Day Total Hours",
+                    value: expandedRecord._totalDaySeconds
+                      ? formatSeconds(expandedRecord._totalDaySeconds)
+                      : "—",
+                  },
                   {
                     label: "Location",
                     value: expandedRecord.location
@@ -1130,7 +1255,6 @@ const AttendancePunch = ({ user }) => {
                   </div>
                 ))}
 
-                {/* Devices */}
                 <div className="col-span-2 bg-gray-50 rounded-xl px-3 py-2.5">
                   <div className="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-2">
                     Device
@@ -1170,35 +1294,30 @@ const AttendancePunch = ({ user }) => {
                 <th className="px-6 py-4 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider">
                   Date
                 </th>
-
                 <th className="px-6 py-4 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider hidden md:table-cell">
                   Photo
                 </th>
-
                 <th className="px-6 py-4 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider hidden md:table-cell">
                   In
                 </th>
-
                 <th className="px-6 py-4 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider hidden md:table-cell">
                   Out
                 </th>
-
                 <th className="px-6 py-4 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider hidden xl:table-cell">
-                  Hours
+                  Session Hrs
                 </th>
-
+                <th className="px-6 py-4 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider hidden xl:table-cell">
+                  Day Total
+                </th>
                 <th className="px-6 py-4 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider hidden xl:table-cell">
                   Device
                 </th>
-
                 <th className="px-6 py-4 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider hidden xl:table-cell">
                   Location
                 </th>
-
                 <th className="px-6 py-4 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                   Status
                 </th>
-
                 <th className="px-6 py-4 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider">
                   Action
                 </th>
@@ -1208,24 +1327,22 @@ const AttendancePunch = ({ user }) => {
               {filteredRecord.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={9}
+                    colSpan={10}
                     className="px-6 py-10 text-center text-sm text-gray-400"
                   >
                     No records yet — punch in to get started.
                   </td>
                 </tr>
               ) : (
-                filteredRecord.map((record) => (
+                recentRecords.map((record) => (
                   <tr
                     key={record.id}
                     className="hover:bg-blue-50/40 transition-colors group text-center"
                   >
-                    {/* Date — always visible */}
                     <td className="px-6 py-4 font-bold text-gray-900 whitespace-nowrap text-center">
                       {record.date}
                     </td>
 
-                    {/* Photo — hidden on mobile */}
                     <td className="hidden md:table-cell px-6 py-3 text-center">
                       {record.photo ? (
                         <img
@@ -1259,22 +1376,25 @@ const AttendancePunch = ({ user }) => {
                       )}
                     </td>
 
-                    {/* In — always visible */}
                     <td className="px-6 py-4 text-gray-600 font-medium text-center hidden md:table-cell">
                       {record.checkIn}
                     </td>
-
-                    {/* Out — hidden on mobile */}
                     <td className="hidden md:table-cell px-6 py-4 text-gray-600 font-medium text-center">
                       {record.checkOut}
                     </td>
 
-                    {/* Hours — hidden on mobile */}
+                    {/* Session hours */}
                     <td className="hidden xl:table-cell px-6 py-4 font-bold text-gray-700 text-center">
                       {record.hours}
                     </td>
 
-                    {/* Device — hidden on mobile */}
+                    {/* Day total hours */}
+                    <td className="hidden xl:table-cell px-6 py-4 font-bold text-blue-700 text-center">
+                      {record._totalDaySeconds
+                        ? formatSeconds(record._totalDaySeconds)
+                        : "—"}
+                    </td>
+
                     <td className="hidden xl:table-cell px-6 py-4 text-center">
                       <div className="flex flex-col gap-1">
                         {record.checkinDevice && (
@@ -1299,7 +1419,6 @@ const AttendancePunch = ({ user }) => {
                       </div>
                     </td>
 
-                    {/* Location — hidden on mobile */}
                     <td className="hidden xl:table-cell px-6 py-4 text-center">
                       {record.location ? (
                         <div className="flex flex-col text-[11px] leading-tight group-hover:translate-x-1 transition-transform">
@@ -1321,12 +1440,10 @@ const AttendancePunch = ({ user }) => {
                       )}
                     </td>
 
-                    {/* Status — always visible */}
                     <td className="px-6 py-4 text-center hidden lg:table-cell">
                       <StatusBadge status={record.status} />
                     </td>
 
-                    {/* Eye icon — only on mobile */}
                     <td className="px-3 py-4 text-center">
                       <button
                         onClick={() => setExpandedRecord(record)}
@@ -1360,9 +1477,11 @@ const AttendancePunch = ({ user }) => {
         </div>
 
         <div className="text-center text-[11px] font-medium text-gray-400 py-4 border-t border-blue-50 bg-gray-50/30">
-          Showing {filteredRecord.length} records •
+          Showing {Math.min(5, filteredRecord.length)} of{" "}
+          {filteredRecord.length} records •
           <span className="text-green-600 px-1">{presentDays} Present</span> •
-          <span className="text-red-600 px-1">{absentDays} Absent</span>
+          <span className="text-red-600 px-1">{absentDays} Absent</span> •
+          <span className="text-purple-600 px-1">{leaveDays} Leave Days</span>
         </div>
       </div>
     </div>

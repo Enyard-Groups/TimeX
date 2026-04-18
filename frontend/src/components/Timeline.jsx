@@ -1,8 +1,14 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRecord } from "../action";
 
 const Timeline = () => {
+  const dispatch = useDispatch();
   const records = useSelector((state) => state.record);
+
+  useEffect(() => {
+    dispatch(fetchRecord());
+  }, [dispatch]);
   const [now, setNow] = useState(new Date());
   const scrollRef = useRef(null);
 

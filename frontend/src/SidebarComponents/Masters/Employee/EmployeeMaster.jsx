@@ -70,7 +70,7 @@ const EmployeeMaster = () => {
 
   const [formData, setFormData] = useState(emptyForm);
 
- const inputStyle =
+  const inputStyle =
     "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
   const labelStyle =
@@ -99,9 +99,7 @@ const EmployeeMaster = () => {
           axios.get(`${API_BASE}/master/designation`),
           axios.get(`${API_BASE}/master/shifts`),
           axios.get(`${API_BASE}/users/approvers`, { withCredentials: true }),
-          axios.get(`${API_BASE}/master/leave-types`, {
-            withCredentials: true,
-          }),
+          axios.get(`${API_BASE}/master/leave-types`),
           axios.get(`${API_BASE}/companies`),
           axios.get(`${API_BASE}/master/geofencing`),
         ]);
@@ -671,9 +669,7 @@ const EmployeeMaster = () => {
                   />
                 </div>
                 <div>
-                  <label className={labelStyle}>
-                    Mobile
-                  </label>
+                  <label className={labelStyle}>Mobile</label>
                   <input
                     name="mobile"
                     value={formData.mobile}
@@ -691,9 +687,7 @@ const EmployeeMaster = () => {
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div>
-                  <label className={labelStyle}>
-                    Date Of Birth
-                  </label>
+                  <label className={labelStyle}>Date Of Birth</label>
                   <input
                     name="dob"
                     value={formData.dob}
@@ -701,6 +695,7 @@ const EmployeeMaster = () => {
                     disabled={mode === "view"}
                     readOnly
                     className={inputStyle}
+                    placeholder="dd/mm/yyyy"
                   />
                   {showDobPicker && (
                     <SpinnerDatePicker
@@ -713,9 +708,7 @@ const EmployeeMaster = () => {
                   )}
                 </div>
                 <div>
-                  <label className={labelStyle}>
-                    Date Of Join
-                  </label>
+                  <label className={labelStyle}>Date Of Join</label>
                   <input
                     name="doj"
                     value={formData.doj}
@@ -723,6 +716,7 @@ const EmployeeMaster = () => {
                     disabled={mode === "view"}
                     readOnly
                     className={inputStyle}
+                    placeholder="dd/mm/yyyy"
                   />
                   {showDojPicker && (
                     <SpinnerDatePicker
@@ -741,7 +735,7 @@ const EmployeeMaster = () => {
                   displayValue={formData.company_name}
                   options={companyOptions}
                   labelKey="name"
-                  valueKey="id"
+                  valueKey="name"
                   labelName="company_name"
                   formData={formData}
                   setFormData={setFormData}
@@ -756,7 +750,7 @@ const EmployeeMaster = () => {
                   displayValue={formData.location_name}
                   options={locationOptions}
                   labelKey="name"
-                  valueKey="id"
+                  valueKey="name"
                   labelName="location_name"
                   formData={formData}
                   setFormData={setFormData}
@@ -771,7 +765,7 @@ const EmployeeMaster = () => {
                   displayValue={formData.department_id_name}
                   options={departmentOptions}
                   labelKey="name"
-                  valueKey="id"
+                  valueKey="name"
                   labelName="department_id_name"
                   formData={formData}
                   setFormData={setFormData}
@@ -786,7 +780,7 @@ const EmployeeMaster = () => {
                   displayValue={formData.designation_id_name}
                   options={designationOptions}
                   labelKey="name"
-                  valueKey="id"
+                  valueKey="name"
                   labelName="designation_id_name"
                   formData={formData}
                   setFormData={setFormData}
@@ -800,14 +794,31 @@ const EmployeeMaster = () => {
                   value={formData.shift_id}
                   displayValue={formData.shift_id_name}
                   options={shiftOptions}
-                  labelKey="shift_name"
-                  valueKey="id"
+                  labelKey="name"
+                  valueKey="name"
                   labelName="shift_id_name"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
                   inputStyle={inputStyle}
                   labelStyle={labelStyle}
+                />
+
+                <SearchDropdown
+                  label="Leave Plan"
+                  name="leave_plan_id"
+                  value={formData.leave_plan_id}
+                  displayValue={formData.leave_plan_id_name}
+                  options={leavePlanOptions}
+                  labelKey="leave_plan_name"
+                  valueKey="name"
+                  labelName="leave_plan_id_name"
+                  formData={formData}
+                  setFormData={setFormData}
+                  disabled={mode === "view"}
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
+                  multiple={true}
                 />
               </div>
             </div>
@@ -826,9 +837,7 @@ const EmployeeMaster = () => {
                     disabled={mode === "view"}
                     className="w-5 h-5 cursor-pointer accent-blue-500"
                   />
-                  <label className={`pt-1.5 ${labelStyle}`}>
-                    Is Manager
-                  </label>
+                  <label className={`pt-1.5 ${labelStyle}`}>Is Manager</label>
                 </div>
                 <div className="flex items-center gap-3 bg-blue-50/50 px-4 py-3 rounded-xl border border-blue-100">
                   <input
@@ -839,9 +848,7 @@ const EmployeeMaster = () => {
                     disabled={mode === "view"}
                     className="w-5 h-5 cursor-pointer accent-blue-500"
                   />
-                  <label className={`pt-1.5 ${labelStyle}`}>
-                    Active
-                  </label>
+                  <label className={`pt-1.5 ${labelStyle}`}>Active</label>
                 </div>
               </div>
             </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRecord } from "../action";
 
 const deviceStyles = {
   mobile: "bg-blue-50 text-blue-600",
@@ -28,8 +29,13 @@ const timeToSeconds = (time) => {
 };
 
 const RecentActivity = () => {
-  const records = useSelector((state) => state.record);
   const [currentTime, setCurrentTime] = useState("");
+  const dispatch = useDispatch();
+  const records = useSelector((state) => state.record);
+
+  useEffect(() => {
+    dispatch(fetchRecord());
+  }, [dispatch]);
 
   useEffect(() => {
     const updateTime = () => {
@@ -135,7 +141,9 @@ const RecentActivity = () => {
                         <p className="font-medium text-gray-800 leading-none">
                           {user?.username || "Unknown"}
                         </p>
-                        <p className="text-sm text-gray-400">ID:{user.userID}</p>
+                        <p className="text-sm text-gray-400">
+                          ID:{user.userID}
+                        </p>
                       </div>
                     </div>
                   </td>

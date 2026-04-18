@@ -727,7 +727,7 @@ const HolidayMaster = () => {
                 setFormData={setFormData}
                 disabled={mode === "view"}
                 labelKey="name"
-                valueKey="id"
+                valueKey="name"
                 inputStyle={inputStyle}
                 labelStyle={labelStyle}
               />
@@ -738,7 +738,7 @@ const HolidayMaster = () => {
                 displayValue={formData.location_name}
                 options={locationOptions}
                 labelKey="name"
-                valueKey="id"
+                valueKey="name"
                 labelName="location_name"
                 formData={formData}
                 setFormData={setFormData}

@@ -667,7 +667,7 @@ const Department = () => {
                     displayValue={formData.company_name}
                     options={companyOptions}
                     labelKey="name"
-                    valueKey="id"
+                    valueKey="name"
                     labelName="company_name"
                     formData={formData}
                     setFormData={setFormData}
