@@ -39,7 +39,7 @@ const Timeline = () => {
           displayTime: user.checkIn,
         });
       }
-      if (user.checkout) {
+      if (user.checkOut) {
         const outSecs = getSecondsFromTime(user.checkOut);
         if (outSecs <= currentSecondsNow) {
           events.push({

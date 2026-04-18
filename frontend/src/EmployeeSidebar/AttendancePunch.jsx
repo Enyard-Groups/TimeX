@@ -15,23 +15,22 @@ const formatTime = (date) =>
 const formatDate = (date) =>
   date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
-// ── DEVICE DETECTION ──────────────────────────────────────────
+//  DEVICE DETECTION
 const getDeviceType = () => {
   const width = window.innerWidth;
   if (width < 768) return "mobile";
   return "desktop";
 };
 
-// ── DERIVE STATUS FROM TOTAL DAILY SECONDS ────────────────────
-// < 1h  → Absent | 1h–<4h → Half Day | ≥ 4h → Present
+//  DERIVE STATUS FROM TOTAL DAILY SECONDS ─
+// < 1h  → Absent
 const deriveStatus = (totalSeconds) => {
   const totalHrs = totalSeconds / 3600;
   if (totalHrs < 1) return "Absent";
-  if (totalHrs < 2) return "Half Day";
   return "Present";
 };
 
-// ── SUM ALL COMPLETED SESSION SECONDS FOR A USER ON A DATE ────
+//  SUM ALL COMPLETED SESSION SECONDS FOR A USER ON A DATE
 const sumDaySeconds = (records, userID, date) => {
   return records
     .filter(
@@ -523,7 +522,7 @@ const CameraModal = ({
   </div>
 );
 
-// ── FORMAT SECONDS → HH:MM:SS ─────────────────────────────────
+//  FORMAT SECONDS → HH:MM:SS ─
 const formatSeconds = (totalSeconds) => {
   const pad = (n) => String(n).padStart(2, "0");
   const h = Math.floor(totalSeconds / 3600);
@@ -558,7 +557,7 @@ const AttendancePunch = ({ user }) => {
   const streamRef = useRef(null);
   const canvasRef = useRef(document.createElement("canvas"));
 
-  // ── PUNCH STATE ───────────────────────────────────────────────
+  //  PUNCH STATE
   // isPunchedIn   → is a session currently open?
   // activeRecord  → the open "In Progress" record for this session
   const [isPunchedIn, setIsPunchedIn] = useState(() => {
@@ -604,7 +603,7 @@ const AttendancePunch = ({ user }) => {
     dispatch(fetchRecord());
   }, [dispatch]);
 
-  // ── MIDNIGHT FINALIZE ─────────────────────────────────────────
+  //  MIDNIGHT FINALIZE ─
   useEffect(() => {
     const now = new Date();
     const midnight = new Date();
@@ -646,7 +645,7 @@ const AttendancePunch = ({ user }) => {
     return () => clearTimeout(timer);
   }, [user.id, dispatch, records]);
 
-  // ── CAMERA HELPERS ────────────────────────────────────────────
+  //  CAMERA HELPERS ─
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((t) => t.stop());
@@ -724,7 +723,7 @@ const AttendancePunch = ({ user }) => {
     stopCamera();
   }, [cameraReject, stopCamera]);
 
-  // ── CORE PUNCH LOGIC ──────────────────────────────────────────
+  //  CORE PUNCH LOGIC
   const executePunch = useCallback(
     async (skipCamera = false, skipLocation = false, savedPhoto = null) => {
       setLoading(true);
@@ -765,7 +764,7 @@ const AttendancePunch = ({ user }) => {
       const today = formatDate(now);
 
       if (!isPunchedIn) {
-        // ── PUNCH IN: always create a brand-new record ────────────
+        //  PUNCH IN: always create a brand-new record
         const newRecord = {
           id: Date.now(),
           userID: user.id,
@@ -789,7 +788,7 @@ const AttendancePunch = ({ user }) => {
         setIsPunchedIn(true);
         dispatch(addRecord(newRecord));
       } else {
-        // ── PUNCH OUT: close the active record ────────────────────
+        //  PUNCH OUT: close the active record ─
         if (!activeRecord) {
           setLoading(false);
           return;
@@ -889,7 +888,7 @@ const AttendancePunch = ({ user }) => {
     setActiveRecord(null);
   }, [activeRecord, records, dispatch]);
 
-  // ── AUTO-CHECKOUT after 12 h ──────────────────────────────────
+  //  AUTO-CHECKOUT after 12 h
   const [timeLeft, setTimeLeft] = useState(null);
 
   useEffect(() => {
@@ -918,14 +917,11 @@ const AttendancePunch = ({ user }) => {
     return () => clearInterval(interval);
   }, [isPunchedIn, activeRecord, handleAutoCheckout]);
 
-  const today = formatDate(new Date());
-  // ── STATS ─────────────────────────────────────────────────────
-
+  //  STATS
   const uniqueDayStatuses = (() => {
     const dayMap = {};
     filteredRecord.forEach((r) => {
       if (r.status === "In Progress") return;
-      if (r.date === today) return;
       if (
         !dayMap[r.date] ||
         (r._totalDaySeconds || 0) > (dayMap[r.date]._totalDaySeconds || 0)
@@ -988,7 +984,7 @@ const AttendancePunch = ({ user }) => {
         </div>
       )}
 
-      {/* ── PUNCH CARD + STATS ── */}
+      {/*  PUNCH CARD + STATS  */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
         <div className=" bg-white border border-blue-100 rounded-2xl p-7 shadow-sm">
           <h3 className="text-lg font-bold text-gray-900 mb-1">
@@ -1161,7 +1157,7 @@ const AttendancePunch = ({ user }) => {
         </div>
       </div>
 
-      {/* ── TABLE ── */}
+      {/*  TABLE  */}
       <div className="bg-white border border-blue-100 rounded-2xl overflow-hidden shadow-sm">
         <div className="px-6 py-4 border-b border-blue-50 bg-blue-50/50">
           <h3 className="text-sm font-bold text-gray-900">

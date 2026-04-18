@@ -139,7 +139,7 @@ const RecentActivity = () => {
                       </div>
                       <div>
                         <p className="font-medium text-gray-800 leading-none">
-                          {user?.username || "Unknown"}
+                          {user?.username?.charAt(0)?.toUpperCase() + user?.username?.slice(1) || "Unknown"}
                         </p>
                         <p className="text-sm text-gray-400">
                           ID:{user.userID}
