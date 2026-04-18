@@ -22,6 +22,7 @@ const API_BASE = "http://localhost:3000/api";
 
 const emptyForm = {
   employee_id: "",
+  employee_name: "",
   enrollment_id: "",
   location: "",
   location_name: "",
@@ -123,6 +124,9 @@ const ManualEntryRequest = () => {
                 employee_name: employeeOptions.find(
                   (e) => e.company_enrollment_id === employee_id,
                 )?.full_name,
+                location_name: locationOptions.find(
+                  (l) => l.id == location
+                )?.name,
               }
               : item,
           ),
@@ -136,6 +140,9 @@ const ManualEntryRequest = () => {
             employee_name: employeeOptions.find(
               (e) => e.company_enrollment_id === employee_id,
             )?.full_name,
+            location_name: locationOptions.find(
+              (l) => l.id == location
+            )?.name,
           },
           ...prev,
         ]);
@@ -438,10 +445,10 @@ const ManualEntryRequest = () => {
                     className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                   >
                     <td className="px-6 py-2.5 text-center font-medium text-gray-800">
-                      {item.employee_name || item.employee_id}
+                      {item.employee_name || employeeOptions.find(e => e.company_enrollment_id === item.employee_id)?.full_name || item.employee_id}
                     </td>
                     <td className="px-6 py-2.5 text-center text-gray-600 hidden lg:table-cell">
-                      {item.location}
+                      {item.location_name || locationOptions.find(l => l.id == item.location)?.name || item.location}
                     </td>
                     <td className="px-6 py-2.5 text-center text-gray-600 font-mono text-sm hidden md:table-cell">
                       {formatTime(item.in_time)}
@@ -600,6 +607,7 @@ const ManualEntryRequest = () => {
                   options={employeeOptions}
                   labelKey="full_name"
                   valueKey="company_enrollment_id"
+                  labelName="employee_name"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}

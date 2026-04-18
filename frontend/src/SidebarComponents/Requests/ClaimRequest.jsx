@@ -19,6 +19,7 @@ const API_BASE = "http://localhost:3000/api";
 
 const emptyForm = {
   employee_id: "",
+  employee_name: "",
   claim_category: "",
   date: "",
   amount: "",
@@ -111,6 +112,7 @@ const ClaimRequest = () => {
               ? {
                   ...item,
                   ...res.data,
+                  date: formatDate(res.data.date || formData.date),
                   employee_name: employeeOptions.find(
                     (e) => e.company_enrollment_id === employee_id,
                   )?.full_name,
@@ -124,6 +126,7 @@ const ClaimRequest = () => {
         setClaims((prev) => [
           {
             ...res.data,
+            date: formatDate(res.data.date || formData.date),
             employee_name: employeeOptions.find(
               (e) => e.company_enrollment_id === employee_id,
             )?.full_name,
@@ -561,6 +564,7 @@ const ClaimRequest = () => {
                 options={employeeOptions}
                 labelKey="full_name"
                 valueKey="company_enrollment_id"
+                labelName="employee_name"
                 formData={formData}
                 setFormData={setFormData}
                 disabled={mode === "view"}

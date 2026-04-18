@@ -19,6 +19,7 @@ const API_BASE = "http://localhost:3000/api";
 
 const emptyForm = {
   employee_id: "",
+  employee_name: "",
   start_date: "",
   end_date: "",
   purpose: "",
@@ -119,6 +120,8 @@ const BusinessTravelRequest = () => {
               ? {
                   ...item,
                   ...res.data,
+                  start_date: formatDate(res.data.start_date || formData.start_date),
+                  end_date: formatDate(res.data.end_date || formData.end_date),
                   employee_name: employeeOptions.find(
                     (e) => e.company_enrollment_id === employee_id,
                   )?.full_name,
@@ -132,6 +135,8 @@ const BusinessTravelRequest = () => {
         setTravel((prev) => [
           {
             ...res.data,
+            start_date: formatDate(res.data.start_date || formData.start_date),
+            end_date: formatDate(res.data.end_date || formData.end_date),
             employee_name: employeeOptions.find(
               (e) => e.company_enrollment_id === employee_id,
             )?.full_name,
@@ -599,6 +604,7 @@ const BusinessTravelRequest = () => {
                   options={employeeOptions}
                   labelKey="full_name"
                   valueKey="company_enrollment_id"
+                  labelName="employee_name"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}

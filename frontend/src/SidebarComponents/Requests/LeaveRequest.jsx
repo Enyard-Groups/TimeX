@@ -233,6 +233,9 @@ const LeaveRequest = () => {
               ? {
                   ...item,
                   ...res.data,
+                  start_date: formatDate(res.data.start_date || formData.start_date),
+                  end_date: formatDate(res.data.end_date || formData.end_date),
+                  resume_date: formatDate(res.data.resume_date || formData.resume_date),
                   employee_name: employeeOptions.find(
                     (e) => e.company_enrollment_id === employee_id,
                   )?.full_name,
@@ -246,6 +249,9 @@ const LeaveRequest = () => {
         setLeave((prev) => [
           {
             ...res.data,
+            start_date: formatDate(res.data.start_date || formData.start_date),
+            end_date: formatDate(res.data.end_date || formData.end_date),
+            resume_date: formatDate(res.data.resume_date || formData.resume_date),
             employee_name: employeeOptions.find(
               (e) => e.company_enrollment_id === employee_id,
             )?.full_name,
