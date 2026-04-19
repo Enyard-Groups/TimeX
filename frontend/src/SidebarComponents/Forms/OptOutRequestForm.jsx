@@ -19,19 +19,6 @@ import axios from "axios";
 const API_URL = "http://localhost:3000/api/form/optRequest";
 
 const OptOutRequestForm = () => {
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
-    try {
-      const date = new Date(dateStr);
-      if (isNaN(date.getTime())) return dateStr;
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
-    } catch (e) {
-      return dateStr;
-    }
-  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState([]);
@@ -46,10 +33,12 @@ const OptOutRequestForm = () => {
   const [employees, setEmployees] = useState([]);
   const [designations, setDesignations] = useState([]);
 
-  const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+   const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
+
   const labelStyle =
-    "text-sm xl:text-base  focus:outline-none font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
+
 
   const defaultFormData = {
     employee: "",
@@ -127,7 +116,7 @@ const OptOutRequestForm = () => {
   useEffect(() => {
     if (formData.employee && mode !== "view") {
       const selectedEmp = employees.find(
-        (emp) => emp.full_name === formData.employee
+        (emp) => emp.full_name === formData.employee,
       );
       if (selectedEmp) {
         setFormData((prev) => ({
@@ -205,7 +194,7 @@ const OptOutRequestForm = () => {
       .map((item) => {
         return [
           item.employee,
-          formatDate(item.date),
+          item.date,
           item.enrollment_id,
           item.designation,
         ].join("\t");
@@ -221,7 +210,7 @@ const OptOutRequestForm = () => {
   const handleExcel = () => {
     const excelData = filteredrequestData.map((item) => ({
       Employee: item.employee,
-      Date: formatDate(item.date),
+      Date: item.date,
       EnrollmentId: item.enrollment_id,
       Designation: item.designation,
     }));
@@ -244,7 +233,7 @@ const OptOutRequestForm = () => {
     filteredrequestData.forEach((item) => {
       const row = [
         item.employee,
-        formatDate(item.date),
+        item.date,
         item.enrollment_id,
         item.designation,
       ];
@@ -284,7 +273,7 @@ const OptOutRequestForm = () => {
                 setFormData(defaultFormData);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -299,7 +288,7 @@ const OptOutRequestForm = () => {
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
                 <label className="text-sm xl:text-base  font-medium text-gray-600">
-                  Show
+                  Display
                 </label>
                 <select
                   value={entriesPerPage}
@@ -307,7 +296,7 @@ const OptOutRequestForm = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60 transition-all"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm  focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -328,7 +317,7 @@ const OptOutRequestForm = () => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
                 />
                 <div className="flex gap-2">
                   <button
@@ -364,22 +353,22 @@ const OptOutRequestForm = () => {
             <table className="w-full text-[17px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-blue-100/50">
-                  <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700 text-center">
                     SL.No
                   </th>
                   <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Employee Name
                   </th>
-                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Enrollment ID
                   </th>
-                  <th className="py-3 px-6 hidden lg:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden lg:table-cell font-semibold text-gray-700 text-center">
                     Designation
                   </th>
-                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Date
                   </th>
-                  <th className="py-3 px-6 font-semibold text-gray-700">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Action
                   </th>
                 </tr>
@@ -412,20 +401,20 @@ const OptOutRequestForm = () => {
                       key={item.id}
                       className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900">
+                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900 text-center">
                         {startIndex + index + 1}
                       </td>
                       <td className="py-3 px-6 font-medium text-gray-900 text-center">
                         {item.employee}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono text-center">
                         {item.enrollment_id}
                       </td>
-                      <td className="py-3 px-6 hidden lg:table-cell text-gray-600">
+                      <td className="py-3 px-6 hidden lg:table-cell text-gray-600 text-center">
                         {item.designation}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
-                        {formatDate(item.date)}
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
+                        {item.date}
                       </td>
                       <td className="py-3 px-6 text-center">
                         <div className="flex justify-center gap-3">
@@ -482,7 +471,7 @@ const OptOutRequestForm = () => {
 
             <div className="flex gap-2">
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
                 title="First page"
@@ -491,7 +480,7 @@ const OptOutRequestForm = () => {
               </button>
 
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
                 title="Previous page"
@@ -504,7 +493,7 @@ const OptOutRequestForm = () => {
               </div>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
                 title="Next page"
@@ -513,7 +502,7 @@ const OptOutRequestForm = () => {
               </button>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(totalPages)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
                 title="Last page"
@@ -532,7 +521,7 @@ const OptOutRequestForm = () => {
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1300px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
             style={{ scrollbarWidth: "none" }}
           >
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
@@ -572,7 +561,7 @@ const OptOutRequestForm = () => {
                     <div className="relative w-48">
                       <input
                         name="date"
-                        value={formatDate(formData.date) || ""}
+                        value={formData.date || ""}
                         onChange={handleChange}
                         onClick={() =>
                           mode !== "view" && setShowDateSpinner(true)
@@ -663,7 +652,7 @@ const OptOutRequestForm = () => {
                       <div className="inline-block relative mx-2">
                         <input
                           name="effectiveFrom"
-                          value={formatDate(formData.effectiveFrom) || ""}
+                          value={formData.effectiveFrom || ""}
                           onChange={handleChange}
                           onClick={() =>
                             mode !== "view" &&
@@ -924,10 +913,11 @@ const OptOutRequestForm = () => {
                                     nameSignMode: "upload",
                                   }))
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.nameSignMode === "upload"
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.nameSignMode === "upload"
                                     ? "bg-[#0f172a] text-white border-[#0f172a]"
                                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                  }`}
+                                }`}
                               >
                                 Upload
                               </button>
@@ -939,10 +929,11 @@ const OptOutRequestForm = () => {
                                     nameSignMode: "draw",
                                   }))
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.nameSignMode === "draw"
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.nameSignMode === "draw"
                                     ? "bg-[#0f172a] text-white border-[#0f172a]"
                                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                  }`}
+                                }`}
                               >
                                 Sign Here
                               </button>
@@ -1079,10 +1070,11 @@ const OptOutRequestForm = () => {
                                     approvedByMode: "upload",
                                   }))
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.approvedByMode === "upload"
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.approvedByMode === "upload"
                                     ? "bg-[#0f172a] text-white border-[#0f172a]"
                                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                  }`}
+                                }`}
                               >
                                 Upload
                               </button>
@@ -1094,10 +1086,11 @@ const OptOutRequestForm = () => {
                                     approvedByMode: "draw",
                                   }))
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.approvedByMode === "draw"
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.approvedByMode === "draw"
                                     ? "bg-[#0f172a] text-white border-[#0f172a]"
                                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                  }`}
+                                }`}
                               >
                                 Sign Here
                               </button>
@@ -1236,10 +1229,11 @@ const OptOutRequestForm = () => {
                                   concurredByMode: "upload",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.concurredByMode === "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.concurredByMode === "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                              }`}
                             >
                               Upload
                             </button>
@@ -1251,10 +1245,11 @@ const OptOutRequestForm = () => {
                                   concurredByMode: "draw",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.concurredByMode === "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.concurredByMode === "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                              }`}
                             >
                               Sign Here
                             </button>

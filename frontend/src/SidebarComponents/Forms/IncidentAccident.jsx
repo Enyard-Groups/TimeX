@@ -19,39 +19,13 @@ import SignPad from "./SignPad";
 const API_URL = "http://localhost:3000/api/form/incident";
 
 const IncidentAccident = () => {
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
-    try {
-      const date = new Date(dateStr);
-      if (isNaN(date.getTime())) return dateStr;
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
-    } catch (e) {
-      return dateStr;
-    }
-  };
-
-  const formatTime = (timeStr) => {
-    if (!timeStr) return "—";
-    if (timeStr instanceof Date) {
-      return timeStr.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-      });
-    }
-    return timeStr;
-  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [incidentData, setIncidentData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
-  const [loading , setLoading ] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [showDateSpinner, setShowDateSpinner] = useState(false);
   const [showMsoDateSpinner, setShowMsoDateSpinner] = useState(false);
@@ -61,33 +35,33 @@ const IncidentAccident = () => {
   const [showTimeSpinner, setShowTimeSpinner] = useState(false);
   const [showTimeSpinner2, setShowTimeSpinner2] = useState(false);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true)
-      const response = await axios.get(API_URL);
-      setIncidentData(response.data);
-      console.log(response.data)
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      toast.error("Failed to fetch data");
-    } finally{
-      setLoading(false)
-    }
-  };
+  // const fetchData = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await axios.get(API_URL);
+  //     setIncidentData(response.data);
+  //     console.log(response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //     toast.error("Failed to fetch data");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
-  const labelStyle =
-    "text-sm xl:text-base  focus:outline-none font-semibold text-gray-700 mb-2 block";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
-  const filteredincidentData = incidentData.filter(
-    (x) =>
-      // x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      x.location.toLowerCase().startsWith(searchTerm.toLowerCase()),
+  const labelStyle =
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
+
+  const filteredincidentData = incidentData.filter((x) =>
+    // x.employee.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+    x.location.toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
   const defaultFormData = {
@@ -184,38 +158,88 @@ const IncidentAccident = () => {
     Math.ceil(filteredincidentData.length / entriesPerPage),
   );
 
-  // Handle submit
-  const handleSubmit = async () => {
-    try {
-      if (editId) {
-        await axios.put(`${API_URL}/${editId}`, formData);
-        toast.success("Request Updated");
-      } else {
-        await axios.post(API_URL, formData);
-        toast.success("Request Submitted");
-      }
-      fetchData();
-      setOpenModal(false);
-      setEditId(null);
-      setFormData(defaultFormData);
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error("Failed to submit form");
-    }
+  // // Handle submit
+  // const handleSubmit = async () => {
+  //   try {
+  //     if (editId) {
+  //       await axios.put(`${API_URL}/${editId}`, formData);
+  //       toast.success("Request Updated");
+  //     } else {
+  //       await axios.post(API_URL, formData);
+  //       toast.success("Request Submitted");
+  //     }
+  //     fetchData();
+  //     setOpenModal(false);
+  //     setEditId(null);
+  //     setFormData(defaultFormData);
+  //   } catch (error) {
+  //     console.error("Error submitting form:", error);
+  //     toast.error("Failed to submit form");
+  //   }
+  // };
+
+  // // Handle delete
+  // const handleDelete = async (id) => {
+  //   if (window.confirm("Are you sure you want to delete this record?")) {
+  //     try {
+  //       await axios.delete(`${API_URL}/${id}`);
+  //       toast.success("Deleted Successfully");
+  //       fetchData();
+  //     } catch (error) {
+  //       console.error("Error deleting record:", error);
+  //       toast.error("Failed to delete record");
+  //     }
+  //   }
+  // };
+
+  // Sync with LocalStorage
+  const fetchData = () => {
+    setLoading(true);
+    const stored = JSON.parse(
+      localStorage.getItem("incident_accident") || "[]",
+    );
+    setIncidentData(stored);
+    setLoading(false);
   };
 
-  // Handle delete
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this record?")) {
-      try {
-        await axios.delete(`${API_URL}/${id}`);
-        toast.success("Deleted Successfully");
-        fetchData();
-      } catch (error) {
-        console.error("Error deleting record:", error);
-        toast.error("Failed to delete record");
-      }
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSubmit = () => {
+    const stored = JSON.parse(
+      localStorage.getItem("incident_accident") || "[]",
+    );
+
+    if (editId) {
+      const updated = stored.map((item) =>
+        item.id === editId ? { ...formData, id: editId } : item,
+      );
+      localStorage.setItem("incident_accident", JSON.stringify(updated));
+      toast.success("Inspection Updated");
+    } else {
+      const newEntry = { ...formData, id: Date.now(), status: "Pending" };
+      localStorage.setItem(
+        "incident_accident",
+        JSON.stringify([...stored, newEntry]),
+      );
+      toast.success("Inspection Submitted for Approval");
     }
+
+    fetchData();
+    setOpenModal(false);
+    setEditId(null);
+    setFormData(defaultFormData);
+  };
+
+  const handleDelete = (id) => {
+    const stored = JSON.parse(
+      localStorage.getItem("incident_accident") || "[]",
+    );
+    const filtered = stored.filter((item) => item.id !== id);
+    localStorage.setItem("incident_accident", JSON.stringify(filtered));
+    fetchData();
+    toast.success("Deleted Successfully");
   };
 
   const handleCopy = () => {
@@ -223,7 +247,7 @@ const IncidentAccident = () => {
 
     const rows = filteredincidentData
       .map((item) => {
-        return [item.location, item.building, formatDate(item.date_of_incident)].join("\t");
+        return [item.location, item.building, item.date_of_incident].join("\t");
       })
       .join("\n");
 
@@ -237,7 +261,7 @@ const IncidentAccident = () => {
     const excelData = filteredincidentData.map((item) => ({
       Location: item.location,
       BuildingName: item.building,
-      Date: formatDate(item.date_of_incident),
+      Date: item.date_of_incident,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -256,7 +280,7 @@ const IncidentAccident = () => {
     const tableRows = [];
 
     filteredincidentData.forEach((item) => {
-      const row = [item.location, item.building, formatDate(item.date_of_incident)];
+      const row = [item.location, item.building, item.date_of_incident];
 
       tableRows.push(row);
     });
@@ -293,7 +317,7 @@ const IncidentAccident = () => {
                 setFormData(defaultFormData);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -309,7 +333,7 @@ const IncidentAccident = () => {
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
                 <label className="text-sm xl:text-base  font-medium text-gray-600">
-                  Show
+                  Display
                 </label>
                 <select
                   value={entriesPerPage}
@@ -317,7 +341,7 @@ const IncidentAccident = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/60"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -337,21 +361,30 @@ const IncidentAccident = () => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
                 />
-                <div className="flex gap-2 text-xl  ">
-                  <GoCopy
+                <div className="flex gap-2">
+                  <button
                     onClick={handleCopy}
-                    className="cursor-pointer text-gray-600 hover:text-blue-600 transition-colors"
-                  />
-                  <FaFileExcel
+                    className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
+                    title="Copy to clipboard"
+                  >
+                    <GoCopy className="text-lg xl:text-xl" />
+                  </button>
+                  <button
                     onClick={handleExcel}
-                    className="cursor-pointer text-green-600 hover:text-green-700 transition-colors"
-                  />
-                  <FaFilePdf
+                    className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
+                    title="Export to Excel"
+                  >
+                    <FaFileExcel className="text-lg xl:text-xl" />
+                  </button>
+                  <button
                     onClick={handlePDF}
-                    className="cursor-pointer text-red-600 hover:text-red-700 transition-colors"
-                  />
+                    className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
+                    title="Export to PDF"
+                  >
+                    <FaFilePdf className="text-lg xl:text-xl" />
+                  </button>
                 </div>
               </div>
             </div>
@@ -364,19 +397,19 @@ const IncidentAccident = () => {
             <table className="w-full text-[17px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-blue-100/50">
-                  <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden sm:table-cell font-semibold text-gray-700 text-center">
                     SL.No
                   </th>
-                  <th className="py-3 px-6 font-semibold text-gray-700">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Date of Incident
                   </th>
-                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Location
                   </th>
-                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Building
                   </th>
-                  <th className="py-3 px-6 font-semibold text-gray-700">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Action
                   </th>
                 </tr>
@@ -409,19 +442,19 @@ const IncidentAccident = () => {
                       key={item.id}
                       className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900">
+                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900 text-center">
                         {startIndex + index + 1}
                       </td>
-                      <td className="py-3 px-6 font-medium text-gray-900">
-                        {formatDate(item.date_of_incident)}
+                      <td className="py-3 px-6 font-medium text-gray-900 text-center">
+                        {item.date_of_incident}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.location}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.building}
                       </td>
-                      <td className="py-3 px-6">
+                      <td className="py-3 px-6 text-center">
                         <div className="flex justify-center gap-3">
                           <FaEye
                             onClick={() => {
@@ -472,33 +505,41 @@ const IncidentAccident = () => {
             </span>
             <div className="flex gap-2">
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
-                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50 transition-all"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="First page"
               >
                 First
               </button>
+
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-2.5 border rounded-lg bg-white disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Previous page"
               >
                 <GrPrevious />
               </button>
-              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm xl:text-base  min-w-[45px] text-center">
+
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
                 {currentPage}
               </div>
+
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-2.5 border rounded-lg bg-white disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Next page"
               >
                 <GrNext />
               </button>
+
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="Last page"
               >
                 Last
               </button>
@@ -546,7 +587,7 @@ const IncidentAccident = () => {
                     <label className={labelStyle}>Date of Incident</label>
                     <input
                       name="date_of_incident"
-                      value={formatDate(formData.date_of_incident)}
+                      value={formData.date_of_incident}
                       onClick={() =>
                         mode !== "view" && setShowDateSpinner(true)
                       }
@@ -579,7 +620,16 @@ const IncidentAccident = () => {
                       }}
                       disabled={mode === "view"}
                     >
-                      {formatTime(formData.time_of_incident) || "HH:MM:SS"}
+                      {formData.time_of_incident
+                        ? new Date(
+                            formData.time_of_incident,
+                          ).toLocaleTimeString("en-GB", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: false,
+                          })
+                        : "HH:MM:SS"}
                     </div>
                     {showTimeSpinner && (
                       <div className="absolute mt-8 ml-8 sm:ml-14 md:ml-16 lg:ml-20 ">

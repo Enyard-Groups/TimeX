@@ -30,9 +30,9 @@ const DeviceManagement = ({ user }) => {
               <span>Device Management</span>
             </div>
             {opendevicemanagements ? (
-              <MdKeyboardArrowUp className="text-2xl" />
+              <MdKeyboardArrowUp className="text-xl" />
             ) : (
-              <MdKeyboardArrowDown className="text-2xl" />
+              <MdKeyboardArrowDown className="text-xl" />
             )}
           </div>
 

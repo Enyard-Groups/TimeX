@@ -49,6 +49,12 @@ const ManualEntryRequest = () => {
 
   const [formData, setFormData] = useState(emptyForm);
 
+  const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
+
+  const labelStyle =
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -176,7 +182,9 @@ const ManualEntryRequest = () => {
       x.location ||
       "";
     return (
-      (x.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (x.employee_name || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
       locName.toString().toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
@@ -202,8 +210,8 @@ const ManualEntryRequest = () => {
         [
           item.employee_name,
           item.location_name ||
-          locationOptions.find((l) => l.id == item.location)?.name ||
-          item.location,
+            locationOptions.find((l) => l.id == item.location)?.name ||
+            item.location,
           item.in_time ? new Date(item.in_time).toLocaleString() : "-",
           item.out_time ? new Date(item.out_time).toLocaleString() : "-",
           item.status,
@@ -246,8 +254,8 @@ const ManualEntryRequest = () => {
     const tableRows = filteredEntry.map((item) => [
       item.employee_name,
       item.location_name ||
-      locationOptions.find((l) => l.id == item.location)?.name ||
-      item.location,
+        locationOptions.find((l) => l.id == item.location)?.name ||
+        item.location,
       item.in_time ? new Date(item.in_time).toLocaleString() : "-",
       item.out_time ? new Date(item.out_time).toLocaleString() : "-",
       item.status,
@@ -277,7 +285,12 @@ const ManualEntryRequest = () => {
 
   const formatTime = (timeStr) => {
     if (!timeStr) return "—";
-    if (typeof timeStr === "string" && timeStr.includes(":") && !timeStr.includes("-") && !timeStr.includes("T")) {
+    if (
+      typeof timeStr === "string" &&
+      timeStr.includes(":") &&
+      !timeStr.includes("-") &&
+      !timeStr.includes("T")
+    ) {
       return timeStr;
     }
     try {
@@ -314,7 +327,7 @@ const ManualEntryRequest = () => {
                 setFormData(emptyForm);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -337,7 +350,7 @@ const ManualEntryRequest = () => {
                   setEntriesPerPage(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm cursor-pointer hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 transition-all"
+                className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/60 transition-all"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -357,7 +370,7 @@ const ManualEntryRequest = () => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm xl:text-base placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
               />
               <div className="flex gap-2">
                 <button
@@ -365,21 +378,21 @@ const ManualEntryRequest = () => {
                   className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
                   title="Copy to clipboard"
                 >
-                  <GoCopy className="text-lg" />
+                  <GoCopy className="text-lg xl:text-xl" />
                 </button>
                 <button
                   onClick={handleExcel}
                   className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
                   title="Export to Excel"
                 >
-                  <FaFileExcel className="text-lg" />
+                  <FaFileExcel className="text-lg xl:text-xl" />
                 </button>
                 <button
                   onClick={handlePDF}
                   className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
                   title="Export to PDF"
                 >
-                  <FaFilePdf className="text-lg" />
+                  <FaFilePdf className="text-lg xl:text-xl" />
                 </button>
               </div>
             </div>
@@ -458,12 +471,13 @@ const ManualEntryRequest = () => {
                     </td>
                     <td className="px-6 py-2.5 text-center hidden sm:table-cell">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs xl:text-sm font-bold ${item.status === "Approved"
+                        className={`px-3 py-1 rounded-full text-xs xl:text-sm font-bold ${
+                          item.status === "Approved"
                             ? "bg-green-100 text-green-700"
                             : item.status === "Rejected"
                               ? "bg-red-100 text-red-700"
                               : "bg-yellow-100 text-yellow-700"
-                          }`}
+                        }`}
                       >
                         {item.status}
                       </span>
@@ -533,33 +547,41 @@ const ManualEntryRequest = () => {
 
           <div className="flex gap-2">
             <button
-              disabled={currentPage === 1}
+              disabled={currentPage == 1}
               onClick={() => setCurrentPage(1)}
               className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+              title="First page"
             >
               First
             </button>
+
             <button
-              disabled={currentPage === 1}
+              disabled={currentPage == 1}
               onClick={() => setCurrentPage(currentPage - 1)}
               className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+              title="Previous page"
             >
               <GrPrevious />
             </button>
+
             <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
               {currentPage}
             </div>
+
             <button
-              disabled={currentPage === totalPages}
+              disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(currentPage + 1)}
               className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+              title="Next page"
             >
               <GrNext />
             </button>
+
             <button
-              disabled={currentPage === totalPages}
+              disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(totalPages)}
               className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+              title="Last page"
             >
               Last
             </button>
@@ -574,7 +596,7 @@ const ManualEntryRequest = () => {
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-6xl max-h-[90vh] overflow-y-auto p-8"
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1000px] max-h-[90vh] overflow-y-auto p-8"
             style={{ scrollbarWidth: "none" }}
           >
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
@@ -611,19 +633,19 @@ const ManualEntryRequest = () => {
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
-                  inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 transition-all shadow-sm font-medium"
-                  labelStyle="text-sm xl:text-base font-bold text-gray-700 mb-2 block"
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
                 />
               </div>
 
               <div>
-                <label className="text-sm xl:text-base font-bold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Enrollment ID
                 </label>
                 <input
                   value={formData.enrollment_id}
                   readOnly
-                  className="w-full bg-gray-100 border-2 border-gray-200 text-gray-500 px-4 py-2.5 xl:text-base rounded-xl transition-all shadow-sm cursor-not-allowed font-medium"
+                  className="w-full bg-gray-100 border-2 border-gray-200 text-gray-500 px-4 py-2 xl:text-base rounded-xl transition-all shadow-sm cursor-not-allowed font-medium"
                 />
               </div>
 
@@ -644,13 +666,13 @@ const ManualEntryRequest = () => {
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
-                  inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 transition-all shadow-sm font-medium"
-                  labelStyle="text-sm xl:text-base font-bold text-gray-700 mb-2 block"
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
                 />
               </div>
 
               <div className="relative">
-                <label className="text-sm xl:text-base font-bold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Punch In Time <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -663,7 +685,7 @@ const ManualEntryRequest = () => {
                   disabled={mode === "view"}
                   readOnly
                   placeholder="HH:MM:SS"
-                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm font-medium"
+                  className={inputStyle}
                 />
                 {showInTimePicker && (
                   <SpinnerTimePicker
@@ -677,7 +699,7 @@ const ManualEntryRequest = () => {
               </div>
 
               <div className="relative">
-                <label className="text-sm xl:text-base font-bold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Punch Out Time <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -690,7 +712,7 @@ const ManualEntryRequest = () => {
                   disabled={mode === "view"}
                   readOnly
                   placeholder="HH:MM:SS"
-                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm font-medium"
+                  className={inputStyle}
                 />
                 {showOutTimePicker && (
                   <SpinnerTimePicker
@@ -704,7 +726,7 @@ const ManualEntryRequest = () => {
               </div>
 
               <div className="lg:col-span-2">
-                <label className="text-sm xl:text-base font-bold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Remarks
                 </label>
                 <textarea
@@ -713,7 +735,7 @@ const ManualEntryRequest = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   rows="1"
-                  className="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm font-medium"
+                  className={inputStyle}
                   placeholder="Enter optional remarks..."
                 />
               </div>

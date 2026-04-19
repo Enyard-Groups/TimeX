@@ -17,19 +17,6 @@ import SpinnerDatePicker from "../SpinnerDatePicker";
 import SignPad from "./SignPad";
 
 const MonthlyFireSafetyInspections = () => {
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
-    try {
-      const date = new Date(dateStr);
-      if (isNaN(date.getTime())) return dateStr;
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
-    } catch (e) {
-      return dateStr;
-    }
-  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [inspectionData, setInspectionData] = useState([]);
@@ -437,10 +424,10 @@ const MonthlyFireSafetyInspections = () => {
   ];
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
-  const labelStyle =
-    "text-sm xl:text-base  focus:outline-none font-semibold text-gray-700 mb-2 block";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
+  const labelStyle =
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
 
   const filteredinspectionData = inspectionData.filter(
     (x) =>
@@ -503,7 +490,6 @@ const MonthlyFireSafetyInspections = () => {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
-
 
   const fetchData = async () => {
     try {
@@ -602,7 +588,7 @@ const MonthlyFireSafetyInspections = () => {
 
     const rows = filteredinspectionData
       .map((item) => {
-        return [item.location, item.employee, formatDate(item.createdDate)].join("\t");
+        return [item.location, item.employee, item.createdDate].join("\t");
       })
       .join("\n");
 
@@ -616,7 +602,7 @@ const MonthlyFireSafetyInspections = () => {
     const excelData = filteredinspectionData.map((item) => ({
       Location: item.location,
       InspectedBy: item.employee,
-      Date: formatDate(item.createdDate),
+      Date: item.createdDate,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -635,7 +621,7 @@ const MonthlyFireSafetyInspections = () => {
     const tableRows = [];
 
     filteredinspectionData.forEach((item) => {
-      const row = [item.location, item.employee, formatDate(item.createdDate)];
+      const row = [item.location, item.employee, item.createdDate];
 
       tableRows.push(row);
     });
@@ -673,7 +659,7 @@ const MonthlyFireSafetyInspections = () => {
                   setFormData(defaultFormData);
                   setOpenModal(true);
                 }}
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
               >
                 + Add New
               </button>
@@ -688,7 +674,7 @@ const MonthlyFireSafetyInspections = () => {
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
                 <label className="text-sm xl:text-base  font-medium text-gray-600">
-                  Show
+                  Display
                 </label>
                 <select
                   value={entriesPerPage}
@@ -696,7 +682,7 @@ const MonthlyFireSafetyInspections = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm  focus:ring-2 focus:ring-blue-500/60"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -717,7 +703,7 @@ const MonthlyFireSafetyInspections = () => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base focus:outline-none  rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
                 />
                 <div className="flex gap-2">
                   <button
@@ -760,13 +746,13 @@ const MonthlyFireSafetyInspections = () => {
                   <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Location
                   </th>
-                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Date
                   </th>
-                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Inspected By
                   </th>
-                  <th className="py-3 px-6 font-semibold text-gray-700">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Action
                   </th>
                 </tr>
@@ -799,16 +785,16 @@ const MonthlyFireSafetyInspections = () => {
                       key={item.id}
                       className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition-all duration-200 even:bg-blue-50/60"
                     >
-                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900">
+                      <td className="py-3 px-6 hidden sm:table-cell text-gray-900 text-center">
                         {startIndex + index + 1}
                       </td>
-                      <td className="py-3 px-6 font-medium text-gray-900">
+                      <td className="py-3 px-6 font-medium text-gray-900 text-center">
                         {item.location}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
-                        {formatDate(item.createdDate)}
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
+                        {item.createdDate}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.employee}
                       </td>
                       <td className="py-3 px-6 text-center">
@@ -872,33 +858,41 @@ const MonthlyFireSafetyInspections = () => {
             </span>
             <div className="flex gap-2">
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
-                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50 transition-all"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="First page"
               >
                 First
               </button>
+
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="p-2.5 border rounded-lg bg-white disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Previous page"
               >
                 <GrPrevious />
               </button>
-              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm xl:text-base  min-w-[45px] text-center">
+
+              <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
                 {currentPage}
               </div>
+
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="p-2.5 border rounded-lg bg-white disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Next page"
               >
                 <GrNext />
               </button>
+
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm xl:text-base  font-medium disabled:opacity-50"
+                className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="Last page"
               >
                 Last
               </button>
@@ -976,13 +970,13 @@ const MonthlyFireSafetyInspections = () => {
                     </label>
                     <input
                       name="createdDate"
-                      value={formatDate(formData.createdDate)}
+                      value={formData.createdDate}
                       onClick={() =>
                         mode !== "view" && setShowDateSpinner(true)
                       }
+                      placeholder="dd/mm/yyyy"
                       readOnly
                       disabled={mode === "view"}
-                      placeholder="dd/mm/yyyy"
                       className={inputStyle}
                     />
                     {showDateSpinner && (
@@ -1076,7 +1070,7 @@ const MonthlyFireSafetyInspections = () => {
                                 className="w-full border-gray-200 rounded-lg xl:text-base  focus:ring-blue-500"
                                 value={
                                   formData[sectionItem.section].remarks[
-                                  field.key
+                                    field.key
                                   ] || ""
                                 }
                                 disabled={mode === "view"}
@@ -1108,22 +1102,22 @@ const MonthlyFireSafetyInspections = () => {
                     <table className="w-full text-sm xl:text-base ">
                       <thead className="bg-slate-50 text-gray-600">
                         <tr>
-                          <th className="border-b p-3 text-left">Area</th>
-                          <th className="border-b p-3 text-left">
+                          <th className="border-b p-3  text-center">Area</th>
+                          <th className="border-b p-3  text-center">
                             Observation
                           </th>
-                          <th className="border-b p-3 text-left">
+                          <th className="border-b p-3  text-center">
                             Action Required
                           </th>
-                          <th className="border-b p-3 text-left">Action By</th>
-                          <th className="border-b p-3 text-left">
+                          <th className="border-b p-3  text-center">Action By</th>
+                          <th className="border-b p-3  text-center">
                             Target Date
                           </th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr className="bg-white">
-                          <td className="p-2 border-r">
+                          <td className="p-2 border-r text-center">
                             <input
                               type="text"
                               className={inputStyle}
@@ -1134,7 +1128,7 @@ const MonthlyFireSafetyInspections = () => {
                               }
                             />
                           </td>
-                          <td className="p-2 border-r">
+                          <td className="p-2 border-r text-center">
                             <textarea
                               rows="1"
                               className={inputStyle}
@@ -1149,7 +1143,7 @@ const MonthlyFireSafetyInspections = () => {
                               style={{ scrollbarWidth: "none" }}
                             />
                           </td>
-                          <td className="p-2 border-r">
+                          <td className="p-2 border-r text-center">
                             <input
                               type="text"
                               className={inputStyle}
@@ -1163,7 +1157,7 @@ const MonthlyFireSafetyInspections = () => {
                               }
                             />
                           </td>
-                          <td className="p-2 border-r">
+                          <td className="p-2 border-r text-center">
                             <input
                               type="text"
                               className={inputStyle}
@@ -1177,11 +1171,12 @@ const MonthlyFireSafetyInspections = () => {
                               }
                             />
                           </td>
-                          <td className="p-2">
+                          <td className="p-2 text-center">
                             <input
                               type="text"
                               className={inputStyle}
-                              value={formatDate(formData.remarks[0]?.targetDate)}
+                              value={formData.remarks[0]?.targetDate}
+                              placeholder="dd/mm/yyyy"
                               disabled={mode === "view"}
                               onChange={(e) =>
                                 handleRemarkDetailChange(
@@ -1216,10 +1211,11 @@ const MonthlyFireSafetyInspections = () => {
                               signatureMode: "upload",
                             })
                           }
-                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.signatureMode === "upload"
-                            ? "bg-[#0f172a] text-white border-[#0f172a]"
-                            : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                            }`}
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                            formData.signatureMode === "upload"
+                              ? "bg-[#0f172a] text-white border-[#0f172a]"
+                              : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                          }`}
                         >
                           Upload
                         </button>
@@ -1233,10 +1229,11 @@ const MonthlyFireSafetyInspections = () => {
                               signatureMode: "draw",
                             })
                           }
-                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.signatureMode === "draw"
-                            ? "bg-[#0f172a] text-white border-[#0f172a]"
-                            : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                            }`}
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                            formData.signatureMode === "draw"
+                              ? "bg-[#0f172a] text-white border-[#0f172a]"
+                              : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                          }`}
                         >
                           Sign Here
                         </button>

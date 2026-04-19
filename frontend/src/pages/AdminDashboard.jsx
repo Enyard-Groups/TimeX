@@ -4,7 +4,6 @@ import RecentActivity from "../components/RecentActivity";
 import EmployeeAttendance from "../components/EmployeeAttendance";
 import AttendanceLineChart from "../components/AttendanceLineChart";
 import DeviceStats from "../components/DeviceStats";
-import { userData } from "../assets/userData";
 import Timeline from "../components/Timeline";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAttendanceStats } from "../action";
@@ -88,7 +87,7 @@ const AdminDashboard = ({ user }) => {
           className=" bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200 min-h-[430px]"
           style={{ scrollbarWidth: "none" }}
         >
-          <DeviceStats data={userData} />
+          <DeviceStats />
         </div>
       </div>
 
@@ -98,7 +97,7 @@ const AdminDashboard = ({ user }) => {
           className=" bg-white rounded shadow-md p-4 overflow-x-auto  border border-gray-200"
           style={{ scrollbarWidth: "none" }}
         >
-          <RecentActivity userData={userData} />
+          <RecentActivity />
         </div>
       </div>
 
@@ -108,7 +107,7 @@ const AdminDashboard = ({ user }) => {
           className="bg-white rounded shadow-md p-4 overflow-x-auto  border border-gray-200"
           style={{ scrollbarWidth: "none" }}
         >
-          <Timeline userData={userData} />
+          <Timeline />
         </div>
       </div>
     </>

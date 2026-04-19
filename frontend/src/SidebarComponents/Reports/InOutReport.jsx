@@ -42,10 +42,11 @@ const InOutReport = () => {
     toPunchDate: "",
   });
 
-  const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+   const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
+
   const labelStyle =
-    "text-sm xl:text-base font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
 
   const filteredReport = inOutReport.filter((emp) => {
     const punchDate = new Date(emp.createdDate);
@@ -96,7 +97,7 @@ const InOutReport = () => {
       <div className="mb-6 max-w-[1920px] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-          <h1 className="flex items-center h-[30px] gap-2 text-base xl:text-xl font-semibold text-gray-900">
+          <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
             <FaAngleRight className="text-blue-500 text-base" />
             <span className="text-gray-500">Reports</span>
             <FaAngleRight className="text-blue-500 text-base" />
@@ -262,7 +263,7 @@ const InOutReport = () => {
                       setEntriesPerPage(Number(e.target.value));
                       setCurrentPage(1);
                     }}
-                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base focus:ring-2 focus:ring-blue-500/60"
+                    className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/60 transition-all"
                   >
                     {[10, 25, 50, 100].map((v) => (
                       <option key={v} value={v}>
@@ -283,7 +284,7 @@ const InOutReport = () => {
                       setSearchTerm(e.target.value);
                       setCurrentPage(1);
                     }}
-                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm"
+                    className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
                   />
                 </div>
               </div>
@@ -392,8 +393,8 @@ const InOutReport = () => {
             <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
               <span className="text-sm xl:text-base text-gray-600">
                 Showing{" "}
-                <span className="font-bold text-gray-900">
-                  {startIndex + 1}
+                <span className="text-gray-900 font-semibold">
+                  {filteredinOutReport.length === 0 ? "0" : startIndex + 1}
                 </span>{" "}
                 to{" "}
                 <span className="font-bold text-gray-900">
@@ -407,33 +408,41 @@ const InOutReport = () => {
               </span>
               <div className="flex gap-2">
                 <button
-                  disabled={currentPage === 1}
+                  disabled={currentPage == 1}
                   onClick={() => setCurrentPage(1)}
-                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
+                  className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                  title="First page"
                 >
                   First
                 </button>
+
                 <button
-                  disabled={currentPage === 1}
+                  disabled={currentPage == 1}
                   onClick={() => setCurrentPage(currentPage - 1)}
-                  className="p-2.5 border rounded-lg bg-white disabled:opacity-50 hover:bg-blue-50 transition-all"
+                  className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                  title="Previous page"
                 >
                   <GrPrevious />
                 </button>
-                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold text-sm min-w-[45px] text-center">
+
+                <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
                   {currentPage}
                 </div>
+
                 <button
-                  disabled={currentPage === totalPages}
+                  disabled={currentPage == totalPages}
                   onClick={() => setCurrentPage(currentPage + 1)}
-                  className="p-2.5 border rounded-lg bg-white disabled:opacity-50 hover:bg-blue-50 transition-all"
+                  className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                  title="Next page"
                 >
                   <GrNext />
                 </button>
+
                 <button
-                  disabled={currentPage === totalPages}
+                  disabled={currentPage == totalPages}
                   onClick={() => setCurrentPage(totalPages)}
-                  className="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
+                  className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                  title="Last page"
                 >
                   Last
                 </button>
@@ -449,7 +458,7 @@ const InOutReport = () => {
             style={{ scrollbarWidth: "none" }}
           >
             <div
-              className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-5xl max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
+              className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1000px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
               style={{ scrollbarWidth: "none" }}
             >
               <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">

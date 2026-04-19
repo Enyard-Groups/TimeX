@@ -23,11 +23,11 @@ const FacilityComplaintForm = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [editId, setEditId] = useState(null);
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const response = await axios.get(API_URL);
       setRequestData(response.data);
       // console.log(response.data)
@@ -35,7 +35,7 @@ const FacilityComplaintForm = () => {
       console.error("Error fetching data:", error);
       toast.error("Failed to fetch data");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -44,9 +44,10 @@ const FacilityComplaintForm = () => {
   }, []);
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-lg  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
+
   const labelStyle =
-    "text-sm xl:text-base  focus:outline-none font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
 
   const defaultFormData = {
     name: "",
@@ -117,6 +118,55 @@ const FacilityComplaintForm = () => {
     }
   };
 
+  // // Sync with LocalStorage
+  // const fetchData = () => {
+  //   setLoading(true);
+  //   const stored = JSON.parse(
+  //     localStorage.getItem("facility_complaint") || "[]",
+  //   );
+  //   setRequestData(stored);
+  //   setLoading(false);
+  // };
+
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+
+  // const handleSubmit = () => {
+  //   const stored = JSON.parse(
+  //     localStorage.getItem("facility_complaint") || "[]",
+  //   );
+
+  //   if (editId) {
+  //     const updated = stored.map((item) =>
+  //       item.id === editId ? { ...formData, id: editId } : item,
+  //     );
+  //     localStorage.setItem("facility_complaint", JSON.stringify(updated));
+  //     toast.success("Inspection Updated");
+  //   } else {
+  //     const newEntry = { ...formData, id: Date.now(), status: "Pending" };
+  //     localStorage.setItem(
+  //       "facility_complaint",
+  //       JSON.stringify([...stored, newEntry]),
+  //     );
+  //     toast.success("Inspection Submitted for Approval");
+  //   }
+
+  //   fetchData();
+  //   setOpenModal(false);
+  //   setEditId(null);
+  //   setFormData(defaultFormData);
+  // };
+
+  // const handleDelete = (id) => {
+  //   const stored = JSON.parse(
+  //     localStorage.getItem("facility_complaint") || "[]",
+  //   );
+  //   const filtered = stored.filter((item) => item.id !== id);
+  //   localStorage.setItem("facility_complaint", JSON.stringify(filtered));
+  //   fetchData();
+  //   toast.success("Deleted Successfully");
+  // };
   const handleCopy = () => {
     const header = [
       "name",
@@ -216,7 +266,7 @@ const FacilityComplaintForm = () => {
     <div className="mb-6">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center gap-2 h-[30px] text-lg font-semibold text-gray-800">
+        <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
           <FaAngleRight className="text-blue-500 text-base" />
           <span className="text-gray-500">Forms</span>
           <FaAngleRight className="text-blue-500 text-base" />
@@ -237,7 +287,7 @@ const FacilityComplaintForm = () => {
                 setFormData(defaultFormData);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -252,7 +302,7 @@ const FacilityComplaintForm = () => {
           <div className="p-6 border-b border-blue-100/30">
             <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-600">
+                <label className="text-sm xl:text-base font-medium text-gray-600">
                   Display
                 </label>
                 <select
@@ -268,7 +318,7 @@ const FacilityComplaintForm = () => {
                   <option value={50}>50</option>
                   <option value={100}>100</option>
                 </select>
-                <span className="text-sm font-medium text-gray-600">
+                <span className="text-sm xl:text-base font-medium text-gray-600">
                   entries
                 </span>
               </div>
@@ -280,7 +330,7 @@ const FacilityComplaintForm = () => {
                     className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
                     title="Copy to clipboard"
                   >
-                    <GoCopy />
+                    <GoCopy className="text-lg xl:text-xl" />
                   </button>
 
                   <button
@@ -288,7 +338,7 @@ const FacilityComplaintForm = () => {
                     className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
                     title="Export to Excel"
                   >
-                    <FaFileExcel />
+                    <FaFileExcel className="text-lg xl:text-xl" />
                   </button>
 
                   <button
@@ -296,7 +346,7 @@ const FacilityComplaintForm = () => {
                     className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
                     title="Export to PDF"
                   >
-                    <FaFilePdf />
+                    <FaFilePdf className="text-lg xl:text-xl" />
                   </button>
                 </div>
               </div>
@@ -397,10 +447,11 @@ const FacilityComplaintForm = () => {
                       <td className="px-4 py-3 hidden lg:table-cell text-center">
                         <div className="flex justify-center">
                           <span
-                            className={`px-3 py-1 rounded-full text-sm font-semibold border ${item.urgent
+                            className={`px-3 py-1 rounded-full text-sm font-semibold border ${
+                              item.urgent
                                 ? "bg-red-100 text-red-700 border-red-300"
                                 : "bg-green-100 text-green-700 border-green-300"
-                              }`}
+                            }`}
                           >
                             {item.urgent ? "Urgent" : "Normal"}
                           </span>
@@ -455,7 +506,7 @@ const FacilityComplaintForm = () => {
 
           {/* Pagination */}
           <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-            <span className="text-sm xl:text-base  text-gray-600">
+            <span className="text-sm xl:text-base text-gray-600">
               Showing{" "}
               <span className="text-gray-900 font-semibold">
                 {requestData.length === 0 ? "0" : startIndex + 1}
@@ -473,7 +524,7 @@ const FacilityComplaintForm = () => {
 
             <div className="flex gap-2">
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
                 title="First page"
@@ -482,7 +533,7 @@ const FacilityComplaintForm = () => {
               </button>
 
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
                 title="Previous page"
@@ -495,7 +546,7 @@ const FacilityComplaintForm = () => {
               </div>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
                 title="Next page"
@@ -504,7 +555,7 @@ const FacilityComplaintForm = () => {
               </button>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(totalPages)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
                 title="Last page"
@@ -523,7 +574,7 @@ const FacilityComplaintForm = () => {
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8"
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-8"
             style={{ scrollbarWidth: "none" }}
           >
             {/* Close Button */}
@@ -732,7 +783,7 @@ const FacilityComplaintForm = () => {
                   onClick={() => setOpenModal(false)}
                   className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-50 font-semibold transition-all"
                 >
-                  Discard
+                  Cancel
                 </button>
                 <button
                   onClick={handleSubmit}

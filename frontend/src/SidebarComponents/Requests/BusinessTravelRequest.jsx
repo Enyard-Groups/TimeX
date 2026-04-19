@@ -44,6 +44,13 @@ const BusinessTravelRequest = () => {
 
   const [formData, setFormData] = useState(emptyForm);
 
+   const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
+
+  const labelStyle =
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
+
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -168,9 +175,11 @@ const BusinessTravelRequest = () => {
 
   const filteredTravel = travel.filter(
     (x) =>
-    (x.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (x.company_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (x.purpose || "").toLowerCase().includes(searchTerm.toLowerCase()),
+      (x.employee_name || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      (x.company_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (x.purpose || "").toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -254,10 +263,6 @@ const BusinessTravelRequest = () => {
     doc.save("TravelRequestData.pdf");
   };
 
-  const inputStyle =
-    "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
-  const labelStyle = "text-lg font-medium mb-1 block";
-
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
     if (dateStr.includes("T")) {
@@ -295,7 +300,7 @@ const BusinessTravelRequest = () => {
                 setFormData(emptyForm);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -318,14 +323,16 @@ const BusinessTravelRequest = () => {
                   setEntriesPerPage(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm cursor-pointer hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 transition-all"
+                className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/60 transition-all"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
                 <option value={50}>50</option>
                 <option value={100}>100</option>
               </select>
-              <span className="text-sm xl:text-base font-medium text-gray-600">entries</span>
+              <span className="text-sm xl:text-base font-medium text-gray-600">
+                entries
+              </span>
             </div>
 
             <div className="flex flex-wrap gap-3 items-center justify-center">
@@ -336,7 +343,7 @@ const BusinessTravelRequest = () => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm xl:text-base placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
               />
 
               <div className="flex gap-2">
@@ -345,23 +352,21 @@ const BusinessTravelRequest = () => {
                   className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
                   title="Copy to clipboard"
                 >
-                  <GoCopy className="text-lg" />
+                  <GoCopy className="text-lg xl:text-xl" />
                 </button>
-
                 <button
                   onClick={handleExcel}
                   className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
                   title="Export to Excel"
                 >
-                  <FaFileExcel className="text-lg" />
+                  <FaFileExcel className="text-lg xl:text-xl" />
                 </button>
-
                 <button
                   onClick={handlePDF}
                   className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
                   title="Export to PDF"
                 >
-                  <FaFilePdf className="text-lg" />
+                  <FaFilePdf className="text-lg xl:text-xl" />
                 </button>
               </div>
             </div>
@@ -520,7 +525,7 @@ const BusinessTravelRequest = () => {
 
           <div className="flex gap-2">
             <button
-              disabled={currentPage === 1}
+              disabled={currentPage == 1}
               onClick={() => setCurrentPage(1)}
               className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
               title="First page"
@@ -529,7 +534,7 @@ const BusinessTravelRequest = () => {
             </button>
 
             <button
-              disabled={currentPage === 1}
+              disabled={currentPage == 1}
               onClick={() => setCurrentPage(currentPage - 1)}
               className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
               title="Previous page"
@@ -542,7 +547,7 @@ const BusinessTravelRequest = () => {
             </div>
 
             <button
-              disabled={currentPage === totalPages}
+              disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(currentPage + 1)}
               className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
               title="Next page"
@@ -551,7 +556,7 @@ const BusinessTravelRequest = () => {
             </button>
 
             <button
-              disabled={currentPage === totalPages}
+              disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(totalPages)}
               className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
               title="Last page"
@@ -569,7 +574,7 @@ const BusinessTravelRequest = () => {
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8"
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1000px] max-h-[90vh] overflow-y-auto p-8"
             style={{ scrollbarWidth: "none" }}
           >
             {/* Close Button */}
@@ -608,14 +613,14 @@ const BusinessTravelRequest = () => {
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}
-                  inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 xl:text-base px-4 py-2.5 rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                  labelStyle="text-sm xl:text-base font-bold text-gray-700 mb-2 block"
+                  inputStyle={inputStyle}
+                  labelStyle={labelStyle}
                 />
               </div>
 
               {/* Travel Start Date */}
               <div>
-                <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Travel Start Date <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -626,7 +631,7 @@ const BusinessTravelRequest = () => {
                     disabled={mode === "view"}
                     placeholder="dd/mm/yyyy"
                     readOnly
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm cursor-pointer"
+                    className={inputStyle}
                   />
                   {fromDateSpinner && (
                     <SpinnerDatePicker
@@ -642,7 +647,7 @@ const BusinessTravelRequest = () => {
 
               {/* Travel Return Date */}
               <div>
-                <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Travel Return Date <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -653,7 +658,7 @@ const BusinessTravelRequest = () => {
                     disabled={mode === "view"}
                     placeholder="dd/mm/yyyy"
                     readOnly
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm cursor-pointer"
+                    className={inputStyle}
                   />
                   {toDateSpinner && (
                     <SpinnerDatePicker
@@ -669,7 +674,7 @@ const BusinessTravelRequest = () => {
 
               {/* Purpose */}
               <div className="sm:col-span-2">
-                <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Purpose <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -678,13 +683,13 @@ const BusinessTravelRequest = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Enter purpose of travel"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                  className={inputStyle}
                 />
               </div>
 
               {/* Remarks */}
               <div className="sm:col-span-2">
-                <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Remarks
                 </label>
                 <textarea
@@ -694,7 +699,7 @@ const BusinessTravelRequest = () => {
                   disabled={mode === "view"}
                   placeholder="Enter optional remarks..."
                   rows="4"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm resize-none"
+                  className={inputStyle}
                 />
               </div>
             </div>

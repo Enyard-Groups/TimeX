@@ -23,12 +23,29 @@ const Login = () => {
     setIsLoading(true);
     setError("");
 
+    // Admin Bypass Logic (for development)
     if (userName === "admin" && password === "admin123") {
       const adminUserData = {
         id: 0,
         user_name: "admin",
         name: "Administrator",
         role: "admin",
+      };
+      localStorage.setItem("user", JSON.stringify(adminUserData));
+      localStorage.setItem("token", "admin-bypass");
+      dispatch(setUser(adminUserData));
+      dispatch(setAuth(true));
+      navigate("/");
+      return;
+    }
+
+    // Admin Bypass Logic (for development)
+    if (userName === "employee" && password === "employee123") {
+      const adminUserData = {
+        id: "EMP03",
+        user_name: "employee",
+        name: "Employee",
+        role: "employee",
       };
       localStorage.setItem("user", JSON.stringify(adminUserData));
       localStorage.setItem("token", "admin-bypass");
@@ -58,10 +75,28 @@ const Login = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-[#0f172a] overflow-hidden font-sans">
-      {/* MOBILE OVERLAY FORM (Translates up from bottom) */}
+    <div className="relative min-h-screen w-full bg-[#0f172a] overflow-hidden font-sans flex items-center justify-center p-4 md:p-0">
+      {/* 1. BACKGROUND IMAGE & OVERLAYS */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="./bgimagelogin.png"
+          className="w-full h-full object-cover object-right"
+          alt="Background"
+        />
+        <div className="absolute inset-0 bg-[#0f172a]/70 z-10"></div>
+      </div>
+
+      {/* FIXED LOGO */}
+      <img
+        src="./timexlogin.png"
+        width="150"
+        className="fixed top-8 right-20 z-50 opacity-100"
+        alt="Logo"
+      />
+
+      {/* 2. MOBILE OVERLAY FORM */}
       <div
-        className={`fixed inset-0 z-50 bg-[#0f172a] transition-transform duration-500 ease-in-out md:hidden flex flex-col p-8 ${
+        className={`fixed inset-0 z-[100] bg-[#0f172a]/80 backdrop-blur-xl transition-transform duration-500 ease-in-out md:hidden flex flex-col p-8 ${
           showMobileForm ? "translate-y-0" : "translate-y-full"
         }`}
       >
@@ -88,20 +123,22 @@ const Login = () => {
             setShowPassword={setShowPassword}
             error={error}
             isLoading={isLoading}
+            isMobileForm={true}
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-1  md:grid-cols-2 xl:grid-cols-3 h-screen">
-        {/* DESKTOP LEFT FORM */}
-        <div className="hidden md:flex justify-center items-center p-12 lg:p-20 bg-[#0f172a] z-20">
-          <div className="w-full max-w-md">
-            <div className="mb-12">
-              <h2 className="text-5xl font-black text-white tracking-tight mb-3">
-                Welcome Back
+      {/* 3. MAIN CONTENT LAYOUT (Above Background) */}
+      <div className="relative z-20 grid grid-cols-1 md:grid-cols-12 gap-8 w-full h-full md:h-[90vh] md:items-center px-6 md:px-12">
+        {/* DESKTOP/RIGHT SIDE: TRANSPARENT FORM CONTAINER */}
+        <div className="hidden md:flex md:col-span-6 xl:col-span-5 h-full">
+          <div className="w-full bg-[#0f172a]/90 border border-white/10 p-10 lg:p-12 rounded-3xl shadow-2xl flex flex-col justify-center ">
+            <div className="mb-10 flex flex-col text-center">
+              <h2 className="text-[40px] font-black text-white tracking-tight mb-4">
+                Sign In
               </h2>
               <p className="text-slate-400 text-base font-light italic">
-                Access your workforce dashboard.
+                Enter your credentials to continue.
               </p>
             </div>
             <LoginForm
@@ -118,57 +155,44 @@ const Login = () => {
           </div>
         </div>
 
-        {/* IMAGE SIDE (Visible on Mobile as Background) */}
-        <div className="relative h-full xl:col-span-2 w-full flex items-end overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/20 to-transparent z-10"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a] via-transparent to-transparent hidden md:block z-10"></div>
+        {/* DESKTOP/LEFT SIDE: TEXT CONTENT */}
+        <div className="md:col-span-6 xl:col-span-7 flex flex-col justify-end md:justify-end h-full pt-20 md:pt-0 pb-12 md:pb-0 ">
+          <div className="text-white max-w-xl">
+            <p className="text-xs font-bold uppercase tracking-[0.4em] text-blue-400 mb-4">
+              Smart Attendance
+            </p>
+            <h1 className="text-xl md:text-3xl lg:text-4xl font-extrabold leading-tight tracking-tight mb-6">
+              Simplify your <br />{" "}
+              <span className="text-blue-400">workforce</span> management.
+            </h1>
+            <p className="text-slate-300 mt-4 max-w-lg hidden md:block text-base font-light">
+              Access your personalized dashboard to manage attendance,
+              schedules, and reports efficiently.
+            </p>
+          </div>
 
-          <img
-            src="./bgimagelogin.png"
-            className="absolute inset-0 w-full h-full object-right object-cover scale-100 md:scale-110 transition-transform duration-700"
-            alt="Background"
-          />
+          {/* MOBILE ONLY TRIGGER BUTTON */}
+          <button
+            onClick={() => setShowMobileForm(true)}
+            className="md:hidden w-full max-w-sm bg-white text-[#0f172a] py-4 rounded-2xl font-black text-lg shadow-2xl active:scale-95 transition-all mb-8"
+          >
+            Sign In to Dashboard
+          </button>
 
-          <img
-            src="./timexlogin.png"
-            width="140"
-            className="fixed top-8 right-8 z-30 opacity-80 md:opacity-100"
-            alt="Logo"
-          />
-
-          <div className="relative z-20 p-8 md:p-16 w-full">
-            <div className="text-white mb-8 md:mb-10 max-w-lg">
-              <p className="text-xs font-bold uppercase tracking-[0.4em] text-blue-400 mb-2">
-                Smart Attendance
-              </p>
-              <h1 className="text-xl md:text-3xl lg:text-4xl font-bold leading-tight">
-                Simplify your <br />{" "}
-                <span className="text-blue-400">workforce</span> management.
-              </h1>
-            </div>
-
-            {/* MOBILE ONLY TRIGGER BUTTON */}
-            <button
-              onClick={() => setShowMobileForm(true)}
-              className="md:hidden w-full bg-white text-[#0f172a] py-4 rounded-2xl font-black text-lg shadow-2xl active:scale-95 transition-all mb-8"
+          {/* FOOTER */}
+          <div className="text-[10px] md:text-xs flex items-center gap-3 text-white/40 uppercase tracking-widest font-semibold mt-auto md:mt-10">
+            <p>© {currentYear}</p>
+            <span>|</span>
+            <a
+              href="https://enyard.in"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-white transition-colors"
             >
-              Sign In to Dashboard
-            </button>
-
-            <div className="text-[10px] md:text-xs flex items-center gap-3 text-white/40 uppercase tracking-widest font-semibold">
-              <p>© {currentYear}</p>
-              <span>|</span>
-              <a
-                href="https://enyard.in"
-                target="_blank"
-                rel="noreferrer"
-                className="hover:text-white"
-              >
-                ENYARD
-              </a>
-              <span>|</span>
-              <p>All rights reserved</p>
-            </div>
+              ENYARD
+            </a>
+            <span>|</span>
+            <p>All rights reserved</p>
           </div>
         </div>
       </div>
@@ -186,6 +210,7 @@ const LoginForm = ({
   setShowPassword,
   error,
   isLoading,
+  isMobileForm = false,
 }) => (
   <form onSubmit={handleSubmit} className="space-y-5">
     {error && (
@@ -195,7 +220,7 @@ const LoginForm = ({
     )}
 
     <div className="space-y-2">
-      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
         Username
       </label>
       <input
@@ -203,13 +228,18 @@ const LoginForm = ({
         type="text"
         value={userName}
         onChange={(e) => setUserName(e.target.value)}
-        className="w-full px-6 py-4 rounded-2xl border border-slate-600 bg-slate-900/40 text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+        // Adjust background opacity of input for mobile vs desktop transparent form
+        className={`w-full px-6 py-4 rounded-2xl border ${
+          isMobileForm
+            ? "border-slate-700 bg-slate-900 text-white"
+            : "border-white/10 bg-white/[0.05] text-white focus:bg-white/[0.08]"
+        } focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all`}
         placeholder="Enter username"
       />
     </div>
 
     <div className="space-y-2">
-      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
         Password
       </label>
       <div className="relative">
@@ -218,13 +248,17 @@ const LoginForm = ({
           type={showPassword ? "text" : "password"}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-6 py-4 rounded-2xl border border-slate-600 bg-slate-900/40 text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+          className={`w-full px-6 py-4 rounded-2xl border ${
+            isMobileForm
+              ? "border-slate-700 bg-slate-900 text-white"
+              : "border-white/10 bg-white/[0.05] text-white focus:bg-white/[0.08]"
+          } focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all`}
           placeholder="••••••••"
         />
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-slate-500 hover:text-white"
+          className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-slate-500 hover:text-gray-700 transition-colors"
         >
           {showPassword ? <RxEyeOpen size={20} /> : <RxEyeClosed size={20} />}
         </button>
@@ -234,7 +268,7 @@ const LoginForm = ({
     <button
       type="submit"
       disabled={isLoading}
-      className="w-full py-4 mt-4 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold shadow-lg shadow-blue-900/40 flex items-center justify-center gap-3 transition-all"
+      className="w-full py-4 mt-6 rounded-2xl bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800/50 text-white font-bold shadow-lg shadow-blue-900/40 flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
     >
       {isLoading ? (
         <AiOutlineLoading3Quarters className="animate-spin" size={20} />

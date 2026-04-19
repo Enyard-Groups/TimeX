@@ -18,19 +18,6 @@ import axios from "axios";
 const API_URL = "http://localhost:3000/api/form/passportRequest";
 
 const PassportRequest = () => {
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
-    try {
-      const date = new Date(dateStr);
-      if (isNaN(date.getTime())) return dateStr;
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
-    } catch (e) {
-      return dateStr;
-    }
-  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState([]);
@@ -40,9 +27,10 @@ const PassportRequest = () => {
   const [loading, setLoading] = useState(false);
   const [showDateSpinner, setShowDateSpinner] = useState(false);
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
+
   const labelStyle =
-    "text-sm xl:text-base  focus:outline-none font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
 
   const defaultFormData = {
     employee_name: "",
@@ -151,7 +139,7 @@ const PassportRequest = () => {
       .map((item) => {
         return [
           item.employee_name,
-          formatDate(item.request_date),
+          item.request_date,
           item.enrollment_id,
           item.reason_for_request,
         ].join("\t");
@@ -167,7 +155,7 @@ const PassportRequest = () => {
   const handleExcel = () => {
     const excelData = requestData.map((item) => ({
       Employee: item.employee_name,
-      Date: formatDate(item.request_date),
+      Date: item.request_date,
       EnrollmentId: item.enrollment_id,
       PassportPurpose: item.reason_for_request,
     }));
@@ -195,7 +183,7 @@ const PassportRequest = () => {
     requestData.forEach((item) => {
       const row = [
         item.employee_name,
-        formatDate(item.request_date),
+        item.request_date,
         item.enrollment_id,
         item.reason_for_request,
       ];
@@ -235,7 +223,7 @@ const PassportRequest = () => {
                 setFormData(defaultFormData);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -250,7 +238,7 @@ const PassportRequest = () => {
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
                 <label className="text-sm xl:text-base  font-medium text-gray-600">
-                  Show
+                  Display
                 </label>
                 <select
                   value={entriesPerPage}
@@ -258,7 +246,7 @@ const PassportRequest = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60 transition-all"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm   focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -272,27 +260,27 @@ const PassportRequest = () => {
               </div>
 
               <div className="flex flex-wrap gap-3 items-center justify-center">
-                <div className="flex">
+                <div className="flex gap-2">
                   <button
                     onClick={handleCopy}
-                    className="text-xl px-3 py-1 cursor-pointer text-gray-800 hover:text-blue-600 transition-colors"
-                    title="Copy"
+                    className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
+                    title="Copy to clipboard"
                   >
-                    <GoCopy />
+                    <GoCopy className="text-lg xl:text-xl" />
                   </button>
                   <button
                     onClick={handleExcel}
-                    className="text-xl px-3 py-1 cursor-pointer text-green-700 hover:text-green-800 transition-colors"
-                    title="Excel"
+                    className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
+                    title="Export to Excel"
                   >
-                    <FaFileExcel />
+                    <FaFileExcel className="text-lg xl:text-xl" />
                   </button>
                   <button
                     onClick={handlePDF}
-                    className="text-xl px-3 py-1 cursor-pointer text-red-600 hover:text-red-800 transition-colors"
-                    title="PDF"
+                    className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
+                    title="Export to PDF"
                   >
-                    <FaFilePdf />
+                    <FaFilePdf className="text-lg xl:text-xl" />
                   </button>
                 </div>
               </div>
@@ -318,10 +306,10 @@ const PassportRequest = () => {
                   <th className="py-3 px-6 hidden lg:table-cell font-semibold text-gray-700 text-center">
                     Passport Purpose
                   </th>
-                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700">
+                  <th className="py-3 px-6 hidden md:table-cell font-semibold text-gray-700 text-center">
                     Date
                   </th>
-                  <th className="py-3 px-6 font-semibold text-gray-700">
+                  <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Action
                   </th>
                 </tr>
@@ -357,19 +345,19 @@ const PassportRequest = () => {
                       <td className="py-3 px-6 hidden sm:table-cell text-gray-900 text-center">
                         {startIndex + index + 1}
                       </td>
-                      <td className="py-3 px-6 font-medium text-gray-900">
+                      <td className="py-3 px-6 font-medium text-gray-900 text-center">
                         {item.employee_name}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono">
+                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono text-center">
                         {item.enrollment_id}
                       </td>
-                      <td className="py-3 px-6 hidden lg:table-cell text-gray-600 italic truncate max-w-[200px]">
+                      <td className="py-3 px-6 hidden lg:table-cell text-gray-600 italic truncate max-w-[200px] text-center">
                         {item.reason_for_request}
                       </td>
                       <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
-                        {formatDate(item.request_date)}
+                        {item.request_date}
                       </td>
-                      <td className="py-3 px-6">
+                      <td className="py-3 px-6 text-center">
                         <div className="flex justify-center gap-3">
                           <FaEye
                             onClick={() => {
@@ -422,7 +410,7 @@ const PassportRequest = () => {
 
             <div className="flex gap-2">
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
                 title="First page"
@@ -431,7 +419,7 @@ const PassportRequest = () => {
               </button>
 
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
                 title="Previous page"
@@ -444,7 +432,7 @@ const PassportRequest = () => {
               </div>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
                 title="Next page"
@@ -453,7 +441,7 @@ const PassportRequest = () => {
               </button>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(totalPages)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
                 title="Last page"
@@ -494,10 +482,10 @@ const PassportRequest = () => {
             <div className="border p-4 sm:p-8 rounded-2xl border-gray-400/30 shadow-inner bg-white ">
               <div className="flex justify-center">
                 <div
-                  className="max-h-[75vh] max-w-5xl overflow-y-auto pr-2 text-[17px]"
+                  className="max-h-[75vh] overflow-y-auto pr-2 text-[17px]"
                   style={{ scrollbarWidth: "none" }}
                 >
-                  <div className="flex flex-col md:flex-row justify-between mb-8 gap-4">
+                  <div className="flex flex-col md:flex-row gap-10 mb-8 gap-4">
                     <div className="text-gray-700 leading-relaxed">
                       To, <br />
                       <span className="font-bold text-gray-800">
@@ -506,7 +494,7 @@ const PassportRequest = () => {
                       <br />
                       Safecor Security <br /> Dubai, UAE.
                     </div>
-                    <div className="flex flex-wrap items-center gap-3 relative min-w-[200px]">
+                    <div className="flex flex-wrap items-center gap-3 relative min-w-[150px]">
                       <label
                         className={`font-bold text-gray-700 whitespace-nowrap`}
                       >
@@ -514,7 +502,7 @@ const PassportRequest = () => {
                       </label>
                       <input
                         name="request_date"
-                        value={formatDate(formData.request_date) || ""}
+                        value={formData.request_date || ""}
                         onChange={handleChange}
                         onClick={() =>
                           mode !== "view" && setShowDateSpinner(true)
@@ -559,7 +547,7 @@ const PassportRequest = () => {
                       I will return the passport to you latest by
                       <input
                         name="expected_return_date"
-                        value={formatDate(formData.expected_return_date)}
+                        value={formData.expected_return_date}
                         onChange={handleChange}
                         disabled={mode === "view"}
                         placeholder="dd/mm/yyyy"
@@ -678,10 +666,11 @@ const PassportRequest = () => {
                                   employeeSignatureMode: "upload",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.employeeSignatureMode === "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.employeeSignatureMode === "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                              }`}
                             >
                               Upload
                             </button>
@@ -693,10 +682,11 @@ const PassportRequest = () => {
                                   employeeSignatureMode: "draw",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.employeeSignatureMode === "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.employeeSignatureMode === "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                              }`}
                             >
                               Sign Here
                             </button>
@@ -849,10 +839,11 @@ const PassportRequest = () => {
                                   msoSignatureMode: "upload",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.msoSignatureMode === "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.msoSignatureMode === "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                              }`}
                             >
                               Upload
                             </button>
@@ -864,10 +855,11 @@ const PassportRequest = () => {
                                   msoSignatureMode: "draw",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.msoSignatureMode === "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.msoSignatureMode === "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                              }`}
                             >
                               Sign Here
                             </button>

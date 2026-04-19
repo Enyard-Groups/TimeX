@@ -41,10 +41,14 @@ const EmployeeCategory = () => {
     try {
       setLoading(true);
       const res = await axios.get(`${API_BASE}/master/employee-categories`);
-      setEmployeeCategory(res.data.map(item => ({
-        ...item,
-        work_hours: item.work_hours ? new Date(`1970-01-01T${item.work_hours}`) : null
-      })));
+      setEmployeeCategory(
+        res.data.map((item) => ({
+          ...item,
+          work_hours: item.work_hours
+            ? new Date(`1970-01-01T${item.work_hours}`)
+            : null,
+        })),
+      );
     } catch (error) {
       console.error("Failed to fetch categories", error);
     } finally {
@@ -66,11 +70,11 @@ const EmployeeCategory = () => {
     fetchCompanies();
   }, []);
 
-  const inputStyle =
-    "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+    const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
   const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
 
   const filteredemployeeCategory = employeeCategory.filter(
     (x) =>
@@ -117,7 +121,10 @@ const EmployeeCategory = () => {
     try {
       setLoading(true);
       if (editId) {
-        await axios.put(`${API_BASE}/master/employee-categories/${editId}`, payload);
+        await axios.put(
+          `${API_BASE}/master/employee-categories/${editId}`,
+          payload,
+        );
         toast.success("Category updated");
       } else {
         await axios.post(`${API_BASE}/master/employee-categories`, payload);
@@ -134,7 +141,8 @@ const EmployeeCategory = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this category?")) return;
+    if (!window.confirm("Are you sure you want to delete this category?"))
+      return;
     try {
       await axios.delete(`${API_BASE}/master/employee-categories/${id}`);
       toast.success("Category deleted");
@@ -224,7 +232,7 @@ const EmployeeCategory = () => {
     <div className="mb-6 max-w-[1920px] mx-auto">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
-        <h1 className="flex items-center h-[30px] gap-2 text-base lg:text-xl 3xl:text-4xl font-semibold text-gray-900 ">
+        <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
           <FaAngleRight className="text-blue-500 text-base" />
           <span className="text-gray-500">Masters</span>
           <FaAngleRight className="text-blue-500 text-base" />
@@ -251,7 +259,7 @@ const EmployeeCategory = () => {
                 }),
                 setOpenModal(true)
               )}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg lg:text-lg 3xl:text-xl border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -265,7 +273,7 @@ const EmployeeCategory = () => {
         <div className="p-6 border-b border-blue-100/30">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <label className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+              <label className="text-sm xl:text-base font-medium text-gray-600">
                 Display
               </label>
               <select
@@ -281,7 +289,7 @@ const EmployeeCategory = () => {
                 <option value={50}>50</option>
                 <option value={100}>100</option>
               </select>
-              <span className="text-sm lg:text-base 3xl:text-lg font-medium text-gray-600">
+              <span className="text-sm xl:text-base font-medium text-gray-600">
                 entries
               </span>
             </div>
@@ -294,7 +302,7 @@ const EmployeeCategory = () => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 lg:text-base 3xl:text-lg rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
               />
               <div className="flex gap-2">
                 <button
@@ -302,21 +310,21 @@ const EmployeeCategory = () => {
                   className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
                   title="Copy to clipboard"
                 >
-                  <GoCopy className="text-lg" />
+                  <GoCopy className="text-lg xl:text-xl" />
                 </button>
                 <button
                   onClick={handleExcel}
                   className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
                   title="Export to Excel"
                 >
-                  <FaFileExcel className="text-lg" />
+                  <FaFileExcel className="text-lg xl:text-xl" />
                 </button>
                 <button
                   onClick={handlePDF}
                   className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
                   title="Export to PDF"
                 >
-                  <FaFilePdf className="text-lg" />
+                  <FaFilePdf className="text-lg xl:text-xl" />
                 </button>
               </div>
             </div>
@@ -324,8 +332,10 @@ const EmployeeCategory = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto min-h-[350px]"
-          style={{scrollbarWidth:"none"}}>
+        <div
+          className="overflow-x-auto min-h-[350px]"
+          style={{ scrollbarWidth: "none" }}
+        >
           <table className="w-full text-[17px]">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
@@ -392,8 +402,8 @@ const EmployeeCategory = () => {
                     <td className="px-6 py-2 text-center hidden md:table-cell text-gray-600">
                       {item.work_hours
                         ? item.work_hours.toLocaleTimeString([], {
-                          hour12: false,
-                        })
+                            hour12: false,
+                          })
                         : "-"}
                     </td>
                     <td className="px-4 py-3 hidden lg:table-cell text-center">
@@ -448,7 +458,7 @@ const EmployeeCategory = () => {
 
         {/* Pagination */}
         <div className="p-6 border-t border-blue-100/30 flex flex-col sm:flex-row justify-between items-center gap-6">
-          <span className="text-sm lg:text-base 3xl:text-lg text-gray-600">
+          <span className="text-sm xl:text-base text-gray-600">
             Showing{" "}
             <span className="text-gray-900 font-semibold">
               {filteredemployeeCategory.length === 0 ? "0" : startIndex + 1}
@@ -467,31 +477,39 @@ const EmployeeCategory = () => {
             <button
               disabled={currentPage == 1}
               onClick={() => setCurrentPage(1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+              title="First page"
             >
               First
             </button>
+
             <button
               disabled={currentPage == 1}
               onClick={() => setCurrentPage(currentPage - 1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+              title="Previous page"
             >
               <GrPrevious />
             </button>
+
             <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
               {currentPage}
             </div>
+
             <button
               disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(currentPage + 1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+              title="Next page"
             >
               <GrNext />
             </button>
+
             <button
               disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(totalPages)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+              title="Last page"
             >
               Last
             </button>
@@ -501,10 +519,14 @@ const EmployeeCategory = () => {
 
       {/* Modal */}
       {openModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
-          style={{scrollbarWidth:"none"}}>
-          <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8"
-          style={{scrollbarWidth:"none"}}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
+          style={{ scrollbarWidth: "none" }}
+        >
+          <div
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1000px] max-h-[90vh] overflow-y-auto p-8"
+            style={{ scrollbarWidth: "none" }}
+          >
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
               <h2 className="text-xl lg:text-2xl 3xl:text-4xl font-bold text-gray-900">
                 {mode === "view"
@@ -523,7 +545,7 @@ const EmployeeCategory = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
               <div>
-                <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Category Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -532,7 +554,7 @@ const EmployeeCategory = () => {
                   onChange={handleChange}
                   disabled={mode === "view"}
                   placeholder="Enter category name"
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
+                  className={inputStyle}
                   required
                 />
               </div>
@@ -548,29 +570,29 @@ const EmployeeCategory = () => {
                 displayValue={formData.company_name}
                 options={companyOptions}
                 labelKey="name"
-                valueKey="id"
+                valueKey="name"
                 labelName="company_name"
                 formData={formData}
                 setFormData={setFormData}
                 disabled={mode === "view"}
-                inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-4 py-2.5 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm"
-                labelStyle="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block"
+                inputStyle={inputStyle}
+                labelStyle={labelStyle}
               />
 
               <div>
-                <label className="text-sm lg:text-lg 3xl:text-xl font-semibold text-gray-700 mb-2 block">
+                <label className={labelStyle}>
                   Work Hours
                 </label>
                 <div
                   onClick={() =>
                     mode !== "view" && setShowWorkHoursPicker(true)
                   }
-                  className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg lg:text-lg 3xl:text-xl focus:ring-2 focus:ring-blue-500/60 disabled:bg-gray-100 transition-all shadow-sm cursor-pointer flex items-center justify-center min-h-[44px]"
+                  className={inputStyle}
                 >
                   {formData.work_hours
                     ? formData.work_hours.toLocaleTimeString([], {
-                      hour12: false,
-                    })
+                        hour12: false,
+                      })
                     : "HH:MM:SS"}
                 </div>
                 {showWorkHoursPicker && (
@@ -593,23 +615,23 @@ const EmployeeCategory = () => {
                   disabled={mode === "view"}
                   className="w-5 h-5 cursor-pointer accent-blue-500"
                 />
-                <label className="text-gray-700 font-semibold lg:text-lg 3xl:text-xl cursor-pointer">
+                <label className={`pt-1.5 ${labelStyle}`}>
                   Active Status
                 </label>
               </div>
             </div>
 
             {mode !== "view" && (
-              <div className="flex justify-end gap-3 pt-4 border-t">
+              <div className="flex justify-end gap-3 pt-4">
                 <button
                   onClick={() => setOpenModal(false)}
-                  className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 lg:text-lg 3xl:text-xl hover:bg-gray-50 font-semibold transition-all"
+                  className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 xl:text-base hover:bg-gray-50 font-semibold transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg lg:text-lg 3xl:text-xl transition-all duration-200"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg xl:text-base transition-all duration-200"
                 >
                   Save
                 </button>

@@ -49,7 +49,9 @@ const EmployeeView = () => {
   const fetchEmployees = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${API_BASE}/employee`, { headers: getHeaders() });
+      const res = await axios.get(`${API_BASE}/employee`, {
+        headers: getHeaders(),
+      });
       setEmployee(res.data || []);
     } catch (error) {
       console.error("Failed to fetch employees:", error);
@@ -79,7 +81,9 @@ const EmployeeView = () => {
   const filteredemployee = (employee || []).filter(
     (x) =>
       (x.full_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-      (x.designation_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
+      (x.designation_name || "")
+        .toLowerCase()
+        .startsWith(searchTerm.toLowerCase()),
   );
 
   const handleSelect = (id) => {
@@ -104,7 +108,12 @@ const EmployeeView = () => {
 
     const rows = filteredemployee
       .map((item, index) => {
-        return [index + 1, item.full_name, item.company_enrollment_id, item.designation_name].join("\t");
+        return [
+          index + 1,
+          item.full_name,
+          item.company_enrollment_id,
+          item.designation_name,
+        ].join("\t");
       })
       .join("\n");
 
@@ -138,7 +147,12 @@ const EmployeeView = () => {
     const tableRows = [];
 
     filteredemployee.forEach((item, index) => {
-      const row = [index + 1, item.full_name, item.company_enrollment_id, item.designation_name];
+      const row = [
+        index + 1,
+        item.full_name,
+        item.company_enrollment_id,
+        item.designation_name,
+      ];
       tableRows.push(row);
     });
 
@@ -202,15 +216,20 @@ const EmployeeView = () => {
           axios.post(
             `${API_BASE}/shift-planner/assign`,
             { employee_id: empId, location_id, roster: rosterData },
-            { headers: getHeaders() }
-          )
-        )
+            { headers: getHeaders() },
+          ),
+        ),
       );
       toast.success("Roster assigned to selected employees");
       setOpenMassModal(false);
       setSelectedEmployees([]);
       setShifts({});
-      setFormData({ startdate: "", enddate: "", location_id: "", location: "" });
+      setFormData({
+        startdate: "",
+        enddate: "",
+        location_id: "",
+        location: "",
+      });
     } catch (error) {
       console.error("Failed to assign roster:", error);
       toast.error("Failed to assign roster");
@@ -235,7 +254,7 @@ const EmployeeView = () => {
                   setEntriesPerPage(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg text-sm"
+                className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/60 transition-all"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -261,21 +280,24 @@ const EmployeeView = () => {
               <div className="flex gap-2">
                 <button
                   onClick={handleCopy}
-                  className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 p-2 rounded-lg"
+                  className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
+                  title="Copy to clipboard"
                 >
-                  <GoCopy className="text-lg" />
+                  <GoCopy className="text-lg xl:text-xl" />
                 </button>
                 <button
                   onClick={handleExcel}
-                  className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 p-2 rounded-lg"
+                  className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
+                  title="Export to Excel"
                 >
-                  <FaFileExcel className="text-lg" />
+                  <FaFileExcel className="text-lg xl:text-xl" />
                 </button>
                 <button
                   onClick={handlePDF}
-                  className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 p-2 rounded-lg"
+                  className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
+                  title="Export to PDF"
                 >
-                  <FaFilePdf className="text-lg" />
+                  <FaFilePdf className="text-lg xl:text-xl" />
                 </button>
               </div>
             </div>
@@ -502,16 +524,24 @@ const EmployeeView = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-2xl border border-blue-100 w-full max-w-4xl p-8 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Mass Shift Update</h2>
-              <button onClick={() => setOpenMassModal(false)}><RxCross2 className="text-2xl" /></button>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Mass Shift Update
+              </h2>
+              <button onClick={() => setOpenMassModal(false)}>
+                <RxCross2 className="text-2xl" />
+              </button>
             </div>
 
             <div className="grid grid-cols-3 gap-6 mb-6">
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-1 block">Start Date</label>
+                <label className="text-sm font-semibold text-gray-700 mb-1 block">
+                  Start Date
+                </label>
                 <input
                   value={formData.startdate}
-                  onChange={(e) => setFormData({ ...formData, startdate: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, startdate: e.target.value })
+                  }
                   onClick={() => setshowstartSpinner(true)}
                   className="w-full border rounded-lg p-2"
                   placeholder="dd/mm/yyyy"
@@ -525,10 +555,14 @@ const EmployeeView = () => {
                 )}
               </div>
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-1 block">End Date</label>
+                <label className="text-sm font-semibold text-gray-700 mb-1 block">
+                  End Date
+                </label>
                 <input
                   value={formData.enddate}
-                  onChange={(e) => setFormData({ ...formData, enddate: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, enddate: e.target.value })
+                  }
                   onClick={() => setshowendSpinner(true)}
                   className="w-full border rounded-lg p-2"
                   placeholder="dd/mm/yyyy"
@@ -576,15 +610,21 @@ const EmployeeView = () => {
                     const k = d.toLocaleDateString("en-GB");
                     return (
                       <div key={k} className="p-2 border rounded-lg bg-gray-50">
-                        <p className="text-xs font-bold text-blue-600 mb-1">{k}</p>
+                        <p className="text-xs font-bold text-blue-600 mb-1">
+                          {k}
+                        </p>
                         <select
                           className="w-full text-xs p-1 border rounded"
                           value={shifts[k] || ""}
-                          onChange={(e) => setShifts({ ...shifts, [k]: e.target.value })}
+                          onChange={(e) =>
+                            setShifts({ ...shifts, [k]: e.target.value })
+                          }
                         >
                           <option value="">Shift</option>
                           {shiftMasters.map((s) => (
-                            <option key={s.id} value={s.id}>{s.shift_name}</option>
+                            <option key={s.id} value={s.id}>
+                              {s.shift_name}
+                            </option>
                           ))}
                           <option value="Off">Off</option>
                         </select>
@@ -596,8 +636,18 @@ const EmployeeView = () => {
             )}
 
             <div className="flex justify-end gap-4 mt-8">
-              <button onClick={() => setOpenMassModal(false)} className="px-6 py-2 border rounded-lg font-semibold">Cancel</button>
-              <button onClick={handleApplyMassRoster} className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold">Apply to {selectedEmployees.length} Employees</button>
+              <button
+                onClick={() => setOpenMassModal(false)}
+                className="px-6 py-2 border rounded-lg font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleApplyMassRoster}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold"
+              >
+                Apply to {selectedEmployees.length} Employees
+              </button>
             </div>
           </div>
         </div>

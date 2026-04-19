@@ -35,12 +35,6 @@ const LeaveRequestApproval = () => {
     fetchPendingRequests();
   }, []);
 
-  const inputStyle =
-    "text-lg w-full border border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
-
-  const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
-
   // Single Approve/ Reject
   const updateStatus = async (id, value) => {
     const item = requests.find((r) => r.id === id);
@@ -193,15 +187,17 @@ const LeaveRequestApproval = () => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm xl:text-base placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all"
+                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
               />
             </div>
           </div>
         </div>
 
         {/* Table Section */}
-        <div className="overflow-x-auto min-h-[350px]"
-          style={{scrollbarWidth:"none"}}>
+        <div
+          className="overflow-x-auto min-h-[350px]"
+          style={{ scrollbarWidth: "none" }}
+        >
           <table className="w-full text-[17px] text-gray-700">
             <thead>
               <tr className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-blue-100/50">
@@ -377,33 +373,41 @@ const LeaveRequestApproval = () => {
 
           <div className="flex gap-2">
             <button
-              disabled={currentPage === 1}
+              disabled={currentPage == 1}
               onClick={() => setCurrentPage(1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+              title="First page"
             >
               First
             </button>
+
             <button
-              disabled={currentPage === 1}
+              disabled={currentPage == 1}
               onClick={() => setCurrentPage(currentPage - 1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+              title="Previous page"
             >
               <GrPrevious />
             </button>
-            <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-bold min-w-[45px] text-center">
+
+            <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
               {currentPage}
             </div>
+
             <button
-              disabled={currentPage === totalPages}
+              disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(currentPage + 1)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+              title="Next page"
             >
               <GrNext />
             </button>
+
             <button
-              disabled={currentPage === totalPages}
+              disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(totalPages)}
-              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+              className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+              title="Last page"
             >
               Last
             </button>
@@ -414,8 +418,10 @@ const LeaveRequestApproval = () => {
       {/* Modal Section */}
       {openModal && selectedItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-5xl max-h-[90vh] overflow-y-auto p-8"
-          style={{scrollbarWidth:"none"}}>
+          <div
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1000px] max-h-[90vh] overflow-y-auto p-8"
+            style={{ scrollbarWidth: "none" }}
+          >
             <div className="flex justify-between items-center mb-8 pb-4 border-b border-blue-100/30">
               <h2 className="text-xl font-bold text-slate-800">
                 Leave Application Details

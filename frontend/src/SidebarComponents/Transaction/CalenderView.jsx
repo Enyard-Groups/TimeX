@@ -26,6 +26,13 @@ const CalenderView = () => {
   const [employeeOptions, setEmployeeOptions] = useState([]);
   const [shiftMasters, setShiftMasters] = useState([]);
 
+   const inputStyle =
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
+
+  const labelStyle =
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
+
+
   const getHeaders = () => {
     const token = localStorage.getItem("token");
     return {
@@ -61,12 +68,6 @@ const CalenderView = () => {
       [key]: value,
     }));
   };
-
-  const inputStyle =
-    "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
-
-  const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -230,7 +231,7 @@ const CalenderView = () => {
         <div className="grid md:grid-cols-3 gap-6">
           {/* Start Date */}
           <div>
-            <label className="text-base font-semibold text-gray-700 mb-2 block">
+            <label className={labelStyle}>
               Start Date <span className="text-red-500">*</span>
             </label>
             <input
@@ -242,7 +243,7 @@ const CalenderView = () => {
                 setshowendSpinner(false);
               }}
               placeholder="dd/mm/yyyy"
-              className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+              className={inputStyle}
             />
 
             {showstartSpinner && (
@@ -258,7 +259,7 @@ const CalenderView = () => {
 
           {/* End Date */}
           <div>
-            <label className="text-base font-semibold text-gray-700 mb-2 block">
+            <label className={labelStyle}>
               End Date <span className="text-red-500">*</span>
             </label>
             <input
@@ -272,7 +273,7 @@ const CalenderView = () => {
               placeholder={
                 !formData.startdate ? "Select Start Date" : "dd/mm/yyyy"
               }
-              className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2  rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+              className={inputStyle}
               disabled={!formData.startdate}
             />
 
@@ -302,8 +303,8 @@ const CalenderView = () => {
               labelName="location"
               formData={formData}
               setFormData={setFormData}
-              inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
-              labelStyle="text-base font-semibold text-gray-700 mb-2 block"
+              inputStyle={inputStyle}
+              labelStyle={labelStyle}
             />
           </div>
 
@@ -327,8 +328,8 @@ const CalenderView = () => {
               labelName="employee"
               formData={formData}
               setFormData={setFormData}
-              inputStyle="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
-              labelStyle="text-base font-semibold text-gray-700 mb-2 block"
+              inputStyle={inputStyle}
+              labelStyle={labelStyle}
             />
           </div>
 

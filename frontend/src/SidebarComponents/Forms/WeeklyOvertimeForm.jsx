@@ -20,19 +20,6 @@ import axios from "axios";
 const API_URL = "http://localhost:3000/api/form/weeklyOvertime";
 
 const WeeklyOvertimeForm = () => {
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
-    try {
-      const date = new Date(dateStr);
-      if (isNaN(date.getTime())) return dateStr;
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
-    } catch (e) {
-      return dateStr;
-    }
-  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState([]);
@@ -51,9 +38,10 @@ const WeeklyOvertimeForm = () => {
   const [locations, setLocations] = useState([]);
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
+
   const labelStyle =
-    "text-sm xl:text-base  focus:outline-none font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
 
   const defaultFormData = {
     employee_name: "",
@@ -135,7 +123,7 @@ const WeeklyOvertimeForm = () => {
   useEffect(() => {
     if (formData.employee_name && mode !== "view") {
       const selectedEmp = employees.find(
-        (emp) => emp.full_name === formData.employee_name
+        (emp) => emp.full_name === formData.employee_name,
       );
       if (selectedEmp) {
         setFormData((prev) => ({
@@ -300,13 +288,21 @@ const WeeklyOvertimeForm = () => {
   };
 
   const handleCopy = () => {
-    const header = ["Employee Name", "Enrollment ID", "Designation", "Date"].join("\t");
+    const header = [
+      "Employee Name",
+      "Enrollment ID",
+      "Designation",
+      "Date",
+    ].join("\t");
 
     const rows = requestData
       .map((item) => {
-        return [item.employee_name, item.enrollment_id, item.designation, formatDate(item.created_at)].join(
-          "\t",
-        );
+        return [
+          item.employee_name,
+          item.enrollment_id,
+          item.designation,
+          item.created_at,
+        ].join("\t");
       })
       .join("\n");
 
@@ -321,7 +317,7 @@ const WeeklyOvertimeForm = () => {
       EmployeeName: item.employee_name,
       EnrollmentID: item.enrollment_id,
       Designation: item.designation,
-      Date: formatDate(item.created_at),
+      Date: item.created_at,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -335,12 +331,22 @@ const WeeklyOvertimeForm = () => {
   const handlePDF = () => {
     const doc = new jsPDF("landscape");
 
-    const tableColumn = ["Employee Name", "Enrollment ID", "Designation", "Date"];
+    const tableColumn = [
+      "Employee Name",
+      "Enrollment ID",
+      "Designation",
+      "Date",
+    ];
 
     const tableRows = [];
 
     requestData.forEach((item) => {
-      const row = [item.employee_name, item.enrollment_id, item.designation, formatDate(item.created_at)];
+      const row = [
+        item.employee_name,
+        item.enrollment_id,
+        item.designation,
+        item.created_at,
+      ];
 
       tableRows.push(row);
     });
@@ -377,7 +383,7 @@ const WeeklyOvertimeForm = () => {
                 setFormData(defaultFormData);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -392,7 +398,7 @@ const WeeklyOvertimeForm = () => {
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
                 <label className="text-sm xl:text-base  font-medium text-gray-600">
-                  Show
+                  Display
                 </label>
                 <select
                   value={entriesPerPage}
@@ -400,7 +406,7 @@ const WeeklyOvertimeForm = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60 transition-all"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -417,24 +423,24 @@ const WeeklyOvertimeForm = () => {
                 <div className="flex gap-2">
                   <button
                     onClick={handleCopy}
-                    className="text-xl px-3 py-1 text-gray-800 hover:text-blue-600 transition-colors"
-                    title="Copy"
+                    className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
+                    title="Copy to clipboard"
                   >
-                    <GoCopy />
+                    <GoCopy className="text-lg xl:text-xl" />
                   </button>
                   <button
                     onClick={handleExcel}
-                    className="text-xl px-3 py-1 text-green-700 hover:text-green-800 transition-colors"
-                    title="Excel"
+                    className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
+                    title="Export to Excel"
                   >
-                    <FaFileExcel />
+                    <FaFileExcel className="text-lg xl:text-xl" />
                   </button>
                   <button
                     onClick={handlePDF}
-                    className="text-xl px-3 py-1 text-red-600 hover:text-red-800 transition-colors"
-                    title="PDF"
+                    className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
+                    title="Export to PDF"
                   >
-                    <FaFilePdf />
+                    <FaFilePdf className="text-lg xl:text-xl" />
                   </button>
                 </div>
               </div>
@@ -463,7 +469,7 @@ const WeeklyOvertimeForm = () => {
                   <th className="py-3 px-6 font-semibold text-gray-700 text-center">
                     Submitted Date
                   </th>
-                  <th className="py-3 px-6 font-semibold text-gray-700">
+                  <th className="py-3 px-6 font-semibold text-center  text-gray-700">
                     Action
                   </th>
                 </tr>
@@ -502,14 +508,14 @@ const WeeklyOvertimeForm = () => {
                       <td className="py-3 px-6 font-medium text-gray-900 text-center">
                         {item.employee_name}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono">
+                      <td className="py-3 px-6 hidden md:table-cell text-center  text-gray-600 font-mono">
                         {item.enrollment_id}
                       </td>
                       <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono text-center">
                         {item.designation}
                       </td>
                       <td className="py-3 px-6 text-gray-600 text-center">
-                        {formatDate(item.created_at)}
+                        {item.created_at}
                       </td>
                       <td className="py-3 px-6 text-center">
                         <div className="flex justify-center gap-3">
@@ -567,7 +573,7 @@ const WeeklyOvertimeForm = () => {
 
             <div className="flex gap-2">
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
                 title="First page"
@@ -576,7 +582,7 @@ const WeeklyOvertimeForm = () => {
               </button>
 
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
                 title="Previous page"
@@ -589,7 +595,7 @@ const WeeklyOvertimeForm = () => {
               </div>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
                 title="Next page"
@@ -598,7 +604,7 @@ const WeeklyOvertimeForm = () => {
               </button>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(totalPages)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
                 title="Last page"
@@ -730,7 +736,7 @@ const WeeklyOvertimeForm = () => {
                     </label>
                   </div>
 
-                  <div className="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                  <div className="rounded-xl border border-gray-200 shadow-sm">
                     <div className="hidden md:grid grid-cols-[48px_1fr_1fr_1fr_1fr_80px_1fr_60px] bg-slate-100 text-gray-700 font-bold border-b border-gray-200 text-sm">
                       <div className="p-3 text-center">#</div>
                       <div className="p-3 text-center">Day</div>
@@ -788,7 +794,7 @@ const WeeklyOvertimeForm = () => {
                                 Date
                               </span>
                               <input
-                                value={formatDate(row.date) || ""}
+                                value={row.date || ""}
                                 onClick={() =>
                                   mode !== "view" && setActiveDateIndex(index)
                                 }
@@ -822,13 +828,14 @@ const WeeklyOvertimeForm = () => {
                                   mode !== "view" && setActiveInTimeIndex(index)
                                 }
                               >
-                                {row.startTime instanceof Date
-                                  ? row.startTime.toLocaleTimeString([], {
+                                {row.startTime
+                                  ? new Date(row.startTime).toLocaleTimeString([], {
                                       hour12: false,
                                       hour: "2-digit",
                                       minute: "2-digit",
+                                      second:"2-digit"
                                     })
-                                  : row.startTime || "00:00"}
+                                  : row.startTime || "00:00:00"}
                               </div>
                               {activeInTimeIndex === index && (
                                 <SpinnerTimePicker
@@ -851,13 +858,14 @@ const WeeklyOvertimeForm = () => {
                                   setActiveOutTimeIndex(index)
                                 }
                               >
-                                {row.endTime instanceof Date
-                                  ? row.endTime.toLocaleTimeString([], {
+                                {row.endTime
+                                  ? new Date(row.endTime).toLocaleTimeString([], {
                                       hour12: false,
                                       hour: "2-digit",
+                                      second:"2-digit",
                                       minute: "2-digit",
                                     })
-                                  : row.endTime || "00:00"}
+                                  : row.endTime || "00:00:00"}
                               </div>
                               {activeOutTimeIndex === index && (
                                 <SpinnerTimePicker
@@ -987,10 +995,11 @@ const WeeklyOvertimeForm = () => {
                                   checkerSignMode: "upload",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.checkerSignMode === "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.checkerSignMode === "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                              }`}
                             >
                               Upload
                             </button>
@@ -1003,10 +1012,11 @@ const WeeklyOvertimeForm = () => {
                                   checkerSignMode: "draw",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.checkerSignMode === "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.checkerSignMode === "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                              }`}
                             >
                               Sign Here
                             </button>
@@ -1175,10 +1185,11 @@ const WeeklyOvertimeForm = () => {
                                   approverSignMode: "upload",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.approverSignMode === "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.approverSignMode === "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                              }`}
                             >
                               Upload
                             </button>
@@ -1191,10 +1202,11 @@ const WeeklyOvertimeForm = () => {
                                   approverSignMode: "draw",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.approverSignMode === "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.approverSignMode === "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                              }`}
                             >
                               Sign Here
                             </button>
@@ -1403,10 +1415,11 @@ const WeeklyOvertimeForm = () => {
                                   verifierSignMode: "upload",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.verifierSignMode === "upload"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.verifierSignMode === "upload"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                              }`}
                             >
                               Upload
                             </button>
@@ -1419,10 +1432,11 @@ const WeeklyOvertimeForm = () => {
                                   verifierSignMode: "draw",
                                 }))
                               }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.verifierSignMode === "draw"
+                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                formData.verifierSignMode === "draw"
                                   ? "bg-[#0f172a] text-white border-[#0f172a]"
                                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
+                              }`}
                             >
                               Sign Here
                             </button>

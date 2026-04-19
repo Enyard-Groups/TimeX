@@ -51,9 +51,10 @@ const PatrollingChecklist = () => {
   }, []);
 
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base  rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
+
   const labelStyle =
-    "text-sm xl:text-base  focus:outline-none font-semibold text-gray-700 mb-2 block";
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
 
   const defaultFormData = {
     name: "",
@@ -288,7 +289,7 @@ const PatrollingChecklist = () => {
                 setFormData(defaultFormData);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -303,7 +304,7 @@ const PatrollingChecklist = () => {
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
                 <label className="text-sm xl:text-base  font-medium text-gray-600">
-                  Show
+                  Display
                 </label>
                 <select
                   value={entriesPerPage}
@@ -311,7 +312,7 @@ const PatrollingChecklist = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60 transition-all"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -328,24 +329,24 @@ const PatrollingChecklist = () => {
                 <div className="flex gap-2">
                   <button
                     onClick={handleCopy}
-                    className="text-xl px-3 py-1 text-gray-800 hover:text-blue-600 transition-colors"
-                    title="Copy"
+                    className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
+                    title="Copy to clipboard"
                   >
-                    <GoCopy />
+                    <GoCopy className="text-lg xl:text-xl" />
                   </button>
                   <button
                     onClick={handleExcel}
-                    className="text-xl px-3 py-1 text-green-700 hover:text-green-800 transition-colors"
-                    title="Excel"
+                    className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
+                    title="Export to Excel"
                   >
-                    <FaFileExcel />
+                    <FaFileExcel className="text-lg xl:text-xl" />
                   </button>
                   <button
                     onClick={handlePDF}
-                    className="text-xl px-3 py-1 text-red-600 hover:text-red-800 transition-colors"
-                    title="PDF"
+                    className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
+                    title="Export to PDF"
                   >
-                    <FaFilePdf />
+                    <FaFilePdf className="text-lg xl:text-xl" />
                   </button>
                 </div>
               </div>
@@ -374,7 +375,7 @@ const PatrollingChecklist = () => {
                   <th className="py-3 px-6 hidden lg:table-cell font-semibold text-gray-700 text-center">
                     Shift Timing
                   </th>
-                  <th className="py-3 px-6 font-semibold text-gray-700">
+                  <th className="py-3 px-6 font-semibold  text-center text-gray-700">
                     Action
                   </th>
                 </tr>
@@ -410,27 +411,28 @@ const PatrollingChecklist = () => {
                       <td className="py-3 px-6 hidden sm:table-cell text-gray-900 text-center">
                         {startIndex + index + 1}
                       </td>
-                      <td className="py-3 px-6 font-medium text-gray-900">
+                      <td className="py-3 px-6 font-medium text-center  text-gray-900">
                         {item.name}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600 font-mono">
+                      <td className="py-3 px-6 hidden md:table-cell  text-center text-gray-600 font-mono">
                         {item.staff_id}
                       </td>
-                      <td className="py-3 px-6 hidden md:table-cell text-gray-600">
+                      <td className="py-3 px-6 hidden md:table-cell  text-center text-gray-600">
                         {item.school_name}
                       </td>
                       <td className="py-3 px-6 hidden lg:table-cell text-gray-600 text-center font-mono">
                         {item.shift_timing
-                          ? item.shift_timing instanceof Date
-                            ? item.shift_timing.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: false,
-                            })
+                          ? item.shift_timing 
+                            ? new Date(item.shift_timing).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second:"2-digit",
+                                hour12: false,
+                              })
                             : item.shift_timing
                           : "-"}
                       </td>
-                      <td className="py-3 px-6">
+                      <td className="py-3 px-6 text-center ">
                         <div className="flex justify-center gap-3">
                           <FaEye
                             onClick={() => {
@@ -485,7 +487,7 @@ const PatrollingChecklist = () => {
 
             <div className="flex gap-2">
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
                 title="First page"
@@ -494,7 +496,7 @@ const PatrollingChecklist = () => {
               </button>
 
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
                 title="Previous page"
@@ -507,7 +509,7 @@ const PatrollingChecklist = () => {
               </div>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
                 title="Next page"
@@ -516,7 +518,7 @@ const PatrollingChecklist = () => {
               </button>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(totalPages)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
                 title="Last page"
@@ -602,12 +604,8 @@ const PatrollingChecklist = () => {
                       }
                     >
                       {formData.shift_timing
-                        ? formData.shift_timing instanceof Date
-                          ? formData.shift_timing.toLocaleTimeString([], {
-                            hour12: false,
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })
+                        ? formData.shift_timing 
+                          ? new Date(formData.shift_timing).toLocaleTimeString()
                           : formData.shift_timing
                         : "HH:MM:SS"}
                     </div>
@@ -761,65 +759,89 @@ const PatrollingChecklist = () => {
                     <table className="w-full text-center text-sm xl:text-base">
                       <thead>
                         <tr className="bg-slate-50 text-gray-400 text-[16px]  tracking-tighter">
-                          <th className="p-3 border-b border-r border-gray-100 hidden sm:table-cell">
+                          <th className="p-3 border-b border-r border-gray-100 hidden sm:table-cell text-center ">
                             #
                           </th>
-                          <th className="p-3 border-b border-r border-gray-100">
+                          <th className=" text-center p-3 border-b border-r border-gray-100">
                             Section/Task
                           </th>
                           <th
-                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            className="p-3 text-center  border-b border-r border-gray-100 hidden xl:table-cell"
                             colSpan="2"
                           >
                             Unattended
                           </th>
                           <th
-                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            className="p-3  text-center border-b border-r border-gray-100 hidden xl:table-cell"
                             colSpan="2"
                           >
                             Hazardous
                           </th>
                           <th
-                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            className="p-3  text-center border-b border-r border-gray-100 hidden xl:table-cell"
                             colSpan="2"
                           >
                             IAS
                           </th>
                           <th
-                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            className="p-3  text-center border-b border-r border-gray-100 hidden xl:table-cell"
                             colSpan="2"
                           >
                             Gems Assets
                           </th>
                           <th
-                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            className="p-3  text-center border-b border-r border-gray-100 hidden xl:table-cell"
                             colSpan="2"
                           >
                             Vehicle
                           </th>
                           <th
-                            className="p-3 border-b border-r border-gray-100 hidden xl:table-cell"
+                            className="p-3  text-center border-b border-r border-gray-100 hidden xl:table-cell"
                             colSpan="2"
                           >
                             PTW
                           </th>
-                          <th className="p-3 border-b">Action</th>
+                          <th className="p-3 text-center  border-b">Action</th>
                         </tr>
                         <tr className="bg-slate-50/50 text-[13px] font-black text-slate-400">
-                          <th className="border-r hidden sm:table-cell"></th>
-                          <th className="border-r"></th>
-                          <th className="border-r hidden xl:table-cell">OK</th>
-                          <th className="border-r hidden xl:table-cell">OCC</th>
-                          <th className="border-r hidden xl:table-cell">OK</th>
-                          <th className="border-r hidden xl:table-cell">OCC</th>
-                          <th className="border-r hidden xl:table-cell">OK</th>
-                          <th className="border-r hidden xl:table-cell">OCC</th>
-                          <th className="border-r hidden xl:table-cell">OK</th>
-                          <th className="border-r hidden xl:table-cell">OCC</th>
-                          <th className="border-r hidden xl:table-cell">OK</th>
-                          <th className="border-r hidden xl:table-cell">OCC</th>
-                          <th className="border-r hidden xl:table-cell">OK</th>
-                          <th className="border-r hidden xl:table-cell">OCC</th>
+                          <th className="border-r text-center  hidden sm:table-cell"></th>
+                          <th className="border-r text-center "></th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OK
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OCC
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OK
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OCC
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OK
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OCC
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OK
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OCC
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OK
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OCC
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OK
+                          </th>
+                          <th className="border-r  text-center hidden xl:table-cell">
+                            OCC
+                          </th>
                           <th></th>
                         </tr>
                       </thead>
@@ -836,54 +858,54 @@ const PatrollingChecklist = () => {
                               key={index}
                               className="border-b border-gray-50 hover:bg-blue-50 transition-colors font-medium"
                             >
-                              <td className="p-3 border-r border-gray-50 hidden sm:table-cell text-gray-400 font-mono">
+                              <td className="p-3  text-center border-r border-gray-50 hidden sm:table-cell text-gray-400 font-mono">
                                 {index + 1}
                               </td>
                               <td className="p-3 border-r border-gray-50 text-center">
-                                <span className="text-blue-700 font-bold block text-sm">
+                                <span className="text-blue-700 text-center  font-bold block text-sm">
                                   {row.section}
                                 </span>
-                                <span className="text-gray-900">
+                                <span className="text-gray-900 text-center ">
                                   {row.taskList}
                                 </span>
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell">
                                 {row.unattended_ok ? "✅" : "❌"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
                                 {row.unattended_reported_to || "-"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell">
                                 {row.hazardous_ok ? "✅" : "❌"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
                                 {row.hazardous_reported_to || "-"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell">
                                 {row.ias_ok ? "✅" : "❌"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
                                 {row.ias_reported_to || "-"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell">
                                 {row.gems_assets_ok ? "✅" : "❌"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
                                 {row.gems_assets_reported_to || "-"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell">
                                 {row.vehicle_parking_ok ? "✅" : "❌"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
                                 {row.vehicle_parking_reported_to || "-"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell">
                                 {row.ptw_ok ? "✅" : "❌"}
                               </td>
-                              <td className="border-r border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
+                              <td className="border-r text-center  border-gray-50 hidden xl:table-cell text-sm text-gray-500 italic">
                                 {row.ptw_reported_to || "-"}
                               </td>
-                              <td className="p-3">
+                              <td className="p-3 text-center ">
                                 <FaEye
                                   className="text-blue-400 hover:text-blue-600 cursor-pointer mx-auto xl:text-xl"
                                   onClick={() => {
@@ -917,10 +939,11 @@ const PatrollingChecklist = () => {
                               eSignMode: "upload",
                             }))
                           }
-                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.eSignMode === "upload"
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                            formData.eSignMode === "upload"
                               ? "bg-[#0f172a] text-white border-[#0f172a]"
                               : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                            }`}
+                          }`}
                         >
                           Upload
                         </button>
@@ -933,10 +956,11 @@ const PatrollingChecklist = () => {
                               eSignMode: "draw",
                             }))
                           }
-                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.eSignMode === "draw"
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                            formData.eSignMode === "draw"
                               ? "bg-[#0f172a] text-white border-[#0f172a]"
                               : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                            }`}
+                          }`}
                         >
                           Sign Here
                         </button>

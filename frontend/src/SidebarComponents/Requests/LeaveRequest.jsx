@@ -67,10 +67,10 @@ const LeaveRequest = () => {
   };
 
   const inputStyle =
-    "text-lg w-full  border  border-[oklch(0.923_0.003_48.717)] bg-white px-2 py-1 rounded-md text-[oklch(0.147_0.004_49.25)] placeholder-[oklch(0.37_0.001_106.424)] focus:outline-none focus:ring-2 focus:ring-[oklch(0.645_0.246_16.439)]";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
   const labelStyle =
-    "text-lg font-medium text-[oklch(0.147_0.004_49.25)] mb-1 block";
+    "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
@@ -84,9 +84,12 @@ const LeaveRequest = () => {
     return dateStr;
   };
 
-  const filteredLeave = leave.filter((x) =>
-    (x.employee_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()) ||
-    (x.company_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
+  const filteredLeave = leave.filter(
+    (x) =>
+      (x.employee_name || "")
+        .toLowerCase()
+        .startsWith(searchTerm.toLowerCase()) ||
+      (x.company_name || "").toLowerCase().startsWith(searchTerm.toLowerCase()),
   );
 
   const endIndex = currentPage * entriesPerPage;
@@ -140,7 +143,12 @@ const LeaveRequest = () => {
         }
       }
     }
-  }, [formData.start_date, formData.end_date, formData.is_half_day, formData.number_of_days]);
+  }, [
+    formData.start_date,
+    formData.end_date,
+    formData.is_half_day,
+    formData.number_of_days,
+  ]);
 
   // Fetch data
   const fetchData = async () => {
@@ -398,7 +406,7 @@ const LeaveRequest = () => {
                   setFormData(emptyForm);
                   setOpenModal(true);
                 }}
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
               >
                 + Add New
               </button>
@@ -421,7 +429,7 @@ const LeaveRequest = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm cursor-pointer hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 transition-all"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
                   <option value={10}>10</option>
                   <option value={25}>25</option>
@@ -441,7 +449,7 @@ const LeaveRequest = () => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 rounded-lg text-sm xl:text-base placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                  className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
                 />
                 <div className="flex gap-2">
                   <button
@@ -449,21 +457,21 @@ const LeaveRequest = () => {
                     className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
                     title="Copy to clipboard"
                   >
-                    <GoCopy className="text-lg" />
+                    <GoCopy className="text-lg xl:text-xl" />
                   </button>
                   <button
                     onClick={handleExcel}
                     className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
                     title="Export to Excel"
                   >
-                    <FaFileExcel className="text-lg" />
+                    <FaFileExcel className="text-lg xl:text-xl" />
                   </button>
                   <button
                     onClick={handlePDF}
                     className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
                     title="Export to PDF"
                   >
-                    <FaFilePdf className="text-lg" />
+                    <FaFilePdf className="text-lg xl:text-xl" />
                   </button>
                 </div>
               </div>
@@ -629,33 +637,41 @@ const LeaveRequest = () => {
 
             <div className="flex gap-2">
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="First page"
               >
                 First
               </button>
+
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Previous page"
               >
                 <GrPrevious />
               </button>
+
               <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
                 {currentPage}
               </div>
+
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
+                title="Next page"
               >
                 <GrNext />
               </button>
+
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(totalPages)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                title="Last page"
               >
                 Last
               </button>
@@ -670,7 +686,7 @@ const LeaveRequest = () => {
             style={{ scrollbarWidth: "none" }}
           >
             <div
-              className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8"
+              className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1000px] max-h-[90vh] overflow-y-auto p-8"
               style={{ scrollbarWidth: "none" }}
             >
               {/* Modal Header */}
@@ -710,8 +726,8 @@ const LeaveRequest = () => {
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
-                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                    labelStyle="text-sm xl:text-base font-bold text-gray-700 mb-2 block"
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
                   />
                 </div>
 
@@ -731,14 +747,14 @@ const LeaveRequest = () => {
                     formData={formData}
                     setFormData={setFormData}
                     disabled={mode === "view"}
-                    inputStyle="w-full bg-white border-2 border-gray-200 text-gray-900 px-4 py-2.5 xl:text-base rounded-xl placeholder-gray-400 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200 transition-all shadow-sm font-medium"
-                    labelStyle="text-sm xl:text-base font-bold text-gray-700 mb-2 block"
+                    inputStyle={inputStyle}
+                    labelStyle={labelStyle}
                   />
                 </div>
 
                 {/* First Date of Absence */}
                 <div>
-                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     First Date of Absence{" "}
                     <span className="text-red-500">*</span>
                   </label>
@@ -749,7 +765,7 @@ const LeaveRequest = () => {
                     onClick={() => setFromDateSpinner(true)}
                     disabled={mode === "view"}
                     placeholder="dd/mm/yyyy"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className={inputStyle}
                   />
                   {fromDateSpinner && (
                     <SpinnerDatePicker
@@ -764,7 +780,7 @@ const LeaveRequest = () => {
 
                 {/* Last Date of Absence */}
                 <div>
-                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Last Date of Absence <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -774,7 +790,7 @@ const LeaveRequest = () => {
                     onClick={() => setToDateSpinner(true)}
                     disabled={mode === "view"}
                     placeholder="dd/mm/yyyy"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className={inputStyle}
                   />
                   {toDateSpinner && (
                     <SpinnerDatePicker
@@ -789,7 +805,7 @@ const LeaveRequest = () => {
 
                 {/* Resume Duty On */}
                 <div>
-                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Resume Duty On
                   </label>
                   <input
@@ -799,7 +815,7 @@ const LeaveRequest = () => {
                     onClick={() => setShowResumeSpinner(true)}
                     disabled={mode === "view"}
                     placeholder="dd/mm/yyyy"
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className={inputStyle}
                   />
                   {showResumeSpinner && (
                     <SpinnerDatePicker
@@ -814,7 +830,7 @@ const LeaveRequest = () => {
 
                 {/* Number of Days */}
                 <div>
-                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Number of Days <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -822,13 +838,13 @@ const LeaveRequest = () => {
                     value={formData.number_of_days}
                     placeholder="Number of Days"
                     disabled
-                    className="w-full bg-gray-100 border border-gray-200 text-gray-500 px-3 py-2 xl:text-base rounded-lg cursor-not-allowed transition-all shadow-sm"
+                    className={inputStyle}
                   />
                 </div>
 
                 {/* Leave Pending of Approvals */}
                 <div>
-                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Leave Pending of Approvals (No of Days)
                   </label>
                   <input
@@ -837,13 +853,13 @@ const LeaveRequest = () => {
                     onChange={handleChange}
                     placeholder="Leave Pending of Approvals (No of Days)"
                     disabled={mode === "view"}
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className={inputStyle}
                   />
                 </div>
 
                 {/* Leave Balance */}
                 <div>
-                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Leave Balance
                   </label>
                   <input
@@ -852,13 +868,13 @@ const LeaveRequest = () => {
                     onChange={handleChange}
                     placeholder="Leave Balance"
                     disabled={mode === "view"}
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className={inputStyle}
                   />
                 </div>
 
                 {/* Contact */}
                 <div>
-                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Contact <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -867,13 +883,13 @@ const LeaveRequest = () => {
                     onChange={handleChange}
                     placeholder="Contact"
                     disabled={mode === "view"}
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className={inputStyle}
                   />
                 </div>
 
                 {/* Email */}
                 <div>
-                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Email <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -883,13 +899,13 @@ const LeaveRequest = () => {
                     onChange={handleChange}
                     placeholder="Email"
                     disabled={mode === "view"}
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className={inputStyle}
                   />
                 </div>
 
                 {/* Leave Reason */}
                 <div className="lg:col-span-2">
-                  <label className="text-sm xl:text-base font-semibold text-gray-700 mb-2 block">
+                  <label className={labelStyle}>
                     Leave Reason
                   </label>
                   <input
@@ -898,7 +914,7 @@ const LeaveRequest = () => {
                     onChange={handleChange}
                     placeholder="Reason for Leave"
                     disabled={mode === "view"}
-                    className="w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className={inputStyle}
                   />
                 </div>
 
@@ -912,7 +928,7 @@ const LeaveRequest = () => {
                     disabled={mode === "view"}
                     className="w-5 h-5 cursor-pointer accent-blue-500 disabled:cursor-not-allowed"
                   />
-                  <label className="text-gray-700 text-sm xl:text-base font-semibold cursor-pointer">
+                  <label className={`pt-1.5 ${labelStyle}`}>
                     Is HalfDay
                   </label>
                 </div>

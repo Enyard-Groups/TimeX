@@ -19,19 +19,6 @@ import axios from "axios";
 const API_URL = "http://localhost:3000/api/form/shiftHandOver";
 
 const ShiftHandOver = () => {
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
-    try {
-      const date = new Date(dateStr);
-      if (isNaN(date.getTime())) return dateStr;
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
-    } catch (e) {
-      return dateStr;
-    }
-  };
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState([]);
@@ -243,7 +230,7 @@ const ShiftHandOver = () => {
           item.school_name,
           item.time_in ? item.time_in.toLocaleTimeString() : "",
           item.time_out ? item.time_out.toLocaleTimeString() : "",
-          formatDate(item.date),
+          item.date,
         ].join("\t");
       })
       .join("\n");
@@ -259,7 +246,7 @@ const ShiftHandOver = () => {
       SchoolName: item.school_name,
       TimeIn: item.time_in ? item.time_in.toLocaleTimeString() : "",
       TimeOut: item.time_out ? item.time_out.toLocaleTimeString() : "",
-      Date: formatDate(item.date),
+      Date: item.date,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -282,7 +269,7 @@ const ShiftHandOver = () => {
         item.school_name,
         item.time_in ? item.time_in.toLocaleTimeString() : "",
         item.time_out ? item.time_out.toLocaleTimeString() : "",
-        formatDate(item.date),
+        item.date,
       ];
 
       tableRows.push(row);
@@ -320,7 +307,7 @@ const ShiftHandOver = () => {
                 setFormData(defaultFormData);
                 setOpenModal(true);
               }}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg xl:text-lg  border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               + Add New
             </button>
@@ -335,7 +322,7 @@ const ShiftHandOver = () => {
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
                 <label className="text-sm xl:text-base  font-medium text-gray-600">
-                  Show
+                  Display
                 </label>
                 <select
                   value={entriesPerPage}
@@ -343,7 +330,7 @@ const ShiftHandOver = () => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm xl:text-base  focus:ring-2 focus:ring-blue-500/60 transition-all"
+                  className="bg-blue-50 border border-blue-200 text-gray-900 px-3 py-1.5 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/60 transition-all"
                 >
                   {[10, 25, 50, 100].map((v) => (
                     <option key={v} value={v}>
@@ -360,24 +347,24 @@ const ShiftHandOver = () => {
                 <div className="flex gap-2">
                   <button
                     onClick={handleCopy}
-                    className="text-xl px-3 py-1 text-gray-800 hover:text-blue-600 transition-colors"
-                    title="Copy"
+                    className="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 p-2.5 rounded-lg transition-all"
+                    title="Copy to clipboard"
                   >
-                    <GoCopy />
+                    <GoCopy className="text-lg xl:text-xl" />
                   </button>
                   <button
                     onClick={handleExcel}
-                    className="text-xl px-3 py-1 text-green-700 hover:text-green-800 transition-colors"
-                    title="Excel"
+                    className="bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 hover:text-green-700 p-2.5 rounded-lg transition-all"
+                    title="Export to Excel"
                   >
-                    <FaFileExcel />
+                    <FaFileExcel className="text-lg xl:text-xl" />
                   </button>
                   <button
                     onClick={handlePDF}
-                    className="text-xl px-3 py-1 text-red-600 hover:text-red-800 transition-colors"
-                    title="PDF"
+                    className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 p-2.5 rounded-lg transition-all"
+                    title="Export to PDF"
                   >
-                    <FaFilePdf />
+                    <FaFilePdf className="text-lg xl:text-xl" />
                   </button>
                 </div>
               </div>
@@ -447,37 +434,42 @@ const ShiftHandOver = () => {
                       </td>
                       <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.time_in
-                          ? item.time_in.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: false,
-                          })
+                          ? new Date(item.time_in).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second:"2-digit",
+                              hour12: false,
+                            })
                           : "-"}
                       </td>
                       <td className="py-3 px-6 hidden md:table-cell text-gray-600 text-center">
                         {item.time_out
-                          ? item.time_out.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: false,
-                          })
+                          ? new Date(item.time_out).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second:"2-digit",
+                              hour12: false,
+                            })
                           : "-"}
                       </td>
                       <td className="py-3 px-6 hidden lg:table-cell text-gray-600 text-center">
-                        {formatDate(item.date)}
+                        {item.date}
                       </td>
-                      <td className="py-3 px-6">
+                      <td className="py-3 px-6 text-center">
                         <div className="flex justify-center gap-3">
                           <FaEye
                             onClick={() => {
-                              /* View Logic */ setMode("view");
+                              setFormData(item);
+                              setMode("view");
                               setOpenModal(true);
                             }}
                             className="text-blue-500 hover:text-blue-700 xl:text-xl  cursor-pointer transition-all"
                           />
                           <FaPen
                             onClick={() => {
-                              /* Edit Logic */ setMode("edit");
+                              setFormData(item);
+                              setEditId(item.id);
+                              setMode("edit");
                               setOpenModal(true);
                             }}
                             className="text-green-500 hover:text-green-700 xl:text-xl  cursor-pointer transition-all"
@@ -516,7 +508,7 @@ const ShiftHandOver = () => {
 
             <div className="flex gap-2">
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
                 title="First page"
@@ -525,7 +517,7 @@ const ShiftHandOver = () => {
               </button>
 
               <button
-                disabled={currentPage === 1}
+                disabled={currentPage == 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
                 title="Previous page"
@@ -538,7 +530,7 @@ const ShiftHandOver = () => {
               </div>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
                 title="Next page"
@@ -547,7 +539,7 @@ const ShiftHandOver = () => {
               </button>
 
               <button
-                disabled={currentPage === totalPages}
+                disabled={currentPage == totalPages}
                 onClick={() => setCurrentPage(totalPages)}
                 className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
                 title="Last page"
@@ -566,7 +558,7 @@ const ShiftHandOver = () => {
           style={{ scrollbarWidth: "none" }}
         >
           <div
-            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1400px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1500px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
             style={{ scrollbarWidth: "none" }}
           >
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-blue-100/30">
@@ -613,7 +605,7 @@ const ShiftHandOver = () => {
                     </label>
                     <input
                       name="date"
-                      value={formatDate(formData.date) || ""}
+                      value={formData.date || ""}
                       onClick={() =>
                         mode !== "view" && setShowDateSpinner(true)
                       }
@@ -670,13 +662,23 @@ const ShiftHandOver = () => {
                         }
                       >
                         {formData.time_out
-                          ? formData.time_out.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: false,
-                            })
+                          ? new Date(formData.time_out).toLocaleTimeString()
                           : "HH:MM:SS"}
                       </div>
+                      {showOutTimePicker && (
+                        <div className="absolute  ml-8 sm:ml-14 md:ml-16 lg:ml-20 ">
+                          <SpinnerTimePicker
+                            value={formData.time_out}
+                            onChange={(date) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                time_out: date,
+                              }))
+                            }
+                            onClose={() => setShowOutTimePicker(false)}
+                          />
+                        </div>
+                      )}
                     </div>
                     <div className="p-3 md:p-2 flex flex-col md:block">
                       <span className="md:hidden text-[10px] uppercase text-center text-gray-400 font-bold mb-1">
@@ -689,13 +691,23 @@ const ShiftHandOver = () => {
                         }
                       >
                         {formData.time_in
-                          ? formData.time_in.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: false,
-                            })
+                          ? new Date(formData.time_in).toLocaleTimeString()
                           : "HH:MM:SS"}
                       </div>
+                      {showInTimePicker && (
+                        <div className="absolute ml-8 sm:ml-14 md:ml-16 lg:ml-20 ">
+                          <SpinnerTimePicker
+                            value={formData.time_in}
+                            onChange={(date) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                time_in: date,
+                              }))
+                            }
+                            onClose={() => setShowInTimePicker(false)}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -857,10 +869,11 @@ const ShiftHandOver = () => {
                                     preparedBySignMode: "upload",
                                   }))
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.preparedBySignMode === "upload"
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.preparedBySignMode === "upload"
                                     ? "bg-[#0f172a] text-white border-[#0f172a]"
                                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                  }`}
+                                }`}
                               >
                                 Upload
                               </button>
@@ -872,10 +885,11 @@ const ShiftHandOver = () => {
                                     preparedBySignMode: "draw",
                                   }))
                                 }
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.preparedBySignMode === "draw"
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.preparedBySignMode === "draw"
                                     ? "bg-[#0f172a] text-white border-[#0f172a]"
                                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                  }`}
+                                }`}
                               >
                                 Sign Here
                               </button>
@@ -976,14 +990,16 @@ const ShiftHandOver = () => {
                         )}
 
                         {/* Draw Area */}
-                        {formData.preparedBySignMode === "draw" && (
-                          <SignPad
-                            fieldName="preparedBySign_drawn"
-                            formData={formData}
-                            setFormData={setFormData}
-                            mode={mode}
-                          />
-                        )}
+                        <div className="flex justify-center">
+                          {formData.preparedBySignMode === "draw" && (
+                            <SignPad
+                              fieldName="preparedBySign_drawn"
+                              formData={formData}
+                              setFormData={setFormData}
+                              mode={mode}
+                            />
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -993,74 +1009,58 @@ const ShiftHandOver = () => {
                       <label className="block text-sm xl:text-base font-bold text-gray-500 uppercase tracking-widest mb-4 text-center">
                         Acknowledged By (Incoming Party)
                       </label>
-                      <div className=" flex justify-center ">
-                        {/* Toggle Tabs — hidden in view mode */}
-                        {mode !== "view" && (
-                          <div className="flex gap-2 mb-4 mt-2">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  acknowledgedBySignMode: "upload",
-                                }))
-                              }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.acknowledgedBySignMode === "upload"
-                                  ? "bg-[#0f172a] text-white border-[#0f172a]"
-                                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
-                            >
-                              Upload
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  acknowledgedBySignMode: "draw",
-                                }))
-                              }
-                              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${formData.acknowledgedBySignMode === "draw"
-                                  ? "bg-[#0f172a] text-white border-[#0f172a]"
-                                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                                }`}
-                            >
-                              Sign Here
-                            </button>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Upload Area */}
-                      {formData.acknowledgedBySignMode === "upload" && (
-                        <div>
-                          <input
-                            type="file"
-                            id="acknowledgedBySignUpload"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) => {
-                              const file = e.target.files[0];
-                              if (file) {
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  acknowledged_by_sign: file,
-                                  acknowledgedBySignPreview:
-                                    URL.createObjectURL(file),
-                                }));
-                              }
-                            }}
-                          />
-
-                          {/* Drag & Drop Zone */}
+                      <div className=" flex flex-col">
+                        <div className=" flex justify-center ">
+                          {/* Toggle Tabs — hidden in view mode */}
                           {mode !== "view" && (
-                            <label
-                              htmlFor="acknowledgedBySignUpload"
-                              onDragOver={(e) => e.preventDefault()}
-                              onDrop={(e) => {
-                                e.preventDefault();
-                                const file = e.dataTransfer.files[0];
-                                if (file && file.type.startsWith("image/")) {
+                            <div className="flex gap-2 mb-4 mt-2">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    acknowledgedBySignMode: "upload",
+                                  }))
+                                }
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.acknowledgedBySignMode === "upload"
+                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                Upload
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    acknowledgedBySignMode: "draw",
+                                  }))
+                                }
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                                  formData.acknowledgedBySignMode === "draw"
+                                    ? "bg-[#0f172a] text-white border-[#0f172a]"
+                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                Sign Here
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Upload Area */}
+                        {formData.acknowledgedBySignMode === "upload" && (
+                          <div>
+                            <input
+                              type="file"
+                              id="acknowledgedBySignUpload"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file) {
                                   setFormData((prev) => ({
                                     ...prev,
                                     acknowledged_by_sign: file,
@@ -1069,70 +1069,92 @@ const ShiftHandOver = () => {
                                   }));
                                 }
                               }}
-                              className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
-                            >
-                              <svg
-                                className="w-8 h-8 text-gray-400 mb-2"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={1.5}
-                                  d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
-                                />
-                              </svg>
-                              <p className="text-sm text-gray-500">
-                                Drag & drop or{" "}
-                                <span className="text-[#0f172a] font-medium underline">
-                                  browse
-                                </span>
-                              </p>
-                              <p className="text-xs text-gray-400 mt-1">
-                                PNG, JPG, SVG supported
-                              </p>
-                            </label>
-                          )}
+                            />
 
-                          {/* Preview */}
-                          {formData.acknowledgedBySignPreview && (
-                            <div className="mt-4 flex items-center gap-3">
-                              <img
-                                src={formData.acknowledgedBySignPreview}
-                                alt="Signature Preview"
-                                className="h-16 border rounded bg-white p-2 shadow-sm"
-                              />
-                              {mode !== "view" && (
-                                <button
-                                  type="button"
-                                  onClick={() =>
+                            {/* Drag & Drop Zone */}
+                            {mode !== "view" && (
+                              <label
+                                htmlFor="acknowledgedBySignUpload"
+                                onDragOver={(e) => e.preventDefault()}
+                                onDrop={(e) => {
+                                  e.preventDefault();
+                                  const file = e.dataTransfer.files[0];
+                                  if (file && file.type.startsWith("image/")) {
                                     setFormData((prev) => ({
                                       ...prev,
-                                      acknowledged_by_sign: null,
-                                      acknowledgedBySignPreview: null,
-                                    }))
+                                      acknowledged_by_sign: file,
+                                      acknowledgedBySignPreview:
+                                        URL.createObjectURL(file),
+                                    }));
                                   }
-                                  className="text-xs text-red-500 hover:underline"
+                                }}
+                                className="flex flex-col items-center justify-center w-full max-w-md h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+                              >
+                                <svg
+                                  className="w-8 h-8 text-gray-400 mb-2"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
                                 >
-                                  Remove
-                                </button>
-                              )}
-                            </div>
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={1.5}
+                                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4"
+                                  />
+                                </svg>
+                                <p className="text-sm text-gray-500">
+                                  Drag & drop or{" "}
+                                  <span className="text-[#0f172a] font-medium underline">
+                                    browse
+                                  </span>
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  PNG, JPG, SVG supported
+                                </p>
+                              </label>
+                            )}
+
+                            {/* Preview */}
+                            {formData.acknowledgedBySignPreview && (
+                              <div className="mt-4 flex items-center gap-3">
+                                <img
+                                  src={formData.acknowledgedBySignPreview}
+                                  alt="Signature Preview"
+                                  className="h-16 border rounded bg-white p-2 shadow-sm"
+                                />
+                                {mode !== "view" && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        acknowledged_by_sign: null,
+                                        acknowledgedBySignPreview: null,
+                                      }))
+                                    }
+                                    className="text-xs text-red-500 hover:underline"
+                                  >
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Draw Area */}
+                        <div className="flex justify-center">
+                          {formData.acknowledgedBySignMode === "draw" && (
+                            <SignPad
+                              fieldName="acknowlegedBySign_drawn"
+                              formData={formData}
+                              setFormData={setFormData}
+                              mode={mode}
+                            />
                           )}
                         </div>
-                      )}
-
-                      {/* Draw Area */}
-                      {formData.acknowledgedBySignMode === "draw" && (
-                        <SignPad
-                          fieldName="acknowlegedBySign_drawn"
-                          formData={formData}
-                          setFormData={setFormData}
-                          mode={mode}
-                        />
-                      )}
+                      </div>
                     </div>
                   </div>
                 </div>
