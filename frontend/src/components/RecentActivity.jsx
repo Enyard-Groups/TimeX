@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRecord } from "../action";
+import { FaEye } from "react-icons/fa6";
+import { RxCross2 } from "react-icons/rx";
 
 const deviceStyles = {
   mobile: "bg-blue-50 text-blue-600",
@@ -28,10 +30,18 @@ const timeToSeconds = (time) => {
   return h * 3600 + m * 60 + s;
 };
 
+const inputStyle =
+  "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
+
+const labelStyle =
+  "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
+
 const RecentActivity = () => {
   const [currentTime, setCurrentTime] = useState("");
   const dispatch = useDispatch();
   const records = useSelector((state) => state.record);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [openModal, setopenModal] = useState(false);
 
   useEffect(() => {
     dispatch(fetchRecord());
@@ -85,10 +95,11 @@ const RecentActivity = () => {
         <thead>
           <tr className="border-b border-gray-100 font-semibold text-gray-600">
             <td className="px-2 pb-2 pl-4 sm:pl-12">Name</td>
-            <td className="text-center">Check in</td>
-            <td className="text-center">Check out</td>
-            <td className="text-center">Device</td>
-            <td className="text-center">Location</td>
+            <td className="text-center hidden sm:table-cell">Check in</td>
+            <td className="text-center hidden sm:table-cell">Check out</td>
+            <td className="text-center hidden md:table-cell">Device</td>
+            <td className="text-center hidden md:table-cell">Location</td>
+            <td className="text-center md:hidden table-cell">Action</td>
           </tr>
         </thead>
 
@@ -139,7 +150,8 @@ const RecentActivity = () => {
                       </div>
                       <div>
                         <p className="font-medium text-gray-800 leading-none">
-                          {user?.username?.charAt(0)?.toUpperCase() + user?.username?.slice(1) || "Unknown"}
+                          {user?.username?.charAt(0)?.toUpperCase() +
+                            user?.username?.slice(1) || "Unknown"}
                         </p>
                         <p className="text-sm text-gray-400">
                           ID:{user.userID}
@@ -149,21 +161,21 @@ const RecentActivity = () => {
                   </td>
 
                   {/* Check In */}
-                  <td className="p-2 text-center text-xs">
+                  <td className="p-2 text-center text-xs hidden sm:table-cell">
                     <span className="px-2 py-1 font-medium rounded-full bg-[#e3e9f7] text-gray-700">
                       {user.checkIn || "--"}
                     </span>
                   </td>
 
                   {/* Check Out */}
-                  <td className="p-2 text-center text-xs">
+                  <td className="p-2 text-center text-xs hidden sm:table-cell">
                     <span className="px-2 py-1 font-medium rounded-full bg-[#e3f6f7] text-gray-700">
                       {isCheckout ? user.checkOut : "--"}
                     </span>
                   </td>
 
                   {/* Device */}
-                  <td className="p-2 text-center">
+                  <td className="p-2 text-center hidden md:table-cell">
                     {device ? (
                       <span
                         className={`px-2 py-1 rounded-full ${
@@ -178,7 +190,7 @@ const RecentActivity = () => {
                   </td>
 
                   {/* Location */}
-                  <td className="p-2 text-center">
+                  <td className="p-2 text-center hidden md:table-cell">
                     {location ? (
                       <span className="text-gray-700">
                         {location.lat} , {location.lng}
@@ -187,12 +199,113 @@ const RecentActivity = () => {
                       "--"
                     )}
                   </td>
+                  <td className="p-2 text-center flex justify-center md:hidden table-cell">
+                    <button
+                      onClick={() => {
+                        setSelectedItem(user);
+                        setopenModal(true);
+                      }}
+                      className="text-blue-500 hover:text-blue-700 hover:bg-blue-100 p-1.5 rounded-lg transition-all"
+                      title="View"
+                    >
+                      <FaEye className="text-lg lg:text-xl  3xl:text-2xl" />
+                    </button>
+                  </td>
                 </tr>
               );
             })
           )}
         </tbody>
       </table>
+
+      {openModal && selectedItem && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-2 overflow-y-auto"
+          style={{ scrollbarWidth: "none" }}
+          onClick={() => setopenModal(false)}
+        >
+          <div
+            className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl border border-blue-100/50 w-full max-w-[1000px] max-h-[90vh] overflow-y-auto p-8 animate-in fade-in zoom-in duration-200"
+            style={{ scrollbarWidth: "none" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center pb-4 border-b border-blue-100/30 mb-6">
+              <h1 className="text-xl font-bold text-gray-900">Details</h1>
+              <button
+                onClick={() => setopenModal(false)}
+                className="text-gray-400 hover:text-red-600 transition"
+              >
+                <RxCross2 className="text-2xl" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label className={labelStyle}>Username</label>
+                <input
+                  type="text"
+                  value={selectedItem.username}
+                  readOnly
+                  className={inputStyle}
+                />
+              </div>
+              <div>
+                <label className={labelStyle}>User ID</label>
+                <input
+                  type="text"
+                  value={selectedItem.userID}
+                  readOnly
+                  className={inputStyle}
+                />
+              </div>
+              <div>
+                <label className={labelStyle}>Check In Time</label>
+                <input
+                  type="text"
+                  value={selectedItem.checkIn}
+                  readOnly
+                  className={inputStyle}
+                />
+              </div>
+              <div>
+                <label className={labelStyle}>Check Out Time</label>
+                <input
+                  type="text"
+                  value={selectedItem.checkOut}
+                  readOnly
+                  className={inputStyle}
+                />
+              </div>
+              <div>
+                <label className={labelStyle}>Device Used</label>
+                <input
+                  type="text"
+                  value={
+                    selectedItem.checkinDevice ||
+                    selectedItem.checkoutDevice ||
+                    "--"
+                  }
+                  readOnly
+                  className={inputStyle}
+                />
+              </div>
+              <div>
+                <label className={labelStyle}>Location</label>
+                <input
+                  type="text"
+                  value={
+                    selectedItem.location
+                      ? `${selectedItem.location.lat} , ${selectedItem.location.lng}`
+                      : "--"
+                  }
+                  readOnly
+                  className={inputStyle}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
