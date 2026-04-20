@@ -20,43 +20,56 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
 
   const getWeeklyProgressData = () => {
     const today = new Date();
-    const dayOfWeek = today.getDay();
+    const dayOfWeek = today.getDay(); // 0 (Sun) to 6 (Sat)
 
-    if (dayOfWeek === 0)
-      return ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => ({
-        day: d,
-        presentToday: 0,
-        absent: 0,
-        leave: 0,
-        isLast: false,
-      }));
+    // We want Monday (1) to be our first visible day.
+    // We'll create a 7-item array where index 0 is a hidden "start" buffer.
+    const weekNames = ["", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const currentDayIndex = dayOfWeek === 0 ? 6 : dayOfWeek;
 
-    const currentDayIndex = dayOfWeek - 1;
-    const recentHistory = attendanceData.slice(-(currentDayIndex + 1));
+    const recentHistory = attendanceData.slice(-currentDayIndex);
 
-    const weekData = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
-      (dayName, index) => {
-        if (index <= currentDayIndex && recentHistory[index]) {
-          const d = recentHistory[index];
-          return {
-            day: dayName,
-            presentToday: d.presentToday || 0,
-            absent: (d.totalEmployees || 0) - (d.presentToday || 0),
-            leave: d.leave || 0,
-            isToday: index === currentDayIndex,
-          };
-        }
+    return weekNames.map((dayName, index) => {
+      // Hidden buffer point (index 0) to force a line segment on Monday
+      if (index === 0) {
+        const firstData = recentHistory[0] || {};
+        return {
+          day: "",
+          presentToday: firstData.presentToday || 0,
+          absent:
+            (firstData.totalEmployees || 0) - (firstData.presentToday || 0),
+          leave: firstData.leave || 0,
+          isToday: false,
+          isBuffer: true, // Mark this so we can hide the dot
+        };
+      }
+
+      // Days with actual data
+      if (index <= currentDayIndex && recentHistory[index - 1]) {
+        const d = recentHistory[index - 1];
         return {
           day: dayName,
-          presentToday: 0,
-          absent: 0,
-          leave: 0,
-          isToday: false,
+          presentToday: d.presentToday ?? 0,
+          absent: (d.totalEmployees || 0) - (d.presentToday || 0),
+          leave: d.leave ?? 0,
+          isToday: index === currentDayIndex,
         };
-      },
-    );
-
-    return weekData;
+      }
+      // return {
+      //   day: dayName,
+      //   presentToday: 0,
+      //   absent: 0,
+      //   leave: 0,
+      //   isToday: false,
+      // };
+      return {
+        day: dayName,
+        presentToday: null,
+        absent: null,
+        leave: null,
+        isToday: false,
+      };
+    });
   };
 
   const chartData = getWeeklyProgressData();
@@ -132,45 +145,28 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
               className={`${item.bg} ${item.text} h-full flex flex-col justify-center items-center min-w-[90px] z-10`}
             >
               <span className="text-xs font-medium mb-2">{item.title}</span>
-              <span className={`${item.iconbg} p-2 rounded-full`}>{item.icon}</span>
+              <span className={`${item.iconbg} p-2 rounded-full`}>
+                {item.icon}
+              </span>
             </div>
 
             <div className="flex-1 h-full pt-12 pb-1 pr-1">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={chartData}
-                  margin={{ left: 7, right: 7, bottom: 4, top: 4 }}
+                  margin={{ left: -20, right: 10, bottom: 4, top: 10 }}
                 >
-                  <defs>
-                    <linearGradient
-                      id={`grad-${index}`}
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop
-                        offset="0%"
-                        stopColor={item.color}
-                        stopOpacity={0.2}
-                      />
-                      <stop
-                        offset="100%"
-                        stopColor={item.color}
-                        stopOpacity={0}
-                      />
-                    </linearGradient>
-                  </defs>
                   <Area
                     type="monotone"
                     dataKey={item.dataKey}
                     stroke={item.color}
                     strokeWidth={3}
                     fill={`url(#grad-${index})`}
+                    connectNulls={false}
                     isAnimationActive={true}
                     dot={(props) => {
                       const { cx, cy, payload } = props;
-                      if (payload.isToday) {
+                      if (payload.isToday && payload[item.dataKey] !== null) {
                         return (
                           <circle
                             cx={cx}

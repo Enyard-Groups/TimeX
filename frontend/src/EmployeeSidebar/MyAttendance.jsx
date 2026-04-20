@@ -1,4 +1,3 @@
-/* eslint-disable no-empty */
 import React, { useState, useMemo, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
@@ -6,7 +5,6 @@ import Navbar from "../components/Navbar";
 // ── CONFIG ─────────────────────────────────────────────────────
 const TOTAL_ANNUAL_LEAVES = 24;
 const WORK_HOURS_PER_DAY = 5;
-const PRESENT_THRESHOLD_SECONDS = 1 * 3600;
 
 // ── HELPERS ────────────────────────────────────────────────────
 const formatSeconds = (s) => {
@@ -24,8 +22,16 @@ const isSameDay = (d1, d2) =>
   d1.getMonth() === d2.getMonth() &&
   d1.getDate() === d2.getDate();
 
+// FIXED: Key now includes the year to prevent ghost data from previous years
 const formatDateKey = (date) =>
-  date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
+const deriveStatus = (totalSeconds) =>
+  totalSeconds > 0 ? "Present" : "Absent";
 
 // ── STATUS CONFIG ───────────────────────────────────────────────
 const STATUS = {
@@ -50,6 +56,13 @@ const STATUS = {
     border: "border-violet-200",
     label: "Leave",
   },
+  "Missed Punch": {
+    bg: "bg-orange-50",
+    text: "text-orange-700",
+    dot: "bg-orange-400",
+    border: "border-orange-200",
+    label: "Missed Punch",
+  },
   Missed: {
     bg: "bg-fuchsia-50",
     text: "text-fuchsia-800",
@@ -71,9 +84,16 @@ const STATUS = {
     border: "border-blue-300",
     label: "Today",
   },
+  "In Progress": {
+    bg: "bg-blue-50",
+    text: "text-blue-700",
+    dot: "bg-blue-400",
+    border: "border-blue-200",
+    label: "In Progress",
+  },
 };
 
-// ── STAT CARD ───────────────────────────────────────────────────
+// ── UI COMPONENTS ───────────────────────────────────────────────
 const StatCard = ({ label, value, sub, iconBg, iconText, icon }) => (
   <div className="bg-white border border-blue-50 rounded-2xl p-4 flex justify-between items-center gap-3 shadow-sm">
     <div className="min-w-0">
@@ -95,7 +115,6 @@ const StatCard = ({ label, value, sub, iconBg, iconText, icon }) => (
   </div>
 );
 
-// ── LEAVE PROGRESS BAR ──────────────────────────────────────────
 const LeaveBar = ({ label, used, total, barColor, textColor }) => {
   const pct = Math.min(100, Math.round((used / total) * 100));
   return (
@@ -119,9 +138,9 @@ const LeaveBar = ({ label, used, total, barColor, textColor }) => {
   );
 };
 
-// ── LEGEND PILL ─────────────────────────────────────────────────
 const LegendPill = ({ status }) => {
   const s = STATUS[status];
+  if (!s) return null;
   return (
     <span
       className={`inline-flex items-center gap-1.5 text-[11px] font-semibold ${s.text} ${s.bg} border ${s.border} rounded-full px-2.5 py-0.5`}
@@ -137,19 +156,20 @@ const MyAttendance = ({ user }) => {
   const records = useSelector((state) => state.record);
   const today = new Date();
 
+  // DATE OF JOINING
+  const dateofJoin = useMemo(() => new Date("Feb 25, 2026"), []);
+
   const [currentMonth, setCurrentMonth] = useState(
     new Date(today.getFullYear(), today.getMonth(), 1),
   );
   const [hoveredDay, setHoveredDay] = useState(null);
   const [now, setNow] = useState(new Date());
 
-  // ── Clock tick ──
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
 
-  // ── isPunchedIn — stable, only re-reads when punch changes ──
   const [isPunchedIn, setIsPunchedIn] = useState(() => {
     try {
       return (
@@ -160,16 +180,12 @@ const MyAttendance = ({ user }) => {
     }
   });
 
-  // ── activeSession — stable on mount, only updates when punch state changes ──
   const readActiveSession = () => {
     try {
       const saved = localStorage.getItem("activeRecord_" + user.id);
       if (!saved) return null;
       const parsed = JSON.parse(saved);
-      const todayKey = new Date().toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      });
+      const todayKey = formatDateKey(new Date());
       if (parsed?.date !== todayKey) return null;
       return parsed;
     } catch {
@@ -178,136 +194,67 @@ const MyAttendance = ({ user }) => {
   };
 
   const [activeSession, setActiveSession] = useState(() => readActiveSession());
-
-  // Re-sync activeSession and isPunchedIn on storage changes (cross-tab or punch events)
-  useEffect(() => {
-    const onStorage = () => {
-      setActiveSession(readActiveSession());
-      try {
-        setIsPunchedIn(
-          JSON.parse(localStorage.getItem("isPunchedIn_" + user.id)) || false,
-        );
-      } catch {
-        setIsPunchedIn(false);
-      }
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, [user.id]);
-
-  // Also poll once per second only for isPunchedIn to catch same-tab punch changes
-  useEffect(() => {
-    try {
-      const val =
-        JSON.parse(localStorage.getItem("isPunchedIn_" + user.id)) || false;
-      if (val !== isPunchedIn) {
-        setIsPunchedIn(val);
-        setActiveSession(readActiveSession());
-      }
-    } catch {}
-  }, [now]);
-
-  const isReduxReady = records.length > 0;
-
   const userRecords = useMemo(
     () => records.filter((r) => r.userID === user.id),
     [records, user.id],
   );
 
-  // ── BUILD DAY MAP ──
   const dayMap = useMemo(() => {
-    // Step 1: Group all closed records by date
     const closedByDate = {};
     userRecords.forEach((r) => {
       if (r.status === "In Progress") return;
-      if (!closedByDate[r.date]) closedByDate[r.date] = [];
-      closedByDate[r.date].push(r);
-    });
-
-    // Step 2: Sum closed session seconds per date
-    const closedSecsByDate = {};
-    Object.entries(closedByDate).forEach(([date, recs]) => {
-      closedSecsByDate[date] = recs.reduce(
-        (acc, r) => acc + (r._sessionSeconds || 0),
-        0,
-      );
-    });
-
-    // Step 3: Pick latest closed record per date for metadata
-    const latestClosedByDate = {};
-    Object.entries(closedByDate).forEach(([date, recs]) => {
-      latestClosedByDate[date] = recs.reduce(
-        (best, r) => (r.id > (best?.id || 0) ? r : best),
-        null,
-      );
+      const dateObj = r._inTime ? new Date(r._inTime) : new Date(r.date);
+      const key = formatDateKey(dateObj); // key now contains year
+      if (!closedByDate[key]) closedByDate[key] = [];
+      closedByDate[key].push(r);
     });
 
     const map = {};
-
-    // Step 4: Build map from closed records
-    Object.entries(closedSecsByDate).forEach(([date, totalSecs]) => {
-      const latest = latestClosedByDate[date];
-      if (!latest) return;
-      const derivedStatus =
-        totalSecs >= PRESENT_THRESHOLD_SECONDS ? "Present" : "Absent";
+    Object.entries(closedByDate).forEach(([date, recs]) => {
+      const totalSecs = recs.reduce(
+        (acc, r) => acc + (r._sessionSeconds || 0),
+        0,
+      );
+      const latest = recs.reduce(
+        (best, r) => (r.id > (best?.id || 0) ? r : best),
+        null,
+      );
+      const hasMissedPunch = recs.some(
+        (r) =>
+          typeof r.checkOut === "string" &&
+          r.checkOut.startsWith("Missed Punch"),
+      );
       map[date] = {
         ...latest,
-        status: derivedStatus,
+        status: hasMissedPunch ? "Missed Punch" : deriveStatus(totalSecs),
         _totalDaySeconds: totalSecs,
+        _countStatus: totalSecs > 0 ? "Present" : "Absent",
       };
     });
 
-    // Step 5: Handle live In Progress session from Redux
+    // Handle Live Session
     const inProgressRecord = userRecords.find(
       (r) => r.status === "In Progress",
     );
-    if (inProgressRecord) {
-      const session =
-        activeSession?.id === inProgressRecord.id
-          ? activeSession
-          : inProgressRecord;
-      const key = session.date;
+    if (inProgressRecord || (isPunchedIn && activeSession)) {
+      const session = inProgressRecord || activeSession;
+      const key = formatDateKey(
+        session._inTime ? new Date(session._inTime) : new Date(),
+      );
       const inTime = session._inTime ? new Date(session._inTime) : now;
-      const liveSessionSecs = Math.max(0, Math.floor((now - inTime) / 1000));
-      const prevClosed = closedSecsByDate[key] || 0;
-      const liveTotalSecs = prevClosed + liveSessionSecs;
-
-      if (liveTotalSecs >= PRESENT_THRESHOLD_SECONDS) {
-        if (!map[key] || liveTotalSecs > (map[key]._totalDaySeconds || 0)) {
-          map[key] = {
-            ...session,
-            status: "Present",
-            _totalDaySeconds: liveTotalSecs,
-          };
-        }
-      }
+      const liveSecs = Math.max(0, Math.floor((now - inTime) / 1000));
+      const prevClosed = map[key]?._totalDaySeconds || 0;
+      map[key] = {
+        ...session,
+        status: "In Progress",
+        _totalDaySeconds: prevClosed + liveSecs,
+        _countStatus: "Present",
+      };
     }
-
-    // Step 6: Safety net — ONLY use localStorage if Redux hasn't loaded yet
-    // This prevents the flicker on refresh where Redux is empty momentarily
-    if (!isReduxReady && isPunchedIn && activeSession && !inProgressRecord) {
-      const key = activeSession.date;
-      const inTime = activeSession._inTime
-        ? new Date(activeSession._inTime)
-        : now;
-      const liveSessionSecs = Math.max(0, Math.floor((now - inTime) / 1000));
-      const prevClosed = closedSecsByDate[key] || 0;
-      const liveTotalSecs = prevClosed + liveSessionSecs;
-      if (
-        liveTotalSecs >= PRESENT_THRESHOLD_SECONDS &&
-        (!map[key] || liveTotalSecs > (map[key]._totalDaySeconds || 0))
-      ) {
-        map[key] = {
-          ...activeSession,
-          status: "Present",
-          _totalDaySeconds: liveTotalSecs,
-        };
-      }
-    }
-
     return map;
-  }, [userRecords, now, activeSession, isPunchedIn, isReduxReady]);
+  }, [userRecords, now, activeSession, isPunchedIn]);
 
+  // ── CALENDAR LOGIC ──────────────────────────────────────────────
   const calendarDays = useMemo(() => {
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
@@ -322,39 +269,89 @@ const MyAttendance = ({ user }) => {
       const date = new Date(year, month, d);
       const key = formatDateKey(date);
       const record = dayMap[key] || null;
-      const dow = date.getDay();
-      const isWeekend = dow === 0;
+      const isWeekend = date.getDay() === 0;
       const isToday = isSameDay(date, today);
       const isFuture = date > today;
 
-      let status = null;
-      if (record)
-        status = record.status; // record always wins
-      else if (isWeekend) status = "Weekend";
-      else if (isToday) status = "Today"; // only if no record yet
+      // Join Date Filter
+      const joinComparison = new Date(dateofJoin);
+      joinComparison.setHours(0, 0, 0, 0);
+      const isBeforeJoin = date < joinComparison;
 
-      days.push({ date, key, record, status, isWeekend, isToday, isFuture });
+      let status = null;
+      if (isBeforeJoin) status = null;
+      else if (record) status = record.status;
+      else if (isWeekend) status = "Weekend";
+      else if (isToday) status = "Today";
+
+      days.push({
+        date,
+        key,
+        record,
+        status,
+        isWeekend,
+        isToday,
+        isFuture,
+        isBeforeJoin,
+      });
     }
     return days;
-  }, [currentMonth, dayMap, today]);
+  }, [currentMonth, dayMap, today, dateofJoin]);
 
-  // ── MONTH STATS — only count days that have a record ──
+  // Stats calculation
   const monthStats = useMemo(() => {
     let present = 0,
       absent = 0,
       leave = 0,
       totalSecs = 0;
     calendarDays.forEach((cell) => {
-      if (!cell || cell.isFuture || cell.isWeekend) return;
-      if (!cell.record) return; // skip days with no record (including today if not punched)
-      const r = cell.record;
-      if (r.status === "Present") present++;
-      else if (r.status === "Absent") absent++;
-      else if (r.status === "Leave") leave++;
-      totalSecs += r._totalDaySeconds || 0;
+      if (!cell || cell.isFuture || cell.isWeekend || cell.isBeforeJoin) return;
+      if (!cell.record) return;
+      const countStatus = cell.record._countStatus || cell.record.status;
+      if (countStatus === "Present") present++;
+      else if (countStatus === "Absent") absent++;
+      else if (cell.record.status === "Leave") leave++;
+      totalSecs += cell.record._totalDaySeconds || 0;
     });
     return { present, absent, leave, totalSecs };
   }, [calendarDays]);
+
+  const workDaysInMonth = calendarDays.filter(
+    (c) => c && !c.isWeekend && !c.isFuture && !c.isBeforeJoin,
+  ).length;
+  const efficiencyPct =
+    workDaysInMonth > 0
+      ? Math.round((monthStats.present / workDaysInMonth) * 100)
+      : 0;
+  const efficiencyColor =
+    efficiencyPct >= 80
+      ? "text-green-600"
+      : efficiencyPct >= 60
+        ? "text-amber-600"
+        : "text-red-600";
+
+  // Navigation Restrictions
+  const isJoinMonth = useMemo(() => {
+    return (
+      currentMonth.getMonth() === dateofJoin.getMonth() &&
+      currentMonth.getFullYear() === dateofJoin.getFullYear()
+    );
+  }, [currentMonth, dateofJoin]);
+
+  const isCurrentMonth =
+    currentMonth.getMonth() === today.getMonth() &&
+    currentMonth.getFullYear() === today.getFullYear();
+
+  const prevMonth = () =>
+    !isJoinMonth &&
+    setCurrentMonth(
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1),
+    );
+  const nextMonth = () =>
+    !isCurrentMonth &&
+    setCurrentMonth(
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1),
+    );
 
   const annualLeaveUsed = useMemo(() => {
     const map = {};
@@ -366,60 +363,22 @@ const MyAttendance = ({ user }) => {
 
   const annualLeaveLeft = TOTAL_ANNUAL_LEAVES - annualLeaveUsed;
 
-  const workDaysInMonth = calendarDays.filter(
-    (c) => c && !c.isWeekend && !c.isFuture,
-  ).length;
-
-  const efficiencyPct =
-    workDaysInMonth > 0
-      ? Math.round((monthStats.present / workDaysInMonth) * 100)
-      : 0;
-
-  const efficiencyColor =
-    efficiencyPct >= 80
-      ? "text-green-600"
-      : efficiencyPct >= 60
-        ? "text-amber-600"
-        : "text-red-600";
-
-  const prevMonth = () =>
-    setCurrentMonth(
-      new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1),
-    );
-  const nextMonth = () =>
-    setCurrentMonth(
-      new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1),
-    );
-  const isCurrentMonth =
-    currentMonth.getMonth() === today.getMonth() &&
-    currentMonth.getFullYear() === today.getFullYear();
-
   return (
     <div
       className="min-h-screen flex mb-6 bg-[#0f172a]"
       style={{ scrollbarWidth: "none" }}
     >
       <Navbar user={user} />
-
-      <div
-        className="lg:ml-64 flex-1 px-4 pt-4 mt-3 lg:px-12 pb-10 bg-white rounded-tl-3xl overflow-hidden"
-        style={{ scrollbarWidth: "none" }}
-      >
-        {/* ── PAGE HEADER ── */}
+      <div className="lg:ml-64 flex-1 px-4 pt-4 mt-3 lg:px-12 pb-10 bg-white rounded-tl-3xl overflow-hidden">
         <div className="mb-7 mt-0.5 pl-10 lg:pl-0">
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">
             My Attendance
           </h1>
           <p className="text-sm text-gray-400">
-            {user?.user_name?.charAt(0)?.toUpperCase() +
-              user?.user_name?.slice(1) ||
-              user?.name?.charAt(0)?.toUpperCase() + user?.name?.slice(1) ||
-              "Employee"}{" "}
-            · Full attendance overview
+            {user?.user_name || "Employee"} · Full overview
           </p>
         </div>
 
-        {/* ── STAT CARDS ── */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
           <StatCard
             label="Present"
@@ -463,30 +422,28 @@ const MyAttendance = ({ user }) => {
           />
         </div>
 
-        {/* ── MAIN GRID ── */}
         <div className="grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-5 items-start">
-          {/* ── CALENDAR ── */}
           <div className="bg-white rounded-2xl border border-blue-50 shadow-sm overflow-hidden">
             <div className="flex items-center justify-between p-5 border-b border-gray-50">
               <button
                 onClick={prevMonth}
-                className="w-8 h-8 rounded-lg border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors cursor-pointer text-base"
+                disabled={isJoinMonth}
+                className={`w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center transition-opacity ${isJoinMonth ? "opacity-20 cursor-not-allowed" : "hover:bg-gray-50 cursor-pointer text-gray-500"}`}
               >
                 ‹
               </button>
               <div className="text-center">
-                <div className="text-base font-black text-gray-900 pt-0.5">
+                <div className="text-base font-black text-gray-900 mt-2">
                   {monthName(currentMonth)}
                 </div>
-                <div className="text-[11px] text-gray-400 mt-1">
+                <div className="text-[11px] text-gray-400 mt-2">
                   {workDaysInMonth} working days
                 </div>
               </div>
               <button
                 onClick={nextMonth}
                 disabled={isCurrentMonth}
-                className={`w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-base transition-colors
-                  ${isCurrentMonth ? "bg-gray-50 text-gray-300 cursor-not-allowed" : "bg-white text-gray-500 hover:bg-gray-50 cursor-pointer"}`}
+                className={`w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center transition-opacity ${isCurrentMonth ? "opacity-20 cursor-not-allowed" : "hover:bg-gray-50 cursor-pointer text-gray-500"}`}
               >
                 ›
               </button>
@@ -496,17 +453,28 @@ const MyAttendance = ({ user }) => {
               {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
                 <div
                   key={d}
-                  className={`text-center text-[10px] font-bold uppercase tracking-wider pb-2 ${d === "Sun" ? "text-gray-300" : "text-gray-400"}`}
+                  className="text-center text-[10px] font-bold uppercase tracking-wider text-gray-400"
                 >
                   {d}
                 </div>
               ))}
             </div>
-
             <div className="min-h-[400px]">
               <div className="grid grid-cols-7 auto-rows-[60px] gap-1 px-4 pb-5">
                 {calendarDays.map((cell, idx) => {
                   if (!cell) return <div key={`blank-${idx}`} />;
+                  if (cell.isBeforeJoin) {
+                    return (
+                      <div
+                        key={cell.key}
+                        className="relative rounded-xl text-center h-[60px] py-2 px-1 opacity-20"
+                      >
+                        <div className="text-xs font-bold text-gray-300">
+                          {cell.date.getDate()}
+                        </div>
+                      </div>
+                    );
+                  }
 
                   const s = cell.status ? STATUS[cell.status] : null;
                   const isHovered = hoveredDay === cell.key;
@@ -520,55 +488,42 @@ const MyAttendance = ({ user }) => {
                       }
                       onMouseLeave={() => setHoveredDay(null)}
                       className={`relative rounded-xl text-center h-[60px] py-2 px-1 transition-all duration-150
-                        ${s ? `${s.bg} border ${s.border}` : cell.isFuture ? "border border-transparent" : "bg-gray-50 border border-gray-100"}
-                        ${record ? "cursor-pointer" : "cursor-default"}
-                        ${isHovered && record ? "scale-105 shadow-md z-10" : ""}`}
+                      ${s ? `${s.bg} border ${s.border}` : cell.isFuture ? "border border-transparent" : "bg-gray-50 border border-gray-100"}
+                      ${isHovered && record ? "scale-105 shadow-md z-10" : ""}`}
                     >
                       <div
-                        className={`text-xs mb-1 ${cell.isToday ? "font-black" : "font-bold"} ${s ? s.text : cell.isFuture ? "text-gray-200" : "text-gray-400"}`}
+                        className={`text-xs mb-1 ${cell.isToday ? "font-black" : "font-bold"} ${s ? s.text : "text-gray-400"}`}
                       >
                         {cell.date.getDate()}
                       </div>
-
                       {s && (
                         <div
                           className={`w-1.5 h-1.5 rounded-full mx-auto mb-0.5 ${s.dot}`}
                         />
                       )}
-
                       {record && record._totalDaySeconds > 0 && (
                         <div
                           className={`text-[9px] font-bold leading-none opacity-80 ${s ? s.text : "text-gray-500"}`}
                         >
-                          {Math.floor(record._totalDaySeconds / 3600)}h
-                          {Math.floor((record._totalDaySeconds % 3600) / 60) > 0
-                            ? ` ${Math.floor((record._totalDaySeconds % 3600) / 60)}m`
-                            : ""}
+                          {Math.floor(record._totalDaySeconds / 3600)}h{" "}
+                          {Math.floor((record._totalDaySeconds % 3600) / 60)}m
                         </div>
                       )}
-
-                      {/* Today ring — only when no record yet */}
                       {cell.isToday && !record && (
                         <div className="absolute inset-[-1px] rounded-xl border-2 border-blue-400 pointer-events-none" />
                       )}
 
                       {isHovered && record && (
-                        <div className="absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2 bg-slate-800 text-white rounded-xl px-3 py-2 text-[11px] whitespace-nowrap z-50 shadow-xl pointer-events-none">
+                        <div className="absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2 bg-slate-800 text-white rounded-xl px-3 py-2 text-[11px] z-50 shadow-xl whitespace-nowrap">
                           <div className="font-bold mb-1">{cell.key}</div>
-                          <div className="text-slate-400">
-                            In: {record.checkIn} · Out: {record.checkOut}
+                          <div>In: {record.checkIn}</div>
+                          <div>
+                            Out:{" "}
+                            {record.status === "In Progress"
+                              ? "In Progress"
+                              : record.checkOut}
                           </div>
-                          <div className="text-slate-400 mt-0.5">
-                            {record._totalDaySeconds
-                              ? `Total: ${formatSeconds(record._totalDaySeconds)}`
-                              : "In Progress"}
-                          </div>
-                          <div
-                            className="absolute -bottom-[5px] left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-slate-800"
-                            style={{
-                              clipPath: "polygon(0 0, 100% 0, 50% 100%)",
-                            }}
-                          />
+                          <div className="absolute -bottom-[5px] left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-slate-800 rotate-45" />
                         </div>
                       )}
                     </div>
@@ -576,20 +531,25 @@ const MyAttendance = ({ user }) => {
                 })}
               </div>
             </div>
-
             <div className="flex flex-wrap gap-2 px-5 py-3 border-t border-gray-50">
-              {["Present", "Absent", "Leave", "Missed"].map((s) => (
+              {[
+                "Present",
+                "In Progress",
+                "Missed Punch",
+                "Absent",
+                "Leave",
+              ].map((s) => (
                 <LegendPill key={s} status={s} />
               ))}
             </div>
           </div>
 
-          {/* ── RIGHT PANEL ── */}
           <div className="flex flex-col gap-4">
             <div className="bg-white border border-blue-50 rounded-2xl p-5 shadow-sm">
               <h3 className="text-sm font-black text-gray-900 mb-4 tracking-tight">
                 Leave Balance
               </h3>
+
               <LeaveBar
                 label="Annual Leave"
                 used={annualLeaveUsed}
@@ -597,6 +557,7 @@ const MyAttendance = ({ user }) => {
                 barColor="bg-violet-500"
                 textColor="text-violet-600"
               />
+
               <LeaveBar
                 label="Sick Leave"
                 used={0}
@@ -604,6 +565,7 @@ const MyAttendance = ({ user }) => {
                 barColor="bg-cyan-500"
                 textColor="text-cyan-600"
               />
+
               <LeaveBar
                 label="Casual Leave"
                 used={0}
@@ -611,18 +573,21 @@ const MyAttendance = ({ user }) => {
                 barColor="bg-amber-500"
                 textColor="text-amber-600"
               />
+
               <div
                 className={`mt-4 p-3 rounded-xl border flex items-center gap-3 ${annualLeaveLeft <= 3 ? "bg-red-50 border-red-200" : "bg-green-50 border-green-200"}`}
               >
                 <span className="text-lg">
-                  {annualLeaveLeft <= 3 ? "⚠️" : "✅"}
+                  {annualLeaveLeft <= 3 ? "⚠️" : ""}
                 </span>
+
                 <div>
                   <div
                     className={`text-sm font-bold ${annualLeaveLeft <= 3 ? "text-red-700" : "text-green-700"}`}
                   >
                     {annualLeaveLeft} leaves remaining
                   </div>
+
                   <div className="text-[11px] text-gray-400 mt-0.5">
                     {annualLeaveLeft <= 3
                       ? "Running low this year"
@@ -636,25 +601,37 @@ const MyAttendance = ({ user }) => {
               <h3 className="text-sm font-black text-gray-900 mb-4 tracking-tight">
                 Month Breakdown
               </h3>
+
               {[
                 {
                   label: "Working Days",
+
                   value: workDaysInMonth,
+
                   cls: "text-gray-500",
                 },
+
                 {
                   label: "Present",
+
                   value: monthStats.present,
+
                   cls: "text-green-600",
                 },
+
                 {
                   label: "Absent",
+
                   value: monthStats.absent,
+
                   cls: "text-red-600",
                 },
+
                 {
                   label: "On Leave",
+
                   value: monthStats.leave,
+
                   cls: "text-violet-600",
                 },
               ].map(({ label, value, cls }) => (
@@ -663,11 +640,14 @@ const MyAttendance = ({ user }) => {
                   className="flex justify-between items-center py-2.5 border-b border-gray-50 last:border-0"
                 >
                   <span className="text-sm text-gray-600">{label}</span>
+
                   <span className={`text-sm font-black ${cls}`}>{value}</span>
                 </div>
               ))}
+
               <div className="flex justify-between items-center pt-3 mt-1 border-t border-blue-50">
                 <span className="text-sm text-gray-600">Total Hours</span>
+
                 <span className="text-sm font-black text-blue-700">
                   {formatSeconds(monthStats.totalSecs)}
                 </span>
