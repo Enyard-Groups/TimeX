@@ -95,7 +95,7 @@ export const updateDesignation = async (req, res) => {
   const { name, code, company, department, description, is_active } = req.body;
   try {
     const result = await db.query(
-      'UPDATE designations SET name=$1, code=$2, company=$3, description=$4, is_active=$5 WHERE id=$6 RETURNING *',
+      `UPDATE designations SET name=$1, code=$2, company_id=$3, department_id=$4, description=$5, is_active=$6 WHERE id=$7 RETURNING *`,
       [name, code, company, department, description, is_active, id]
     );
     res.json(result.rows[0]);
@@ -174,9 +174,10 @@ export const deleteShift = async (req, res) => {
 export const getHolidays = async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT h.*, c.name as company_name
+      SELECT h.*, c.name as company_name, gm.name as location_name
       FROM holidays h
       LEFT JOIN companies c ON h.company = CAST(c.id AS TEXT)
+      LEFT JOIN geofencing_masters gm ON h.location = CAST(gm.id AS TEXT)
       ORDER BY h.created_at DESC
     `);
 

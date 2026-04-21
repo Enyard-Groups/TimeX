@@ -83,7 +83,30 @@ export const login=async(req,res)=>{
 
   if(result.rows.length===0)
 {
-  return res.status(404).json({message:"Incorrect email password"});
+    const employeeQuery = `
+      SELECT 
+        e.*, 
+        c.name AS company_name,
+        ds.name AS designation_name,
+        s.shift_name AS shift_name,
+        e.company_enrollment_id AS enrollment_id,
+        e.full_name AS user_name,
+        e.phone AS emp_name,
+        'employee' as role
+      FROM employees e
+      LEFT JOIN companies c ON e.company = CAST(c.id AS int)
+      LEFT JOIN designations ds ON e.designation_id = ds.id
+      LEFT JOIN shifts s ON e.shift_id = s.id
+      WHERE e.company_enrollment_id = $1
+    `;
+    const empResult = await db.query(employeeQuery, [user_name]);
+    
+    if (empResult.rows.length > 0) {
+      const user = empResult.rows[0];
+      const { password: pwd, ...safeUser } = user;
+      const token = generateToken(safeUser, res);
+      return res.status(200).json({ message: "Login successfully", success: true, User: safeUser, token });
+    }
 
 
 }
@@ -100,7 +123,7 @@ export const login=async(req,res)=>{
 
   const {password:pwd, ...safeUser}=user;
   const token=generateToken(safeUser,res);
-  
+
 
 
 

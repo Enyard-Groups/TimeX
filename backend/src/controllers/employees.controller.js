@@ -1,5 +1,13 @@
 import db from "../lib/db.js";
-
+import bcrypt from "bcrypt";
+const formatToPostgresDate = (dateStr) => {
+  if (!dateStr) return null;
+  if (dateStr.includes("-")) return dateStr; // Already in yyyy-mm-dd format
+  const [day, month, year] = dateStr.split("/");
+  if (!day || !month || !year) return dateStr;
+  return `${year}-${month}-${day}`;
+};
+ 
 export const getEmployeeReport = async (req, res) => {
   try {
     const { company, type, location, designation_id, finger } = req.query;
@@ -95,6 +103,7 @@ export const getEmployees = async (req, res) => {
 };
 
 export const createEmployee = async (req, res) => {
+  console.log(req.body)
   const {
     device_enrollment_id,
     company_enrollment_id,
@@ -110,29 +119,42 @@ export const createEmployee = async (req, res) => {
     first_approver,
     second_approver,
     is_manager,
-    type,
+
     break_hours_friday,
     is_active,
     is_mobile_user,
   } = req.body;
 
   try {
+
+    const type="employee"
+
+ const userPass=`${mobile.slice(-4)}@timex`
+ const hashPassword= await bcrypt.hash(userPass,10);
+
+
+
+
+
+
+
+  
     const insertResult = await db.query(
       `INSERT INTO employees (
         device_enrollment_id, company_enrollment_id, full_name, phone,
         dob, doj, company, location, leave_plan,
-        first_approver, second_approver, is_manager, type,
+        first_approver, second_approver, is_manager, role,
         friday_break_hours, is_active, is_mobile_user,
-        department_id, designation_id, shift_id
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)
+        department_id, designation_id, shift_id, password
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
       RETURNING id`,
       [
         device_enrollment_id,
         company_enrollment_id,
         full_name,
         mobile,
-        dob || null,
-        doj || null,
+        formatToPostgresDate(dob) || null,
+        formatToPostgresDate(doj) || null,
         company,
         location,
         leave_plan,
@@ -146,6 +168,7 @@ export const createEmployee = async (req, res) => {
         req.body.department_id || null,
         req.body.designation_id || null,
         req.body.shift_id || null,
+        hashPassword
       ]
     );
 
@@ -211,8 +234,8 @@ export const updateEmployee = async (req, res) => {
         company_enrollment_id,
         full_name,
         mobile,
-        dob || null,
-        doj || null,
+        formatToPostgresDate(dob) || null,
+        formatToPostgresDate(doj) || null,
         company,
         location,
         leave_plan,

@@ -58,7 +58,8 @@ export const getLeaveReport = async (req, res) => {
       ORDER BY lr.created_at DESC`,
       params
     );
-    return res.json(result.rows);
+    console.log(result.rows);
+
   } catch (error) {
     return handleError(res, error, "Error in getLeaveReport");
   }
@@ -92,6 +93,7 @@ export const getLeaveRequests = async (req, res) => {
     query += ` ORDER BY lr.created_at DESC`; // ✅ now valid
 
     const result = await db.query(query, params);
+    console.log(result.rows);
     return res.json(result.rows);
 
   } catch (error) {
@@ -847,13 +849,15 @@ export const getManualRequests = async (req, res) => {
         e.type                  AS employee_category,
         gm.name                 AS location_name,
         c.name                  AS company_name,
-        ds.name                 AS designation,
+        ds.name                 AS designation_name,
+        s.shift_name            AS shift_name,
         d.name                  AS department
       FROM manual_entry_requests m
       LEFT JOIN employees e     ON m.employee_id = e.company_enrollment_id
       LEFT JOIN geofencing_masters gm ON m.location = gm.id
       LEFT JOIN companies c     ON e.company = CAST(c.id AS int)
       LEFT JOIN designations ds  ON e.designation_id = ds.id
+      LEFT JOIN shifts s         ON e.shift_id = s.id
       LEFT JOIN departments d    ON e.department_id = d.id
     `;
     const params = [];
