@@ -564,6 +564,10 @@ const AttendancePunch = ({ user }) => {
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const canvasRef = useRef(document.createElement("canvas"));
+  const recordsRef = useRef(records);
+  useEffect(() => {
+    recordsRef.current = records;
+  }, [records]);
 
   const [isPunchedIn, setIsPunchedIn] = useState(() => {
     try {
@@ -608,16 +612,65 @@ const AttendancePunch = ({ user }) => {
     dispatch(fetchRecord());
   }, [dispatch]);
 
+  // STALE SESSION RECOVERY — runs once on mount
+  // Catches any "In Progress" records from previous days where the
+  // midnight timer never fired (browser was closed / tab was not open)
+  useEffect(() => {
+    const today = formatDate(new Date());
+
+    // Wait one tick so fetchRecord has dispatched before we read records
+    const t = setTimeout(() => {
+      const stale = recordsRef.current.filter(
+        (r) =>
+          r.userID === user.id &&
+          r.status === "In Progress" &&
+          r.date !== today,
+      );
+
+      if (stale.length === 0) return;
+
+      const recovered = recordsRef.current.map((r) => {
+        if (
+          r.userID === user.id &&
+          r.status === "In Progress" &&
+          r.date !== today
+        ) {
+          // Build 23:59:59 of the day the session belongs to
+          const dayEnd = new Date(r._inTime || Date.now());
+          dayEnd.setHours(23, 59, 59, 0);
+
+          const inTime = r._inTime ? new Date(r._inTime) : dayEnd;
+          const sessionSecs = Math.max(0, Math.floor((dayEnd - inTime) / 1000));
+          const totalSecs = (r._prevDaySeconds || 0) + sessionSecs;
+
+          return {
+            ...r,
+            checkOut: "Missed Punch",
+            status: "Present",
+            hours: formatSeconds(sessionSecs),
+            _sessionSeconds: sessionSecs,
+            _totalDaySeconds: totalSecs,
+          };
+        }
+        return r;
+      });
+
+      dispatch(updateRecord(recovered));
+    }, 300);
+
+    return () => clearTimeout(t);
+  }, []);
+
   // MIDNIGHT FINALIZE
   useEffect(() => {
     const now = new Date();
     const midnight = new Date();
     midnight.setHours(24, 0, 0, 0);
     const msUntilMidnight = midnight - now;
+    const today = formatDate(now);
 
     const timer = setTimeout(() => {
-      const today = formatDate(now);
-      const finalized = records.map((r) => {
+      const finalized = recordsRef.current.map((r) => {
         if (
           r.userID === user.id &&
           r.date === today &&
@@ -646,7 +699,7 @@ const AttendancePunch = ({ user }) => {
     }, msUntilMidnight);
 
     return () => clearTimeout(timer);
-  }, [user.id, dispatch, records]);
+  }, [user.id, dispatch]);
 
   // CAMERA HELPERS
   const stopCamera = useCallback(() => {
@@ -940,6 +993,13 @@ const AttendancePunch = ({ user }) => {
   ].filter((d) => d.value > 0);
 
   const totalDays = presentDays + absentDays + leaveDays;
+
+  useEffect(() => {
+    if (isPunchedIn && !activeRecord) {
+      setIsPunchedIn(false);
+      localStorage.removeItem(`isPunchedIn_${user.id}`);
+    }
+  }, []);
 
   return (
     <div className="mx-auto pb-10 px-4 sm:px-6">
