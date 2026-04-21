@@ -131,7 +131,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
                 ) : (
                   <ArrowDown size={12} />
                 )}
-                {Math.min(Math.abs(item.percentage),100)}%
+                {Math.min(Math.abs(item.percentage), 100)}%
               </div>
 
               <p className="text-gray-500">this week</p>
