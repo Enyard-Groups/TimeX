@@ -309,7 +309,7 @@ const Timeline = () => {
                 value={ymdToDMY(selectedYMD)}
                 onClick={() => setShowDateSpinner(true)}
                 readOnly
-                className="text-xs font-semibold text-gray-700 bg-transparent focus:outline-none cursor-pointer"
+                className="text-xs pt-0.5 font-semibold text-gray-700 bg-transparent focus:outline-none cursor-pointer"
                 placeholder="dd/mm/yyyy"
               />
             </div>
@@ -325,11 +325,11 @@ const Timeline = () => {
 
             {/* Start Time Selector */}
             <div className="flex flex-row bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 shadow-sm gap-4">
-              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">
+              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide pt-0.5">
                 From
               </span>
               <div
-                className="text-xs font-semibold text-gray-700 bg-transparent focus:outline-none cursor-pointer"
+                className="text-xs font-semibold text-gray-700 bg-transparent focus:outline-none cursor-pointer pt-0.5"
                 onClick={() => setShowStartTimeSpinner(true)}
               >
                 {startTime || "HH:MM:SS"}
