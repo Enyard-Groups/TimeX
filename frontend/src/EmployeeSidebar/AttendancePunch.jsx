@@ -1113,7 +1113,7 @@ const AttendancePunch = ({ user }) => {
                     : "bg-gradient-to-br from-blue-700 to-blue-600 text-white shadow-md shadow-blue-200 hover:shadow-lg"
                 }`}
             >
-              {loading && !isPunchedIn ? "Processing..." : "Punch In"}
+              {loading && !isPunchedIn ? "Processing..." : "Check In"}
             </button>
 
             <button
@@ -1126,7 +1126,7 @@ const AttendancePunch = ({ user }) => {
                     : "bg-white text-red-600 border-2 border-red-200 hover:bg-red-50 hover:border-red-300"
                 }`}
             >
-              {loading && isPunchedIn ? "Processing..." : "Punch Out"}
+              {loading && isPunchedIn ? "Processing..." : "Check Out"}
             </button>
           </div>
         </div>
@@ -1276,8 +1276,8 @@ const AttendancePunch = ({ user }) => {
 
               <div className="p-5 grid grid-cols-2 gap-3">
                 {[
-                  { label: "Punch In", value: expandedRecord.checkIn },
-                  { label: "Punch Out", value: expandedRecord.checkOut },
+                  { label: "Check In", value: expandedRecord.checkIn },
+                  { label: "Check Out", value: expandedRecord.checkOut },
                   { label: "Session Hours", value: expandedRecord.hours },
                   {
                     label: "Day Total Hours",
