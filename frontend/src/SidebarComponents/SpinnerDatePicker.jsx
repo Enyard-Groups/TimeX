@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const months = [
   "Jan",
@@ -21,12 +21,23 @@ const years = Array.from(
 );
 
 export default function SpinnerDatePicker({ value, onChange, onClose }) {
-  /* ---------- Improved Parsing ---------- */
+  const pickerRef = useRef(null);
+
+  // Close on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target)) {
+        onClose && onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [onClose]);
+
   const parseInitialDate = () => {
     if (value instanceof Date) return value;
     if (typeof value === "string" && value.includes("/")) {
       const [d, m, y] = value.split("/");
-      // Ensure we don't create an "Invalid Date"
       const parsed = new Date(Number(y), Number(m) - 1, Number(d));
       return isNaN(parsed.getTime()) ? new Date() : parsed;
     }
@@ -41,7 +52,6 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
   const [tempMonth, setTempMonth] = useState(months[baseDate.getMonth()]);
   const [tempYear, setTempYear] = useState(baseDate.getFullYear());
 
-  /* ---------- Logic Fix: Max Days in Month ---------- */
   const daysInMonth = new Date(
     tempYear,
     months.indexOf(tempMonth) + 1,
@@ -51,7 +61,6 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
     String(i + 1).padStart(2, "0"),
   );
 
-  // Effect to ensure day doesn't exceed max days when month changes (e.g., Feb 31 -> Feb 28)
   useEffect(() => {
     if (Number(tempDay) > daysInMonth) {
       setTempDay(String(daysInMonth).padStart(2, "0"));
@@ -68,7 +77,6 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
 
   const handleOk = () => {
     const monthNumber = months.indexOf(tempMonth) + 1;
-    // Standardizing return to dd/mm/yyyy as requested
     const formatted = `${String(tempDay).padStart(2, "0")}/${String(monthNumber).padStart(2, "0")}/${tempYear}`;
     onChange?.(formatted);
     onClose?.();
@@ -87,7 +95,10 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
   });
 
   return (
-    <div className="absolute z-50 mt-2 bg-white shadow-2xl rounded-2xl p-6 w-72 border border-gray-100">
+    <div
+      ref={pickerRef}
+      className="absolute z-50 mt-2 bg-white shadow-2xl rounded-2xl p-6 w-72 border border-gray-100"
+    >
       <div className="text-blue-600 text-lg font-semibold text-center mb-4 tracking-tight">
         {headerLabel}
       </div>
@@ -155,7 +166,6 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
   );
 }
 
-// Sub-component for cleaner code
 function SpinnerColumn({ val, onUp, onDown }) {
   return (
     <div className="flex flex-col items-center">

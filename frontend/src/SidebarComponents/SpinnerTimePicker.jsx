@@ -1,6 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 export default function SpinnerTimePicker({ value, onChange, onClose }) {
+  const pickerRef = useRef(null);
+
+  // Close on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target)) {
+        onClose && onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [onClose]);
+
   let baseTime = new Date();
   if (value instanceof Date) {
     baseTime = value;
@@ -58,7 +71,10 @@ export default function SpinnerTimePicker({ value, onChange, onClose }) {
     "w-10 sm:w-12 text-center py-2 rounded-lg border border-[oklch(0.86_0.001_106.424)] text-2xl tracking-widest";
 
   return (
-    <div className="absolute z-50 bg-white shadow-2xl rounded-2xl px-4 sm:px-6 py-5 w-fit">
+    <div
+      ref={pickerRef}
+      className="absolute z-50 bg-white shadow-2xl rounded-2xl px-4 sm:px-6 py-5 w-fit"
+    >
       <div className="mb-4 text-xs font-semibold tracking-[.25em] text-gray-500">
         ENTER TIME
       </div>
