@@ -60,7 +60,8 @@ const Department = () => {
           id: d.id,
           name: d.name || "",
           code: d.code || "",
-          company: d.company_name || "",
+          company: d.company || "",
+          company_name: d.company_name || "",
           description: d.description || "",
           isActive:
             d.is_active === true ||
@@ -667,7 +668,7 @@ const Department = () => {
                     displayValue={formData.company_name}
                     options={companyOptions}
                     labelKey="name"
-                    valueKey="name"
+                    valueKey="id"
                     labelName="company_name"
                     formData={formData}
                     setFormData={setFormData}

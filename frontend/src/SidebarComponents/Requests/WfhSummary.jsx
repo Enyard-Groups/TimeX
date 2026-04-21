@@ -12,7 +12,7 @@ import { RxCross2 } from "react-icons/rx";
 
 const API_BASE = "http://localhost:3000/api";
 
-const WfhSummary = () => {
+const WfhSummary = ({ user }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,7 +31,14 @@ const WfhSummary = () => {
     try {
       setLoading(true);
       const res = await axios.get(`${API_BASE}/requests/wfh`);
-      const formattedData = (res.data || []).map((w) => ({
+      let data = res.data || [];
+
+      // Filter for employee role
+      if (user && user.role === "employee") {
+        data = data.filter((w) => w.enrollment_id === user.enrollment_id);
+      }
+
+      const formattedData = data.map((w) => ({
         ...w,
         start_date: formatDate(w.start_date),
         end_date: formatDate(w.end_date),
@@ -59,7 +66,7 @@ const WfhSummary = () => {
 
   useEffect(() => {
     fetchWfhEntries();
-  }, []);
+  }, [user]);
 
   const filteredData = wfhData.filter(
     (item) =>
@@ -309,13 +316,12 @@ const WfhSummary = () => {
                     </td>
                     <td className="px-4 py-2.5 text-center whitespace-nowrap hidden sm:table-cell">
                       <span
-                        className={`px-3 py-1 rounded-full text-sm xl:text-[16px] font-semibold ${
-                          item.status === "Approved"
+                        className={`px-3 py-1 rounded-full text-sm xl:text-[16px] font-semibold ${item.status === "Approved"
                             ? "bg-green-100 text-green-700"
                             : item.status === "Rejected"
                               ? "bg-red-100 text-red-700"
                               : "bg-yellow-100 text-yellow-700"
-                        }`}
+                          }`}
                       >
                         {item.status}
                       </span>
@@ -451,13 +457,12 @@ const WfhSummary = () => {
               <div>
                 <h3 className={labelStyle}>Status</h3>
                 <p
-                  className={`${inputStyle} ${
-                    selectedEntry.status === "Approved"
+                  className={`${inputStyle} ${selectedEntry.status === "Approved"
                       ? "bg-green-100 text-green-700"
                       : selectedEntry.status === "Rejected"
                         ? "bg-red-100 text-red-700"
                         : "bg-yellow-100 text-yellow-700"
-                  } font-semibold text-center`}
+                    } font-semibold text-center`}
                 >
                   {selectedEntry.status}
                 </p>

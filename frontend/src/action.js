@@ -25,7 +25,7 @@ export const logout = () => {
 };
 
 export const load = () => {
-  return { type: types.STOP_LOADING };
+  return { type: types.APP_READY };
 };
 
 // Helper function to generate the 10-year mock data
@@ -132,12 +132,14 @@ export const addRecord = (record) => async (dispatch) => {
     const updated = [res.data, ...existing];
     localStorage.setItem("records", JSON.stringify(updated));
     dispatch({ type: types.ADD_RECORD, payload: res.data });
+    return res.data;
   } catch (error) {
     // Fallback to local-only if API fails
     const existing = JSON.parse(localStorage.getItem("records") || "[]");
     const updated = [record, ...existing];
     localStorage.setItem("records", JSON.stringify(updated));
     dispatch({ type: types.ADD_RECORD, payload: record });
+    return record;
   }
 };
 
@@ -175,9 +177,11 @@ export const updateRecord = (data) => async (dispatch) => {
     localStorage.setItem("records", JSON.stringify(merged));
 
     dispatch({ type: types.UPDATE_RECORD, payload: res.data });
+    return res.data;
   } catch (error) {
     // Fallback: update store only
     dispatch({ type: types.UPDATE_RECORD, payload: record });
+    return record;
   }
 };
 

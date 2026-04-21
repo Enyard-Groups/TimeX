@@ -21,7 +21,7 @@ const App = () => {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.isAuthenticated);
   const user = useSelector((state) => state.user);
-  const loading = useSelector((state) => state.loading);
+  const isReady = useSelector((state) => state.isReady);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -33,7 +33,7 @@ const App = () => {
     dispatch(load());
   }, [dispatch]);
 
-  if (loading) {
+  if (!isReady) {
     return null;
   }
 

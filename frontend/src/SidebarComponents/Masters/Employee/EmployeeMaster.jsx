@@ -163,6 +163,7 @@ const EmployeeMaster = () => {
   };
 
   const handleSubmit = async () => {
+    console.log(formData)
     const { device_enrollment_id, company_enrollment_id, full_name } = formData;
 
     if (!device_enrollment_id || !company_enrollment_id || !full_name) {
@@ -225,9 +226,9 @@ const EmployeeMaster = () => {
           item.device_enrollment_id,
           item.company_enrollment_id,
           item.location_name ||
-            item.name ||
-            locationOptions.find((o) => o.id == item.location)?.name ||
-            item.location,
+          item.name ||
+          locationOptions.find((o) => o.id == item.location)?.name ||
+          item.location,
           item.full_name,
           item.shift_name || item.shift,
           item.designation_name || item.designation,
@@ -278,9 +279,9 @@ const EmployeeMaster = () => {
       item.device_enrollment_id,
       item.company_enrollment_id,
       item.location_name ||
-        item.name ||
-        locationOptions.find((o) => o.id == item.location)?.name ||
-        item.location,
+      item.name ||
+      locationOptions.find((o) => o.id == item.location)?.name ||
+      item.location,
       item.full_name,
       item.shift_name || item.shift,
       item.designation_name || item.designation,
@@ -735,7 +736,7 @@ const EmployeeMaster = () => {
                   displayValue={formData.company_name}
                   options={companyOptions}
                   labelKey="name"
-                  valueKey="name"
+                  valueKey="id"
                   labelName="company_name"
                   formData={formData}
                   setFormData={setFormData}
@@ -750,7 +751,7 @@ const EmployeeMaster = () => {
                   displayValue={formData.location_name}
                   options={locationOptions}
                   labelKey="name"
-                  valueKey="name"
+                  valueKey="id"
                   labelName="location_name"
                   formData={formData}
                   setFormData={setFormData}
@@ -765,7 +766,7 @@ const EmployeeMaster = () => {
                   displayValue={formData.department_id_name}
                   options={departmentOptions}
                   labelKey="name"
-                  valueKey="name"
+                  valueKey="id"
                   labelName="department_id_name"
                   formData={formData}
                   setFormData={setFormData}
@@ -780,7 +781,7 @@ const EmployeeMaster = () => {
                   displayValue={formData.designation_id_name}
                   options={designationOptions}
                   labelKey="name"
-                  valueKey="name"
+                  valueKey="id"
                   labelName="designation_id_name"
                   formData={formData}
                   setFormData={setFormData}
@@ -794,8 +795,8 @@ const EmployeeMaster = () => {
                   value={formData.shift_id}
                   displayValue={formData.shift_id_name}
                   options={shiftOptions}
-                  labelKey="name"
-                  valueKey="name"
+                  labelKey="shift_name"
+                  valueKey="id"
                   labelName="shift_id_name"
                   formData={formData}
                   setFormData={setFormData}
@@ -806,13 +807,13 @@ const EmployeeMaster = () => {
 
                 <SearchDropdown
                   label="Leave Plan"
-                  name="leave_plan_id"
-                  value={formData.leave_plan_id}
-                  displayValue={formData.leave_plan_id_name}
+                  name="leave_plan"
+                  value={formData.leave_plan}
+                  displayValue={formData.leave_plan_name}
                   options={leavePlanOptions}
-                  labelKey="leave_plan_name"
-                  valueKey="name"
-                  labelName="leave_plan_id_name"
+                  labelKey="name"
+                  valueKey="id"
+                  labelName="leave_plan_name"
                   formData={formData}
                   setFormData={setFormData}
                   disabled={mode === "view"}

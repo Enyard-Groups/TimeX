@@ -27,7 +27,7 @@ const emptyForm = {
   status: "Pending",
 };
 
-const WfhRequest = () => {
+const WfhRequest = ({ user }) => {
   const [mode, setMode] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [wfh, setWfh] = useState([]);
@@ -44,7 +44,7 @@ const WfhRequest = () => {
 
   const [formData, setFormData] = useState(emptyForm);
 
-   const inputStyle =
+  const inputStyle =
     "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
   const labelStyle =
@@ -58,13 +58,20 @@ const WfhRequest = () => {
         axios.get(`${API_BASE}/requests/wfh`),
         axios.get(`${API_BASE}/employee`),
       ]);
-      const formattedWfh = (wfhRes.data || []).map((w) => ({
+      const wfhData = (wfhRes.data || []).map((w) => ({
         ...w,
         start_date: formatDate(w.start_date),
         end_date: formatDate(w.end_date),
         request_date: formatDate(w.request_date),
       }));
-      setWfh(formattedWfh);
+
+      let filteredData = wfhData;
+      if (user?.role === "employee") {
+        const userId = user.enrollment_id || user.id;
+        filteredData = wfhData.filter((item) => String(item.employee_id) === String(userId));
+      }
+
+      setWfh(filteredData);
       setEmployeeOptions(empRes.data);
     } catch (error) {
       console.error("Failed to fetch data", error);
@@ -120,6 +127,24 @@ const WfhRequest = () => {
     }
   }, [formData.start_date, formData.end_date, formData.number_of_days]);
 
+  // Update enrollment_id and details when employee changes
+  useEffect(() => {
+    if (formData.employee_id) {
+      const emp = employeeOptions.find(
+        (e) => e.company_enrollment_id === formData.employee_id,
+      );
+      if (emp) {
+        setFormData((prev) => ({
+          ...prev,
+          enrollment_id: emp.company_enrollment_id || "N/A",
+          designation_name: emp.designation_name || "",
+          company_name: emp.company_name || "",
+          shift_name: emp.shift_name || "",
+        }));
+      }
+    }
+  }, [formData.employee_id, employeeOptions]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -162,15 +187,15 @@ const WfhRequest = () => {
           prev.map((item) =>
             item.id === editId
               ? {
-                  ...item,
-                  ...res.data,
-                  start_date: formatDate(res.data.start_date || formData.start_date),
-                  end_date: formatDate(res.data.end_date || formData.end_date),
-                  request_date: formatDate(res.data.request_date || formData.request_date),
-                  employee_name: employeeOptions.find(
-                    (e) => e.company_enrollment_id === employee_id,
-                  )?.full_name,
-                }
+                ...item,
+                ...res.data,
+                start_date: formatDate(res.data.start_date || formData.start_date),
+                end_date: formatDate(res.data.end_date || formData.end_date),
+                request_date: formatDate(res.data.request_date || formData.request_date),
+                employee_name: employeeOptions.find(
+                  (e) => e.company_enrollment_id === employee_id,
+                )?.full_name,
+              }
               : item,
           ),
         );
@@ -337,7 +362,22 @@ const WfhRequest = () => {
               onClick={() => {
                 setMode("");
                 setEditId(null);
-                setFormData(emptyForm);
+                if (user?.role === "employee") {
+                  const emp = employeeOptions.find(
+                    (e) => String(e.company_enrollment_id) === String(user.enrollment_id),
+                  );
+                  setFormData({
+                    ...emptyForm,
+                    employee_id: user.enrollment_id || user.id,
+                    employee_name: user.user_name || user.full_name || user.name,
+                    enrollment_id: user.enrollment_id || "N/A",
+                    designation_name: user.designation_name || emp?.designation_name || "",
+                    company_name: user.company_name || emp?.company_name || "",
+                    shift_name: user.shift_name || emp?.shift_name || "",
+                  });
+                } else {
+                  setFormData(emptyForm);
+                }
                 setOpenModal(true);
               }}
               className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
@@ -484,13 +524,12 @@ const WfhRequest = () => {
                     </td>
                     <td className="px-6 py-2 text-center">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-bold ${
-                          item.status === "Approved"
+                        className={`px-3 py-1 rounded-full text-xs font-bold ${item.status === "Approved"
                             ? "bg-green-100 text-green-700"
                             : item.status === "Rejected"
                               ? "bg-red-100 text-red-700"
                               : "bg-yellow-100 text-yellow-700"
-                        }`}
+                          }`}
                       >
                         {item.status}
                       </span>
@@ -644,10 +683,53 @@ const WfhRequest = () => {
                 labelName="employee_name"
                 formData={formData}
                 setFormData={setFormData}
-                disabled={mode === "view"}
+                disabled={mode === "view" || user?.role === "employee"}
                 inputStyle={inputStyle}
                 labelStyle={labelStyle}
               />
+
+              {/* Enrollment ID */}
+              <div>
+                <label className={labelStyle}>Enrollment ID</label>
+                <input
+                  value={formData.enrollment_id || (user?.role === "employee" ? user.enrollment_id : "") || "N/A"}
+                  readOnly
+                  className="w-full bg-gray-100 border border-gray-200 text-gray-500 px-3 py-2 xl:text-base rounded-lg transition-all shadow-sm cursor-not-allowed font-medium"
+                />
+              </div>
+
+              {(formData.designation_name || user?.role === "employee") && (
+                <div>
+                  <label className={labelStyle}>Designation</label>
+                  <input
+                    value={formData.designation_name || "N/A"}
+                    readOnly
+                    className="w-full bg-gray-100 border border-gray-200 text-gray-500 px-3 py-2 xl:text-base rounded-lg transition-all shadow-sm cursor-not-allowed font-medium"
+                  />
+                </div>
+              )}
+
+              {(formData.company_name || user?.role === "employee") && (
+                <div>
+                  <label className={labelStyle}>Company</label>
+                  <input
+                    value={formData.company_name || "N/A"}
+                    readOnly
+                    className="w-full bg-gray-100 border border-gray-200 text-gray-500 px-3 py-2 xl:text-base rounded-lg transition-all shadow-sm cursor-not-allowed font-medium"
+                  />
+                </div>
+              )}
+
+              {(formData.shift_name || user?.role === "employee") && (
+                <div>
+                  <label className={labelStyle}>Shift</label>
+                  <input
+                    value={formData.shift_name || "N/A"}
+                    readOnly
+                    className="w-full bg-gray-100 border border-gray-200 text-gray-500 px-3 py-2 xl:text-base rounded-lg transition-all shadow-sm cursor-not-allowed font-medium"
+                  />
+                </div>
+              )}
 
               <div>
                 <label className={labelStyle}>

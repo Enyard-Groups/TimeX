@@ -65,9 +65,9 @@ const Designation = () => {
           id: d.id,
           name: d.name || "",
           code: d.code || "",
-          company: d.company || "",
+          company: d.company_id || "",
           company_name: d.company_name || "",
-          department: d.department_name || "",
+          department: d.department_id || "",
           department_name: d.department_name || "",
           description: d.description || "",
           isActive:
@@ -714,7 +714,7 @@ const Designation = () => {
                   displayValue={formData.company_name}
                   options={companyOptions}
                   labelKey="name"
-                  valueKey="name"
+                  valueKey="id"
                   labelName="company_name"
                   formData={formData}
                   setFormData={setFormData}
@@ -734,7 +734,7 @@ const Designation = () => {
                   displayValue={formData.department_name}
                   options={departmentOptions}
                   labelKey="name"
-                  valueKey="name"
+                  valueKey="id"
                   labelName="department_name"
                   formData={formData}
                   setFormData={setFormData}

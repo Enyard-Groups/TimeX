@@ -29,49 +29,40 @@ const SearchDropdown = ({
   });
 
   //  MULTI + SINGLE HANDLER
-  const handleSelect = (val, lbl) => {
-    if (multiple) {
-      const currentValues = Array.isArray(value) ? value : [];
-      const currentLabels = Array.isArray(formData[labelName || `${name}_name`])
-        ? formData[labelName || `${name}_name`]
-        : [];
+const handleSelect = (val, lbl) => {
+  if (multiple) {
+    const currentValues = Array.isArray(value) ? value : [];
+    const currentLabels = Array.isArray(formData[labelName || `${name}_name`])
+      ? formData[labelName || `${name}_name`]
+      : [];
 
-      let updatedValues;
-      let updatedLabels;
+    let updatedValues;
+    let updatedLabels;
 
-      if (currentValues.includes(val)) {
-        // remove
-        updatedValues = currentValues.filter((v) => v !== val);
-        updatedLabels = currentLabels.filter((l) => l !== lbl);
-      } else {
-        // add
-        updatedValues = [...currentValues, val];
-        updatedLabels = [...currentLabels, lbl];
-      }
-
-      setFormData({
-        ...formData,
-        [name]: updatedValues,
-        [labelName || `${name}_name`]: updatedLabels,
-      });
+    if (currentValues.includes(val)) {
+      updatedValues = currentValues.filter((v) => v !== val);
+      updatedLabels = currentLabels.filter((l) => l !== lbl);
     } else {
-      const updatedFormData = {
-        ...formData,
-        [name]: labelName === name ? lbl : val,
-      };
-
-      if (labelName && labelName !== name) {
-        updatedFormData[labelName] = lbl;
-      }
-
-      if (valueKey && labelName === name) {
-        updatedFormData[`${name}_id`] = val;
-      }
-
-      setFormData(updatedFormData);
-      setOpen(false);
+      updatedValues = [...currentValues, val];
+      updatedLabels = [...currentLabels, lbl];
     }
-  };
+
+    setFormData({
+      ...formData,
+      [name]: updatedValues,
+      [labelName || `${name}_name`]: updatedLabels,
+    });
+  } else {
+    // ✅ FIXED SINGLE SELECT
+    setFormData((prev) => ({
+      ...prev,
+      [name]: val,
+      ...(labelName && { [labelName]: lbl }),
+    }));
+
+    setOpen(false);
+  }
+};
 
   const isSelected = (val) => {
     if (multiple) {

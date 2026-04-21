@@ -32,7 +32,7 @@ const emptyForm = {
   status: "Pending",
 };
 
-const ManualEntryRequest = () => {
+const ManualEntryRequest = ({ user }) => {
   const [mode, setMode] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [manualEntry, setManualEntry] = useState([]);
@@ -63,9 +63,18 @@ const ManualEntryRequest = () => {
         axios.get(`${API_BASE}/employee`),
         axios.get(`${API_BASE}/master/geofencing`),
       ]);
-      console.log(manualRes.data);
-      setManualEntry(manualRes.data);
-      setEmployeeOptions(empRes.data);
+
+      let data = manualRes.data || [];
+      const employeeData = empRes.data || [];
+
+      // Role-based filtering
+      if (user?.role === "employee") {
+        const userId = user.enrollment_id || user.id;
+        data = data.filter((item) => String(item.employee_id) === String(userId));
+      }
+
+      setManualEntry(data);
+      setEmployeeOptions(employeeData);
       setLocationOptions(locRes.data || []);
     } catch (error) {
       console.error("Failed to fetch data", error);
@@ -88,7 +97,7 @@ const ManualEntryRequest = () => {
       if (emp) {
         setFormData((prev) => ({
           ...prev,
-          enrollment_id: emp.device_enrollment_id || "N/A",
+          enrollment_id: emp.company_enrollment_id || "N/A",
         }));
       }
     }
@@ -323,8 +332,22 @@ const ManualEntryRequest = () => {
             <button
               onClick={() => {
                 setMode("");
-                setEditId(null);
-                setFormData(emptyForm);
+                if (user?.role === "employee") {
+                  const emp = employeeOptions.find(
+                    (e) => String(e.company_enrollment_id) === String(user.enrollment_id),
+                  );
+                  setFormData({
+                    ...emptyForm,
+                    employee_id: user.enrollment_id || user.id,
+                    employee_name: user.user_name || user.full_name || user.name,
+                    enrollment_id: user.enrollment_id || "N/A",
+                    designation_name: user.designation_name || "",
+                    company_name: user.company_name || "",
+                    shift_name: user.shift_name || "",
+                  });
+                } else {
+                  setFormData(emptyForm);
+                }
                 setOpenModal(true);
               }}
               className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
@@ -632,7 +655,7 @@ const ManualEntryRequest = () => {
                   labelName="employee_name"
                   formData={formData}
                   setFormData={setFormData}
-                  disabled={mode === "view"}
+                  disabled={mode === "view" || user?.role === "employee"}
                   inputStyle={inputStyle}
                   labelStyle={labelStyle}
                 />
@@ -643,11 +666,44 @@ const ManualEntryRequest = () => {
                   Enrollment ID
                 </label>
                 <input
-                  value={formData.enrollment_id}
+                  value={formData.enrollment_id || "N/A"}
                   readOnly
-                  className="w-full bg-gray-100 border-2 border-gray-200 text-gray-500 px-4 py-2 xl:text-base rounded-xl transition-all shadow-sm cursor-not-allowed font-medium"
+                  className="w-full bg-gray-100 border border-gray-200 text-gray-500 px-3 py-2 xl:text-base rounded-lg transition-all shadow-sm cursor-not-allowed font-medium"
                 />
               </div>
+
+              {(formData.designation_name || user?.role === "employee") && (
+                <div>
+                  <label className={labelStyle}>Designation</label>
+                  <input
+                    value={formData.designation_name || "N/A"}
+                    readOnly
+                    className="w-full bg-gray-100 border border-gray-200 text-gray-500 px-3 py-2 xl:text-base rounded-lg transition-all shadow-sm cursor-not-allowed font-medium"
+                  />
+                </div>
+              )}
+
+              {(formData.company_name || user?.role === "employee") && (
+                <div>
+                  <label className={labelStyle}>Company</label>
+                  <input
+                    value={formData.company_name || "N/A"}
+                    readOnly
+                    className="w-full bg-gray-100 border border-gray-200 text-gray-500 px-3 py-2 xl:text-base rounded-lg transition-all shadow-sm cursor-not-allowed font-medium"
+                  />
+                </div>
+              )}
+
+              {(formData.shift_name || user?.role === "employee") && (
+                <div>
+                  <label className={labelStyle}>Shift</label>
+                  <input
+                    value={formData.shift_name || "N/A"}
+                    readOnly
+                    className="w-full bg-gray-100 border border-gray-200 text-gray-500 px-3 py-2 xl:text-base rounded-lg transition-all shadow-sm cursor-not-allowed font-medium"
+                  />
+                </div>
+              )}
 
               <div>
                 <SearchDropdown

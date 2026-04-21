@@ -105,6 +105,7 @@ export const login=async(req,res)=>{
       const user = empResult.rows[0];
       const { password: pwd, ...safeUser } = user;
       const token = generateToken(safeUser, res);
+      console.log(safeUser)
       return res.status(200).json({ message: "Login successfully", success: true, User: safeUser, token });
     }
 

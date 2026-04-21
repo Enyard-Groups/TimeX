@@ -4,7 +4,8 @@ export const initState = {
   // Auth
   isAuthenticated: false,
   user: null,
-  loading: true,
+  isReady: false,
+  loading: false,
   attendanceData: [],
   record: [],
   error: null,
@@ -34,6 +35,9 @@ const reducer = (state = initState, action) => {
 
     case types.STOP_LOADING:
       return { ...state, loading: false };
+
+    case types.APP_READY:
+      return { ...state, isReady: true };
 
     case types.GET_ATTENDANCE_REQUEST:
       return { ...state, loading: true };

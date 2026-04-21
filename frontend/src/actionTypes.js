@@ -14,3 +14,4 @@ export const GET_RECORD_FAILURE = "GET_RECORD_FAILURE";
 
 export const ADD_RECORD = "ADD_RECORD";
 export const UPDATE_RECORD = "UPDATE_RECORD";
+export const APP_READY = "APP_READY";

@@ -12,7 +12,7 @@ import { RxCross2 } from "react-icons/rx";
 
 const API_BASE = "http://localhost:3000/api";
 
-const LeaveSummary = () => {
+const LeaveSummary = ({ user }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,7 +31,14 @@ const LeaveSummary = () => {
     try {
       setLoading(true);
       const res = await axios.get(`${API_BASE}/requests/leave`);
-      const formattedData = (res.data || []).map((l) => ({
+      let data = res.data || [];
+
+      // Filter for employee role
+      if (user && user.role === "employee") {
+        data = data.filter((l) => l.enrollment_id === user.enrollment_id);
+      }
+
+      const formattedData = data.map((l) => ({
         ...l,
         start_date: formatDate(l.start_date),
         end_date: formatDate(l.end_date),
@@ -59,7 +66,7 @@ const LeaveSummary = () => {
 
   useEffect(() => {
     fetchLeaves();
-  }, []);
+  }, [user]);
 
   const filteredData = leaveData.filter(
     (item) =>
@@ -320,13 +327,12 @@ const LeaveSummary = () => {
                     </td>
                     <td className="px-4 py-2.5 text-center hidden sm:table-cell">
                       <span
-                        className={`px-3 py-1 rounded-full text-sm xl:text-[16px] font-semibold ${
-                          item.status === "Approved"
+                        className={`px-3 py-1 rounded-full text-sm xl:text-[16px] font-semibold ${item.status === "Approved"
                             ? "bg-green-100 text-green-700"
                             : item.status === "Rejected"
                               ? "bg-red-100 text-red-700"
                               : "bg-yellow-100 text-yellow-700"
-                        }`}
+                          }`}
                       >
                         {item.status}
                       </span>

@@ -50,10 +50,14 @@ export const getLeaveReport = async (req, res) => {
         lr.*, 
         e.full_name AS employee_name,
         e.company_enrollment_id AS employee_code,
-        c.name AS company_name
+        c.name AS company_name,
+        ds.name AS designation_name,
+        s.shift_name AS shift_name
       FROM leave_requests lr
       LEFT JOIN employees e ON lr.employee_id = e.company_enrollment_id
       LEFT JOIN companies c ON e.company = CAST(c.id AS int)
+      LEFT JOIN designations ds ON e.designation_id = ds.id
+      LEFT JOIN shifts s ON e.shift_id = s.id
       ${whereClause}
       ORDER BY lr.created_at DESC`,
       params
@@ -75,13 +79,19 @@ export const getLeaveRequests = async (req, res) => {
         lr.*, 
         e.full_name AS employee_name, 
         e.company_enrollment_id AS "idNo",
-        c.name AS company_name
+        c.name AS company_name,
+        ds.name AS designation_name,
+        s.shift_name AS shift_name
       FROM leave_requests lr
       LEFT JOIN employees e 
         ON lr.employee_id = e.company_enrollment_id
       LEFT JOIN companies c 
         ON e.company = c.id
-    `; // ❌ removed semicolon here
+      LEFT JOIN designations ds
+        ON e.designation_id = ds.id
+      LEFT JOIN shifts s
+        ON e.shift_id = s.id
+    `;
 
     const params = [];
 
@@ -292,10 +302,14 @@ export const getClaimReport = async (req, res) => {
         cr.*, 
         e.full_name AS employee_name,
         e.company_enrollment_id AS employee_code,
-        c.name AS company_name
+        c.name AS company_name,
+        ds.name AS designation_name,
+        s.shift_name AS shift_name
       FROM claim_requests cr
       LEFT JOIN employees e ON cr.employee_id = e.company_enrollment_id
       LEFT JOIN companies c ON e.company = CAST(c.id AS int)
+      LEFT JOIN designations ds ON e.designation_id = ds.id
+      LEFT JOIN shifts s ON e.shift_id = s.id
       ${whereClause}
       ORDER BY cr.created_at DESC`,
       params
@@ -314,12 +328,18 @@ export const getClaimRequests = async (req, res) => {
      SELECT 
     cr.*, 
     e.full_name AS employee_name,
-    c.name
+    c.name AS company_name,
+    ds.name AS designation_name,
+    s.shift_name AS shift_name
 FROM claim_requests cr
 LEFT JOIN employees e 
     ON cr.employee_id = e.company_enrollment_id
 LEFT JOIN companies c 
-    ON e.company= c.id
+    ON e.company = c.id
+LEFT JOIN designations ds
+    ON e.designation_id = ds.id
+LEFT JOIN shifts s
+    ON e.shift_id = s.id
     `;
     const params = [];
     if (status) {
@@ -459,12 +479,18 @@ export const getTravelRequests = async (req, res) => {
      SELECT 
     tr.*, 
     e.full_name AS employee_name,
-    c.name
+    c.name AS company_name,
+    ds.name AS designation_name,
+    s.shift_name AS shift_name
 FROM business_travel_requests tr
 LEFT JOIN employees e 
     ON tr.employee_id = e.company_enrollment_id
 LEFT JOIN companies c 
     ON e.company = c.id
+LEFT JOIN designations ds
+    ON e.designation_id = ds.id
+LEFT JOIN shifts s
+    ON e.shift_id = s.id
     `;
     const params = [];
     if (status) {
@@ -628,10 +654,14 @@ export const getWfhReport = async (req, res) => {
         w.*, 
         e.full_name AS employee_name,
         e.company_enrollment_id AS employee_code,
-        c.name AS company_name
+        c.name AS company_name,
+        ds.name AS designation_name,
+        s.shift_name AS shift_name
       FROM wfh_requests w
       LEFT JOIN employees e ON w.employee_id = e.company_enrollment_id
       LEFT JOIN companies c ON e.company = CAST(c.id AS int)
+      LEFT JOIN designations ds ON e.designation_id = ds.id
+      LEFT JOIN shifts s ON e.shift_id = s.id
       ${whereClause}
       ORDER BY w.created_at DESC`,
       params
@@ -646,9 +676,18 @@ export const getWfhReport = async (req, res) => {
 export const getWfhRequests = async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT w.*, e.full_name as employee_name, e.company_enrollment_id as "idNo"
+      SELECT 
+        w.*, 
+        e.full_name as employee_name, 
+        e.company_enrollment_id as "idNo",
+        c.name AS company_name,
+        ds.name AS designation_name,
+        s.shift_name AS shift_name
       FROM wfh_requests w
       LEFT JOIN employees e ON w.employee_id = e.company_enrollment_id  
+      LEFT JOIN companies c ON e.company = CAST(c.id AS int)
+      LEFT JOIN designations ds ON e.designation_id = ds.id
+      LEFT JOIN shifts s ON e.shift_id = s.id
       ORDER BY w.created_at DESC
     `);
     return res.json(result.rows);
@@ -846,7 +885,7 @@ export const getManualRequests = async (req, res) => {
       SELECT 
         m.*, 
         e.full_name             AS employee_name,
-        e.type                  AS employee_category,
+        e.role                  AS employee_category,
         gm.name                 AS location_name,
         c.name                  AS company_name,
         ds.name                 AS designation_name,

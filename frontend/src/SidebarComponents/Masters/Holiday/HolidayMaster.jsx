@@ -499,7 +499,7 @@ const HolidayMaster = () => {
                       {item.company_name || item.company || "-"}
                     </td>
                     <td className="px-6 py-2 text-center hidden xl:table-cell text-gray-600">
-                      {item.location || "-"}
+                      {item.location_name || item.location || "-"}
                     </td>
                     <td className="px-4 py-3 hidden lg:table-cell text-center">
                       <div className="flex justify-center">
@@ -727,7 +727,8 @@ const HolidayMaster = () => {
                 setFormData={setFormData}
                 disabled={mode === "view"}
                 labelKey="name"
-                valueKey="name"
+                valueKey="id"
+                labelName="company_name"
                 inputStyle={inputStyle}
                 labelStyle={labelStyle}
               />
@@ -738,7 +739,7 @@ const HolidayMaster = () => {
                 displayValue={formData.location_name}
                 options={locationOptions}
                 labelKey="name"
-                valueKey="name"
+                valueKey="id"
                 labelName="location_name"
                 formData={formData}
                 setFormData={setFormData}

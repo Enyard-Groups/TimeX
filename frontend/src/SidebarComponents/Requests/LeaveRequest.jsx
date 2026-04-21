@@ -32,7 +32,7 @@ const emptyForm = {
   is_half_day: false,
 };
 
-const LeaveRequest = () => {
+const LeaveRequest = ({ user }) => {
   const [mode, setMode] = useState(""); // "view" | "edit"
   const [openModal, setOpenModal] = useState(false);
   const [selectedId, setSelectedID] = useState(null);
@@ -159,13 +159,20 @@ const LeaveRequest = () => {
         axios.get(`${API_BASE}/employee`),
         axios.get(`${API_BASE}/master/leave-types`),
       ]);
-      const formattedLeave = (leaveRes.data || []).map((l) => ({
+      const leaveData = (leaveRes.data || []).map((l) => ({
         ...l,
         start_date: formatDate(l.start_date),
         end_date: formatDate(l.end_date),
         resume_date: formatDate(l.resume_date),
       }));
-      setLeave(formattedLeave);
+
+      let filteredData = leaveData;
+      if (user?.role === "employee") {
+        const userId = user.enrollment_id || user.id;
+        filteredData = leaveData.filter((item) => String(item.employee_id) === String(userId));
+      }
+
+      setLeave(filteredData);
       setEmployeeOptions(empRes.data);
       setLeaveTypeOptions(typeRes.data);
     } catch (error) {
@@ -179,6 +186,24 @@ const LeaveRequest = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Update enrollment_id and details when employee changes
+  useEffect(() => {
+    if (formData.employee_id) {
+      const emp = employeeOptions.find(
+        (e) => e.company_enrollment_id === formData.employee_id,
+      );
+      if (emp) {
+        setFormData((prev) => ({
+          ...prev,
+          enrollment_id: emp.company_enrollment_id || "N/A",
+          designation_name: emp.designation_name || "",
+          company_name: emp.company_name || "",
+          shift_name: emp.shift_name || "",
+        }));
+      }
+    }
+  }, [formData.employee_id, employeeOptions]);
 
   // Handle Submit
   const handleSubmit = async () => {
@@ -239,15 +264,15 @@ const LeaveRequest = () => {
           prev.map((item) =>
             item.id === editId
               ? {
-                  ...item,
-                  ...res.data,
-                  start_date: formatDate(res.data.start_date || formData.start_date),
-                  end_date: formatDate(res.data.end_date || formData.end_date),
-                  resume_date: formatDate(res.data.resume_date || formData.resume_date),
-                  employee_name: employeeOptions.find(
-                    (e) => e.company_enrollment_id === employee_id,
-                  )?.full_name,
-                }
+                ...item,
+                ...res.data,
+                start_date: formatDate(res.data.start_date || formData.start_date),
+                end_date: formatDate(res.data.end_date || formData.end_date),
+                resume_date: formatDate(res.data.resume_date || formData.resume_date),
+                employee_name: employeeOptions.find(
+                  (e) => e.company_enrollment_id === employee_id,
+                )?.full_name,
+              }
               : item,
           ),
         );
@@ -400,12 +425,27 @@ const LeaveRequest = () => {
           {!openModal && (
             <div className="flex justify-end">
               <button
-                onClick={() => {
-                  setMode("");
-                  setEditId(null);
-                  setFormData(emptyForm);
-                  setOpenModal(true);
-                }}
+                  onClick={() => {
+                    setMode("");
+                    setEditId(null);
+                    if (user?.role === "employee") {
+                      const emp = employeeOptions.find(
+                        (e) => String(e.company_enrollment_id) === String(user.enrollment_id),
+                      );
+                      setFormData({
+                        ...emptyForm,
+                        employee_id: user.enrollment_id || user.id,
+                        employee_name: user.user_name || user.full_name || user.name,
+                        enrollment_id: user.enrollment_id || "N/A",
+                        designation_name: user.designation_name || emp?.designation_name || "",
+                        company_name: user.company_name || emp?.company_name || "",
+                        shift_name: user.shift_name || emp?.shift_name || "",
+                      });
+                    } else {
+                      setFormData(emptyForm);
+                    }
+                    setOpenModal(true);
+                  }}
                 className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white xl:text-lg font-semibold px-6 py-2 rounded-lg border border-white/30 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
               >
                 + Add New
@@ -725,11 +765,54 @@ const LeaveRequest = () => {
                     labelName="employee_name"
                     formData={formData}
                     setFormData={setFormData}
-                    disabled={mode === "view"}
+                    disabled={mode === "view" || user?.role === "employee"}
                     inputStyle={inputStyle}
                     labelStyle={labelStyle}
                   />
                 </div>
+
+                {/* Enrollment ID */}
+                <div>
+                  <label className={labelStyle}>Enrollment ID</label>
+                  <input
+                    value={formData.enrollment_id || (user?.role === "employee" ? user.enrollment_id : "") || "N/A"}
+                    readOnly
+                    className="w-full bg-gray-100 border border-gray-200 text-gray-500 px-3 py-2 xl:text-base rounded-lg transition-all shadow-sm cursor-not-allowed font-medium"
+                  />
+                </div>
+
+                {(formData.designation_name || user?.role === "employee") && (
+                  <div>
+                    <label className={labelStyle}>Designation</label>
+                    <input
+                      value={formData.designation_name || "N/A"}
+                      readOnly
+                      className="w-full bg-gray-100 border border-gray-200 text-gray-500 px-3 py-2 xl:text-base rounded-lg transition-all shadow-sm cursor-not-allowed font-medium"
+                    />
+                  </div>
+                )}
+
+                {(formData.company_name || user?.role === "employee") && (
+                  <div>
+                    <label className={labelStyle}>Company</label>
+                    <input
+                      value={formData.company_name || "N/A"}
+                      readOnly
+                      className="w-full bg-gray-100 border border-gray-200 text-gray-500 px-3 py-2 xl:text-base rounded-lg transition-all shadow-sm cursor-not-allowed font-medium"
+                    />
+                  </div>
+                )}
+
+                {(formData.shift_name || user?.role === "employee") && (
+                  <div>
+                    <label className={labelStyle}>Shift</label>
+                    <input
+                      value={formData.shift_name || "N/A"}
+                      readOnly
+                      className="w-full bg-gray-100 border border-gray-200 text-gray-500 px-3 py-2 xl:text-base rounded-lg transition-all shadow-sm cursor-not-allowed font-medium"
+                    />
+                  </div>
+                )}
 
                 {/* Leave Type */}
                 <div>

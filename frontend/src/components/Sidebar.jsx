@@ -54,9 +54,8 @@ const Sidebar = ({ user }) => {
 
       {isAdmin && (
         <div
-          className={`mt-2.5 mb-5 px-3 mx-2.5 rounded-xl text-md transition-all ${
-            isdashboardActive ? activeClass : hoverClass
-          }`}
+          className={`mt-2.5 mb-5 px-3 mx-2.5 rounded-xl text-md transition-all ${isdashboardActive ? activeClass : hoverClass
+            }`}
         >
           <div className="flex items-center gap-3 text-[16px] pl-2">
             <RxDashboard />
@@ -85,9 +84,8 @@ const Sidebar = ({ user }) => {
         ) : (
           <>
             <div
-              className={`mt-2.5 mb-5 px-4 rounded-xl text-md transition-all ${
-                isdashboardActive ? activeClass : hoverClass
-              }`}
+              className={`mt-2.5 mb-5 px-4 rounded-xl text-md transition-all ${isdashboardActive ? activeClass : hoverClass
+                }`}
             >
               <div className="flex items-center gap-3 text-[16px] ">
                 <RxDashboard />
@@ -95,9 +93,8 @@ const Sidebar = ({ user }) => {
               </div>
             </div>
             <div
-              className={`mt-2.5 mb-5 px-4 rounded-xl text-md transition-all ${
-                isattendanceActive ? activeClass : hoverClass
-              }`}
+              className={`mt-2.5 mb-5 px-4 rounded-xl text-md transition-all ${isattendanceActive ? activeClass : hoverClass
+                }`}
             >
               <div className="flex items-center gap-3 text-[16px]">
                 <MdCoPresent />

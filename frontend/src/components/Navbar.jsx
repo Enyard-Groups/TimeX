@@ -86,9 +86,8 @@ export default function Navbar({
 
         {/* RIGHT SIDEBAR */}
         <aside
-          className={`fixed top-3 right-0 h-full w-72 bg-white shadow-xl border-l border-gray-200 z-[60] transform transition-transform duration-300 ${
-            rightSidebarOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+          className={`fixed top-3 right-0 h-full w-72 bg-white shadow-xl border-l border-gray-200 z-[60] transform transition-transform duration-300 ${rightSidebarOpen ? "translate-x-0" : "translate-x-full"
+            }`}
         >
           <div className="p-4 h-full flex flex-col">
             <div className="flex justify-end mb-2">
@@ -107,9 +106,8 @@ export default function Navbar({
         {/* LEFT SIDEBAR */}
         <aside
           ref={sidebarRef}
-          className={`fixed top-0 left-0 h-full transition-transform duration-300 ${
-            sidebarOpen ? "translate-x-0 w-64" : "-translate-x-full"
-          } lg:translate-x-0 lg:w-64 z-40 bg-white`}
+          className={`fixed top-0 left-0 h-full transition-transform duration-300 ${sidebarOpen ? "translate-x-0 w-64" : "-translate-x-full"
+            } lg:translate-x-0 lg:w-64 z-40 bg-white`}
         >
           <Sidebar user={user} setSidebarOpen={setSidebarOpen} />
         </aside>
