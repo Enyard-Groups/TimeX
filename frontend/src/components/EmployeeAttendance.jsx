@@ -119,7 +119,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
         {stats.map((item, index) => (
           <div
             key={index}
-            className="bg-white rounded-sm shadow-sm flex items-center justify-between overflow-hidden relative h-[90px] border border-gray-200"
+            className="bg-white rounded-xl shadow-sm flex items-center justify-between overflow-hidden relative h-[100px] border border-gray-200"
           >
             {/* Top Right Percentage Indicator */}
             <div className="absolute top-2 right-2 flex flex-col items-center gap-0.5 text-[10px] font-bold">
@@ -131,7 +131,7 @@ const EmployeeAttendance = ({ attendanceData = [] }) => {
                 ) : (
                   <ArrowDown size={12} />
                 )}
-                {Math.abs(item.percentage)}%
+                {Math.min(Math.abs(item.percentage),100)}%
               </div>
 
               <p className="text-gray-500">this week</p>

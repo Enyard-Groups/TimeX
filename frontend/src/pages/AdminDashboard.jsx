@@ -78,13 +78,13 @@ const AdminDashboard = ({ user }) => {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6 items-start">
         {/* Line Chart */}
         <div
-          className="xl:col-span-2 bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200 min-h-[430px]"
+          className="xl:col-span-2 bg-white rounded-xl shadow-md p-2 overflow-x-auto  border border-gray-200 min-h-[430px]"
           style={{ scrollbarWidth: "none" }}
         >
           <AttendanceLineChart attendanceData={attendanceData} />
         </div>
         <div
-          className=" bg-white rounded shadow-md p-2 overflow-x-auto  border border-gray-200 min-h-[430px]"
+          className=" bg-white rounded-xl shadow-md p-2 overflow-x-auto  border border-gray-200 min-h-[430px]"
           style={{ scrollbarWidth: "none" }}
         >
           <DeviceStats />
@@ -94,7 +94,7 @@ const AdminDashboard = ({ user }) => {
       <div className=" mt-6 items-start">
         {/* Recent Actvity */}
         <div
-          className=" bg-white rounded shadow-md p-4 overflow-x-auto  border border-gray-200"
+          className=" bg-white rounded-xl shadow-md p-4 overflow-x-auto  border border-gray-200"
           style={{ scrollbarWidth: "none" }}
         >
           <RecentActivity />
@@ -104,7 +104,7 @@ const AdminDashboard = ({ user }) => {
       <div className="my-6 items-start">
         {/* Timeline Actvity */}
         <div
-          className="bg-white rounded shadow-md p-4 overflow-x-auto  border border-gray-200"
+          className="bg-white rounded-xl shadow-md p-4 overflow-x-auto  border border-gray-200"
           style={{ scrollbarWidth: "none" }}
         >
           <Timeline />
