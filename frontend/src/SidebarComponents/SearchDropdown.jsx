@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 const SearchDropdown = ({
@@ -19,16 +19,33 @@ const SearchDropdown = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const dropdownRef = useRef(null);
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    const handleOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setOpen(false);
+        setSearch("");
+      }
+    };
+    document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, [open]);
 
   const getLabel = (opt) => (labelKey ? opt[labelKey] : opt);
   const getValue = (opt) => (valueKey ? opt[valueKey] : opt);
 
   const filtered = options.filter((o) => {
     const l = getLabel(o);
-    return l && typeof l === 'string' && l.toLowerCase().includes(search.toLowerCase());
+    return (
+      l &&
+      typeof l === "string" &&
+      l.toLowerCase().includes(search.toLowerCase())
+    );
   });
 
-  //  MULTI + SINGLE HANDLER
   const handleSelect = (val, lbl) => {
     if (multiple) {
       const currentValues = Array.isArray(value) ? value : [];
@@ -40,11 +57,9 @@ const SearchDropdown = ({
       let updatedLabels;
 
       if (currentValues.includes(val)) {
-        // remove
         updatedValues = currentValues.filter((v) => v !== val);
         updatedLabels = currentLabels.filter((l) => l !== lbl);
       } else {
-        // add
         updatedValues = [...currentValues, val];
         updatedLabels = [...currentLabels, lbl];
       }
@@ -70,6 +85,7 @@ const SearchDropdown = ({
 
       setFormData(updatedFormData);
       setOpen(false);
+      setSearch("");
     }
   };
 
@@ -77,16 +93,14 @@ const SearchDropdown = ({
     if (multiple) {
       return Array.isArray(value) && value.includes(val);
     }
-
     if (labelName === name && valueKey) {
       return formData[`${name}_id`] === val;
     }
-
     return value === val;
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <label className={labelStyle}>{label}</label>
 
       {/* Input */}

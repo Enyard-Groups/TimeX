@@ -1,5 +1,95 @@
 import React, { useMemo, useState } from "react";
-import Chart from "react-apexcharts";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
+
+const COLORS = {
+  Present: "#2563EB",
+  Absent: "#EF4444",
+  Leave: "#06B6D4",
+};
+
+const CustomTooltip = ({ active, payload, label }) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div
+      style={{
+        background: "#fff",
+        border: "1px solid #e2e8f0",
+        borderRadius: 10,
+        padding: "10px 14px",
+        fontSize: 12,
+        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+      }}
+    >
+      <p style={{ fontWeight: 700, marginBottom: 6, color: "#334155" }}>
+        {label}
+      </p>
+      {payload.map((p) => (
+        <div
+          key={p.name}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            marginBottom: 3,
+          }}
+        >
+          <span
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              background: p.color,
+              display: "inline-block",
+            }}
+          />
+          <span style={{ color: "#64748b" }}>{p.name}:</span>
+          <span style={{ fontWeight: 600, color: "#1e293b" }}>{p.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const CustomLegend = ({ payload }) => (
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "flex-end",
+      gap: 16,
+      paddingRight: 16,
+      paddingBottom: 4,
+    }}
+  >
+    {payload?.map((p) => (
+      <div
+        key={p.value}
+        style={{ display: "flex", alignItems: "center", gap: 5 }}
+      >
+        <span
+          style={{
+            width: 8,
+            height: 8,
+            borderRadius: "50%",
+            background: p.color,
+            display: "inline-block",
+          }}
+        />
+        <span style={{ fontSize: 11, color: "#94a3b8", fontWeight: 600 }}>
+          {p.value}
+        </span>
+      </div>
+    ))}
+  </div>
+);
 
 const AttendanceLineChart = ({ attendanceData = [] }) => {
   const [range, setRange] = useState("7d");
@@ -12,7 +102,6 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
       return day !== 0;
     });
 
-    // 1. Daily/Weekly Views (7d, 15d, 1m)
     if (range === "7d" || range === "15d" || range === "1m") {
       const sliceSize = range === "7d" ? -6 : range === "15d" ? -15 : -30;
       return filteredData.slice(sliceSize).map((item) => {
@@ -25,78 +114,59 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
                   day: "2-digit",
                   month: "short",
                 }),
-          present: item.presentToday,
-          absent: item.totalEmployees - item.presentToday,
-          leave: item.leave,
+          Present: item.presentToday,
+          Absent: item.totalEmployees - item.presentToday,
+          Leave: item.leave,
         };
       });
     }
 
-    // 2. 1 Year View
     if (range === "1y") {
       const monthNames = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
+        "Jan","Feb","Mar","Apr","May","Jun",
+        "Jul","Aug","Sep","Oct","Nov","Dec",
       ];
       const months = {};
-
-      // Take last 365 available non-Sunday days
       filteredData.slice(-312).forEach((item) => {
         const dateObj = new Date(item.date);
         const monthLabel = monthNames[dateObj.getMonth()];
-
         if (!months[monthLabel]) {
-          months[monthLabel] = { present: 0, absent: 0, leave: 0, count: 0 };
+          months[monthLabel] = { Present: 0, Absent: 0, Leave: 0, count: 0 };
         }
-        months[monthLabel].present += item.presentToday;
-        months[monthLabel].absent += item.totalEmployees - item.presentToday;
-        months[monthLabel].leave += item.leave;
+        months[monthLabel].Present += item.presentToday;
+        months[monthLabel].Absent += item.totalEmployees - item.presentToday;
+        months[monthLabel].Leave += item.leave;
         months[monthLabel].count += 1;
       });
-
       return monthNames
         .filter((name) => months[name])
         .map((name) => ({
           label: name,
-          present: Math.round(months[name].present / months[name].count),
-          absent: Math.round(months[name].absent / months[name].count),
-          leave: Math.round(months[name].leave / months[name].count),
+          Present: Math.round(months[name].Present / months[name].count),
+          Absent: Math.round(months[name].Absent / months[name].count),
+          Leave: Math.round(months[name].Leave / months[name].count),
         }));
     }
 
-    // 3. 3 Year View - Aggregated by Year
     if (range === "3y") {
       const years = {};
       filteredData.slice(-939).forEach((item) => {
-        // ~939 working days in 3 years
         const yearLabel = new Date(item.date).getFullYear().toString();
-
         if (!years[yearLabel]) {
-          years[yearLabel] = { present: 0, absent: 0, leave: 0, count: 0 };
+          years[yearLabel] = { Present: 0, Absent: 0, Leave: 0, count: 0 };
         }
-        years[yearLabel].present += item.presentToday;
-        years[yearLabel].absent += item.totalEmployees - item.presentToday;
-        years[yearLabel].leave += item.leave;
+        years[yearLabel].Present += item.presentToday;
+        years[yearLabel].Absent += item.totalEmployees - item.presentToday;
+        years[yearLabel].Leave += item.leave;
         years[yearLabel].count += 1;
       });
-
       return Object.keys(years)
         .sort()
         .map((y) => ({
           label: y,
-          present: Math.round(years[y].present / years[y].count),
-          absent: Math.round(years[y].absent / years[y].count),
-          leave: Math.round(years[y].leave / years[y].count),
+          Present: Math.round(years[y].Present / years[y].count),
+          Absent: Math.round(years[y].Absent / years[y].count),
+          Leave: Math.round(years[y].Leave / years[y].count),
         }));
     }
 
@@ -111,65 +181,12 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
     );
   }
 
-  const series = [
-    { name: "Present", data: processedData.map((d) => d.present) },
-    { name: "Absent", data: processedData.map((d) => d.absent) },
-    { name: "Leave", data: processedData.map((d) => d.leave) },
-  ];
-
-  const options = {
-    chart: {
-      type: "area",
-      toolbar: { show: false },
-      zoom: { enabled: false },
-      fontFamily: "inherit",
-    },
-    dataLabels: { enabled: false },
-    stroke: { curve: "smooth", width: 3 },
-    colors: ["#2563EB", "#EF4444", "#06B6D4"],
-    fill: {
-      type: "gradient",
-      gradient: {
-        opacityFrom: 0.4,
-        opacityTo: 0.05,
-        stops: [20, 100],
-      },
-    },
-    grid: {
-      show: true,
-      xaxis: { lines: { show: false } },
-      yaxis: { lines: { show: false } },
-      padding: { left: 15, right:17 },
-    },
-    xaxis: {
-      categories: processedData.map((d) => d.label),
-      axisBorder: { show: false },
-      axisTicks: { show: false },
-      labels: {
-        style: {
-          colors: "#94a3b8",
-          fontSize: "11px",
-        },
-        // --- TILT SETTINGS START HERE ---
-        rotate: -45,
-        rotateAlways: false,
-        hideOverlappingLabels: true,
-        trim: true,
-        maxHeight: 60,
-      },
-    },
-    yaxis: {
-      labels: { style: { colors: "#94a3b8", fontSize: "11px" } },
-      axisBorder: { show: false },
-      axisTicks: { show: false },
-    },
-    tooltip: { theme: "light" },
-    legend: { position: "top", horizontalAlign: "right" },
-  };
+  const isRotated = range === "15d" || range === "1m";
 
   return (
     <div className="w-full h-full bg-white rounded-2xl">
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
         <h3 className="text-md font-bold text-slate-800 p-6">
           Attendance Overview
         </h3>
@@ -189,7 +206,82 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
           ))}
         </div>
       </div>
-      <Chart options={options} series={series} type="area" height={300} />
+
+      {/* Chart — ResponsiveContainer is the key, same as EmployeeAttendance */}
+      <ResponsiveContainer width="100%" height={300}>
+        <AreaChart
+          data={processedData}
+          margin={{ top: 10, right: 20, left: 40, bottom: isRotated ? 30 : 10 }}
+        >
+          <defs>
+            <linearGradient id="gradPresent" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="20%" stopColor={COLORS.Present} stopOpacity={0.4} />
+              <stop offset="100%" stopColor={COLORS.Present} stopOpacity={0.03} />
+            </linearGradient>
+            <linearGradient id="gradAbsent" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="20%" stopColor={COLORS.Absent} stopOpacity={0.4} />
+              <stop offset="100%" stopColor={COLORS.Absent} stopOpacity={0.03} />
+            </linearGradient>
+            <linearGradient id="gradLeave" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="20%" stopColor={COLORS.Leave} stopOpacity={0.4} />
+              <stop offset="100%" stopColor={COLORS.Leave} stopOpacity={0.03} />
+            </linearGradient>
+          </defs>
+
+          <CartesianGrid vertical={false} horizontal={false} />
+
+          <XAxis
+            dataKey="label"
+            tick={{
+              fontSize: 11,
+              fill: "#94a3b8",
+              fontWeight: 600,
+            }}
+            axisLine={false}
+            tickLine={false}
+            interval="preserveStartEnd"
+            angle={isRotated ? -45 : 0}
+            textAnchor={isRotated ? "end" : "middle"}
+            height={isRotated ? 55 : 30}
+          />
+
+          <YAxis
+            tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 600 }}
+            axisLine={false}
+            tickLine={false}
+            width={40}
+          />
+
+          <Tooltip content={<CustomTooltip />} />
+
+          <Legend
+            content={<CustomLegend />}
+            verticalAlign="top"
+            align="right"
+          />
+
+          {Object.entries(COLORS).map(([key, color]) => (
+            <Area
+              key={key}
+              type="monotone"
+              dataKey={key}
+              stroke={color}
+              strokeWidth={3}
+              fill={`url(#grad${key})`}
+              dot={false}
+              activeDot={{
+                r: 5,
+                fill: color,
+                stroke: "#fff",
+                strokeWidth: 2,
+              }}
+              isAnimationActive={true}
+              animationDuration={1000}
+              animationEasing="ease-in-out"
+            />
+          ))}
+        </AreaChart>
+      </ResponsiveContainer>
     </div>
   );
 };
