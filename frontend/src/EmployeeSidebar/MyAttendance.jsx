@@ -157,7 +157,7 @@ const MyAttendance = ({ user }) => {
   const today = new Date();
 
   // DATE OF JOINING
-  const dateofJoin = useMemo(() => new Date("Feb 25, 2026"), []);
+  const dateofJoin = useMemo(() => new Date("Feb 25, 2025"), []);
 
   const [currentMonth, setCurrentMonth] = useState(
     new Date(today.getFullYear(), today.getMonth(), 1),
