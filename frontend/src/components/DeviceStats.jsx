@@ -4,21 +4,28 @@ import { FaFingerprint, FaMobileAlt } from "react-icons/fa";
 import { FaDesktop } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 
+const formatDate = (date) =>
+  date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
 const DeviceStats = () => {
   const records = useSelector((state) => state.record);
+  const today = formatDate(new Date());
 
-  const today = new Date().toDateString();
   const todayRecords = records.filter((user) => {
-    const recordDate = new Date(
-      user.date || user.checkinTime || user.createdAt,
-    ).toDateString();
-    return recordDate === today;
+    return user.date === today;
   });
 
-  const deviceCount = { mobile: 0, desktop: 0, biometric: 0 };
+  // Count devices from both checkin and checkout
+  const deviceCount = {
+    mobile: 0,
+    desktop: 0,
+    biometric: 0,
+  };
+
   let totalActions = 0;
 
   todayRecords.forEach((user) => {
+    // Check Check-in Device
     if (
       user.checkinDevice &&
       Object.prototype.hasOwnProperty.call(deviceCount, user.checkinDevice)
@@ -26,6 +33,7 @@ const DeviceStats = () => {
       deviceCount[user.checkinDevice] += 1;
       totalActions += 1;
     }
+    // Check Check-out Device
     if (
       user.checkoutDevice &&
       Object.prototype.hasOwnProperty.call(deviceCount, user.checkoutDevice)
@@ -35,7 +43,7 @@ const DeviceStats = () => {
     }
   });
 
-  const isEmpty = totalActions === 0;
+  const isEmpty = totalActions === 0; 
 
   const divisor = totalActions || 1;
 
@@ -53,9 +61,9 @@ const DeviceStats = () => {
     legend: { show: false },
     dataLabels: { enabled: false },
     stroke: { width: 0 },
-    colors: isEmpty ? ["#e2e8f0"] : ["#6366f1", "#3b82f6", "#228eb8"],
+    colors: isEmpty ? ["#e2e8f0"] : ["#6366f1", "#3b82f6", "#228eb8"], 
     states: {
-      hover: { filter: { type: isEmpty ? "none" : "lighten" } },
+      hover: { filter: { type: isEmpty ? "none" : "lighten" } }, 
     },
     tooltip: { enabled: !isEmpty },
     plotOptions: {
@@ -69,7 +77,7 @@ const DeviceStats = () => {
               label: "Devices",
               color: "#64748b",
               fontSize: "14px",
-              formatter: () => totalActions,
+              formatter: () => totalActions, 
             },
           },
         },
