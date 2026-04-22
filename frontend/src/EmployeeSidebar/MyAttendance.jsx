@@ -375,7 +375,7 @@ const MyAttendance = ({ user }) => {
             My Attendance
           </h1>
           <p className="text-sm text-gray-400">
-            {user?.user_name || "Employee"} · Full overview
+            {user?.user_name.charAt(0).toUpperCase()+ user.?user_name.slice(1) || "Employee"} · Full overview
           </p>
         </div>
 
