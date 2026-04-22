@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { addRecord, fetchRecord, updateRecord } from "../action";
 import * as types from "../actionTypes";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import toast from "react-hot-toast";
+
 const API_BASE = "http://localhost:3000/api";
 const formatTime = (date) =>
   date.toLocaleTimeString("en-US", {
@@ -1109,9 +1111,10 @@ const AttendancePunch = ({ user }) => {
               onClick={() => !isPunchedIn && !loading && executePunch()}
               disabled={isPunchedIn || loading}
               className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all active:scale-[0.98]
-                ${isPunchedIn
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
-                  : "bg-gradient-to-br from-blue-700 to-blue-600 text-white shadow-md shadow-blue-200 hover:shadow-lg"
+                ${
+                  isPunchedIn
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
+                    : "bg-gradient-to-br from-blue-700 to-blue-600 text-white shadow-md shadow-blue-200 hover:shadow-lg"
                 }`}
             >
               {loading && !isPunchedIn ? "Processing..." : "Check In"}
@@ -1121,9 +1124,10 @@ const AttendancePunch = ({ user }) => {
               onClick={() => isPunchedIn && !loading && executePunch()}
               disabled={!isPunchedIn || loading}
               className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all active:scale-[0.98]
-                ${!isPunchedIn
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
-                  : "bg-white text-red-600 border-2 border-red-200 hover:bg-red-50 hover:border-red-300"
+                ${
+                  !isPunchedIn
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
+                    : "bg-white text-red-600 border-2 border-red-200 hover:bg-red-50 hover:border-red-300"
                 }`}
             >
               {loading && isPunchedIn ? "Processing..." : "Check Out"}

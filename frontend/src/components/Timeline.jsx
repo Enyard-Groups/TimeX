@@ -62,7 +62,7 @@ const ymdToRecordDate = (ymd) => {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 };
 
-// ─── Time helpers 
+// ─── Time helpers
 
 const normalizeTime = (raw) => {
   if (!raw) return "00:00:00";
@@ -257,16 +257,18 @@ const Timeline = () => {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-6 w-full relative overflow-hidden">
+    <div className="bg-white rounded-3xl w-full relative overflow-hidden">
       {/* Header */}
-      <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
+      <div className="flex flex-wrap justify-between items-center gap-3 p-4 mb-6">
         <div>
           <h2 className="text-md font-bold text-gray-600 tracking-tight">
             Live Attendance Feed
           </h2>
           <p className="text-[11px] text-gray-400 mt-0.5">
             Showing{" "}
-            <span className="font-bold text-gray-600">{startTime} – 23:59:59</span>
+            <span className="font-bold text-gray-600">
+              {startTime} – 23:59:59
+            </span>
             {" for "}
             <span className="font-bold text-gray-600">{selectedLabel}</span>
             {" · "}
@@ -298,10 +300,10 @@ const Timeline = () => {
             </button>
           )}
 
-          <div className="flex items-center gap-2 relative">
+          <div className="flex items-center flex-wrap gap-2 relative">
             {/* Date Selector */}
-            <div className="bg-gray-50 border border-gray-200 rounded-xl pl-4 py-1.5 shadow-sm">
-              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide pr-4">
+            <div className="bg-gray-50 border border-gray-200 flex flex-row rounded-xl pl-4 py-2 shadow-sm">
+              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide pr-4 pt-0.5">
                 Date
               </span>
               <input
@@ -324,7 +326,7 @@ const Timeline = () => {
             )}
 
             {/* Start Time Selector */}
-            <div className="flex flex-row bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 shadow-sm gap-4">
+            <div className="flex flex-row bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 shadow-sm gap-4">
               <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide pt-0.5">
                 From
               </span>

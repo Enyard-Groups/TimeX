@@ -211,7 +211,7 @@ const AttendanceLineChart = ({ attendanceData = [] }) => {
       <ResponsiveContainer width="100%" height={300}>
         <AreaChart
           data={processedData}
-          margin={{ top: 10, right: 20, left: 40, bottom: isRotated ? 30 : 10 }}
+          margin={{ top: 10, right: 20, left: 0, bottom: isRotated ? 30 : 10 }}
         >
           <defs>
             <linearGradient id="gradPresent" x1="0" y1="0" x2="0" y2="1">
