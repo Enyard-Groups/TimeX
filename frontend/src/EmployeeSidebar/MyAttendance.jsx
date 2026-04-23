@@ -513,6 +513,15 @@ const MyAttendance = ({ user }) => {
                           className={`w-1.5 h-1.5 rounded-full mx-auto mb-0.5 ${s.dot}`}
                         />
                       )}
+                      {s
+                        ? s.label === "Absent" && (
+                            <div
+                              className={`text-[9px] font-bold leading-none opacity-80 ${s ? s.text : "text-gray-500"}`}
+                            >
+                              0h 0m
+                            </div>
+                          )
+                        : ""}
                       {record && record._totalDaySeconds > 0 && (
                         <div
                           className={`text-[9px] font-bold leading-none opacity-80 ${s ? s.text : "text-gray-500"}`}
