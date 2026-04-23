@@ -204,7 +204,7 @@ const MyAttendance = ({ user }) => {
     userRecords.forEach((r) => {
       if (r.status === "In Progress") return;
       const dateObj = r._inTime ? new Date(r._inTime) : new Date(r.date);
-      const key = formatDateKey(dateObj); // key now contains year
+      const key = formatDateKey(dateObj);
       if (!closedByDate[key]) closedByDate[key] = [];
       closedByDate[key].push(r);
     });
@@ -278,11 +278,15 @@ const MyAttendance = ({ user }) => {
       joinComparison.setHours(0, 0, 0, 0);
       const isBeforeJoin = date < joinComparison;
 
+      // A past weekday with no record = Absent
+      const isPastDay = !isFuture && !isToday;
+
       let status = null;
       if (isBeforeJoin) status = null;
       else if (record) status = record.status;
       else if (isWeekend) status = "Weekend";
       else if (isToday) status = "Today";
+      else if (isPastDay) status = "Absent";
 
       days.push({
         date,
@@ -306,7 +310,13 @@ const MyAttendance = ({ user }) => {
       totalSecs = 0;
     calendarDays.forEach((cell) => {
       if (!cell || cell.isFuture || cell.isWeekend || cell.isBeforeJoin) return;
-      if (!cell.record) return;
+
+      // No record but marked Absent (no check-in at all)
+      if (!cell.record) {
+        if (cell.status === "Absent") absent++;
+        return;
+      }
+
       const countStatus = cell.record._countStatus || cell.record.status;
       if (countStatus === "Present") present++;
       else if (countStatus === "Absent") absent++;
@@ -375,7 +385,9 @@ const MyAttendance = ({ user }) => {
             My Attendance
           </h1>
           <p className="text-sm text-gray-400">
-            {user?.user_name.charAt(0).toUpperCase()+ user?.user_name.slice(1) || "Employee"} · Full overview
+            {user?.user_name.charAt(0).toUpperCase() +
+              user?.user_name.slice(1) || "Employee"}{" "}
+            · Full overview
           </p>
         </div>
 
@@ -605,33 +617,22 @@ const MyAttendance = ({ user }) => {
               {[
                 {
                   label: "Working Days",
-
                   value: workDaysInMonth,
-
                   cls: "text-gray-500",
                 },
-
                 {
                   label: "Present",
-
                   value: monthStats.present,
-
                   cls: "text-green-600",
                 },
-
                 {
                   label: "Absent",
-
                   value: monthStats.absent,
-
                   cls: "text-red-600",
                 },
-
                 {
                   label: "On Leave",
-
                   value: monthStats.leave,
-
                   cls: "text-violet-600",
                 },
               ].map(({ label, value, cls }) => (
@@ -640,14 +641,12 @@ const MyAttendance = ({ user }) => {
                   className="flex justify-between items-center py-2.5 border-b border-gray-50 last:border-0"
                 >
                   <span className="text-sm text-gray-600">{label}</span>
-
                   <span className={`text-sm font-black ${cls}`}>{value}</span>
                 </div>
               ))}
 
               <div className="flex justify-between items-center pt-3 mt-1 border-t border-blue-50">
                 <span className="text-sm text-gray-600">Total Hours</span>
-
                 <span className="text-sm font-black text-blue-700">
                   {formatSeconds(monthStats.totalSecs)}
                 </span>
