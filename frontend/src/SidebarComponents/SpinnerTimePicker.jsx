@@ -1,9 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 
+const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
+const minutes = Array.from({ length: 60 }, (_, i) =>
+  String(i).padStart(2, "0"),
+);
+const seconds = Array.from({ length: 60 }, (_, i) =>
+  String(i).padStart(2, "0"),
+);
+
 export default function SpinnerTimePicker({ value, onChange, onClose }) {
   const pickerRef = useRef(null);
 
-  // Close on outside click
   useEffect(() => {
     const handleOutsideClick = (e) => {
       if (pickerRef.current && !pickerRef.current.contains(e.target)) {
@@ -14,27 +21,44 @@ export default function SpinnerTimePicker({ value, onChange, onClose }) {
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, [onClose]);
 
-  let baseTime = new Date();
-  if (value instanceof Date) {
-    baseTime = value;
-  } else if (typeof value === "string" && value.includes(":")) {
-    const [h, m, s] = value.split(":");
-    baseTime.setHours(Number(h), Number(m), Number(s || 0), 0);
-  }
+  // ✅ Default to 00:00:00 instead of current time
+  const parseValue = () => {
+    if (value instanceof Date) {
+      return {
+        h: String(value.getHours()).padStart(2, "0"),
+        m: String(value.getMinutes()).padStart(2, "0"),
+        s: String(value.getSeconds()).padStart(2, "0"),
+      };
+    }
+    if (typeof value === "string" && value.includes(":")) {
+      const [h, m, s] = value.split(":");
+      return {
+        h: String(Number(h)).padStart(2, "0"),
+        m: String(Number(m)).padStart(2, "0"),
+        s: String(Number(s || 0)).padStart(2, "0"),
+      };
+    }
+    return { h: "00", m: "00", s: "00" }; // ✅ default
+  };
 
-  const [hour, setHour] = useState(
-    String(baseTime.getHours()).padStart(2, "0"),
-  );
-  const [minute, setMinute] = useState(
-    String(baseTime.getMinutes()).padStart(2, "0"),
-  );
-  const [second, setSecond] = useState(
-    String(baseTime.getSeconds()).padStart(2, "0"),
-  );
+  const init = parseValue();
 
-  const [tempHour, setTempHour] = useState(hour);
-  const [tempMinute, setTempMinute] = useState(minute);
-  const [tempSecond, setTempSecond] = useState(second);
+  const [hour, setHour] = useState(init.h);
+  const [minute, setMinute] = useState(init.m);
+  const [second, setSecond] = useState(init.s);
+
+  const [tempHour, setTempHour] = useState(init.h);
+  const [tempMinute, setTempMinute] = useState(init.m);
+  const [tempSecond, setTempSecond] = useState(init.s);
+
+  // ✅ Same spin helper as date picker
+  const spin = (setter, list, currentVal, dir) => {
+    const index = list.indexOf(currentVal);
+    let next = dir === "up" ? index - 1 : index + 1;
+    if (next < 0) next = list.length - 1;
+    if (next >= list.length) next = 0;
+    setter(list[next]);
+  };
 
   const clamp = (val, max) => {
     const num = Number(val);
@@ -48,14 +72,11 @@ export default function SpinnerTimePicker({ value, onChange, onClose }) {
     const h = clamp(tempHour, 23);
     const m = clamp(tempMinute, 59);
     const s = clamp(tempSecond, 59);
-
     setHour(h);
     setMinute(m);
     setSecond(s);
-
     const next = new Date();
     next.setHours(Number(h), Number(m), Number(s), 0);
-
     onChange && onChange(next);
     onClose && onClose();
   };
@@ -68,7 +89,7 @@ export default function SpinnerTimePicker({ value, onChange, onClose }) {
   };
 
   const commonInputClasses =
-    "w-10 sm:w-12 text-center py-2 rounded-lg border border-[oklch(0.86_0.001_106.424)] text-2xl tracking-widest";
+    "w-10 sm:w-12 text-center py-2 rounded-lg border border-[oklch(0.86_0.001_106.424)] text-2xl tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-300";
 
   return (
     <div
@@ -81,53 +102,50 @@ export default function SpinnerTimePicker({ value, onChange, onClose }) {
 
       <div className="flex items-center gap-3">
         {/* Hour */}
-        <div className="flex flex-col items-center">
-          <input
-            value={tempHour}
-            onChange={(e) => {
-              let v = e.target.value.replace(/\D/g, "");
-              if (v.length > 2) v = v.slice(0, 2);
-              setTempHour(v);
-            }}
-            className={commonInputClasses}
-          />
-          <span className="mt-2 text-xs text-gray-500 uppercase">Hour</span>
-        </div>
+        <SpinnerColumn
+          val={tempHour}
+          list={hours}
+          setter={setTempHour}
+          spin={spin}
+          inputClasses={commonInputClasses}
+          label="Hour"
+          onInputChange={(v) => {
+            if (v.length <= 2) setTempHour(v);
+          }}
+        />
 
-        <div className="text-3xl text-gray-400">:</div>
+        <div className="text-3xl text-gray-400 mb-5">:</div>
 
         {/* Minute */}
-        <div className="flex flex-col items-center">
-          <input
-            value={tempMinute}
-            onChange={(e) => {
-              let v = e.target.value.replace(/\D/g, "");
-              if (v.length > 2) v = v.slice(0, 2);
-              setTempMinute(v);
-            }}
-            className={commonInputClasses}
-          />
-          <span className="mt-2 text-xs text-gray-500 uppercase">Minute</span>
-        </div>
+        <SpinnerColumn
+          val={tempMinute}
+          list={minutes}
+          setter={setTempMinute}
+          spin={spin}
+          inputClasses={commonInputClasses}
+          label="Minute"
+          onInputChange={(v) => {
+            if (v.length <= 2) setTempMinute(v);
+          }}
+        />
 
-        <div className="text-3xl text-gray-400">:</div>
+        <div className="text-3xl text-gray-400 mb-5">:</div>
 
         {/* Second */}
-        <div className="flex flex-col items-center">
-          <input
-            value={tempSecond}
-            onChange={(e) => {
-              let v = e.target.value.replace(/\D/g, "");
-              if (v.length > 2) v = v.slice(0, 2);
-              setTempSecond(v);
-            }}
-            className={commonInputClasses}
-          />
-          <span className="mt-2 text-xs text-gray-500 uppercase">Second</span>
-        </div>
+        <SpinnerColumn
+          val={tempSecond}
+          list={seconds}
+          setter={setTempSecond}
+          spin={spin}
+          inputClasses={commonInputClasses}
+          label="Second"
+          onInputChange={(v) => {
+            if (v.length <= 2) setTempSecond(v);
+          }}
+        />
       </div>
 
-      <div className="flex justify-end gap-4 mt-6 text-sm">
+      <div className="flex justify-end gap-4 mt-2 text-sm">
         <button
           onClick={handleCancel}
           className="px-4 py-1 rounded-lg border text-gray-600 hover:bg-gray-100"
@@ -141,6 +159,43 @@ export default function SpinnerTimePicker({ value, onChange, onClose }) {
           OK
         </button>
       </div>
+    </div>
+  );
+}
+
+// ✅ Same arrow style as date picker
+function SpinnerColumn({
+  val,
+  list,
+  setter,
+  spin,
+  inputClasses,
+  label,
+  onInputChange,
+}) {
+  return (
+    <div className="flex flex-col items-center">
+      <button
+        className="text-gray-400 hover:text-black"
+        onClick={() => spin(setter, list, val, "up")}
+      >
+        ▲
+      </button>
+
+      <input
+        value={val}
+        onChange={(e) => onInputChange(e.target.value.replace(/\D/g, ""))}
+        className={inputClasses}
+      />
+
+      <button
+        className="text-gray-400 hover:text-black"
+        onClick={() => spin(setter, list, val, "down")}
+      >
+        ▼
+      </button>
+
+      <span className="mt-2 text-xs text-gray-500 uppercase">{label}</span>
     </div>
   );
 }

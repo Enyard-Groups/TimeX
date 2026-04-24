@@ -763,7 +763,7 @@ const EmployeeMaster = () => {
                   label="Department"
                   name="department_id"
                   value={formData.department_id}
-                  displayValue={formData.department_id_name}
+                  displayValue={formData.department_name}
                   options={departmentOptions}
                   labelKey="name"
                   valueKey="id"
@@ -778,7 +778,7 @@ const EmployeeMaster = () => {
                   label="Designation"
                   name="designation_id"
                   value={formData.designation_id}
-                  displayValue={formData.designation_id_name}
+                  displayValue={formData.designation_name}
                   options={designationOptions}
                   labelKey="name"
                   valueKey="id"
@@ -793,7 +793,7 @@ const EmployeeMaster = () => {
                   label="Shift"
                   name="shift_id"
                   value={formData.shift_id}
-                  displayValue={formData.shift_id_name}
+                  displayValue={formData.shift_name}
                   options={shiftOptions}
                   labelKey="shift_name"
                   valueKey="id"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const months = [
   "Jan",
@@ -14,16 +14,17 @@ const months = [
   "Nov",
   "Dec",
 ];
+
 const currentYear = new Date().getFullYear();
+
 const years = Array.from(
-  { length: currentYear + 150 - 1930 + 1 },
-  (_, i) => 1930 + i,
+  { length: currentYear + 150 - 1950 + 1 },
+  (_, i) => 1950 + i,
 );
 
 export default function SpinnerDatePicker({ value, onChange, onClose }) {
   const pickerRef = useRef(null);
 
-  // Close on outside click
   useEffect(() => {
     const handleOutsideClick = (e) => {
       if (pickerRef.current && !pickerRef.current.contains(e.target)) {
@@ -34,59 +35,111 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, [onClose]);
 
-  const parseInitialDate = () => {
-    if (value instanceof Date) return value;
-    if (typeof value === "string" && value.includes("/")) {
+  let baseDate = new Date();
+
+  if (value instanceof Date) {
+    baseDate = value;
+  } else if (typeof value === "string") {
+    if (value.includes("/")) {
       const [d, m, y] = value.split("/");
-      const parsed = new Date(Number(y), Number(m) - 1, Number(d));
-      return isNaN(parsed.getTime()) ? new Date() : parsed;
+      baseDate = new Date(Number(y), Number(m) - 1, Number(d));
+    } else if (value.includes("-")) {
+      const [y, m, d] = value.split("-");
+      baseDate = new Date(Number(y), Number(m) - 1, Number(d));
     }
-    return new Date();
-  };
+  }
 
-  const [baseDate] = useState(parseInitialDate);
+  const [day, setDay] = useState(String(baseDate.getDate()).padStart(2, "0"));
+  const [month, setMonth] = useState(months[baseDate.getMonth()]);
+  const [year, setYear] = useState(baseDate.getFullYear());
 
-  const [tempDay, setTempDay] = useState(
-    String(baseDate.getDate()).padStart(2, "0"),
-  );
-  const [tempMonth, setTempMonth] = useState(months[baseDate.getMonth()]);
-  const [tempYear, setTempYear] = useState(baseDate.getFullYear());
+  const [tempDay, setTempDay] = useState(day);
+  const [tempMonth, setTempMonth] = useState(month);
+  const [tempYear, setTempYear] = useState(year);
+
+  /* ---------- Days in selected month ---------- */
 
   const daysInMonth = new Date(
     tempYear,
     months.indexOf(tempMonth) + 1,
     0,
   ).getDate();
+
   const days = Array.from({ length: daysInMonth }, (_, i) =>
     String(i + 1).padStart(2, "0"),
   );
 
-  useEffect(() => {
-    if (Number(tempDay) > daysInMonth) {
-      setTempDay(String(daysInMonth).padStart(2, "0"));
-    }
-  }, [tempMonth, tempYear, daysInMonth, tempDay]);
+  /* ---------- Spinner helpers ---------- */
 
-  const spin = (setter, list, currentVal, dir) => {
-    const index = list.indexOf(currentVal);
+  const spin = (setter, list, value, dir) => {
+    const index = list.indexOf(value);
     let next = dir === "up" ? index - 1 : index + 1;
+
     if (next < 0) next = list.length - 1;
     if (next >= list.length) next = 0;
+
     setter(list[next]);
   };
 
-  const handleOk = () => {
-    const monthNumber = months.indexOf(tempMonth) + 1;
-    const formatted = `${String(tempDay).padStart(2, "0")}/${String(monthNumber).padStart(2, "0")}/${tempYear}`;
-    onChange?.(formatted);
-    onClose?.();
+  const spinYear = (dir) => {
+    const index = years.indexOf(Number(tempYear));
+    let next = dir === "up" ? index - 1 : index + 1;
+
+    if (next < 0) next = years.length - 1;
+    if (next >= years.length) next = 0;
+
+    setTempYear(years[next]);
   };
 
-  const headerDate = new Date(
-    tempYear,
-    months.indexOf(tempMonth),
-    Number(tempDay) || 1,
-  );
+  /* ---------- Mouse wheel support ---------- */
+
+  const handleWheelDay = (event) => {
+    event.preventDefault();
+    const dir = event.deltaY < 0 ? "up" : "down";
+    spin(setTempDay, days, tempDay, dir);
+  };
+
+  const handleWheelMonth = (event) => {
+    event.preventDefault();
+    const dir = event.deltaY < 0 ? "up" : "down";
+    spin(setTempMonth, months, tempMonth, dir);
+  };
+
+  const handleWheelYear = (event) => {
+    const dir = event.deltaY < 0 ? "up" : "down";
+    spinYear(dir);
+  };
+
+  /* ---------- OK / Cancel ---------- */
+
+  const handleOk = () => {
+    setDay(tempDay);
+    setMonth(tempMonth);
+    setYear(tempYear);
+
+    const monthNumber = months.indexOf(tempMonth) + 1;
+
+    const formatted =
+      `${tempDay}/` +
+      `${String(monthNumber).padStart(2, "0")}/` +
+      `${tempYear}`;
+
+    onChange && onChange(formatted);
+
+    onClose && onClose();
+  };
+
+  const handleCancel = () => {
+    setTempDay(day);
+    setTempMonth(month);
+    setTempYear(year);
+    onClose && onClose();
+  };
+
+  /* ---------- Derived display ---------- */
+
+  const monthIndex = months.indexOf(tempMonth);
+  const headerDate = new Date(tempYear, monthIndex, Number(tempDay) || 1);
   const headerLabel = headerDate.toLocaleDateString("en-US", {
     weekday: "short",
     month: "short",
@@ -94,120 +147,130 @@ export default function SpinnerDatePicker({ value, onChange, onClose }) {
     year: "numeric",
   });
 
+  /* ---------- UI ---------- */
+
   return (
     <div
+      className="absolute z-50 mt-2 bg-white shadow-2xl rounded-2xl px-4 sm:px-6 py-5 w-fit"
       ref={pickerRef}
-      className="absolute z-50 mt-2 bg-white shadow-2xl rounded-2xl p-6 w-72 border border-gray-100"
     >
-      <div className="text-blue-600 text-lg font-semibold text-center mb-4 tracking-tight">
+      <div className="text-blue-500 text-lg font-medium text-center mb-3">
         {headerLabel}
       </div>
 
-      <div className="flex items-center justify-center gap-2 mb-6 bg-gray-50 py-4 rounded-xl">
-        {/* DAY SPINNER */}
-        <SpinnerColumn
-          label="Day"
-          val={tempDay}
-          onUp={() => spin(setTempDay, days, tempDay, "up")}
-          onDown={() => spin(setTempDay, days, tempDay, "down")}
-        />
+      <div className="h-px bg-[oklch(0.9_0.001_106.424)] mb-4" />
 
-        <span className="text-gray-300 font-light text-2xl mb-1">/</span>
+      <div className="flex items-center justify-center gap-2 sm:gap-4">
+        {/* DAY */}
+        <div className="flex flex-col items-center" onWheel={handleWheelDay}>
+          <button
+            className="text-gray-400 hover:text-black"
+            onClick={() => spin(setTempDay, days, tempDay, "up")}
+          >
+            ▲
+          </button>
 
-        {/* MONTH SPINNER */}
-        <SpinnerColumn
-          label="Month"
-          val={tempMonth}
-          onUp={() => spin(setTempMonth, months, tempMonth, "up")}
-          onDown={() => spin(setTempMonth, months, tempMonth, "down")}
-        />
+          <input
+            value={tempDay}
+            onChange={(e) => {
+              let v = e.target.value.replace(/\D/g, "");
+              if (v.length <= 2) setTempDay(v);
+            }}
+            className="w-10 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-blue-500 focus:outline-none"
+          />
 
-        <span className="text-gray-300 font-light text-2xl mb-1">/</span>
+          <button
+            className="text-gray-400 hover:text-black"
+            onClick={() => spin(setTempDay, days, tempDay, "down")}
+          >
+            ▼
+          </button>
+        </div>
 
-        {/* YEAR SPINNER */}
-        <SpinnerColumn
-          label="Year"
-          val={tempYear}
-          onUp={() =>
-            spin(
-              (v) => setTempYear(v),
-              years.map(String),
-              String(tempYear),
-              "up",
-            )
-          }
-          onDown={() =>
-            spin(
-              (v) => setTempYear(v),
-              years.map(String),
-              String(tempYear),
-              "down",
-            )
-          }
-        />
+        <div className="text-2xl text-gray-300">/</div>
+
+        {/* MONTH */}
+        <div className="flex flex-col items-center" onWheel={handleWheelMonth}>
+          <button
+            className="text-gray-400 hover:text-black"
+            onClick={() => spin(setTempMonth, months, tempMonth, "up")}
+          >
+            ▲
+          </button>
+
+          <input
+            value={tempMonth}
+            onChange={(e) => {
+              const v = e.target.value.slice(0, 3);
+              setTempMonth(v);
+            }}
+            onBlur={() => {
+              const match = months.find(
+                (m) => m.toLowerCase() === tempMonth.toLowerCase(),
+              );
+              if (!match) {
+                setTempMonth(month);
+              } else {
+                setTempMonth(match);
+              }
+            }}
+            className="w-12 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-blue-500 focus:outline-none"
+          />
+
+          <button
+            className="text-gray-400 hover:text-black"
+            onClick={() => spin(setTempMonth, months, tempMonth, "down")}
+          >
+            ▼
+          </button>
+        </div>
+
+        <div className="text-2xl text-gray-300">/</div>
+
+        {/* YEAR */}
+        <div className="flex flex-col items-center" onWheel={handleWheelYear}>
+          <button
+            className="text-gray-400 hover:text-black"
+            onClick={() => spinYear("up")}
+          >
+            ▲
+          </button>
+
+          <input
+            value={tempYear}
+            onChange={(e) => {
+              let v = e.target.value.replace(/\D/g, "");
+              if (v.length <= 4) setTempYear(v);
+            }}
+            className="w-12 text-center py-1.5 rounded-md text-xl tracking-wide border-b-2 border-blue-500 focus:outline-none"
+          />
+
+          <button
+            className="text-gray-400 hover:text-black"
+            onClick={() => spinYear("down")}
+          >
+            ▼
+          </button>
+        </div>
       </div>
 
       {/* ACTION BUTTONS */}
-      <div className="flex gap-3">
+
+      <div className="flex justify-end gap-3 mt-5 text-sm">
         <button
-          onClick={onClose}
-          className="flex-1 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"
+          onClick={handleCancel}
+          className="px-4 py-1 rounded-lg border text-gray-600 hover:bg-gray-100"
         >
           Cancel
         </button>
+
         <button
           onClick={handleOk}
-          className="flex-1 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-95"
+          className="px-5 py-1 rounded-lg bg-blue-500 text-white hover:opacity-90"
         >
-          Set Date
+          OK
         </button>
       </div>
-    </div>
-  );
-}
-
-function SpinnerColumn({ val, onUp, onDown }) {
-  return (
-    <div className="flex flex-col items-center">
-      <button
-        onClick={onUp}
-        className="p-1 text-gray-400 hover:text-blue-500 transition-colors"
-      >
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 15l7-7 7 7"
-          />
-        </svg>
-      </button>
-      <span className="text-xl font-bold text-gray-800 w-12 text-center tabular-nums">
-        {val}
-      </span>
-      <button
-        onClick={onDown}
-        className="p-1 text-gray-400 hover:text-blue-500 transition-colors"
-      >
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
-      </button>
     </div>
   );
 }

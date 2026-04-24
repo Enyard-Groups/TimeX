@@ -40,7 +40,7 @@ const HolidayMaster = () => {
     company_name: "",
     location: "",
     location_name: "",
-    isActive: false,
+    is_active: false,
   });
 
   const inputStyle =
@@ -176,7 +176,7 @@ const HolidayMaster = () => {
         holidayend: formData.holidayend,
         company: formData.company,
         location: formData.location,
-        is_active: formData.isActive,
+        is_active: formData.is_active,
       };
 
       if (editId) {
@@ -210,7 +210,7 @@ const HolidayMaster = () => {
       company_name: "",
       location: "",
       location_name: "",
-      isActive: false,
+      is_active: false,
     });
   };
 
@@ -236,7 +236,7 @@ const HolidayMaster = () => {
           item.holidayend,
           item.company_name || item.company,
           item.location,
-          item.isActive ? "Y" : "N",
+          item.is_active ? "Y" : "N",
         ].join("\t"),
       )
       .join("\n");
@@ -256,7 +256,7 @@ const HolidayMaster = () => {
       HolidayEnd: item.holidayend,
       Location: item.location,
       Company: item.company_name || item.company,
-      Active: item.isActive ? "Y" : "N",
+      Active: item.is_active ? "Y" : "N",
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -292,7 +292,7 @@ const HolidayMaster = () => {
         item.holidayend,
         item.company_name || item.company,
         item.location,
-        item.isActive ? "Y" : "N",
+        item.is_active ? "Y" : "N",
       ];
 
       tableRows.push(row);
@@ -337,7 +337,7 @@ const HolidayMaster = () => {
                   company_name: "",
                   location: "",
                   location_name: "",
-                  isActive: false,
+                  is_active: false,
                 }),
                 setOpenModal(true)
               )}
@@ -504,9 +504,9 @@ const HolidayMaster = () => {
                     <td className="px-4 py-3 hidden lg:table-cell text-center">
                       <div className="flex justify-center">
                         <span
-                          className={`px-3 py-1 rounded-full text-sm lg:text-base 3xl:text-lg font-semibold border ${item.isActive ? "bg-green-100 text-green-700 border-green-300" : "bg-gray-100 text-gray-700 border-gray-300"}`}
+                          className={`px-3 py-1 rounded-full text-sm lg:text-base whitespace-nowrap 3xl:text-lg font-semibold border ${item.is_active ? "bg-green-100 text-green-700 border-green-300" : "bg-gray-100 text-gray-700 border-gray-300"}`}
                         >
-                          {item.isActive ? "✓ Active" : "○ Inactive"}
+                          {item.is_active ? "✓ Active" : "○ Inactive"}
                         </span>
                       </div>
                     </td>
@@ -750,8 +750,8 @@ const HolidayMaster = () => {
               <div className="flex items-center gap-3 h-fit sm:mt-8">
                 <input
                   type="checkbox"
-                  name="isActive"
-                  checked={formData.isActive}
+                  name="is_active"
+                  checked={formData.is_active}
                   onChange={handleChange}
                   disabled={mode === "view"}
                   className="w-5 h-5 cursor-pointer accent-blue-500"
