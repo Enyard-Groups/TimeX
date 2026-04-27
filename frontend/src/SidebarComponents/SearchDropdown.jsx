@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 import React, { useState, useRef, useEffect } from "react";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
@@ -34,6 +35,24 @@ const SearchDropdown = ({
     return () => document.removeEventListener("mousedown", handleOutside);
   }, [open]);
 
+  // Sync labels into formData on mount for edit/view mode
+  useEffect(() => {
+    if (!multiple || !Array.isArray(value) || value.length === 0) return;
+
+    const labelArr = formData[labelName || `${name}_name`];
+    if (Array.isArray(labelArr) && labelArr.length > 0) return; // already set
+
+    const derivedLabels = options
+      .filter((o) => value.map(String).includes(String(getValue(o))))
+      .map((o) => getLabel(o));
+
+    if (derivedLabels.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        [labelName || `${name}_name`]: derivedLabels,
+      }));
+    }
+  }, [value, options]); 
   const getLabel = (opt) => (labelKey ? opt[labelKey] : opt);
   const getValue = (opt) => (valueKey ? opt[valueKey] : opt);
 
@@ -46,50 +65,68 @@ const SearchDropdown = ({
     );
   });
 
-  //  MULTI + SINGLE HANDLER
-const handleSelect = (val, lbl) => {
-  if (multiple) {
-    const currentValues = Array.isArray(value) ? value : [];
-    const currentLabels = Array.isArray(formData[labelName || `${name}_name`])
+  // Compare as strings to avoid number/string type mismatch
+  const isSelected = (val) => {
+    if (multiple) {
+      return Array.isArray(value) && value.map(String).includes(String(val));
+    }
+    return String(value) === String(val);
+  };
+
+  const handleSelect = (val, lbl) => {
+    if (multiple) {
+      const currentValues = Array.isArray(value) ? value : [];
+      const currentLabels = Array.isArray(formData[labelName || `${name}_name`])
+        ? formData[labelName || `${name}_name`]
+        : [];
+
+      let updatedValues;
+      let updatedLabels;
+
+      if (currentValues.map(String).includes(String(val))) {
+        updatedValues = currentValues.filter((v) => String(v) !== String(val));
+        updatedLabels = currentLabels.filter((l) => l !== lbl);
+      } else {
+        updatedValues = [...currentValues, val];
+        updatedLabels = [...currentLabels, lbl];
+      }
+
+      setFormData({
+        ...formData,
+        [name]: updatedValues,
+        [labelName || `${name}_name`]: updatedLabels,
+      });
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: val,
+        ...(labelName && { [labelName]: lbl }),
+      }));
+      setOpen(false);
+      setSearch("");
+    }
+  };
+
+  // Derive display labels for multiple select (fallback for view/edit mode)
+  const getDisplayLabel = () => {
+    if (!multiple) return displayValue || value || "Select";
+
+    const labelArr = Array.isArray(formData[labelName || `${name}_name`])
       ? formData[labelName || `${name}_name`]
       : [];
 
-    let updatedValues;
-    let updatedLabels;
+    if (labelArr.length > 0) return labelArr.join(", ");
 
-    if (currentValues.includes(val)) {
-      updatedValues = currentValues.filter((v) => v !== val);
-      updatedLabels = currentLabels.filter((l) => l !== lbl);
-    } else {
-      updatedValues = [...currentValues, val];
-      updatedLabels = [...currentLabels, lbl];
+    // Fallback: derive labels from value IDs + options
+    const selectedValues = Array.isArray(value) ? value : [];
+    if (selectedValues.length > 0) {
+      const derivedLabels = options
+        .filter((o) => selectedValues.map(String).includes(String(getValue(o))))
+        .map((o) => getLabel(o));
+      return derivedLabels.length > 0 ? derivedLabels.join(", ") : "Select";
     }
 
-    setFormData({
-      ...formData,
-      [name]: updatedValues,
-      [labelName || `${name}_name`]: updatedLabels,
-    });
-  } else {
-    // ✅ FIXED SINGLE SELECT
-    setFormData((prev) => ({
-      ...prev,
-      [name]: val,
-      ...(labelName && { [labelName]: lbl }),
-    }));
-
-    setOpen(false);
-  }
-};
-
-  const isSelected = (val) => {
-    if (multiple) {
-      return Array.isArray(value) && value.includes(val);
-    }
-    if (labelName === name && valueKey) {
-      return formData[`${name}_id`] === val;
-    }
-    return value === val;
+    return "Select";
   };
 
   return (
@@ -105,14 +142,7 @@ const handleSelect = (val, lbl) => {
             : "cursor-pointer border-2 hover:border-blue-500/60"
         } flex items-center justify-between min-h-[40px] transition-all`}
       >
-        <span className="truncate">
-          {multiple
-            ? Array.isArray(formData[labelName || `${name}_name`]) &&
-              formData[labelName || `${name}_name`].length > 0
-              ? formData[labelName || `${name}_name`].join(", ")
-              : "Select"
-            : displayValue || value || "Select"}
-        </span>
+        <span className="truncate">{getDisplayLabel()}</span>
 
         {!disabled &&
           (open ? (

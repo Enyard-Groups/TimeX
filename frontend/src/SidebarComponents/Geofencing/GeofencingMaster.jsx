@@ -495,18 +495,18 @@ const GeofencingMaster = () => {
                       key={item.id}
                       className="border-b border-blue-100/30 bg-white/50 hover:bg-blue-50 transition"
                     >
-                      <td className="text-center hidden sm:table-cell">
+                      <td className="px-4 py-3 text-center hidden sm:table-cell">
                         {index + 1}
                       </td>
-                      <td className="text-center font-medium">{item.name}</td>
-                      <td className="text-center hidden md:table-cell">
+                      <td className="px-4 py-3 text-center font-medium">{item.name}</td>
+                      <td className="px-4 py-3 text-center hidden md:table-cell">
                         {item.latitude}
                       </td>
-                      <td className="text-center hidden md:table-cell">
+                      <td className="px-4 py-3 text-center hidden md:table-cell">
                         {item.longitude}
                       </td>
 
-                      <td className="text-center">
+                      <td className="px-4 py-3 text-center">
                         <div className="flex justify-center gap-2">
                           <button
                             onClick={() => {

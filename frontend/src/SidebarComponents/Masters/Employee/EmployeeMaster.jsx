@@ -17,6 +17,23 @@ import SearchDropdown from "../../SearchDropdown";
 
 const API_BASE = "http://localhost:3000/api";
 
+// ── Format any date string → dd/mm/yyyy for display ──────────────────────────
+const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+
+  // Already in dd/mm/yyyy
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) return dateStr;
+
+  // yyyy-mm-dd or ISO string
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return dateStr; // fallback: return as-is
+
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const yyyy = date.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+};
+
 const emptyForm = {
   device_enrollment_id: "",
   company_enrollment_id: "",
@@ -47,8 +64,25 @@ const emptyForm = {
   leave_plan_name: [],
 };
 
+// ── Normalize employee (list data) ────────────────────────────────────────────
+const normalizeEmployee = (emp) => ({
+  ...emp,
+  dob: formatDate(emp.dob),
+  doj: formatDate(emp.doj),
+  leave_plan: Array.isArray(emp.leave_plan)
+    ? emp.leave_plan.map(Number)
+    : emp.leave_plan
+      ? emp.leave_plan.split(",").map(Number)
+      : [],
+  leave_plan_name: Array.isArray(emp.leave_plan_name)
+    ? emp.leave_plan_name
+    : emp.leave_plan_name
+      ? emp.leave_plan_name.split(",")
+      : [],
+});
+
 const EmployeeMaster = () => {
-  const [mode, setMode] = useState(""); // "view" | "edit"
+  const [mode, setMode] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [employeeMaster, setEmployeeMaster] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -59,7 +93,6 @@ const EmployeeMaster = () => {
   const [showDojPicker, setShowDojPicker] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Dropdown options fetched from backend
   const [departmentOptions, setDepartmentOptions] = useState([]);
   const [designationOptions, setDesignationOptions] = useState([]);
   const [shiftOptions, setShiftOptions] = useState([]);
@@ -70,19 +103,46 @@ const EmployeeMaster = () => {
 
   const [formData, setFormData] = useState(emptyForm);
 
+  // ── Build formData from a table row for view/edit modal ───────────────────
+  const buildFormData = (item) => ({
+    ...item,
+    mobile: item.phone || "-",
+    // ✅ Format dates to dd/mm/yyyy for display
+    dob: formatDate(item.dob),
+    doj: formatDate(item.doj),
+    department_id_name: item.department_name || "",
+    designation_id_name: item.designation_name || "",
+    shift_id_name: item.shift_name || item.shift || "",
+    location_name:
+      item.location_name ||
+      item.name ||
+      locationOptions.find((o) => o.id == item.location)?.name ||
+      item.location,
+    company_name: item.company_name || "",
+    leave_plan: Array.isArray(item.leave_plan)
+      ? item.leave_plan.map(Number)
+      : item.leave_plan
+        ? item.leave_plan.split(",").map(Number)
+        : [],
+    leave_plan_name: Array.isArray(item.leave_plan_name)
+      ? item.leave_plan_name
+      : item.leave_plan_name
+        ? item.leave_plan_name.split(",")
+        : [],
+  });
+
   const inputStyle =
-    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
+    "w-full bg-white border border-gray-200 text-gray-900 px-3 py-2 xl:text-base rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-all shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed";
 
   const labelStyle =
     "text-sm xl:text-base focus:outline-none font-semibold text-slate-600 mb-1.5 block";
 
-  // ── Fetch employees on mount ──────────────────────────────────────────────
+  // ── Fetch employees ───────────────────────────────────────────────────────
   const fetchEmployees = async () => {
     try {
       setLoading(true);
       const res = await axios.get(`${API_BASE}/employee`);
-
-      setEmployeeMaster(res.data);
+      setEmployeeMaster((res.data || []).map(normalizeEmployee));
     } catch (error) {
       toast.error("Failed to load employees");
     } finally {
@@ -90,7 +150,7 @@ const EmployeeMaster = () => {
     }
   };
 
-  // ── Fetch dropdown options from backend ───────────────────────────────────
+  // ── Fetch dropdown options ────────────────────────────────────────────────
   const fetchDropdowns = async () => {
     try {
       const [deptRes, desRes, shiftRes, appRes, levRes, compRes, locRes] =
@@ -121,7 +181,7 @@ const EmployeeMaster = () => {
     fetchDropdowns();
   }, []);
 
-  // ── Filtered / paged data ─────────────────────────────────────────────────
+  // ── Filter + pagination ───────────────────────────────────────────────────
   const filteredemployeeMaster = employeeMaster.filter((x) => {
     const locName =
       x.location_name ||
@@ -144,7 +204,7 @@ const EmployeeMaster = () => {
 
   const endIndex = currentPage * entriesPerPage;
   const startIndex = endIndex - entriesPerPage;
-  const currentemployeeMaster = filteredemployeeMaster.slice(
+  const currentemployeeMaster = (filteredemployeeMaster || []).slice(
     startIndex,
     endIndex,
   );
@@ -163,7 +223,6 @@ const EmployeeMaster = () => {
   };
 
   const handleSubmit = async () => {
-    console.log(formData)
     const { device_enrollment_id, company_enrollment_id, full_name } = formData;
 
     if (!device_enrollment_id || !company_enrollment_id || !full_name) {
@@ -173,19 +232,26 @@ const EmployeeMaster = () => {
 
     const payload = {
       ...formData,
-      leave_plan: formData.leave_plan.join(","),
+      leave_plan: Array.isArray(formData.leave_plan)
+        ? formData.leave_plan.join(",")
+        : formData.leave_plan || "",
+      leave_plan_name: Array.isArray(formData.leave_plan_name)
+        ? formData.leave_plan_name.join(",")
+        : formData.leave_plan_name || "",
     };
 
     try {
       if (editId) {
         const res = await axios.put(`${API_BASE}/employee/${editId}`, payload);
         setEmployeeMaster((prev) =>
-          prev.map((emp) => (emp.id === editId ? res.data : emp)),
+          prev.map((emp) =>
+            emp.id === editId ? normalizeEmployee(res.data) : emp,
+          ),
         );
         toast.success("Employee updated");
       } else {
         const res = await axios.post(`${API_BASE}/employee`, payload);
-        setEmployeeMaster((prev) => [res.data, ...prev]);
+        setEmployeeMaster((prev) => [normalizeEmployee(res.data), ...prev]);
         toast.success("Employee added");
       }
 
@@ -226,9 +292,9 @@ const EmployeeMaster = () => {
           item.device_enrollment_id,
           item.company_enrollment_id,
           item.location_name ||
-          item.name ||
-          locationOptions.find((o) => o.id == item.location)?.name ||
-          item.location,
+            item.name ||
+            locationOptions.find((o) => o.id == item.location)?.name ||
+            item.location,
           item.full_name,
           item.shift_name || item.shift,
           item.designation_name || item.designation,
@@ -279,9 +345,9 @@ const EmployeeMaster = () => {
       item.device_enrollment_id,
       item.company_enrollment_id,
       item.location_name ||
-      item.name ||
-      locationOptions.find((o) => o.id == item.location)?.name ||
-      item.location,
+        item.name ||
+        locationOptions.find((o) => o.id == item.location)?.name ||
+        item.location,
       item.full_name,
       item.shift_name || item.shift,
       item.designation_name || item.designation,
@@ -294,7 +360,7 @@ const EmployeeMaster = () => {
 
   return (
     <div className="mb-6 max-w-[1920px] mx-auto">
-      {/* Header Section */}
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between mb-6 gap-4 pl-10 lg:pl-0">
         <h1 className="flex items-center gap-2 h-[30px] text-lg xl:text-xl font-semibold text-gray-800">
           <FaAngleRight className="text-blue-500 text-base" />
@@ -360,7 +426,7 @@ const EmployeeMaster = () => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base  rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
+                className="w-full sm:w-48 bg-blue-50 border border-blue-200 text-gray-900 px-4 py-2 xl:text-base rounded-lg text-sm placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:bg-blue-100 focus:border-blue-300 transition-all"
               />
               <div className="flex gap-2">
                 <button
@@ -489,7 +555,7 @@ const EmployeeMaster = () => {
                       <div className="flex justify-center gap-2">
                         <button
                           onClick={() => {
-                            setFormData({ ...item });
+                            setFormData(buildFormData(item));
                             setMode("view");
                             setOpenModal(true);
                           }}
@@ -499,20 +565,7 @@ const EmployeeMaster = () => {
                         </button>
                         <button
                           onClick={() => {
-                            setFormData({
-                              ...item,
-                              department_id_name: item.department_name,
-                              designation_id_name: item.designation_name,
-                              shift_id_name: item.shift_name || item.shift,
-                              location_name:
-                                item.location_name ||
-                                item.name ||
-                                item.location,
-                              company_name: item.company_name,
-                              leave_plan: item.leave_plan
-                                ? item.leave_plan.split(",")
-                                : [],
-                            });
+                            setFormData(buildFormData(item));
                             setEditId(item.id);
                             setMode("edit");
                             setOpenModal(true);
@@ -558,38 +611,30 @@ const EmployeeMaster = () => {
               disabled={currentPage == 1}
               onClick={() => setCurrentPage(1)}
               className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
-              title="First page"
             >
               First
             </button>
-
             <button
               disabled={currentPage == 1}
               onClick={() => setCurrentPage(currentPage - 1)}
               className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
-              title="Previous page"
             >
               <GrPrevious />
             </button>
-
             <div className="px-4 py-2 bg-blue-100 border border-blue-300 rounded-lg text-blue-700 font-semibold min-w-[45px] text-center">
               {currentPage}
             </div>
-
             <button
               disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(currentPage + 1)}
               className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 p-2 rounded-lg transition-all"
-              title="Next page"
             >
               <GrNext />
             </button>
-
             <button
               disabled={currentPage == totalPages}
               onClick={() => setCurrentPage(totalPages)}
               className="bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium transition-all"
-              title="Last page"
             >
               Last
             </button>
@@ -623,7 +668,7 @@ const EmployeeMaster = () => {
               </button>
             </div>
 
-            {/* Form Sections with Responsive Labels */}
+            {/* Basic Information */}
             <div className="mb-8 pb-6 border-b border-blue-100/30">
               <h3 className="text-lg lg:text-xl 3xl:text-2xl font-semibold text-gray-800 mb-4">
                 Basic Information
@@ -682,6 +727,7 @@ const EmployeeMaster = () => {
               </div>
             </div>
 
+            {/* Organization Details */}
             <div className="mb-8 pb-6 border-b border-blue-100/30">
               <h3 className="text-lg lg:text-xl 3xl:text-2xl font-semibold text-gray-800 mb-4">
                 Organization Details
@@ -691,19 +737,24 @@ const EmployeeMaster = () => {
                   <label className={labelStyle}>Date Of Birth</label>
                   <input
                     name="dob"
-                    value={formData.dob}
+                    value={formData.dob} // ✅ Already formatted to dd/mm/yyyy
                     onClick={() => mode !== "view" && setShowDobPicker(true)}
                     disabled={mode === "view"}
                     readOnly
-                    className={inputStyle}
+                    className={`${inputStyle} cursor-pointer`}
                     placeholder="dd/mm/yyyy"
                   />
                   {showDobPicker && (
                     <SpinnerDatePicker
                       value={formData.dob}
-                      onChange={(date) =>
-                        setFormData({ ...formData, dob: date })
-                      }
+                      onChange={(date) => {
+                        // ✅ Ensure SpinnerDatePicker output is also formatted
+                        setFormData((prev) => ({
+                          ...prev,
+                          dob: formatDate(date),
+                        }));
+                        setShowDobPicker(false);
+                      }}
                       onClose={() => setShowDobPicker(false)}
                     />
                   )}
@@ -712,19 +763,24 @@ const EmployeeMaster = () => {
                   <label className={labelStyle}>Date Of Join</label>
                   <input
                     name="doj"
-                    value={formData.doj}
+                    value={formData.doj} // ✅ Already formatted to dd/mm/yyyy
                     onClick={() => mode !== "view" && setShowDojPicker(true)}
                     disabled={mode === "view"}
                     readOnly
-                    className={inputStyle}
+                    className={`${inputStyle} cursor-pointer`}
                     placeholder="dd/mm/yyyy"
                   />
                   {showDojPicker && (
                     <SpinnerDatePicker
                       value={formData.doj}
-                      onChange={(date) =>
-                        setFormData({ ...formData, doj: date })
-                      }
+                      onChange={(date) => {
+                        // ✅ Ensure SpinnerDatePicker output is also formatted
+                        setFormData((prev) => ({
+                          ...prev,
+                          doj: formatDate(date),
+                        }));
+                        setShowDojPicker(false);
+                      }}
                       onClose={() => setShowDojPicker(false)}
                     />
                   )}
@@ -763,7 +819,7 @@ const EmployeeMaster = () => {
                   label="Department"
                   name="department_id"
                   value={formData.department_id}
-                  displayValue={formData.department_name}
+                  displayValue={formData.department_id_name}
                   options={departmentOptions}
                   labelKey="name"
                   valueKey="id"
@@ -778,7 +834,7 @@ const EmployeeMaster = () => {
                   label="Designation"
                   name="designation_id"
                   value={formData.designation_id}
-                  displayValue={formData.designation_name}
+                  displayValue={formData.designation_id_name}
                   options={designationOptions}
                   labelKey="name"
                   valueKey="id"
@@ -793,7 +849,7 @@ const EmployeeMaster = () => {
                   label="Shift"
                   name="shift_id"
                   value={formData.shift_id}
-                  displayValue={formData.shift_name}
+                  displayValue={formData.shift_id_name}
                   options={shiftOptions}
                   labelKey="shift_name"
                   valueKey="id"
@@ -804,12 +860,11 @@ const EmployeeMaster = () => {
                   inputStyle={inputStyle}
                   labelStyle={labelStyle}
                 />
-
                 <SearchDropdown
                   label="Leave Plan"
                   name="leave_plan"
-                  value={formData.leave_plan}
-                  displayValue={formData.leave_plan_name}
+                  value={formData.leave_plan ?? []}
+                  displayValue={formData.leave_plan_name ?? []}
                   options={leavePlanOptions}
                   labelKey="name"
                   valueKey="id"
@@ -824,6 +879,7 @@ const EmployeeMaster = () => {
               </div>
             </div>
 
+            {/* Flags & Status */}
             <div className="mb-8">
               <h3 className="text-lg lg:text-xl 3xl:text-2xl font-semibold text-gray-800 mb-4">
                 Flags & Status
