@@ -942,6 +942,10 @@ const AttendancePunch = ({ user }) => {
   const uniqueDayStatuses = (() => {
     const dayMap = {};
     filteredRecord.forEach((r) => {
+      // Skip Sundays
+      const recordDate = new Date(r.date);
+      if (recordDate.getDay() === 0) return;
+
       const effectiveRecord =
         r.status === "In Progress" ? { ...r, status: "Present" } : r;
       if (
