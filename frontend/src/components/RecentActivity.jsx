@@ -4,6 +4,9 @@ import { fetchRecord } from "../action";
 import { FaEye } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 
+const formatDate = (date) =>
+  date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
 const deviceStyles = {
   mobile: "bg-blue-50 text-blue-600",
   desktop: "bg-indigo-50 text-indigo-600",
@@ -40,6 +43,12 @@ const RecentActivity = () => {
   const [currentTime, setCurrentTime] = useState("");
   const dispatch = useDispatch();
   const records = useSelector((state) => state.record);
+
+  const today = formatDate(new Date());
+
+  const todayRecords = records.filter((user) => {
+    return user.date === today;
+  });
 
   const [selectedItem, setSelectedItem] = useState(null);
   const [openModal, setopenModal] = useState(false);
